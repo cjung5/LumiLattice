@@ -1,0 +1,40 @@
+# Private notes / planning docs (README stays public for submission)
+*.md
+!README.md
+
+# Secrets (API keys: Meta Model API, Materials Project, Baseten, etc.)
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# Local data (private candidates, caches)
+*.db
+*.sqlite
+*.sqlite3
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Claude Code local settings
+.claude/settings.local.json
