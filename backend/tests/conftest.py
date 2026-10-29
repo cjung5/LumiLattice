@@ -1,6 +1,17 @@
 import pytest
 from pymatgen.core import Lattice, Structure
 
+from app.tools import usage
+
+
+@pytest.fixture(autouse=True)
+def fresh_api_usage():
+    """Shared caches and daily caps must not leak between tests."""
+    for item in (usage.MP_CACHE, usage.OPENALEX_CACHE):
+        item.clear()
+    for cap in (usage.MP_CAP, usage.OPENALEX_CAP):
+        cap.reset()
+
 
 @pytest.fixture
 def srtio3() -> Structure:

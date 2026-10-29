@@ -15,7 +15,12 @@ def offline_literature() -> OpenAlexClient:
 def test_registry_exposes_agent_tools():
     names = [s["name"] for s in build_registry(None, offline_literature()).schemas()]
 
-    assert names == ["composition_info", "search_materials", "search_literature"]
+    assert names == [
+        "composition_info",
+        "create_candidate",
+        "search_materials",
+        "search_literature",
+    ]
 
 
 def test_search_materials_without_key_tells_model_to_report_unknown():

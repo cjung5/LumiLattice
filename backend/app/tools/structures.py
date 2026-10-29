@@ -47,7 +47,7 @@ def structure_payload(structure: Structure, provenance: Provenance) -> Structure
     )
 
 
-def parse_cif(text: str, filename: str) -> StructurePayload:
+def _read_cif(text: str, filename: str) -> tuple[list[Structure], list[str]]:
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
         try:
@@ -56,9 +56,17 @@ def parse_cif(text: str, filename: str) -> StructurePayload:
             raise ToolError(f"Cannot read CIF {filename!r}: {exc}") from exc
     if not structures:
         raise ToolError(f"CIF {filename!r} has no structure.")
+    return structures, sorted({str(w.message) for w in caught})[:5]
 
+
+def parse_cif_structure(text: str, filename: str) -> Structure:
+    return _read_cif(text, filename)[0][0]
+
+
+def parse_cif(text: str, filename: str) -> StructurePayload:
+    structures, cif_warnings = _read_cif(text, filename)
     payload = structure_payload(structures[0], Provenance(source="CIF upload", reference=filename))
-    payload.warnings = sorted({str(w.message) for w in caught})[:5]
+    payload.warnings = cif_warnings
     if len(structures) > 1:
         payload.warnings.append(f"CIF has {len(structures)} structures; showing the first.")
     return payload

@@ -76,6 +76,52 @@ export type PaperEvidence = {
   provenance: Provenance;
 };
 
+export type Substitution = { element_from: string; element_to: string; fraction: number };
+
+export type CheckStatus = "pass" | "warn" | "fail" | "info" | "not_applicable";
+export type AssessmentStatus =
+  | "Structurally Plausible"
+  | "Structural Concerns"
+  | "Insufficient Evidence";
+
+export type CheckResult = {
+  id: string;
+  name: string;
+  status: CheckStatus;
+  message: string;
+  atom_indices: number[];
+  values: Record<string, number | string>;
+  method: string | null;
+};
+
+export type StructuralAssessment = {
+  status: AssessmentStatus;
+  checks: CheckResult[];
+  oxidation_states: Record<string, number> | null;
+  notes: string[];
+};
+
+export type Candidate = {
+  candidate_id: string;
+  parent_id: string | null;
+  formula: string;
+  structure: StructurePayload;
+  transformation: {
+    host: Provenance;
+    supercell: [number, number, number];
+    substitutions: Substitution[];
+    substituted_sites: Record<string, number[]>;
+    site_selection: string;
+  };
+  assessment: StructuralAssessment;
+  created_at: string;
+};
+
+export type HostRef =
+  | { material_id: string }
+  | { candidate_id: string }
+  | { cif: string; filename: string };
+
 export type ToolCall = {
   name: string;
   arguments: string;
@@ -128,6 +174,14 @@ export function uploadCif(filename: string, cif: string): Promise<StructurePaylo
 
 export function searchLiterature(query: string): Promise<PaperEvidence[]> {
   return request<PaperEvidence[]>(`/api/literature/search?${new URLSearchParams({ q: query })}`);
+}
+
+export function createCandidate(host: HostRef, substitutions: Substitution[]): Promise<Candidate> {
+  return postJson<Candidate>("/api/candidates", { host, substitutions });
+}
+
+export function assessHost(host: HostRef): Promise<StructuralAssessment> {
+  return postJson<StructuralAssessment>("/api/structures/assess", host);
 }
 
 export function runAgent(message: string, locale: string): Promise<AgentResult> {

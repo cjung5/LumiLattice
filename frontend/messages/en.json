@@ -58,10 +58,11 @@
     "lattice": "Lattice",
     "sites": "Sites in cell",
     "source": "Source",
-    "warnings": "Parser warnings"
+    "warnings": "Parser warnings",
+    "baseline": "Host check (baseline)"
   },
   "Literature": {
-    "title": "3. Literature",
+    "title": "4. Literature",
     "hint": "Paper metadata from OpenAlex. LumiLattice does not read full texts.",
     "placeholder": "Example: SrTiO3 refractive index",
     "search": "Search",
@@ -70,6 +71,27 @@
     "citedBy": "Cited by {count}",
     "openAccess": "Open access",
     "source": "Source: {source}"
+  },
+  "Candidate": {
+    "title": "3. Candidates",
+    "hint": "Replace a fraction of one element's sites in {host}. Atom positions stay at the host positions (no relaxation).",
+    "from": "Element to replace",
+    "to": "New element",
+    "toPlaceholder": "e.g. Zr",
+    "fraction": "Fraction",
+    "ofSites": "of {element} sites",
+    "remove": "Remove",
+    "addRow": "+ Co-substitution",
+    "generating": "Generating…",
+    "generateFromHost": "Generate from host",
+    "reviseCurrent": "Revise {id}",
+    "lineage": "from {parent} · supercell {supercell}",
+    "viewerLegend": "Larger atoms: substituted sites. Pink atoms with labels: atoms in the selected check.",
+    "history": "Version history"
+  },
+  "Assessment": {
+    "clickHint": "Select a check to show its atoms.",
+    "atoms": "{count} atoms"
   },
   "Agent": {
     "title": "Agent console",

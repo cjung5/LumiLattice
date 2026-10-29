@@ -1,17 +1,19 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { AssessmentPanel } from "@/components/AssessmentPanel";
 import { CrystalViewer } from "@/components/CrystalViewer";
-import type { MaterialRecord, StructurePayload } from "@/lib/api";
+import type { MaterialRecord, StructuralAssessment, StructurePayload } from "@/lib/api";
 
 type Props = {
   structure: StructurePayload | null;
   record: MaterialRecord | null;
+  assessment: StructuralAssessment | null;
   loading: boolean;
   error: string | null;
 };
 
-export function StructurePanel({ structure, record, loading, error }: Props) {
+export function StructurePanel({ structure, record, assessment, loading, error }: Props) {
   const t = useTranslations("Structure");
 
   return (
@@ -74,6 +76,13 @@ export function StructurePanel({ structure, record, loading, error }: Props) {
               </div>
             )}
           </dl>
+        </div>
+      )}
+
+      {structure && !loading && assessment && (
+        <div className="mt-4">
+          <h3 className="mb-1 text-sm font-medium">{t("baseline")}</h3>
+          <AssessmentPanel assessment={assessment} />
         </div>
       )}
     </section>

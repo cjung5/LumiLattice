@@ -58,10 +58,11 @@
     "lattice": "격자",
     "sites": "셀 안의 원자 수",
     "source": "출처",
-    "warnings": "파서 경고"
+    "warnings": "파서 경고",
+    "baseline": "기준 구조 검사 (비교 기준)"
   },
   "Literature": {
-    "title": "3. 문헌",
+    "title": "4. 문헌",
     "hint": "OpenAlex의 논문 메타데이터입니다. LumiLattice는 논문 본문을 읽지 않습니다.",
     "placeholder": "예: SrTiO3 refractive index",
     "search": "검색",
@@ -70,6 +71,27 @@
     "citedBy": "피인용 {count}회",
     "openAccess": "오픈 액세스",
     "source": "출처: {source}"
+  },
+  "Candidate": {
+    "title": "3. 후보",
+    "hint": "{host}에서 한 원소 자리의 일부를 다른 원소로 바꿉니다. 원자 위치는 기준 구조 그대로입니다(relaxation 없음).",
+    "from": "바꿀 원소",
+    "to": "새 원소",
+    "toPlaceholder": "예: Zr",
+    "fraction": "비율",
+    "ofSites": "({element} 자리 중)",
+    "remove": "삭제",
+    "addRow": "+ 동시 치환",
+    "generating": "생성 중…",
+    "generateFromHost": "기준 구조에서 생성",
+    "reviseCurrent": "{id} 수정",
+    "lineage": "출발: {parent} · 슈퍼셀 {supercell}",
+    "viewerLegend": "큰 원자: 치환된 자리. 분홍색 원자와 라벨: 선택한 검사에 해당하는 원자.",
+    "history": "버전 기록"
+  },
+  "Assessment": {
+    "clickHint": "검사 항목을 누르면 해당 원자가 표시됩니다.",
+    "atoms": "원자 {count}개"
   },
   "Agent": {
     "title": "에이전트 콘솔",

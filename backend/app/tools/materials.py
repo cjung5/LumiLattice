@@ -13,10 +13,12 @@ from pymatgen.core import Structure
 from app.models.evidence import PropertyValue, Provenance
 from app.models.materials import MaterialRecord
 from app.tools.registry import ToolError, UpstreamError
+from app.tools.usage import MP_CACHE, MP_CAP, DailyCap, ResponseCache, cache_key
 
 MP_API_URL = "https://api.materialsproject.org"
 MP_WEB_URL = "https://next-gen.materialsproject.org/materials"
-MATERIAL_ID = re.compile(r"^(mp|mvc)-\d+$")
+# Legacy IDs (mp-5229) and the newer AlphaID form (mp-aaaaahtd) are both accepted.
+MATERIAL_ID = re.compile(r"^(mp|mvc)-([0-9]+|[a-z]+)$")
 SUMMARY_FIELDS = (
     "material_id,formula_pretty,symmetry,nsites,band_gap,is_metal,energy_above_hull,"
     "is_stable,theoretical,n,e_electronic,database_IDs"
@@ -25,18 +27,33 @@ DFT_METHOD = "DFT (Materials Project; mostly GGA/GGA+U)"
 
 
 class MaterialsProjectClient:
-    def __init__(self, api_key: str, transport: httpx.BaseTransport | None = None):
+    def __init__(
+        self,
+        api_key: str,
+        transport: httpx.BaseTransport | None = None,
+        cache: ResponseCache = MP_CACHE,
+        cap: DailyCap = MP_CAP,
+    ):
         self._http = httpx.Client(
             base_url=MP_API_URL,
             headers={"X-API-KEY": api_key},
             timeout=30,
             transport=transport,
         )
+        self._cache = cache
+        self._cap = cap
 
     def close(self) -> None:
         self._http.close()
 
     def _get(self, path: str, params: dict[str, Any]) -> list[dict[str, Any]]:
+        # Legacy IDs (mp-5229) match the Materials Project website and most papers.
+        params = {**params, "id_format": "legacy"}
+        key = cache_key(path, params)
+        cached = self._cache.get(key)
+        if cached is not None:
+            return cached
+        self._cap.take()
         try:
             response = self._http.get(path, params=params)
         except httpx.HTTPError as exc:
@@ -47,7 +64,9 @@ class MaterialsProjectClient:
             raise UpstreamError(
                 f"Materials Project error {response.status_code}: {response.text[:200]}"
             )
-        return response.json().get("data", [])
+        data = response.json().get("data", [])
+        self._cache.put(key, data)
+        return data
 
     def search(
         self,

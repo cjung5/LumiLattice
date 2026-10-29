@@ -4,6 +4,9 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
+from app.models.candidates import Substitution
+from app.storage.memory import STORE, CandidateStore
+from app.tools.candidates import create_candidate, load_host
 from app.tools.composition import COMPOSITION_TOOL
 from app.tools.literature import OpenAlexClient
 from app.tools.materials import MaterialsProjectClient
@@ -34,7 +37,28 @@ class SearchLiteratureArgs(BaseModel):
     limit: int = Field(default=5, ge=1, le=10)
 
 
-def build_registry(mp: MaterialsProjectClient | None, literature: OpenAlexClient) -> ToolRegistry:
+class CreateCandidateArgs(BaseModel):
+    host_material_id: str | None = Field(
+        default=None, max_length=40, description="Materials Project ID of the host, e.g. 'mp-5229'."
+    )
+    host_candidate_id: str | None = Field(
+        default=None,
+        max_length=20,
+        description="ID of an earlier candidate to revise, e.g. 'LL-0001'. Use instead of host_material_id.",
+    )
+    substitutions: list[Substitution] = Field(
+        min_length=1,
+        max_length=4,
+        description="Element replacements, e.g. [{'element_from': 'Ti', 'element_to': 'Zr', 'fraction': 0.5}]. "
+        "Fractions like 1, 1/2, 1/3, 1/4 work best.",
+    )
+
+
+def build_registry(
+    mp: MaterialsProjectClient | None,
+    literature: OpenAlexClient,
+    store: CandidateStore = STORE,
+) -> ToolRegistry:
     def search_materials(args: SearchMaterialsArgs) -> dict[str, Any]:
         if mp is None:
             raise ToolError(
@@ -56,9 +80,41 @@ def build_registry(mp: MaterialsProjectClient | None, literature: OpenAlexClient
         papers = literature.search(args.query, limit=args.limit)
         return {"count": len(papers), "results": [p.model_dump(exclude_none=True) for p in papers]}
 
+    def new_candidate(args: CreateCandidateArgs) -> dict[str, Any]:
+        host, host_ref, parent_id = load_host(
+            store, mp, material_id=args.host_material_id, candidate_id=args.host_candidate_id
+        )
+        candidate = create_candidate(store, host, host_ref, args.substitutions, parent_id, mp)
+        assessment = candidate.assessment
+        return {
+            "candidate_id": candidate.candidate_id,
+            "parent_id": candidate.parent_id,
+            "formula": candidate.formula,
+            "supercell": candidate.transformation.supercell,
+            "substituted_sites": candidate.transformation.substituted_sites,
+            "assessment_status": assessment.status,
+            "checks": [
+                {"id": c.id, "status": c.status, "message": c.message}
+                for c in assessment.checks
+                if c.status != "not_applicable"
+            ],
+            "notes": assessment.notes,
+        }
+
     return ToolRegistry(
         [
             COMPOSITION_TOOL,
+            Tool(
+                name="create_candidate",
+                description=(
+                    "Make a candidate material by replacing a fraction of one element's sites in "
+                    "a known host structure (or an earlier candidate), then run structural checks: "
+                    "charge balance, distances, ionic size fit, coordination, bond valence sum, "
+                    "tolerance factor, and known analogs. Atoms are not relaxed."
+                ),
+                args_model=CreateCandidateArgs,
+                handler=new_candidate,
+            ),
             Tool(
                 name="search_materials",
                 description=(

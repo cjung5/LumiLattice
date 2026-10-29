@@ -53,5 +53,5 @@ def test_no_key_is_not_sent():
 def test_budget_exhausted():
     client = OpenAlexClient(transport=httpx.MockTransport(lambda r: httpx.Response(429)))
 
-    with pytest.raises(UpstreamError, match="OPENALEX_API_KEY"):
+    with pytest.raises(UpstreamError, match="free daily budget"):
         client.search("TiO2")
