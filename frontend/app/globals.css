@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --surface: #f7f7f8;
+  --line: #e2e2e6;
+  --muted: #5f6070;
+  --accent: #4f46e5;
+  --danger: #c0262d;
+  --warning: #a15c00;
+  /* Evidence tags (spec 3.4): Experimental, DFT-computed, Heuristic, Unknown */
+  --tag-exp: #1e7d3a;
+  --tag-dft: #1d5fc4;
+  --tag-heur: #a15c00;
+  --tag-unknown: #6b6b78;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0b0b0f;
+    --foreground: #ededed;
+    --surface: #15151c;
+    --line: #2a2a35;
+    --muted: #a0a0b0;
+    --accent: #6d67f0;
+    --danger: #ff6b6b;
+    --warning: #f0b45a;
+    --tag-exp: #5fd17f;
+    --tag-dft: #6aa8ff;
+    --tag-heur: #f0b45a;
+    --tag-unknown: #9a9aaa;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-tag-exp: var(--tag-exp);
+  --color-tag-dft: var(--tag-dft);
+  --color-tag-heur: var(--tag-heur);
+  --color-tag-unknown: var(--tag-unknown);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}

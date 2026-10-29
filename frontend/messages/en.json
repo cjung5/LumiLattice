@@ -1,0 +1,85 @@
+{
+  "Metadata": {
+    "title": "LumiLattice",
+    "description": "A collaborative AI scientist for optoelectronic materials discovery."
+  },
+  "Home": {
+    "tagline": "A collaborative AI scientist for optoelectronic materials discovery",
+    "intro": "Explore candidate materials for AR waveguides with Muse Spark. Every number comes from a database or a calculation, with its source."
+  },
+  "Language": {
+    "label": "Language"
+  },
+  "Status": {
+    "title": "Backend",
+    "checking": "Checking…",
+    "online": "Online",
+    "offline": "Offline. Start the backend at {url}.",
+    "model": "Model",
+    "keyConfigured": "Meta Model API key configured",
+    "keyMissing": "Meta Model API key missing. Add MODEL_API_KEY to backend/.env.",
+    "mpConfigured": "Materials Project key configured",
+    "mpMissing": "Materials Project key missing. Add MP_API_KEY to backend/.env.",
+    "openAlexConfigured": "OpenAlex key configured",
+    "openAlexMissing": "No OpenAlex key: literature search uses a small shared daily budget."
+  },
+  "Evidence": {
+    "experimental": "Measured value from an experiment.",
+    "dftComputed": "Computed with density functional theory (DFT). Not a measurement.",
+    "heuristic": "Estimated range from similar materials. Not a prediction.",
+    "unknown": "No reliable value is available."
+  },
+  "Host": {
+    "title": "1. Select a host structure",
+    "hint": "Search Materials Project by formula (SrTiO3, *TiO3), elements (Sr,Ti,O), or ID (mp-5229). Or upload your own CIF.",
+    "placeholder": "SrTiO3, Sr,Ti,O, or mp-5229",
+    "search": "Search",
+    "searching": "Searching…",
+    "upload": "Upload CIF",
+    "uploading": "Reading…",
+    "noResults": "No materials found.",
+    "columns": {
+      "formula": "Formula",
+      "spacegroup": "Space group",
+      "eHull": "E above hull",
+      "bandGap": "Band gap",
+      "n": "n",
+      "status": "Status"
+    },
+    "stable": "Stable",
+    "experimental": "Observed (ICSD)",
+    "theoretical": "Theoretical"
+  },
+  "Structure": {
+    "title": "2. Structure",
+    "empty": "Select a material or upload a CIF to see its structure.",
+    "loading": "Loading structure…",
+    "spacegroup": "Space group",
+    "lattice": "Lattice",
+    "sites": "Sites in cell",
+    "source": "Source",
+    "warnings": "Parser warnings"
+  },
+  "Literature": {
+    "title": "3. Literature",
+    "hint": "Paper metadata from OpenAlex. LumiLattice does not read full texts.",
+    "placeholder": "Example: SrTiO3 refractive index",
+    "search": "Search",
+    "searching": "Searching…",
+    "empty": "No papers found.",
+    "citedBy": "Cited by {count}",
+    "openAccess": "Open access",
+    "source": "Source: {source}"
+  },
+  "Agent": {
+    "title": "Agent console",
+    "hint": "The agent must use a tool for every number. Tool calls are shown below the answer.",
+    "placeholder": "Example: What are the likely oxidation states in SrTiO3?",
+    "run": "Run",
+    "running": "Running…",
+    "answer": "Answer",
+    "toolCalls": "Tool calls ({count})",
+    "noToolCalls": "No tool calls. Treat any numbers in this answer as unverified.",
+    "error": "Error: {message}"
+  }
+}

@@ -22,6 +22,12 @@ class Settings(BaseSettings):
     muse_model: str = "muse-spark-1.3"
     agent_max_steps: int = 8
 
+    # Materials Project (free key: https://next-gen.materialsproject.org/api)
+    mp_api_key: SecretStr | None = None
+    # OpenAlex works without a key but then shares a small daily budget per IP address.
+    # A free key (https://openalex.org/settings/api) gives the app its own budget.
+    openalex_api_key: SecretStr | None = None
+
     # JSON list in the environment, e.g. CORS_ORIGINS='["https://lumilattice.vercel.app"]'
     cors_origins: list[str] = ["http://localhost:3000"]
 

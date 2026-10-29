@@ -16,6 +16,10 @@ class ToolError(Exception):
     """An expected failure the model should see and can recover from (e.g. bad formula)."""
 
 
+class UpstreamError(ToolError):
+    """An external data source (Materials Project, OpenAlex) failed or refused the request."""
+
+
 @dataclass(frozen=True)
 class Tool:
     name: str

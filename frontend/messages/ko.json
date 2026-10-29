@@ -1,0 +1,85 @@
+{
+  "Metadata": {
+    "title": "LumiLattice",
+    "description": "광전자 소재 발견을 위한 협업형 AI 과학자"
+  },
+  "Home": {
+    "tagline": "광전자 소재 발견을 위한 협업형 AI 과학자",
+    "intro": "Muse Spark와 함께 AR 도파관용 후보 소재를 탐색하세요. 모든 수치는 출처가 있는 데이터베이스나 계산에서 나옵니다."
+  },
+  "Language": {
+    "label": "언어"
+  },
+  "Status": {
+    "title": "백엔드",
+    "checking": "확인 중…",
+    "online": "연결됨",
+    "offline": "연결 안 됨. {url}에서 백엔드를 실행하세요.",
+    "model": "모델",
+    "keyConfigured": "Meta Model API 키 설정됨",
+    "keyMissing": "Meta Model API 키가 없습니다. backend/.env에 MODEL_API_KEY를 추가하세요.",
+    "mpConfigured": "Materials Project 키 설정됨",
+    "mpMissing": "Materials Project 키가 없습니다. backend/.env에 MP_API_KEY를 추가하세요.",
+    "openAlexConfigured": "OpenAlex 키 설정됨",
+    "openAlexMissing": "OpenAlex 키 없음: 문헌 검색이 여럿이 함께 쓰는 작은 일일 한도를 사용합니다."
+  },
+  "Evidence": {
+    "experimental": "실험으로 측정한 값입니다.",
+    "dftComputed": "밀도범함수이론(DFT)으로 계산한 값입니다. 측정값이 아닙니다.",
+    "heuristic": "유사 물질로부터 추정한 범위입니다. 예측값이 아닙니다.",
+    "unknown": "신뢰할 수 있는 값이 없습니다."
+  },
+  "Host": {
+    "title": "1. 기준 구조 선택",
+    "hint": "Materials Project에서 화학식(SrTiO3, *TiO3), 원소(Sr,Ti,O), ID(mp-5229)로 검색하세요. 직접 가진 CIF를 올려도 됩니다.",
+    "placeholder": "SrTiO3, Sr,Ti,O 또는 mp-5229",
+    "search": "검색",
+    "searching": "검색 중…",
+    "upload": "CIF 업로드",
+    "uploading": "읽는 중…",
+    "noResults": "검색 결과가 없습니다.",
+    "columns": {
+      "formula": "화학식",
+      "spacegroup": "공간군",
+      "eHull": "E above hull",
+      "bandGap": "밴드갭",
+      "n": "n",
+      "status": "상태"
+    },
+    "stable": "안정",
+    "experimental": "실험 관측 (ICSD)",
+    "theoretical": "이론 구조"
+  },
+  "Structure": {
+    "title": "2. 결정구조",
+    "empty": "물질을 선택하거나 CIF를 올리면 구조가 표시됩니다.",
+    "loading": "구조를 불러오는 중…",
+    "spacegroup": "공간군",
+    "lattice": "격자",
+    "sites": "셀 안의 원자 수",
+    "source": "출처",
+    "warnings": "파서 경고"
+  },
+  "Literature": {
+    "title": "3. 문헌",
+    "hint": "OpenAlex의 논문 메타데이터입니다. LumiLattice는 논문 본문을 읽지 않습니다.",
+    "placeholder": "예: SrTiO3 refractive index",
+    "search": "검색",
+    "searching": "검색 중…",
+    "empty": "논문을 찾지 못했습니다.",
+    "citedBy": "피인용 {count}회",
+    "openAccess": "오픈 액세스",
+    "source": "출처: {source}"
+  },
+  "Agent": {
+    "title": "에이전트 콘솔",
+    "hint": "에이전트는 모든 수치를 도구로 구해야 합니다. 도구 호출 기록은 답변 아래에 표시됩니다.",
+    "placeholder": "예: SrTiO3의 가능한 산화수는?",
+    "run": "실행",
+    "running": "실행 중…",
+    "answer": "답변",
+    "toolCalls": "도구 호출 ({count})",
+    "noToolCalls": "도구 호출이 없습니다. 이 답변의 수치는 검증되지 않은 것으로 보세요.",
+    "error": "오류: {message}"
+  }
+}

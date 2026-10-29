@@ -1,20 +1,16 @@
 from dataclasses import asdict
-from typing import Annotated, Any, Literal
+from typing import Any, Literal
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from openai import APIError
 from pydantic import BaseModel, Field
 
 from app.agents.loop import AgentStepLimitReached, run_agent
 from app.agents.muse import ModelAPIKeyMissing, create_client
-from app.config import Settings, get_settings
-from app.tools.composition import COMPOSITION_TOOL
-from app.tools.registry import ToolRegistry
+from app.api.deps import LiteratureDep, OptionalMPDep, SettingsDep
+from app.tools.catalog import build_registry
 
 router = APIRouter(prefix="/api")
-SettingsDep = Annotated[Settings, Depends(get_settings)]
-
-REGISTRY = ToolRegistry([COMPOSITION_TOOL])
 
 
 @router.get("/health")
@@ -23,6 +19,8 @@ def health(settings: SettingsDep) -> dict[str, Any]:
         "status": "ok",
         "model": settings.muse_model,
         "model_api_key_configured": settings.model_api_key is not None,
+        "materials_project_configured": settings.mp_api_key is not None,
+        "openalex_api_key_configured": settings.openalex_api_key is not None,
     }
 
 
@@ -32,7 +30,12 @@ class AgentRequest(BaseModel):
 
 
 @router.post("/agent/run")
-def agent_run(request: AgentRequest, settings: SettingsDep) -> dict[str, Any]:
+def agent_run(
+    request: AgentRequest,
+    settings: SettingsDep,
+    mp: OptionalMPDep,
+    literature: LiteratureDep,
+) -> dict[str, Any]:
     try:
         client = create_client(settings)
     except ModelAPIKeyMissing as exc:
@@ -41,7 +44,7 @@ def agent_run(request: AgentRequest, settings: SettingsDep) -> dict[str, Any]:
         result = run_agent(
             client,
             settings.muse_model,
-            REGISTRY,
+            build_registry(mp, literature),
             request.message,
             locale=request.locale,
             max_steps=settings.agent_max_steps,
