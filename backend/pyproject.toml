@@ -1,0 +1,25 @@
+[project]
+name = "lumilattice-backend"
+version = "0.1.0"
+description = "LumiLattice API: Muse Spark research agent and deterministic materials tools"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.162.0",
+    "openai>=3.41.0",
+    "pydantic-settings>=2.16.2",
+    "pymatgen>=2026.10.24",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.2.0",
+    "ruff>=0.17.3",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
