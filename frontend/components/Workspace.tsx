@@ -62,7 +62,7 @@ export function Workspace() {
   const [goal, setGoal] = useState<Goal>({ ...AR_GOAL, forbidden_elements: [] });
   const [goalTouched, setGoalTouched] = useState(false);
   const [example, setExample] = useState<ExampleState>({ stage: null, error: null });
-  const [scrollTarget, setScrollTarget] = useState<StepId | null>(null);
+  const [scrollTarget, setScrollTarget] = useState<StepId | "agent" | null>(null);
   const alignTimer = useRef<number | undefined>(undefined);
   const [history, setHistory] = useState<Candidate[]>([]);
   const [current, setCurrent] = useState<Candidate | null>(null);
@@ -295,6 +295,10 @@ export function Workspace() {
             goal={goal}
             agentBusy={agentBusy}
             onCandidate={showCandidate}
+            onAskAgent={(message) => {
+              void askAgent(message, message);
+              setScrollTarget("agent");
+            }}
             onSelect={setCurrent}
             onDecide={decide}
           />
@@ -312,18 +316,20 @@ export function Workspace() {
           />
         </div>
       )}
-      <AgentPanel
-        turns={turns}
-        busy={agentBusy}
-        error={agentError}
-        onSend={(message) => void askAgent(message, message)}
-        onReset={() => {
-          setTurns([]);
-          setResponseId(null);
-          setAgentError(null);
-        }}
-        onOpenCandidate={(id) => void openCandidate(id)}
-      />
+      <div id="step-agent" className="scroll-mt-4 md:scroll-mt-28">
+        <AgentPanel
+          turns={turns}
+          busy={agentBusy}
+          error={agentError}
+          onSend={(message) => void askAgent(message, message)}
+          onReset={() => {
+            setTurns([]);
+            setResponseId(null);
+            setAgentError(null);
+          }}
+          onOpenCandidate={(id) => void openCandidate(id)}
+        />
+      </div>
       <RegistryPanel version={registryVersion} onOpen={showCandidate} />
       <LiteraturePanel key={formula ?? "none"} formula={formula} />
     </>

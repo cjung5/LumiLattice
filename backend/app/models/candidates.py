@@ -3,6 +3,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+from app.models.critique import Critique
 from app.models.evidence import Provenance
 from app.models.materials import StructurePayload
 from app.models.optical import OpticalEstimate
@@ -131,3 +132,4 @@ class Candidate(BaseModel):
     credit: Credit | None = None
     relaxation: Relaxation | None = None
     experiments: list[ExperimentRecord] = []
+    critiques: list[Critique] = []  # Muse Spark reviews, newest last

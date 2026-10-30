@@ -1,7 +1,7 @@
 from collections.abc import Iterator
 from typing import Annotated
 
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Request
 
 from app.config import Settings, get_settings
 from app.tools.cod import CodClient
@@ -67,3 +67,11 @@ OptionalMPDep = Annotated[MaterialsProjectClient | None, Depends(get_optional_mp
 MPDep = Annotated[MaterialsProjectClient, Depends(get_mp_client)]
 LiteratureDep = Annotated[LiteratureSearch, Depends(get_literature_client)]
 CodDep = Annotated[CodClient, Depends(get_cod_client)]
+
+
+def client_id(request: Request) -> str:
+    """Rate-limit key: the first X-Forwarded-For address (Render's proxy), else the peer."""
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.client.host if request.client else "unknown"

@@ -139,6 +139,44 @@
     "exporting": "准备中…",
     "exportNote": "CIF 列出所有位点 (P1)，并包含溯源文件头。JSON 记录另含目标评分、3D 结构分析、数据来源和注意事项。"
   },
+  "Critique": {
+    "title": "Muse Spark 评价",
+    "aiTag": "AI 评价：仅为观点，非证据",
+    "hint": "Muse Spark 从结构的三个视图和计算证据审查该候选结构。每条观点均注明所用证据，不在证据中的数值会被标记。",
+    "run": "请求评价",
+    "rerun": "重新请求",
+    "running": "评价中…",
+    "runningLong": "Muse Spark 正在评价 {id}。大约需要 30 至 90 秒。",
+    "noViews": "无法捕获 3D 视图，因此本次评价仅使用证据。",
+    "verdict": {
+      "promising": "有前景",
+      "mixed": "褒贬参半",
+      "weak": "较弱",
+      "insufficient_evidence": "证据不足"
+    },
+    "kind": {
+      "strength": "优点",
+      "concern": "疑虑",
+      "open_question": "开放问题"
+    },
+    "basis": {
+      "evidence": "来自证据",
+      "image": "见于图像",
+      "both": "证据与图像"
+    },
+    "meta": "{model} · {geometry}单胞的 {views} 个视图 · {time}",
+    "geometry": {
+      "unrelaxed": "未弛豫",
+      "relaxed": "已弛豫"
+    },
+    "suggestions": "建议后续步骤",
+    "questions": "向您提问",
+    "testThis": "请求代理测试此项",
+    "sent": "已发送至研究代理（第 6 节）",
+    "warnings": "本次评价中检查发现的问题",
+    "evidence": "模型所见证据（{count} 项）",
+    "older": "早期评价（{count}）"
+  },
   "Evidence": {
     "experimental": "来自实验的实测值。",
     "dftComputed": "由密度泛函理论 (DFT) 计算得到，非实测值。",

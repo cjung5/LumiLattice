@@ -139,6 +139,44 @@
     "exporting": "Wird vorbereitet…",
     "exportNote": "Die CIF listet alle Atomlagen (P1) mit Provenienz-Header auf. Der JSON-Datensatz fügt Ziel-Score, 3D-Strukturanalyse, Datenquellen und Einschränkungen hinzu."
   },
+  "Critique": {
+    "title": "Muse Spark-Kritik",
+    "aiTag": "KI-Review: Meinung, kein Beleg",
+    "hint": "Muse Spark bewertet diesen Kandidaten anhand dreier Strukturansichten und der berechneten Belege. Jeder Punkt nennt die verwendeten Belege, Zahlen ohne Beleg werden markiert.",
+    "run": "Kritik anfordern",
+    "rerun": "Erneut anfordern",
+    "running": "Wird geprüft…",
+    "runningLong": "Muse Spark prüft {id}. Dauert etwa 30 bis 90 Sekunden.",
+    "noViews": "Die 3D-Ansicht konnte nicht erfasst werden, daher nutzte diese Kritik nur die Belege.",
+    "verdict": {
+      "promising": "Vielversprechend",
+      "mixed": "Gemischt",
+      "weak": "Schwach",
+      "insufficient_evidence": "Unzureichende Belege"
+    },
+    "kind": {
+      "strength": "Stärke",
+      "concern": "Bedenken",
+      "open_question": "Offene Frage"
+    },
+    "basis": {
+      "evidence": "aus den Belegen",
+      "image": "im Bild gesehen",
+      "both": "Belege und Bild"
+    },
+    "meta": "{model} · {views} Ansichten der {geometry}-Zelle · {time}",
+    "geometry": {
+      "unrelaxed": "unrelaxiert",
+      "relaxed": "relaxiert"
+    },
+    "suggestions": "Vorgeschlagene nächste Schritte",
+    "questions": "Fragen an Sie",
+    "testThis": "Agent mit Test beauftragen",
+    "sent": "An den Forschungsagenten gesendet (Abschnitt 6)",
+    "warnings": "Probleme, die die Prüfungen in dieser Kritik gefunden haben",
+    "evidence": "Belege, die das Modell gesehen hat ({count} Einträge)",
+    "older": "Frühere Kritiken ({count})"
+  },
   "Evidence": {
     "experimental": "Gemessener Wert aus einem Experiment.",
     "dftComputed": "Mit Dichtefunktionaltheorie (DFT) berechnet. Keine Messung.",

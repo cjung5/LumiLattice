@@ -139,6 +139,44 @@
     "exporting": "준비 중…",
     "exportNote": "CIF에는 모든 자리(P1)와 출처 머리말이 들어갑니다. JSON 기록에는 목표 점수, 3D 구조 분석, 데이터 출처, 주의 사항이 더 들어갑니다."
   },
+  "Critique": {
+    "title": "Muse Spark 비평",
+    "aiTag": "AI 검토: 근거가 아닌 의견",
+    "hint": "Muse Spark가 구조의 세 방향 그림과 계산된 근거로 이 후보를 검토합니다. 각 항목은 사용한 근거를 밝히고, 근거에 없는 수치는 표시됩니다.",
+    "run": "비평 요청",
+    "rerun": "다시 요청",
+    "running": "검토 중…",
+    "runningLong": "Muse Spark가 {id}를 검토하고 있습니다. 30~90초쯤 걸립니다.",
+    "noViews": "3D 화면을 캡처하지 못해, 이 비평은 근거만 사용했습니다.",
+    "verdict": {
+      "promising": "유망",
+      "mixed": "엇갈림",
+      "weak": "약함",
+      "insufficient_evidence": "근거 부족"
+    },
+    "kind": {
+      "strength": "강점",
+      "concern": "우려",
+      "open_question": "열린 질문"
+    },
+    "basis": {
+      "evidence": "근거에서",
+      "image": "그림에서 본 것",
+      "both": "근거와 그림"
+    },
+    "meta": "{model} · {geometry} 셀의 {views}개 방향 · {time}",
+    "geometry": {
+      "unrelaxed": "이완 전",
+      "relaxed": "이완 후"
+    },
+    "suggestions": "제안하는 다음 단계",
+    "questions": "연구자에게 묻는 질문",
+    "testThis": "에이전트에게 시험 요청",
+    "sent": "연구 에이전트(6번)에 보냈습니다",
+    "warnings": "검사에서 찾은 이 비평의 문제",
+    "evidence": "모델이 본 근거 ({count}개)",
+    "older": "이전 비평 ({count}개)"
+  },
   "Evidence": {
     "experimental": "실험으로 측정한 값입니다.",
     "dftComputed": "밀도범함수이론(DFT)으로 계산한 값입니다. 측정값이 아닙니다.",

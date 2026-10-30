@@ -139,6 +139,44 @@
     "exporting": "Preparing…",
     "exportNote": "The CIF lists every site (P1) with a provenance header. The JSON record adds the goal score, the 3D structure analysis, the data sources, and the caveats."
   },
+  "Critique": {
+    "title": "Muse Spark critique",
+    "aiTag": "AI review: an opinion, not evidence",
+    "hint": "Muse Spark reviews this candidate from three views of the structure and the computed evidence. Each point cites the evidence it uses, and numbers that are not in the evidence are flagged.",
+    "run": "Ask for a critique",
+    "rerun": "Ask again",
+    "running": "Reviewing…",
+    "runningLong": "Muse Spark is reviewing {id}. This takes about 30 to 90 seconds.",
+    "noViews": "The 3D view could not be captured, so this critique used the evidence only.",
+    "verdict": {
+      "promising": "Promising",
+      "mixed": "Mixed",
+      "weak": "Weak",
+      "insufficient_evidence": "Insufficient evidence"
+    },
+    "kind": {
+      "strength": "Strength",
+      "concern": "Concern",
+      "open_question": "Open question"
+    },
+    "basis": {
+      "evidence": "from the evidence",
+      "image": "seen in the image",
+      "both": "evidence and image"
+    },
+    "meta": "{model} · {views} views of the {geometry} cell · {time}",
+    "geometry": {
+      "unrelaxed": "unrelaxed",
+      "relaxed": "relaxed"
+    },
+    "suggestions": "Suggested next steps",
+    "questions": "Questions for you",
+    "testThis": "Ask the agent to test this",
+    "sent": "Sent to the research agent (section 6)",
+    "warnings": "Problems the checks found in this critique",
+    "evidence": "Evidence the model saw ({count} items)",
+    "older": "Earlier critiques ({count})"
+  },
   "Evidence": {
     "experimental": "Measured value from an experiment.",
     "dftComputed": "Computed with density functional theory (DFT). Not a measurement.",

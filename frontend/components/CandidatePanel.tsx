@@ -1,9 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useRef, useState, type FormEvent } from "react";
 import { AssessmentPanel } from "@/components/AssessmentPanel";
-import { CrystalViewer } from "@/components/CrystalViewer";
+import { CritiquePanel } from "@/components/CritiquePanel";
+import { CrystalViewer, type ViewerHandle } from "@/components/CrystalViewer";
 import { DecisionBar } from "@/components/DecisionBar";
 import { PropertyValueView } from "@/components/EvidenceTag";
 import { ExperimentPanel } from "@/components/ExperimentPanel";
@@ -40,6 +41,8 @@ type Props = {
   goal: Goal;
   agentBusy: boolean;
   onCandidate: (candidate: Candidate) => void;
+  /** Sends a message to the research agent (e.g. a change the critique suggests). */
+  onAskAgent?: (message: string) => void;
   onSelect: (candidate: Candidate) => void;
   onDecide: (kind: DecisionKind, reason: string) => Promise<void>;
 };
@@ -53,6 +56,7 @@ export function CandidatePanel({
   goal,
   agentBusy,
   onCandidate,
+  onAskAgent,
   onSelect,
   onDecide,
 }: Props) {
@@ -64,6 +68,7 @@ export function CandidatePanel({
   const [showRelaxed, setShowRelaxed] = useState(false);
   const [copied, setCopied] = useState(false);
   const [exporting, setExporting] = useState<ExportKind | null>(null);
+  const viewer = useRef<ViewerHandle>(null);
   const [exportError, setExportError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -272,6 +277,7 @@ export function CandidatePanel({
           <div className="grid gap-4 md:grid-cols-[3fr_2fr]">
             <div>
               <CrystalViewer
+                ref={viewer}
                 cif={(relaxed?.structure ?? current.structure).cif}
                 emphasis={emphasis}
                 highlight={highlight}
@@ -305,6 +311,15 @@ export function CandidatePanel({
             </div>
           )}
           <p className="text-xs text-muted">{current.transformation.site_selection}</p>
+          <CritiquePanel
+            key={`critique-${current.candidate_id}`}
+            candidate={current}
+            goal={goal}
+            geometry={relaxed ? "relaxed" : "unrelaxed"}
+            capture={() => viewer.current?.capture() ?? Promise.resolve({ views: [], legend: {} })}
+            onChange={onCandidate}
+            onAskAgent={onAskAgent}
+          />
           <PublishControl key={`pub-${current.candidate_id}`} candidate={current} onChange={onCandidate} />
           <ExperimentPanel key={`exp-${current.candidate_id}`} candidate={current} onChange={onCandidate} />
           <DecisionBar

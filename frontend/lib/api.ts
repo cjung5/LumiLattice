@@ -288,6 +288,25 @@ export type Candidate = {
   credit: { display: "name" | "anonymous"; name: string | null; published_at: string } | null;
   relaxation: Relaxation | null;
   experiments: ExperimentRecord[];
+  critiques: Critique[];
+};
+
+export type CritiqueEvidence = { id: string; group: string; text: string };
+
+/** Muse Spark's review: an opinion that cites evidence IDs, never evidence itself. */
+export type Critique = {
+  created_at: string;
+  model: string;
+  locale: string;
+  geometry: "unrelaxed" | "relaxed";
+  views: number;
+  verdict: "promising" | "mixed" | "weak" | "insufficient_evidence";
+  summary: string;
+  points: { kind: "strength" | "concern" | "open_question"; text: string; evidence: string[]; basis: "evidence" | "image" | "both" }[];
+  suggestions: { change: string; rationale: string; evidence: string[] }[];
+  questions: string[];
+  evidence: CritiqueEvidence[];
+  warnings: string[];
 };
 
 export type Relaxation = {
@@ -422,6 +441,19 @@ export function setVisibility(
   },
 ): Promise<Candidate> {
   return postJson<Candidate>(`/api/candidates/${encodeURIComponent(candidateId)}/visibility`, body);
+}
+
+export function critiqueCandidate(
+  id: string,
+  body: {
+    goal: Goal;
+    locale: string;
+    geometry: "unrelaxed" | "relaxed";
+    views: { label: string; image: string }[];
+    legend: Record<string, string>;
+  },
+): Promise<Candidate> {
+  return postJson<Candidate>(`/api/candidates/${encodeURIComponent(id)}/critique`, body);
 }
 
 export type ExportKind = "cif" | "cif-relaxed" | "record";

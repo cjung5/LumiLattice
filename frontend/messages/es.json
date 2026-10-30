@@ -139,6 +139,44 @@
     "exporting": "Preparando…",
     "exportNote": "El CIF enumera todos los sitios (P1) con un encabezado de procedencia. El registro JSON añade la puntuación del objetivo, el análisis de la estructura 3D, las fuentes de datos y las advertencias."
   },
+  "Critique": {
+    "title": "Crítica de Muse Spark",
+    "aiTag": "Revisión de IA: una opinión, no evidencia",
+    "hint": "Muse Spark revisa este candidato desde tres vistas de la estructura y la evidencia calculada. Cada punto cita la evidencia que utiliza, y los números que no están en la evidencia se marcan.",
+    "run": "Solicitar una crítica",
+    "rerun": "Solicitar de nuevo",
+    "running": "Revisando…",
+    "runningLong": "Muse Spark está revisando {id}. Esto tarda entre 30 y 90 segundos.",
+    "noViews": "No se pudo capturar la vista 3D, por lo que esta crítica usó solo la evidencia.",
+    "verdict": {
+      "promising": "Prometedor",
+      "mixed": "Mixto",
+      "weak": "Débil",
+      "insufficient_evidence": "Evidencia insuficiente"
+    },
+    "kind": {
+      "strength": "Fortaleza",
+      "concern": "Preocupación",
+      "open_question": "Pregunta abierta"
+    },
+    "basis": {
+      "evidence": "de la evidencia",
+      "image": "visto en la imagen",
+      "both": "evidencia e imagen"
+    },
+    "meta": "{model} · {views} vistas de la celda {geometry} · {time}",
+    "geometry": {
+      "unrelaxed": "no relajado",
+      "relaxed": "relajado"
+    },
+    "suggestions": "Próximos pasos sugeridos",
+    "questions": "Preguntas para ti",
+    "testThis": "Pedir al agente que pruebe esto",
+    "sent": "Enviado al agente de investigación (sección 6)",
+    "warnings": "Problemas detectados por las comprobaciones en esta crítica",
+    "evidence": "Evidencia que vio el modelo ({count} elementos)",
+    "older": "Críticas anteriores ({count})"
+  },
   "Evidence": {
     "experimental": "Valor medido de un experimento.",
     "dftComputed": "Calculado con teoría del funcional de la densidad (DFT). No es una medición.",

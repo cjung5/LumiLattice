@@ -1,11 +1,14 @@
 from datetime import UTC, datetime
 from typing import Annotated, Literal
 
-from fastapi import APIRouter, HTTPException, Query, Response
+from fastapi import APIRouter, HTTPException, Query, Request, Response
 from fastapi.responses import PlainTextResponse
+from openai import APIError
 from pydantic import BaseModel, Field
 
-from app.api.deps import OptionalMPDep
+from app.agents.critique import View, evidence_pack, run_critique
+from app.agents.muse import ModelAPIKeyMissing, create_client
+from app.api.deps import OptionalMPDep, SettingsDep, client_id
 from app.api.materials import to_http
 from app.models.candidates import (
     Candidate,
@@ -24,10 +27,11 @@ from app.tools.candidates import assess_host, create_candidate, load_host
 from app.tools.export import CandidateRecord, SpatialRecord, ancestry, build_record, cif_text
 from app.tools.goals import Goal, GoalScore, score_candidate, score_formula
 from app.tools.reference_db import get_reference_db
-from app.tools.registry import ToolError
+from app.tools.registry import ToolError, UpstreamError
 from app.tools.relaxation import displacement_summary, relax, relaxation_available
 from app.tools.spatial import SpatialAnalysis, analyze
 from app.tools.structures import parse_cif_structure, structure_payload
+from app.tools.usage import AGENT_CAP, AGENT_RATE
 from app.tools.validation import RELAXED_NOTE, assess
 
 router = APIRouter(prefix="/api")
@@ -289,6 +293,66 @@ def export_record(
     )
     response.headers["Content-Disposition"] = f'attachment; filename="{candidate_id}-record.json"'
     return build_record(store, candidate, get_reference_db().meta(), goal, goal_score, spatial)
+
+
+class CritiqueRequest(BaseModel):
+    goal: Goal
+    locale: str = Field(default="en", max_length=10)
+    geometry: Literal["unrelaxed", "relaxed"] = "unrelaxed"
+    views: list[View] = Field(default_factory=list, max_length=3)
+    legend: dict[str, str] = Field(default_factory=dict, max_length=30)  # element -> color
+
+
+@router.post("/candidates/{candidate_id}/critique")
+def critique_candidate(
+    candidate_id: str, body: CritiqueRequest, request: Request, settings: SettingsDep
+) -> Candidate:
+    """Muse Spark reviews the candidate from its evidence and structure views (cites IDs)."""
+    store = get_store()
+    stored = store.get(candidate_id)
+    if stored is None:
+        raise not_found(candidate_id)
+    candidate = stored[0]
+    if body.geometry == "relaxed" and candidate.relaxation is None:
+        raise HTTPException(status_code=400, detail=f"{candidate_id} has not been relaxed.")
+    try:
+        client = create_client(settings)
+    except ModelAPIKeyMissing as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    # Same Meta credit protection as the research agent.
+    if not AGENT_RATE.allow(client_id(request)):
+        raise HTTPException(status_code=429, detail="Too many agent requests. Wait a few minutes.")
+    try:
+        AGENT_CAP.take()
+    except UpstreamError as exc:
+        raise HTTPException(status_code=429, detail=str(exc)) from exc
+
+    try:
+        evidence = evidence_pack(
+            candidate,
+            score_candidate(candidate, body.goal),
+            candidate_spatial(candidate_id),
+            candidate_spatial(candidate_id, relaxed=True) if candidate.relaxation else None,
+        )
+        critique = run_critique(
+            client,
+            settings.muse_model,
+            candidate,
+            body.goal,
+            evidence,
+            body.views,
+            body.legend,
+            body.geometry,
+            body.locale,
+        )
+    except ToolError as exc:
+        raise to_http(exc) from exc
+    except APIError as exc:
+        raise HTTPException(status_code=502, detail=f"Meta Model API error: {exc}") from exc
+    updated = store.update(candidate_id, {"critiques": [*candidate.critiques, critique][-5:]})
+    if updated is None:
+        raise not_found(candidate_id)
+    return updated
 
 
 @router.post("/structures/spatial")

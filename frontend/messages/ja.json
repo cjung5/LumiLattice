@@ -139,6 +139,44 @@
     "exporting": "準備中…",
     "exportNote": "CIFは全サイト（P1）をプロベナンスヘッダー付きで列挙します。JSONレコードには目標スコア、3D構造解析、データソース、注意事項が追加されます。"
   },
+  "Critique": {
+    "title": "Muse Spark 批評",
+    "aiTag": "AIレビュー：意見であり証拠ではない",
+    "hint": "Muse Sparkは構造の3視点と計算済み証拠からこの候補を評価します。各指摘は使用した証拠を引用し、証拠にない数値はフラグ付けされます。",
+    "run": "批評を依頼",
+    "rerun": "再依頼",
+    "running": "レビュー中…",
+    "runningLong": "Muse Sparkが{id}をレビュー中です。約30〜90秒かかります。",
+    "noViews": "3Dビューを取得できなかったため、この批評は証拠のみを使用しました。",
+    "verdict": {
+      "promising": "有望",
+      "mixed": "混合",
+      "weak": "弱い",
+      "insufficient_evidence": "証拠不十分"
+    },
+    "kind": {
+      "strength": "強み",
+      "concern": "懸念",
+      "open_question": "疑問点"
+    },
+    "basis": {
+      "evidence": "証拠より",
+      "image": "画像で確認",
+      "both": "証拠と画像"
+    },
+    "meta": "{model} · {geometry}セルの{views}ビュー · {time}",
+    "geometry": {
+      "unrelaxed": "未緩和",
+      "relaxed": "緩和済み"
+    },
+    "suggestions": "推奨される次の手順",
+    "questions": "あなたへの質問",
+    "testThis": "エージェントにテストを依頼",
+    "sent": "研究エージェントに送信済み（セクション6）",
+    "warnings": "この批評でチェックが検出した問題",
+    "evidence": "モデルが参照した証拠（{count}件）",
+    "older": "以前の批評（{count}）"
+  },
   "Evidence": {
     "experimental": "実験による実測値。",
     "dftComputed": "密度汎関数理論（DFT）による計算値。実測ではありません。",

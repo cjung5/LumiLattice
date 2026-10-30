@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 
 from app.agents.loop import AgentStepLimitReached, run_agent
 from app.agents.muse import ModelAPIKeyMissing, create_client
-from app.api.deps import LiteratureDep, OptionalMPDep, SettingsDep
+from app.api.deps import LiteratureDep, OptionalMPDep, SettingsDep, client_id
 from app.models.candidates import DecisionKind
 from app.storage.memory import get_store
 from app.tools.catalog import build_registry
@@ -86,13 +86,6 @@ def with_context(message: str, context: AgentContext | None) -> str:
     if not lines:
         return message
     return "[Workspace]\n" + "\n".join(lines) + "\n[/Workspace]\n\n" + message
-
-
-def client_id(request: Request) -> str:
-    forwarded = request.headers.get("x-forwarded-for")
-    if forwarded:
-        return forwarded.split(",")[0].strip()
-    return request.client.host if request.client else "unknown"
 
 
 @router.post("/agent/run")

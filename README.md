@@ -11,7 +11,7 @@ Built for the Meta Global AI Developer Hackathon (Oct 27 – Nov 4, 2026), track
 ## How it works
 
 1. The researcher sets optical targets and constraints, and selects a host crystal structure.
-2. Muse Spark (Meta Model API, Responses endpoint) plans the work and calls tools.
+2. Muse Spark (Meta Model API, Responses endpoint) plans the work and calls tools. It also reviews each candidate from its evidence and rendered views of its structure (multimodal critique).
 3. Tools return values with provenance. The model never writes a number on its own.
 4. Each value carries one evidence tag: `Experimental`, `DFT-computed`, `Heuristic`, or `Unknown`.
 5. The researcher accepts, modifies, or rejects a candidate, and the agent revises it.
@@ -132,7 +132,22 @@ Each candidate also has:
 - **Measurements:** the researcher can add a measured n (with wavelength) or band gap, with sample type, method, and reference. The app shows whether a measured n falls inside the candidate's end-member range. LumiLattice records these values as given.
 - **Share link:** `?candidate=LL-0003` opens that candidate on the same backend.
 - **Export:** a CIF of the candidate (and of its relaxed geometry, if relaxed) and a JSON research record (below).
+- **Muse Spark critique:** a reviewer's reading of the candidate from its evidence and three views of its structure (below).
 - **Registry:** all candidates in one table with filters, and a side-by-side comparison of up to 3 (checks, n range, ΔV after relaxation, measurements).
+
+### Muse Spark critique
+
+Muse Spark is multimodal, so the critique gives it two kinds of input:
+
+1. **Evidence items** built by the deterministic tools, each with an ID: every structural check (`check.bond_valence`), the per-site numbers (`site.La0`), the n and band-gap ranges and end members (`optics.n`, `optics.SrTiO3`), the goal verdicts (`goal.band_gap`), the 3D structure analysis (`spatial.symmetry`, `spatial.poly.Al4`, `spatial.links`, `spatial.ordering`), the CHGNet relaxation and the relaxed checks, and the researcher's measurements.
+2. **Three rendered views** of the cell, down the a, b, and c axes, captured from the 3D viewer. The substituted atoms are labeled with their site IDs (for example La0), and the element colors are sent as a legend, so the model can tie what it sees to the evidence.
+
+It returns a strict JSON critique: a verdict (`promising`, `mixed`, `weak`, `insufficient_evidence`), a short summary, strengths and concerns, up to 3 suggested next steps, and up to 3 questions for the researcher. Guardrails:
+
+- Every point cites evidence IDs, and unknown IDs are rejected. A point based only on the images says so ("seen in the image").
+- Every decimal number in the text must appear in the evidence at the precision written. Muse Spark gets one retry to fix a problem; problems that remain are shown with the critique.
+- The critique is labeled "AI review: an opinion, not evidence". It never changes an evidence tag, a check, or a score. The evidence it saw is stored with it, and it is included in the JSON export.
+- "Ask the agent to test this" sends a suggestion to the research agent, which makes and checks the new candidate with the usual tools.
 
 ### Export
 
@@ -156,7 +171,7 @@ Candidates are kept in memory unless `DATABASE_URL` points to a Postgres databas
 
 - Materials Project and OpenAlex responses are cached for 24 hours. OpenAlex stops at 500 searches per day (half of its free daily budget) and stops early if the free budget left for the day falls below $0.05. Materials Project has a cap of 1,000 requests per day.
 - Crossref (public pool, 1 request per second), arXiv (1 request per 3 seconds, as its API terms ask), Semantic Scholar (optional free key), and COD are free; they are cached and capped too. If a source rate-limits or times out, it is skipped for 10 minutes so the other sources still answer quickly. No personal email address is sent.
-- The public demo protects Meta Model API credits: at most 10 agent requests per client per 10 minutes and 200 per day, with at most 8 tool steps per request.
+- The public demo protects Meta Model API credits: at most 10 agent requests per client per 10 minutes and 200 per day, with at most 8 tool steps per request. Critiques count as agent requests (one request, plus at most one retry).
 
 ## Run locally
 
