@@ -32,6 +32,10 @@ NO_RELAXATION_NOTE = (
     "No relaxation: atoms stay at the host positions, so the checks show how well the new "
     "elements fit the host geometry. A real material would adjust its lattice."
 )
+RELAXED_NOTE = (
+    "Relaxed with CHGNet (machine-learned potential): atoms and cell moved to lower energy, "
+    "so the checks describe the relaxed geometry. Still not a synthesis prediction."
+)
 RADII_METHOD = "Shannon (1976) ionic radii"
 BVS_METHOD = f"Bond valence sum, O'Keeffe & Brese (1991) universal parameters, b = {BV_B} Å"
 
@@ -307,6 +311,7 @@ def assess(
     focus_sites: list[int] | None = None,
     analog_formulas: list[str] | None = None,
     analog_lookup: AnalogLookup | None = None,
+    note: str = NO_RELAXATION_NOTE,
 ) -> StructuralAssessment:
     """Run all checks. focus_sites: substituted sites (None = check every cation site)."""
     model = ionic_model(structure)
@@ -321,7 +326,7 @@ def assess(
                     message="No anion: the checks need an ionic material (oxide, nitride, fluoride).",
                 )
             ],
-            notes=[NO_RELAXATION_NOTE],
+            notes=[note],
         )
 
     sites = _cation_sites(structure, model, focus_sites)
@@ -343,5 +348,5 @@ def assess(
         status=status,
         checks=checks,
         oxidation_states=model.oxidation_states,
-        notes=[NO_RELAXATION_NOTE],
+        notes=[note],
     )

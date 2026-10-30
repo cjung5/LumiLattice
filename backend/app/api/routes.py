@@ -13,6 +13,7 @@ from app.storage.memory import get_store
 from app.tools.catalog import build_registry
 from app.tools.reference_db import get_reference_db
 from app.tools.registry import UpstreamError
+from app.tools.relaxation import relaxation_available
 from app.tools.usage import AGENT_CAP, AGENT_RATE
 
 router = APIRouter(prefix="/api")
@@ -28,6 +29,7 @@ def health(settings: SettingsDep) -> dict[str, Any]:
         "openalex_api_key_configured": settings.openalex_api_key is not None,
         "reference_db_available": get_reference_db().available,
         "candidate_store": "postgres" if settings.database_url else "memory",
+        "relaxation_available": relaxation_available(),
     }
 
 

@@ -9,6 +9,7 @@ export type Health = {
   openalex_api_key_configured: boolean;
   reference_db_available: boolean;
   candidate_store: "memory" | "postgres";
+  relaxation_available: boolean;
 };
 
 export type EvidenceStatus = "Experimental" | "DFT-computed" | "Heuristic" | "Unknown";
@@ -173,6 +174,8 @@ export type Candidate = {
     substitutions: Substitution[];
     substituted_sites: Record<string, number[]>;
     site_selection: string;
+    root_formula: string;
+    lineage: Substitution[];
   };
   assessment: StructuralAssessment;
   optical_estimate: OpticalEstimate | null;
@@ -180,7 +183,33 @@ export type Candidate = {
   decisions: { decision: "accept" | "modify" | "reject" | "explore"; reason: string; created_at: string }[];
   visibility: "private" | "published";
   credit: { display: "name" | "anonymous"; name: string | null; published_at: string } | null;
+  relaxation: Relaxation | null;
+  experiments: ExperimentRecord[];
 };
+
+export type Relaxation = {
+  method: string;
+  converged: boolean;
+  steps: number;
+  energy_per_atom: number;
+  lattice_change: [number, number, number];
+  volume_change: number;
+  max_displacement: number;
+  structure: StructurePayload;
+  assessment: StructuralAssessment;
+};
+
+export type ExperimentInput = {
+  property: "refractive_index" | "band_gap";
+  value: number;
+  wavelength_nm?: number | null;
+  sample: "bulk" | "thin film" | "powder" | "other";
+  method: string;
+  reference?: string | null;
+  notes?: string;
+};
+
+export type ExperimentRecord = ExperimentInput & { created_at: string };
 
 export type HostRef =
   | { material_id: string }
@@ -302,6 +331,18 @@ export function runAgent(
 
 export function getCandidate(candidateId: string): Promise<Candidate> {
   return request<Candidate>(`/api/candidates/${encodeURIComponent(candidateId)}`);
+}
+
+export function listCandidates(): Promise<Candidate[]> {
+  return request<Candidate[]>("/api/candidates");
+}
+
+export function relaxCandidate(candidateId: string): Promise<Candidate> {
+  return postJson<Candidate>(`/api/candidates/${encodeURIComponent(candidateId)}/relax`, {});
+}
+
+export function addExperiment(candidateId: string, body: ExperimentInput): Promise<Candidate> {
+  return postJson<Candidate>(`/api/candidates/${encodeURIComponent(candidateId)}/experiments`, body);
 }
 
 export function addDecision(

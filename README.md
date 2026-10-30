@@ -29,9 +29,9 @@ Built for the Meta Global AI Developer Hackathon (Oct 27 – Nov 4, 2026), track
 |---|---|---|
 | `composition_info` | pymatgen | Reduced formula, molar mass, charge-balanced oxidation states |
 | `search_materials` | Materials Project | Known structures with DFT band gap, energy above hull, and refractive index, each tagged |
-| `search_literature` | OpenAlex, Crossref, arXiv | Paper metadata merged by DOI or title, with the sources that found each paper |
+| `search_literature` | OpenAlex, Crossref, arXiv, Semantic Scholar | Paper metadata merged by DOI or title, with the sources that found each paper |
 | `create_candidate` | LumiLattice | Substitutes elements on a host or on an earlier candidate, then runs the structural checks below |
-| `get_candidate` | LumiLattice | A candidate's substitutions, checks, n range, and the researcher's decisions |
+| `get_candidate` | LumiLattice | A candidate's substitutions, checks, n range, measurements, and the researcher's decisions |
 | `get_optical_reference` | refractiveindex.info, JARVIS-DFT | Measured n at 450/550/650 nm with sources; DFT band gaps and n (OptB88vdW, TBmBJ) |
 
 When a source is not available, the tool returns an error and the agent reports the value as unknown instead of guessing.
@@ -91,6 +91,13 @@ The research agent sees the selected host and the current candidate, and it keep
 
 Candidates from the form and from the agent share one version history (parent → child).
 
+Each candidate also has:
+
+- **CHGNet relaxation (local install only):** moves atoms and the cell with a machine-learned potential and runs the same checks on the relaxed geometry; the UI switches between unrelaxed and relaxed views. It needs PyTorch, which does not fit the free server, so the live demo says "local install". CHGNet energies are never compared with DFT energies.
+- **Measurements:** the researcher can add a measured n (with wavelength) or band gap, with sample type, method, and reference. The app shows whether a measured n falls inside the candidate's end-member range. LumiLattice records these values as given.
+- **Share link:** `?candidate=LL-0003` opens that candidate on the same backend.
+- **Registry:** all candidates in one table with filters, and a side-by-side comparison of up to 3 (checks, n range, ΔV after relaxation, measurements).
+
 Candidates are **private by default**. Publishing needs explicit consent and a credit choice (by name/ORCID or anonymous). In this version, publishing records the choice only; nothing is sent outside LumiLattice.
 
 Candidates are kept in memory unless `DATABASE_URL` points to a Postgres database (for example the free plan of Neon or Supabase); then they survive restarts.
@@ -98,7 +105,7 @@ Candidates are kept in memory unless `DATABASE_URL` points to a Postgres databas
 ## API usage limits
 
 - Materials Project and OpenAlex responses are cached for 24 hours. OpenAlex stops at 500 searches per day (half of its free daily budget) and stops early if the free budget left for the day falls below $0.05. Materials Project has a cap of 1,000 requests per day.
-- Crossref (public pool, 1 request per second), arXiv (1 request per 3 seconds, as its API terms ask), and COD are free and keyless; they are cached and capped too. If arXiv rate-limits or times out, it is skipped for 10 minutes so the other sources still answer quickly. No personal email address is sent.
+- Crossref (public pool, 1 request per second), arXiv (1 request per 3 seconds, as its API terms ask), Semantic Scholar (optional free key), and COD are free; they are cached and capped too. If a source rate-limits or times out, it is skipped for 10 minutes so the other sources still answer quickly. No personal email address is sent.
 - The public demo protects Meta Model API credits: at most 10 agent requests per client per 10 minutes and 200 per day, with at most 8 tool steps per request.
 
 ## Run locally
@@ -110,8 +117,8 @@ Backend:
 ```bash
 cd backend
 cp .env.example .env   # then add your MODEL_API_KEY
-uv sync
-uv run uvicorn app.main:app --reload --port 8000
+uv sync --group relax  # --group relax adds CHGNet + PyTorch (optional, about 1 GB)
+uv run --group relax uvicorn app.main:app --reload --port 8000
 ```
 
 Frontend (in a second terminal):
@@ -172,6 +179,8 @@ In use:
 - **Crystallography Open Database** — experimental structures, [CC0](https://creativecommons.org/publicdomain/zero/1.0/). S. Gražulis et al., *J. Appl. Cryst.* 42, 726 (2009). Credit the original authors shown with each entry.
 - **Crossref** — scholarly metadata (public REST API).
 - **arXiv** — preprint metadata via the arXiv API. Thank you to arXiv for use of its open access interoperability.
+- **Semantic Scholar** — paper metadata via the Semantic Scholar Academic Graph API.
+- **CHGNet** (optional, local) — B. Deng et al., *Nat. Mach. Intell.* 5, 1031 (2023), BSD-3-Clause license.
 
 ## License
 

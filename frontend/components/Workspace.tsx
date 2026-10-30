@@ -1,11 +1,12 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AgentPanel, type AgentTurn } from "@/components/AgentPanel";
 import { CandidatePanel } from "@/components/CandidatePanel";
 import { HostSelector } from "@/components/HostSelector";
 import { LiteraturePanel } from "@/components/LiteraturePanel";
+import { RegistryPanel } from "@/components/RegistryPanel";
 import { StructurePanel } from "@/components/StructurePanel";
 import {
   addDecision,
@@ -40,6 +41,7 @@ export function Workspace() {
 
   const [history, setHistory] = useState<Candidate[]>([]);
   const [current, setCurrent] = useState<Candidate | null>(null);
+  const [registryVersion, setRegistryVersion] = useState(0);
 
   const [turns, setTurns] = useState<AgentTurn[]>([]);
   const [responseId, setResponseId] = useState<string | null>(null);
@@ -78,6 +80,7 @@ export function Workspace() {
   }
 
   function upsertCandidate(candidate: Candidate) {
+    setRegistryVersion((v) => v + 1);
     setHistory((old) =>
       old.some((c) => c.candidate_id === candidate.candidate_id)
         ? old.map((c) => (c.candidate_id === candidate.candidate_id ? candidate : c))
@@ -94,6 +97,18 @@ export function Workspace() {
     const known = history.find((c) => c.candidate_id === candidateId);
     showCandidate(known ?? (await getCandidate(candidateId)));
   }
+
+  // Share links: ?candidate=LL-0003 opens that candidate (it stays private to this backend).
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get("candidate");
+    if (!id) return;
+    getCandidate(id)
+      .then((candidate) => {
+        setHistory((old) => (old.some((c) => c.candidate_id === id) ? old : [...old, candidate]));
+        setCurrent(candidate);
+      })
+      .catch(() => setError(`Candidate ${id} was not found on this server.`));
+  }, []);
 
   const formula = structure?.formula ?? record?.formula ?? null;
   const host: HostRef | null = record
@@ -171,12 +186,12 @@ export function Workspace() {
         loading={loading}
         error={error}
       />
-      {host && structure && !loading && (
+      {((host && structure && !loading) || current) && (
         <CandidatePanel
-          key={record?.material_id ?? structure.provenance.reference ?? "host"}
-          host={host}
+          key={record?.material_id ?? structure?.provenance.reference ?? "no-host"}
+          host={structure && !loading ? host : null}
           hostLabel={hostLabel}
-          hostElements={[...new Set(structure.sites.map((s) => s.species))]}
+          hostElements={structure ? [...new Set(structure.sites.map((s) => s.species))] : []}
           history={history}
           current={current}
           agentBusy={agentBusy}
@@ -197,6 +212,7 @@ export function Workspace() {
         }}
         onOpenCandidate={(id) => void openCandidate(id)}
       />
+      <RegistryPanel version={registryVersion} onOpen={showCandidate} />
       <LiteraturePanel key={formula ?? "none"} formula={formula} />
     </>
   );

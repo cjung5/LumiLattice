@@ -23,6 +23,9 @@ from app.tools.usage import (
     CROSSREF_CACHE,
     CROSSREF_CAP,
     CROSSREF_THROTTLE,
+    S2_CACHE,
+    S2_CAP,
+    S2_THROTTLE,
     DailyCap,
     ResponseCache,
     Throttle,
@@ -126,6 +129,54 @@ class CrossrefClient(_PoliteClient):
         papers = [crossref_to_evidence(item) for item in response.json()["message"]["items"]]
         self._cache.put(key, papers)
         return papers
+
+
+class SemanticScholarClient(_PoliteClient):
+    """Keyless requests share a small pool and are often refused (429); a free key helps."""
+
+    name = "Semantic Scholar"
+    FIELDS = "title,authors,year,venue,externalIds,citationCount,openAccessPdf,url"
+
+    def __init__(
+        self,
+        api_key: str | None = None,
+        transport: httpx.BaseTransport | None = None,
+        cache: ResponseCache = S2_CACHE,
+        cap: DailyCap = S2_CAP,
+        throttle: Throttle = S2_THROTTLE,
+    ):
+        super().__init__("https://api.semanticscholar.org", transport, cache, cap, throttle, 10)
+        if api_key:
+            self._http.headers["x-api-key"] = api_key
+
+    def search(self, query: str, limit: int = 5) -> list[PaperEvidence]:
+        params = {"query": query, "limit": limit, "fields": self.FIELDS}
+        result = self._get("/graph/v1/paper/search", params)
+        if isinstance(result, list):
+            return result
+        key, response = result
+        papers = [s2_to_evidence(item) for item in response.json().get("data") or []]
+        self._cache.put(key, papers)
+        return papers
+
+
+def s2_to_evidence(item: dict[str, Any]) -> PaperEvidence:
+    ids = item.get("externalIds") or {}
+    doi = ids.get("DOI")
+    pdf = (item.get("openAccessPdf") or {}).get("url")
+    return PaperEvidence(
+        title=_plain(item.get("title")) or "(untitled)",
+        authors=[a["name"] for a in (item.get("authors") or [])[:MAX_AUTHORS] if a.get("name")],
+        year=item.get("year"),
+        venue=item.get("venue") or None,
+        doi=doi.lower() if doi else None,
+        url=f"https://doi.org/{doi}" if doi else item.get("url"),
+        cited_by_count=item.get("citationCount"),
+        open_access=bool(pdf) or None,
+        open_access_url=pdf,
+        provenance=Provenance(source="Semantic Scholar", reference=item.get("paperId")),
+        sources=["Semantic Scholar"],
+    )
 
 
 def crossref_to_evidence(item: dict[str, Any]) -> PaperEvidence:

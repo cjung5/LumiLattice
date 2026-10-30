@@ -24,6 +24,9 @@ class Settings(BaseSettings):
 
     # Materials Project (free key: https://next-gen.materialsproject.org/api)
     mp_api_key: SecretStr | None = None
+    # Semantic Scholar works without a key but is often rate-limited; a free key helps.
+    semantic_scholar_api_key: SecretStr | None = None
+
     # Hosted Postgres for candidates (e.g. Neon or Supabase). Unset: kept in memory only.
     database_url: SecretStr | None = None
 

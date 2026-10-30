@@ -88,7 +88,10 @@
     "lineage": "출발: {parent} · 슈퍼셀 {supercell}",
     "viewerLegend": "큰 원자: 치환된 자리. 분홍색 원자와 라벨: 선택한 검사에 해당하는 원자.",
     "history": "버전 기록",
-    "nEstimate": "굴절률 (끝 조성 범위)"
+    "nEstimate": "굴절률 (끝 조성 범위)",
+    "noHost": "기준 구조 없이 연 후보입니다. 이 후보를 수정하거나, 새 후보를 만들려면 기준 구조를 선택하세요.",
+    "copyLink": "링크 복사",
+    "linkCopied": "링크를 복사했습니다"
   },
   "Assessment": {
     "clickHint": "검사 항목을 누르면 해당 원자가 표시됩니다.",
@@ -148,8 +151,64 @@
     "creditName": "크레딧: {name}",
     "creditAnonymous": "크레딧: 익명"
   },
+  "Relax": {
+    "title": "구조 이완 (CHGNet, 로컬 설치 전용)",
+    "run": "CHGNet으로 이완",
+    "running": "이완 중…",
+    "hint": "기계학습 포텐셜로 원자와 셀을 에너지가 낮은 쪽으로 움직인 뒤 같은 검사를 다시 합니다. PyTorch가 필요해서 로컬 설치에서만 동작합니다.",
+    "unrelaxed": "이완 전",
+    "relaxed": "이완 후",
+    "maxShift": "최대 원자 이동",
+    "status": "최적화",
+    "converged": "{steps}단계 만에 수렴",
+    "notConverged": "{steps}단계 후에도 수렴하지 않음",
+    "energy": "CHGNet 에너지",
+    "energyNote": "기계학습 포텐셜 값이므로 DFT 에너지와 비교하지 마세요"
+  },
+  "Experiment": {
+    "title": "측정값",
+    "notTested": "아직 실험하지 않음",
+    "measured": "측정 {count}건",
+    "property": "물성",
+    "value": "값",
+    "wavelength": "파장 (nm)",
+    "sample": "시료",
+    "bulk": "벌크",
+    "thinFilm": "박막",
+    "powder": "분말",
+    "other": "기타",
+    "method": "측정 방법",
+    "methodPlaceholder": "예: 엘립소메트리",
+    "reference": "참고문헌",
+    "add": "추가",
+    "bandGap": "밴드갭",
+    "inside": "끝 조성 범위 {lo}–{hi} 안",
+    "outside": "끝 조성 범위 {lo}–{hi} 밖",
+    "hint": "직접 측정한 값을 넣어 예측과 실험을 비교하세요. LumiLattice는 입력한 그대로 기록하며 검증하지 않습니다."
+  },
+  "Registry": {
+    "title": "5. 후보 목록",
+    "hint": "이 서버의 모든 후보(입력 폼과 에이전트가 만든 것)입니다. 최대 {max}개를 골라 비교하세요.",
+    "filter": {
+      "all": "전체",
+      "plausible": "통과",
+      "published": "공개",
+      "decided": "결정 있음"
+    },
+    "empty": "아직 후보가 없습니다.",
+    "compare": "비교",
+    "formula": "화학식",
+    "origin": "출발",
+    "status": "상태",
+    "decision": "마지막 결정",
+    "comparison": "비교",
+    "substitutions": "치환 (원래 기준 구조부터)",
+    "nRange": "n (끝 조성 범위)",
+    "relaxedVolume": "CHGNet 후 ΔV",
+    "experiments": "측정값"
+  },
   "Literature": {
-    "title": "5. 문헌",
+    "title": "6. 문헌",
     "hint": "OpenAlex, Crossref, arXiv의 논문 메타데이터를 DOI 기준으로 합쳐 보여줍니다. LumiLattice는 논문 본문을 읽지 않습니다.",
     "placeholder": "예: SrTiO3 refractive index",
     "search": "검색",

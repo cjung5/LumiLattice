@@ -88,7 +88,10 @@
     "lineage": "from {parent} · supercell {supercell}",
     "viewerLegend": "Larger atoms: substituted sites. Pink atoms with labels: atoms in the selected check.",
     "history": "Version history",
-    "nEstimate": "Refractive index (end-member range)"
+    "nEstimate": "Refractive index (end-member range)",
+    "noHost": "This candidate was opened without a host. You can revise it, or select a host to make new candidates.",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied"
   },
   "Assessment": {
     "clickHint": "Select a check to show its atoms.",
@@ -148,8 +151,64 @@
     "creditName": "Credit: {name}",
     "creditAnonymous": "Credit: anonymous"
   },
+  "Relax": {
+    "title": "Relaxation (CHGNet, local install)",
+    "run": "Relax with CHGNet",
+    "running": "Relaxing…",
+    "hint": "Moves atoms and the cell to lower energy with a machine-learned potential, then runs the same checks. Needs PyTorch, so it runs only in a local install.",
+    "unrelaxed": "Unrelaxed",
+    "relaxed": "Relaxed",
+    "maxShift": "Largest atom shift",
+    "status": "Optimizer",
+    "converged": "converged in {steps} steps",
+    "notConverged": "not converged after {steps} steps",
+    "energy": "CHGNet energy",
+    "energyNote": "ML potential; do not compare with DFT energies"
+  },
+  "Experiment": {
+    "title": "Measurements",
+    "notTested": "Experiment not yet performed",
+    "measured": "{count} measurement(s)",
+    "property": "Property",
+    "value": "Value",
+    "wavelength": "Wavelength (nm)",
+    "sample": "Sample",
+    "bulk": "bulk",
+    "thinFilm": "thin film",
+    "powder": "powder",
+    "other": "other",
+    "method": "Method",
+    "methodPlaceholder": "e.g. ellipsometry",
+    "reference": "Reference",
+    "add": "Add",
+    "bandGap": "Band gap",
+    "inside": "inside the end-member range {lo}–{hi}",
+    "outside": "outside the end-member range {lo}–{hi}",
+    "hint": "Add your own measurement to compare prediction and experiment. LumiLattice records it as given and does not verify it."
+  },
+  "Registry": {
+    "title": "5. Candidate registry",
+    "hint": "Every candidate on this server, from the form and from the agent. Select up to {max} to compare.",
+    "filter": {
+      "all": "All",
+      "plausible": "Plausible",
+      "published": "Published",
+      "decided": "With decision"
+    },
+    "empty": "No candidates yet.",
+    "compare": "Compare",
+    "formula": "Formula",
+    "origin": "From",
+    "status": "Status",
+    "decision": "Last decision",
+    "comparison": "Comparison",
+    "substitutions": "Substitutions (from root host)",
+    "nRange": "n (end-member range)",
+    "relaxedVolume": "ΔV after CHGNet",
+    "experiments": "Measurements"
+  },
   "Literature": {
-    "title": "5. Literature",
+    "title": "6. Literature",
     "hint": "Paper metadata from OpenAlex, Crossref, and arXiv, merged by DOI. LumiLattice does not read full texts.",
     "placeholder": "Example: SrTiO3 refractive index",
     "search": "Search",

@@ -87,3 +87,32 @@ def test_publish_needs_consent_and_can_be_undone(srtio3):
     private = api.post(url, json={"visibility": "private"}).json()
     assert private["visibility"] == "private"
     assert private["credit"] is None
+
+
+def test_experiment_upload(srtio3):
+    candidate = make(get_store(), srtio3)
+    api = TestClient(app)
+    url = f"/api/candidates/{candidate.candidate_id}/experiments"
+
+    missing_wavelength = api.post(url, json={"property": "refractive_index", "value": 2.3})
+    assert missing_wavelength.status_code == 400
+
+    body = api.post(
+        url,
+        json={
+            "property": "refractive_index",
+            "value": 2.31,
+            "wavelength_nm": 550,
+            "sample": "thin film",
+            "method": "ellipsometry",
+        },
+    ).json()
+    [record] = body["experiments"]
+    assert record["value"] == 2.31
+    assert record["sample"] == "thin film"
+    assert (
+        api.post(
+            "/api/candidates/LL-9999/experiments", json={"property": "band_gap", "value": 3}
+        ).status_code
+        == 404
+    )

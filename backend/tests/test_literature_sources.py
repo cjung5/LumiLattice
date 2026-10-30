@@ -166,3 +166,43 @@ def test_rate_limited_source_is_paused(monkeypatch):
             pass
 
     assert len(calls) == 1  # later searches skip arXiv instead of waiting for it
+
+
+def test_semantic_scholar_parsing_and_key_header():
+    from app.tools.literature_sources import SemanticScholarClient
+
+    seen = {}
+
+    def handler(request):
+        seen["key"] = request.headers.get("x-api-key")
+        return httpx.Response(
+            200,
+            json={
+                "data": [
+                    {
+                        "paperId": "abc",
+                        "title": "Optical constants",
+                        "authors": [{"name": "A. Author"}],
+                        "year": 2020,
+                        "venue": "Example",
+                        "externalIds": {"DOI": "10.1/X"},
+                        "citationCount": 3,
+                        "openAccessPdf": {"url": "https://example.org/p.pdf"},
+                    }
+                ]
+            },
+        )
+
+    client = SemanticScholarClient(
+        "s2-key",
+        httpx.MockTransport(handler),
+        cache=ResponseCache(),
+        cap=DailyCap("t", 10),
+        throttle=Throttle(0),
+    )
+    [paper] = client.search("SrTiO3")
+
+    assert seen["key"] == "s2-key"
+    assert paper.doi == "10.1/x"
+    assert paper.open_access is True
+    assert paper.sources == ["Semantic Scholar"]

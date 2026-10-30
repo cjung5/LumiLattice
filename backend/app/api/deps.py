@@ -6,7 +6,12 @@ from fastapi import Depends, HTTPException
 from app.config import Settings, get_settings
 from app.tools.cod import CodClient
 from app.tools.literature import OpenAlexClient
-from app.tools.literature_sources import ArxivClient, CrossrefClient, LiteratureSearch
+from app.tools.literature_sources import (
+    ArxivClient,
+    CrossrefClient,
+    LiteratureSearch,
+    SemanticScholarClient,
+)
 from app.tools.materials import MaterialsProjectClient
 
 SettingsDep = Annotated[Settings, Depends(get_settings)]
@@ -34,9 +39,15 @@ def get_mp_client(
 
 
 def get_literature_client(settings: SettingsDep) -> Iterator[LiteratureSearch]:
-    key = settings.openalex_api_key
+    openalex = settings.openalex_api_key
+    s2 = settings.semantic_scholar_api_key
     search = LiteratureSearch(
-        [OpenAlexClient(key.get_secret_value() if key else None), CrossrefClient(), ArxivClient()]
+        [
+            OpenAlexClient(openalex.get_secret_value() if openalex else None),
+            CrossrefClient(),
+            ArxivClient(),
+            SemanticScholarClient(s2.get_secret_value() if s2 else None),
+        ]
     )
     try:
         yield search

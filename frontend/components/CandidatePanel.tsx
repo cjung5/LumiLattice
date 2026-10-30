@@ -6,7 +6,9 @@ import { AssessmentPanel } from "@/components/AssessmentPanel";
 import { CrystalViewer } from "@/components/CrystalViewer";
 import { DecisionBar } from "@/components/DecisionBar";
 import { PropertyValueView } from "@/components/EvidenceTag";
+import { ExperimentPanel } from "@/components/ExperimentPanel";
 import { PublishControl } from "@/components/PublishControl";
+import { RelaxationPanel } from "@/components/RelaxationPanel";
 import {
   createCandidate,
   type Candidate,
@@ -25,7 +27,8 @@ const FRACTIONS: { label: string; value: number }[] = [
 ];
 
 type Props = {
-  host: HostRef;
+  /** Null when a candidate is opened from a link or the registry without a host. */
+  host: HostRef | null;
   hostLabel: string;
   hostElements: string[];
   history: Candidate[];
@@ -52,6 +55,8 @@ export function CandidatePanel({
     { element_from: hostElements[0] ?? "", element_to: "", fraction: 1 / 2 },
   ]);
   const [selectedCheck, setSelectedCheck] = useState<string | null>(null);
+  const [showRelaxed, setShowRelaxed] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -64,10 +69,22 @@ export function CandidatePanel({
     () => (current ? Object.values(current.transformation.substituted_sites).flat() : []),
     [current],
   );
+  // CHGNet keeps the site order, so indices and highlights apply to both geometries.
+  const relaxed = showRelaxed && current?.relaxation ? current.relaxation : null;
+  const assessment = relaxed?.assessment ?? current?.assessment ?? null;
   const highlight = useMemo(
-    () => current?.assessment.checks.find((c) => c.id === selectedCheck)?.atom_indices ?? [],
-    [current, selectedCheck],
+    () => assessment?.checks.find((c) => c.id === selectedCheck)?.atom_indices ?? [],
+    [assessment, selectedCheck],
   );
+
+  async function copyLink() {
+    if (!current) return;
+    const url = new URL(window.location.href);
+    url.search = new URLSearchParams({ candidate: current.candidate_id }).toString();
+    await navigator.clipboard.writeText(url.toString());
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
 
   function updateRow(index: number, patch: Partial<Substitution>) {
     setRows((old) => old.map((row, i) => (i === index ? { ...row, ...patch } : row)));
@@ -79,7 +96,11 @@ export function CandidatePanel({
     try {
       const candidate = await createCandidate(
         from,
-        rows.map((r) => ({ ...r, element_to: r.element_to.trim() })),
+        rows.map((r) => ({
+          ...r,
+          element_from: r.element_from || elementOptions[0] || "",
+          element_to: r.element_to.trim(),
+        })),
       );
       onCandidate(candidate);
       setSelectedCheck(null);
@@ -92,15 +113,16 @@ export function CandidatePanel({
 
   function onSubmit(event: FormEvent) {
     event.preventDefault();
-    void generate(host);
+    if (host) void generate(host);
   }
 
-  const canSubmit = !busy && rows.every((r) => r.element_from && r.element_to.trim());
+  const canSubmit =
+    !busy && rows.every((r) => (r.element_from || elementOptions[0]) && r.element_to.trim());
 
   return (
     <section className="rounded-lg border border-line bg-surface p-4">
       <h2 className="font-semibold">{t("title")}</h2>
-      <p className="mb-3 text-sm text-muted">{t("hint", { host: hostLabel })}</p>
+      <p className="mb-3 text-sm text-muted">{host ? t("hint", { host: hostLabel }) : t("noHost")}</p>
 
       <form onSubmit={onSubmit} className="space-y-2">
         {rows.map((row, index) => (
@@ -108,7 +130,7 @@ export function CandidatePanel({
             <select
               aria-label={t("from")}
               className="rounded-md border border-line bg-background px-2 py-1.5"
-              value={row.element_from}
+              value={row.element_from || elementOptions[0] || ""}
               onChange={(e) => updateRow(index, { element_from: e.target.value })}
             >
               {elementOptions.map((el) => (
@@ -138,7 +160,9 @@ export function CandidatePanel({
                 </option>
               ))}
             </select>
-            <span className="text-muted">{t("ofSites", { element: row.element_from })}</span>
+            <span className="text-muted">
+              {t("ofSites", { element: row.element_from || elementOptions[0] || "" })}
+            </span>
             {rows.length > 1 && (
               <button
                 type="button"
@@ -167,7 +191,7 @@ export function CandidatePanel({
           )}
           <button
             type="submit"
-            disabled={!canSubmit}
+            disabled={!canSubmit || !host}
             className="rounded-md bg-accent px-4 py-1.5 font-medium text-white disabled:opacity-50"
           >
             {busy ? t("generating") : t("generateFromHost")}
@@ -197,11 +221,21 @@ export function CandidatePanel({
                 supercell: current.transformation.supercell.join("×"),
               })}
             </span>
+            <button type="button" onClick={() => void copyLink()} className="ml-2 text-xs font-normal text-accent underline">
+              {copied ? t("linkCopied") : t("copyLink")}
+            </button>
           </h3>
+          <RelaxationPanel
+            key={`relax-${current.candidate_id}`}
+            candidate={current}
+            showRelaxed={showRelaxed}
+            onShowRelaxed={setShowRelaxed}
+            onChange={onCandidate}
+          />
           <div className="grid gap-4 md:grid-cols-[3fr_2fr]">
             <div>
               <CrystalViewer
-                cif={current.structure.cif}
+                cif={(relaxed?.structure ?? current.structure).cif}
                 emphasis={emphasis}
                 highlight={highlight}
                 species={species}
@@ -209,7 +243,7 @@ export function CandidatePanel({
               <p className="mt-1 text-xs text-muted">{t("viewerLegend")}</p>
             </div>
             <AssessmentPanel
-              assessment={current.assessment}
+              assessment={assessment ?? current.assessment}
               selectedCheck={selectedCheck}
               onSelectCheck={setSelectedCheck}
             />
@@ -235,6 +269,7 @@ export function CandidatePanel({
           )}
           <p className="text-xs text-muted">{current.transformation.site_selection}</p>
           <PublishControl key={`pub-${current.candidate_id}`} candidate={current} onChange={onCandidate} />
+          <ExperimentPanel key={`exp-${current.candidate_id}`} candidate={current} onChange={onCandidate} />
           <DecisionBar
             key={current.candidate_id}
             candidate={current}
@@ -257,6 +292,7 @@ export function CandidatePanel({
                     onClick={() => {
                       onSelect(c);
                       setSelectedCheck(null);
+                      setShowRelaxed(false);
                     }}
                     className={`underline-offset-2 hover:underline ${
                       c.candidate_id === current?.candidate_id ? "font-semibold" : ""

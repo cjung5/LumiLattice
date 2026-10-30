@@ -89,6 +89,8 @@ CROSSREF_CAP = DailyCap("Crossref", limit=1000)
 ARXIV_CACHE = ResponseCache()
 ARXIV_CAP = DailyCap("arXiv", limit=300)
 COD_CACHE = ResponseCache()
+S2_CACHE = ResponseCache()
+S2_CAP = DailyCap("Semantic Scholar", limit=300)
 COD_CAP = DailyCap("COD", limit=500)
 
 
@@ -110,6 +112,7 @@ class Throttle:
 
 CROSSREF_THROTTLE = Throttle(1.0)  # public pool: 1 request per second, 1 at a time
 ARXIV_THROTTLE = Throttle(3.0)  # arXiv API terms: no more than 1 request every 3 seconds
+S2_THROTTLE = Throttle(1.0)  # Semantic Scholar: 1 request per second with a key
 
 
 class RateLimiter:

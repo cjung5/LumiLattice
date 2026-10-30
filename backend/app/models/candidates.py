@@ -60,6 +60,34 @@ class Decision(BaseModel):
     created_at: datetime
 
 
+class Relaxation(BaseModel):
+    """CHGNet relaxation of a candidate (local installs only; spec D5)."""
+
+    method: str
+    converged: bool
+    steps: int
+    # Machine-learned potential energy. Never compare with DFT energies.
+    energy_per_atom: float
+    lattice_change: tuple[float, float, float]  # fractions for a, b, c
+    volume_change: float  # fraction
+    max_displacement: float  # Å
+    structure: StructurePayload
+    assessment: StructuralAssessment
+
+
+class ExperimentRecord(BaseModel):
+    """A measurement the researcher adds to a candidate (spec 3.5). LumiLattice does not verify it."""
+
+    property: Literal["refractive_index", "band_gap"]
+    value: float
+    wavelength_nm: float | None = Field(default=None, gt=0, le=20000)
+    sample: Literal["bulk", "thin film", "powder", "other"] = "bulk"
+    method: str = Field(default="", max_length=200)  # e.g. "ellipsometry"
+    reference: str | None = Field(default=None, max_length=300)  # DOI or URL
+    notes: str = Field(default="", max_length=1000)
+    created_at: datetime
+
+
 Visibility = Literal["private", "published"]
 
 
@@ -84,3 +112,5 @@ class Candidate(BaseModel):
     # Private by default. Stage 1 records the choice only; nothing is shared outside the app.
     visibility: Visibility = "private"
     credit: Credit | None = None
+    relaxation: Relaxation | None = None
+    experiments: list[ExperimentRecord] = []

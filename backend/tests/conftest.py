@@ -13,6 +13,7 @@ def fresh_api_usage():
         usage.CROSSREF_CACHE,
         usage.ARXIV_CACHE,
         usage.COD_CACHE,
+        usage.S2_CACHE,
     ):
         item.clear()
     for cap in (
@@ -21,6 +22,7 @@ def fresh_api_usage():
         usage.CROSSREF_CAP,
         usage.ARXIV_CAP,
         usage.COD_CAP,
+        usage.S2_CAP,
         usage.AGENT_CAP,
     ):
         cap.reset()

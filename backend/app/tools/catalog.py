@@ -86,6 +86,9 @@ def candidate_summary(candidate: Candidate) -> dict[str, Any]:
             if candidate.optical_estimate
             else None
         ),
+        "experiments": [
+            e.model_dump(exclude={"created_at"}, exclude_none=True) for e in candidate.experiments
+        ],
         "researcher_decisions": [
             {"decision": d.decision, "reason": d.reason} for d in candidate.decisions
         ],
@@ -197,7 +200,7 @@ def build_registry(
             Tool(
                 name="search_literature",
                 description=(
-                    "Search OpenAlex, Crossref, and arXiv for scientific papers (merged by DOI). "
+                    "Search OpenAlex, Crossref, arXiv, and Semantic Scholar for papers (merged by DOI). "
                     "Returns titles, authors, year, venue, DOI, open-access links, and which "
                     "sources found each paper. Only metadata, not full text."
                 ),
