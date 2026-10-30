@@ -37,6 +37,39 @@
     "note": "Eine Bandlücke von etwa 3,1 eV legt die Absorptionskante nahe 400 nm, ans blaue Ende des sichtbaren Bereichs.",
     "title": "1. Forschungsziel"
   },
+  "Guide": {
+    "label": "Workflow-Schritte",
+    "step": {
+      "goal": "Ziel",
+      "host": "Host",
+      "candidate": "Kandidat",
+      "evidence": "Evidenz & Entscheidung"
+    },
+    "state": {
+      "done": "(fertig)",
+      "current": "(aktueller Schritt)",
+      "todo": "(nicht gestartet)"
+    },
+    "next": "Weiter:",
+    "hint": {
+      "goal": "Mindest-n (nahe 550 nm) und Bandlücke festlegen oder AR-Wellenleiter-Standardwerte behalten.",
+      "host": "Bekannte Struktur in Materials Project oder COD suchen oder CIF hochladen.",
+      "candidate": "Einen Teil der Plätze eines Elements in {host} ersetzen, dann Strukturprüfungen lesen.",
+      "evidence": "{id} in den Evidenz-Ansichten mit bekannten Materialien vergleichen, dann mit Begründung akzeptieren, überarbeiten oder ablehnen."
+    },
+    "allDone": "Alle vier Schritte sind fertig. Kandidaten überarbeiten, Agent nach Alternativen fragen oder in der Registry veröffentlichen.",
+    "example": "AR-Beispiel ausprobieren",
+    "exampleRunning": "Beispiel wird ausgeführt…",
+    "exampleStage": {
+      "goal": "AR-Wellenleiter-Ziel wird festgelegt…",
+      "host": "SrTiO3 (mp-5229) aus Materials Project wird geladen…",
+      "candidate": "Kandidat wird erstellt: Sr→La 25%, Ti→Al 25%…"
+    },
+    "exampleTitle": "Beispielfrage.",
+    "exampleStory": "SrTiO3 hat ein hohes n (2.43, gemessen), aber eine Bandlücke nahe der blauen Kante des sichtbaren Bereichs. LaAlO3 hat eine breitere Lücke, aber ein niedrigeres n (2.07). Wenn La 25% von Sr und Al 25% von Ti ersetzt, bleibt n bei 2.2 oder höher, während sich die Lücke vergrößert? In \"{landscape}\" ist das orangefarbene Feld der Bereich des Kandidaten zwischen den beiden Endgliedern. Dann \"{score}\" und \"{spatial}\" öffnen.",
+    "exampleError": "Das Beispiel wurde nicht ausgeführt: {error}",
+    "dismiss": "Schließen"
+  },
   "Host": {
     "title": "2. Hoststruktur wählen",
     "hint": "Materials Project nach Formel (SrTiO3, *TiO3), Elementen (Sr,Ti,O) oder ID (mp-5229) durchsuchen. Oder eigene CIF hochladen.",
@@ -96,7 +129,15 @@
     "nEstimate": "Brechungsindex (Endglied-Bereich)",
     "noHost": "Dieser Kandidat wurde ohne Host geöffnet. Er kann überarbeitet werden, oder einen Host wählen, um neue Kandidaten zu erstellen.",
     "copyLink": "Link kopieren",
-    "linkCopied": "Link kopiert"
+    "linkCopied": "Link kopiert",
+    "export": "Export:",
+    "exportKind": {
+      "cif": "CIF",
+      "cif-relaxed": "CIF (relaxiert)",
+      "record": "JSON-Datensatz"
+    },
+    "exporting": "Wird vorbereitet…",
+    "exportNote": "Die CIF listet alle Atomlagen (P1) mit Provenienz-Header auf. Der JSON-Datensatz fügt Ziel-Score, 3D-Strukturanalyse, Datenquellen und Einschränkungen hinzu."
   },
   "Evidence": {
     "experimental": "Gemessener Wert aus einem Experiment.",

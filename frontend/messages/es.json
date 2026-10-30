@@ -37,6 +37,39 @@
     "note": "Una banda prohibida de unos 3,1 eV sitúa el borde de absorción cerca de 400 nm, el extremo azul del espectro visible.",
     "title": "1. Objetivo de investigación"
   },
+  "Guide": {
+    "label": "Pasos del flujo de trabajo",
+    "step": {
+      "goal": "Objetivo",
+      "host": "Anfitrión",
+      "candidate": "Candidato",
+      "evidence": "Evidencia y decisión"
+    },
+    "state": {
+      "done": "(terminado)",
+      "current": "(paso actual)",
+      "todo": "(no iniciado)"
+    },
+    "next": "Siguiente:",
+    "hint": {
+      "goal": "Define el n mínimo (cerca de 550 nm) y la brecha de banda, o conserva los valores predeterminados de guía de ondas AR.",
+      "host": "Busca en Materials Project o COD una estructura conocida, o sube un CIF.",
+      "candidate": "Sustituye parte de los sitios de un elemento en {host} y revisa las comprobaciones estructurales.",
+      "evidence": "Compara {id} con materiales conocidos en las vistas de evidencia y acéptalo, revísalo o recházalo con un motivo."
+    },
+    "allDone": "Los cuatro pasos están completos. Revisa el candidato, pide alternativas al agente o publícalo en el registro.",
+    "example": "Probar el ejemplo AR",
+    "exampleRunning": "Ejecutando el ejemplo…",
+    "exampleStage": {
+      "goal": "Configurando el objetivo de guía de ondas AR…",
+      "host": "Cargando SrTiO3 (mp-5229) desde Materials Project…",
+      "candidate": "Creando el candidato: Sr→La 25%, Ti→Al 25%…"
+    },
+    "exampleTitle": "Pregunta de ejemplo.",
+    "exampleStory": "SrTiO3 tiene un n alto (2.43, medido) pero una brecha de banda cerca del borde azul del rango visible. LaAlO3 tiene una brecha más amplia pero un n más bajo (2.07). Si La sustituye el 25% de Sr y Al sustituye el 25% de Ti, ¿se mantiene n en 2.2 o más mientras la brecha aumenta? En \"{landscape}\", el cuadro naranja es el intervalo del candidato entre los dos miembros finales. Luego abre \"{score}\" y \"{spatial}\".",
+    "exampleError": "El ejemplo no se ejecutó: {error}",
+    "dismiss": "Cerrar"
+  },
   "Host": {
     "title": "2. Seleccionar estructura anfitriona",
     "hint": "Busca en Materials Project por fórmula (SrTiO3, *TiO3), elementos (Sr,Ti,O) o ID (mp-5229). O sube tu propio CIF.",
@@ -96,7 +129,15 @@
     "nEstimate": "Índice de refracción (rango de miembros extremos)",
     "noHost": "Este candidato se abrió sin anfitrión. Puedes revisarlo o seleccionar un anfitrión para crear nuevos candidatos.",
     "copyLink": "Copiar enlace",
-    "linkCopied": "Enlace copiado"
+    "linkCopied": "Enlace copiado",
+    "export": "Exportar:",
+    "exportKind": {
+      "cif": "CIF",
+      "cif-relaxed": "CIF (relajado)",
+      "record": "Registro JSON"
+    },
+    "exporting": "Preparando…",
+    "exportNote": "El CIF enumera todos los sitios (P1) con un encabezado de procedencia. El registro JSON añade la puntuación del objetivo, el análisis de la estructura 3D, las fuentes de datos y las advertencias."
   },
   "Evidence": {
     "experimental": "Valor medido de un experimento.",

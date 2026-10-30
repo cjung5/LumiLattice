@@ -37,6 +37,39 @@
     "note": "約3.1 eVのバンドギャップは、可視域の青端である400 nm付近に吸収端をもたらします。",
     "title": "1. 研究目標"
   },
+  "Guide": {
+    "label": "ワークフロー手順",
+    "step": {
+      "goal": "目標",
+      "host": "ホスト",
+      "candidate": "候補",
+      "evidence": "エビデンスと判定"
+    },
+    "state": {
+      "done": "(完了)",
+      "current": "(現在のステップ)",
+      "todo": "(未開始)"
+    },
+    "next": "次:",
+    "hint": {
+      "goal": "n（550 nm付近）の下限とバンドギャップを設定、またはAR導波路のデフォルトを維持。",
+      "host": "既知構造をMaterials ProjectまたはCODで検索、またはCIFをアップロード。",
+      "candidate": "{host}の一元素のサイトを一部置換し、構造チェックを確認。",
+      "evidence": "エビデンスビューで{id}を既知材料と比較し、理由付きで承認・修正・却下。"
+    },
+    "allDone": "4ステップが完了しました。候補を修正、エージェントに代替案を依頼、またはレジストリに公開してください。",
+    "example": "AR例を試す",
+    "exampleRunning": "例を実行中…",
+    "exampleStage": {
+      "goal": "AR導波路の目標を設定中…",
+      "host": "Materials ProjectからSrTiO3 (mp-5229)を読み込み中…",
+      "candidate": "候補を作成中: Sr→La 25%、Ti→Al 25%…"
+    },
+    "exampleTitle": "例の質問。",
+    "exampleStory": "SrTiO3は高いn（2.43、実測値）を持つが、バンドギャップは可視域の青色端付近にある。LaAlO3はギャップが広いがn（2.07）は低い。Srの25%をLaで、Tiの25%をAlで置換すると、ギャップを広げつつnを2.2以上に維持できるか？「{landscape}」では、橙色のボックスが両端成分間の候補の範囲を示す。次に「{score}」と「{spatial}」を開く。",
+    "exampleError": "例の実行に失敗しました: {error}",
+    "dismiss": "閉じる"
+  },
   "Host": {
     "title": "2. ホスト構造の選択",
     "hint": "Materials Projectを化学式（SrTiO3、*TiO3）、元素（Sr,Ti,O）、ID（mp-5229）で検索。または独自のCIFをアップロード。",
@@ -96,7 +129,15 @@
     "nEstimate": "屈折率（端成分範囲）",
     "noHost": "この候補はホストなしで開かれました。修正するか、ホストを選択して新規候補を作成できます。",
     "copyLink": "リンクをコピー",
-    "linkCopied": "リンクをコピーしました"
+    "linkCopied": "リンクをコピーしました",
+    "export": "エクスポート:",
+    "exportKind": {
+      "cif": "CIF",
+      "cif-relaxed": "CIF（緩和後）",
+      "record": "JSONレコード"
+    },
+    "exporting": "準備中…",
+    "exportNote": "CIFは全サイト（P1）をプロベナンスヘッダー付きで列挙します。JSONレコードには目標スコア、3D構造解析、データソース、注意事項が追加されます。"
   },
   "Evidence": {
     "experimental": "実験による実測値。",

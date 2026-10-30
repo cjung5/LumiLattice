@@ -37,6 +37,39 @@
     "note": "约 3.1 eV 的带隙对应吸收边在 400 nm 附近，即可见光蓝端。",
     "title": "1. 研究目标"
   },
+  "Guide": {
+    "label": "工作流步骤",
+    "step": {
+      "goal": "目标",
+      "host": "母体",
+      "candidate": "候选材料",
+      "evidence": "证据与决策"
+    },
+    "state": {
+      "done": "(已完成)",
+      "current": "(当前步骤)",
+      "todo": "(未开始)"
+    },
+    "next": "下一步：",
+    "hint": {
+      "goal": "设置 n（550 nm 附近）与带隙最小值，或保留 AR 波导默认值。",
+      "host": "在 Materials Project 或 COD 中搜索已知结构，或上传 CIF。",
+      "candidate": "替换 {host} 中一种元素的部分占位，然后查看结构检查。",
+      "evidence": "在证据视图中将 {id} 与已知材料对比，然后接受、修改或驳回并填写理由。"
+    },
+    "allDone": "四个步骤已完成。可修改候选材料、向智能体请求替代方案，或发布到注册库。",
+    "example": "试用 AR 示例",
+    "exampleRunning": "正在运行示例…",
+    "exampleStage": {
+      "goal": "正在设置 AR 波导目标…",
+      "host": "正在从 Materials Project 加载 SrTiO3 (mp-5229)…",
+      "candidate": "正在生成候选材料：Sr→La 25%, Ti→Al 25%…"
+    },
+    "exampleTitle": "示例问题。",
+    "exampleStory": "SrTiO3 具有高 n（2.43，实测值），但带隙接近可见光蓝端。LaAlO3 带隙更宽，但 n 较低（2.07）。若 La 取代 25% Sr 且 Al 取代 25% Ti，n 能否保持在 2.2 以上同时增大带隙？在“{landscape}”中，橙色框为候选材料在两个端元之间的范围。然后打开“{score}”和“{spatial}”。",
+    "exampleError": "示例运行失败：{error}",
+    "dismiss": "关闭"
+  },
   "Host": {
     "title": "2. 选择主体结构",
     "hint": "按化学式（SrTiO3、*TiO3）、元素（Sr,Ti,O）或 ID（mp-5229）搜索 Materials Project，或上传自己的 CIF。",
@@ -96,7 +129,15 @@
     "nEstimate": "折射率（端元范围）",
     "noHost": "该候选材料未关联主体打开。可以直接修改，或选择主体以生成新候选。",
     "copyLink": "复制链接",
-    "linkCopied": "链接已复制"
+    "linkCopied": "链接已复制",
+    "export": "导出：",
+    "exportKind": {
+      "cif": "CIF",
+      "cif-relaxed": "CIF (弛豫后)",
+      "record": "JSON 记录"
+    },
+    "exporting": "准备中…",
+    "exportNote": "CIF 列出所有位点 (P1)，并包含溯源文件头。JSON 记录另含目标评分、3D 结构分析、数据来源和注意事项。"
   },
   "Evidence": {
     "experimental": "来自实验的实测值。",

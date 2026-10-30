@@ -37,6 +37,39 @@
     "note": "A band gap of about 3.1 eV puts the absorption edge near 400 nm, the blue end of the visible range.",
     "title": "1. Research goal"
   },
+  "Guide": {
+    "label": "Workflow steps",
+    "step": {
+      "goal": "Goal",
+      "host": "Host",
+      "candidate": "Candidate",
+      "evidence": "Evidence & decision"
+    },
+    "state": {
+      "done": "(done)",
+      "current": "(current step)",
+      "todo": "(not started)"
+    },
+    "next": "Next:",
+    "hint": {
+      "goal": "Set the minimum n (near 550 nm) and band gap, or keep the AR waveguide defaults.",
+      "host": "Search Materials Project or COD for a known structure, or upload a CIF.",
+      "candidate": "Replace part of one element's sites in {host}, then read the structural checks.",
+      "evidence": "Compare {id} with known materials in the Evidence views, then accept, revise, or reject it with a reason."
+    },
+    "allDone": "All four steps are done. Revise the candidate, ask the agent for alternatives, or publish it to the registry.",
+    "example": "Try the AR example",
+    "exampleRunning": "Running the example…",
+    "exampleStage": {
+      "goal": "Setting the AR waveguide goal…",
+      "host": "Loading SrTiO3 (mp-5229) from Materials Project…",
+      "candidate": "Making the candidate: Sr→La 25%, Ti→Al 25%…"
+    },
+    "exampleTitle": "Example question.",
+    "exampleStory": "SrTiO3 has a high n (2.43, measured) but a band gap near the blue edge of the visible range. LaAlO3 has a wider gap but a lower n (2.07). If La replaces 25% of Sr and Al replaces 25% of Ti, does n stay at 2.2 or more while the gap widens? In \"{landscape}\", the orange box is the candidate's range between the two end members. Then open \"{score}\" and \"{spatial}\".",
+    "exampleError": "The example did not run: {error}",
+    "dismiss": "Close"
+  },
   "Host": {
     "title": "2. Select a host structure",
     "hint": "Search Materials Project by formula (SrTiO3, *TiO3), elements (Sr,Ti,O), or ID (mp-5229). Or upload your own CIF.",
@@ -96,7 +129,15 @@
     "nEstimate": "Refractive index (end-member range)",
     "noHost": "This candidate was opened without a host. You can revise it, or select a host to make new candidates.",
     "copyLink": "Copy link",
-    "linkCopied": "Link copied"
+    "linkCopied": "Link copied",
+    "export": "Export:",
+    "exportKind": {
+      "cif": "CIF",
+      "cif-relaxed": "CIF (relaxed)",
+      "record": "JSON record"
+    },
+    "exporting": "Preparing…",
+    "exportNote": "The CIF lists every site (P1) with a provenance header. The JSON record adds the goal score, the 3D structure analysis, the data sources, and the caveats."
   },
   "Evidence": {
     "experimental": "Measured value from an experiment.",

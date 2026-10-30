@@ -11,8 +11,11 @@ import { PublishControl } from "@/components/PublishControl";
 import { RelaxationPanel } from "@/components/RelaxationPanel";
 import {
   createCandidate,
+  downloadExport,
   type Candidate,
   type DecisionKind,
+  type ExportKind,
+  type Goal,
   type HostRef,
   type Substitution,
 } from "@/lib/api";
@@ -33,6 +36,8 @@ type Props = {
   hostElements: string[];
   history: Candidate[];
   current: Candidate | null;
+  /** Scored in the exported JSON record. */
+  goal: Goal;
   agentBusy: boolean;
   onCandidate: (candidate: Candidate) => void;
   onSelect: (candidate: Candidate) => void;
@@ -45,6 +50,7 @@ export function CandidatePanel({
   hostElements,
   history,
   current,
+  goal,
   agentBusy,
   onCandidate,
   onSelect,
@@ -57,6 +63,8 @@ export function CandidatePanel({
   const [selectedCheck, setSelectedCheck] = useState<string | null>(null);
   const [showRelaxed, setShowRelaxed] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [exporting, setExporting] = useState<ExportKind | null>(null);
+  const [exportError, setExportError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -84,6 +92,19 @@ export function CandidatePanel({
     await navigator.clipboard.writeText(url.toString());
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  }
+
+  async function exportFile(kind: ExportKind) {
+    if (!current) return;
+    setExporting(kind);
+    setExportError(null);
+    try {
+      await downloadExport(current.candidate_id, kind, goal);
+    } catch (err) {
+      setExportError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setExporting(null);
+    }
   }
 
   function updateRow(index: number, patch: Partial<Substitution>) {
@@ -225,6 +246,22 @@ export function CandidatePanel({
               {copied ? t("linkCopied") : t("copyLink")}
             </button>
           </h3>
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <span className="text-muted">{t("export")}</span>
+            {(["cif", ...(current.relaxation ? ["cif-relaxed" as const] : []), "record"] as ExportKind[]).map((kind) => (
+              <button
+                key={kind}
+                type="button"
+                disabled={exporting !== null}
+                onClick={() => void exportFile(kind)}
+                className="rounded-md border border-line px-2 py-1 disabled:opacity-50"
+              >
+                {exporting === kind ? t("exporting") : t(`exportKind.${kind}`)}
+              </button>
+            ))}
+            <span className="text-muted">{t("exportNote")}</span>
+            {exportError && <span className="text-danger">{exportError}</span>}
+          </div>
           <RelaxationPanel
             key={`relax-${current.candidate_id}`}
             candidate={current}

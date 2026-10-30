@@ -5,7 +5,7 @@
   },
   "Home": {
     "tagline": "광전자 소재 발견을 위한 협업형 AI 과학자",
-    "intro": "Muse Spark와 함께 AR 도파관용 후보 소재를 탐색하세요. 모든 수치는 출처가 있는 데이터베이스나 계산에서 나옵니다."
+    "intro": "Muse Spark와 함께 AR 도파로용 후보 소재를 탐색하세요. 모든 수치는 출처가 있는 데이터베이스나 계산에서 나옵니다."
   },
   "Language": {
     "label": "언어",
@@ -32,10 +32,43 @@
     "minGap": "최소 밴드갭 (eV)",
     "forbidden": "금지 원소",
     "forbiddenPlaceholder": "예: Pb, Cd",
-    "presetAr": "AR 도파관 기본값",
+    "presetAr": "AR 도파로 기본값",
     "presetToxic": "+ 독성 원소",
     "note": "밴드갭이 약 3.1 eV면 흡수단이 가시광의 파란 끝인 400 nm 부근에 옵니다.",
     "title": "1. 연구 목표"
+  },
+  "Guide": {
+    "label": "작업 단계",
+    "step": {
+      "goal": "목표",
+      "host": "기준 구조",
+      "candidate": "후보",
+      "evidence": "근거와 결정"
+    },
+    "state": {
+      "done": "(완료)",
+      "current": "(현재 단계)",
+      "todo": "(시작 전)"
+    },
+    "next": "다음:",
+    "hint": {
+      "goal": "최소 n(550 nm 부근)과 밴드갭을 정하거나, AR 도파로 기본값을 그대로 쓰세요.",
+      "host": "Materials Project나 COD에서 알려진 구조를 찾거나 CIF를 올리세요.",
+      "candidate": "{host}에서 한 원소 자리의 일부를 바꾸고, 구조 검사 결과를 확인하세요.",
+      "evidence": "근거 보기에서 {id}를 알려진 물질과 비교한 뒤, 이유와 함께 채택·수정·거절하세요."
+    },
+    "allDone": "네 단계를 모두 마쳤습니다. 후보를 수정하거나, 에이전트에게 대안을 묻거나, 레지스트리에 공개하세요.",
+    "example": "AR 예제 실행",
+    "exampleRunning": "예제 실행 중…",
+    "exampleStage": {
+      "goal": "AR 도파로 목표를 설정하는 중…",
+      "host": "Materials Project에서 SrTiO3(mp-5229)를 불러오는 중…",
+      "candidate": "후보를 만드는 중: Sr→La 25%, Ti→Al 25%…"
+    },
+    "exampleTitle": "예제 질문.",
+    "exampleStory": "SrTiO3는 n이 높지만(측정값 2.43) 밴드갭이 가시광의 청색 끝에 가깝습니다. LaAlO3는 밴드갭이 더 넓지만 n이 낮습니다(2.07). Sr의 25%를 La로, Ti의 25%를 Al로 바꾸면 밴드갭이 넓어지면서 n이 2.2 이상으로 유지될까요? \"{landscape}\" 보기의 주황색 상자가 두 끝 조성 사이의 후보 범위입니다. 그다음 \"{score}\"와 \"{spatial}\"을 여세요.",
+    "exampleError": "예제를 실행하지 못했습니다: {error}",
+    "dismiss": "닫기"
   },
   "Host": {
     "title": "2. 기준 구조 선택",
@@ -96,7 +129,15 @@
     "nEstimate": "굴절률 (끝 조성 범위)",
     "noHost": "기준 구조 없이 연 후보입니다. 이 후보를 수정하거나, 새 후보를 만들려면 기준 구조를 선택하세요.",
     "copyLink": "링크 복사",
-    "linkCopied": "링크를 복사했습니다"
+    "linkCopied": "링크를 복사했습니다",
+    "export": "내보내기:",
+    "exportKind": {
+      "cif": "CIF",
+      "cif-relaxed": "CIF (이완 후)",
+      "record": "JSON 기록"
+    },
+    "exporting": "준비 중…",
+    "exportNote": "CIF에는 모든 자리(P1)와 출처 머리말이 들어갑니다. JSON 기록에는 목표 점수, 3D 구조 분석, 데이터 출처, 주의 사항이 더 들어갑니다."
   },
   "Evidence": {
     "experimental": "실험으로 측정한 값입니다.",

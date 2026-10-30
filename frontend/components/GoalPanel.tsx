@@ -5,6 +5,8 @@ import { useState } from "react";
 import type { Goal } from "@/lib/api";
 
 const TOXIC = ["Pb", "Cd", "Hg", "Tl", "As"];
+/** AR waveguide preset: high index, transparent across the visible range (gap above ~3.1 eV). */
+export const AR_GOAL = { target_n: 2.2, min_band_gap: 3.0 };
 
 type Props = { goal: Goal; onChange: (goal: Goal) => void };
 
@@ -67,7 +69,7 @@ export function GoalPanel({ goal, onChange }: Props) {
             className="rounded-md border border-line px-3 py-1.5 text-xs"
             onClick={() => {
               setElementText(goal.forbidden_elements.join(", "));
-              onChange({ ...goal, target_n: 2.2, min_band_gap: 3.0 });
+              onChange({ ...goal, ...AR_GOAL });
             }}
           >
             {t("presetAr")}

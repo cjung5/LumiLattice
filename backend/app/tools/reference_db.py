@@ -62,6 +62,12 @@ class ReferenceDB:
             else None
         )
 
+    def meta(self) -> dict[str, str]:
+        """Build metadata: dataset versions, licenses, and SHA-256 of the downloaded files."""
+        if self._db is None:
+            return {}
+        return dict(self._db.execute("SELECT key, value FROM meta").fetchall())
+
     def measured(self, formula: str) -> list[MeasuredIndex]:
         if self._db is None:
             return []

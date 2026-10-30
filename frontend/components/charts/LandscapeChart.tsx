@@ -162,7 +162,24 @@ export function LandscapeChart({ data, goal, points, box }: Props) {
                 stroke="var(--series-heur)"
                 strokeWidth="2"
               />
-              <text x={x(box.gap[1])} y={y(box.n[1]) - 6} textAnchor="end" fontSize="11" fontWeight="600" fill="var(--chart-ink)" {...HALO}>{box.label}</text>
+              {/* The host is a corner of the box and is labeled outside it, so this label goes inside
+                  the top-right corner, or below the box when the box is too small. */}
+              {(() => {
+                const inside = y(box.n[0]) - y(box.n[1]) >= 24 && x(box.gap[1]) - x(box.gap[0]) >= box.label.length * 7 + 12;
+                return (
+                  <text
+                    x={x(box.gap[1]) - (inside ? 8 : 0)}
+                    y={inside ? y(box.n[1]) + 16 : y(box.n[0]) + 14}
+                    textAnchor="end"
+                    fontSize="11"
+                    fontWeight="600"
+                    fill="var(--chart-ink)"
+                    {...HALO}
+                  >
+                    {box.label}
+                  </text>
+                );
+              })()}
             </g>
           )}
           {/* host and end members, labeled */}

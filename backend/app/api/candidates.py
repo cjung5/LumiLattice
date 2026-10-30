@@ -1,7 +1,8 @@
 from datetime import UTC, datetime
-from typing import Literal
+from typing import Annotated, Literal
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query, Response
+from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
 
 from app.api.deps import OptionalMPDep
@@ -20,6 +21,7 @@ from app.models.candidates import (
 from app.models.evidence import Provenance
 from app.storage.memory import add_decision, get_store
 from app.tools.candidates import assess_host, create_candidate, load_host
+from app.tools.export import CandidateRecord, SpatialRecord, ancestry, build_record, cif_text
 from app.tools.goals import Goal, GoalScore, score_candidate, score_formula
 from app.tools.reference_db import get_reference_db
 from app.tools.registry import ToolError
@@ -233,6 +235,60 @@ def candidate_spatial(candidate_id: str, relaxed: bool = False) -> SpatialAnalys
         _spatial_cache.clear()
     _spatial_cache[key] = result
     return result
+
+
+@router.get("/candidates/{candidate_id}/export.cif", response_class=PlainTextResponse)
+def export_cif(candidate_id: str, relaxed: bool = False) -> PlainTextResponse:
+    """The candidate's P1 cell (or its CHGNet-relaxed cell) with a provenance header."""
+    store = get_store()
+    stored = store.get(candidate_id)
+    if stored is None:
+        raise not_found(candidate_id)
+    candidate = stored[0]
+    if relaxed and candidate.relaxation is None:
+        raise HTTPException(status_code=400, detail=f"{candidate_id} has not been relaxed.")
+    name = f"{candidate_id}{'-relaxed' if relaxed else ''}.cif"
+    return PlainTextResponse(
+        cif_text(candidate, ancestry(store, candidate), relaxed),
+        media_type="chemical/x-cif",
+        headers={"Content-Disposition": f'attachment; filename="{name}"'},
+    )
+
+
+@router.get("/candidates/{candidate_id}/export.json")
+def export_record(
+    candidate_id: str,
+    response: Response,
+    target_n: Annotated[float | None, Query(ge=1, le=5)] = None,
+    min_band_gap: Annotated[float | None, Query(ge=0, le=15)] = None,
+    forbidden: Annotated[str, Query(max_length=200)] = "",
+) -> CandidateRecord:
+    """Everything known about a candidate, with the goal score, spatial analysis, and sources.
+
+    Give target_n and min_band_gap (and optionally forbidden=Pb,Cd) to include a goal score.
+    """
+    store = get_store()
+    stored = store.get(candidate_id)
+    if stored is None:
+        raise not_found(candidate_id)
+    candidate = stored[0]
+    goal, goal_score = None, None
+    if target_n is not None and min_band_gap is not None:
+        goal = Goal(
+            target_n=target_n,
+            min_band_gap=min_band_gap,
+            forbidden_elements=[e.strip() for e in forbidden.split(",") if e.strip()],
+        )
+        try:
+            goal_score = score_candidate(candidate, goal)
+        except ToolError as exc:
+            raise to_http(exc) from exc
+    spatial = SpatialRecord(
+        unrelaxed=candidate_spatial(candidate_id),
+        relaxed=candidate_spatial(candidate_id, relaxed=True) if candidate.relaxation else None,
+    )
+    response.headers["Content-Disposition"] = f'attachment; filename="{candidate_id}-record.json"'
+    return build_record(store, candidate, get_reference_db().meta(), goal, goal_score, spatial)
 
 
 @router.post("/structures/spatial")

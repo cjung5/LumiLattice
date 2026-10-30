@@ -334,15 +334,17 @@ export type AgentResult = {
   completed: boolean;
 };
 
+async function errorFrom(response: Response): Promise<Error> {
+  const body = await response.json().catch(() => null);
+  const detail = body?.detail;
+  return new Error(
+    typeof detail === "string" ? detail : detail ? JSON.stringify(detail) : `HTTP ${response.status}`,
+  );
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, init);
-  if (!response.ok) {
-    const body = await response.json().catch(() => null);
-    const detail = body?.detail;
-    throw new Error(
-      typeof detail === "string" ? detail : detail ? JSON.stringify(detail) : `HTTP ${response.status}`,
-    );
-  }
+  if (!response.ok) throw await errorFrom(response);
   return response.json() as Promise<T>;
 }
 
@@ -420,6 +422,36 @@ export function setVisibility(
   },
 ): Promise<Candidate> {
   return postJson<Candidate>(`/api/candidates/${encodeURIComponent(candidateId)}/visibility`, body);
+}
+
+export type ExportKind = "cif" | "cif-relaxed" | "record";
+
+/** The JSON record includes the goal score when a goal is given. */
+export function exportUrl(id: string, kind: ExportKind, goal?: Goal): string {
+  const base = `${API_BASE_URL}/api/candidates/${encodeURIComponent(id)}`;
+  if (kind !== "record") return `${base}/export.cif${kind === "cif-relaxed" ? "?relaxed=true" : ""}`;
+  const params = goal
+    ? `?${new URLSearchParams({
+        target_n: String(goal.target_n),
+        min_band_gap: String(goal.min_band_gap),
+        forbidden: goal.forbidden_elements.join(","),
+      })}`
+    : "";
+  return `${base}/export.json${params}`;
+}
+
+/** Fetch an export and save it under its file name (<a download> ignores cross-origin URLs). */
+export async function downloadExport(id: string, kind: ExportKind, goal?: Goal): Promise<void> {
+  const response = await fetch(exportUrl(id, kind, goal));
+  if (!response.ok) throw await errorFrom(response);
+  const url = URL.createObjectURL(await response.blob());
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = kind === "record" ? `${id}-record.json` : `${id}${kind === "cif-relaxed" ? "-relaxed" : ""}.cif`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 export function createCandidate(host: HostRef, substitutions: Substitution[]): Promise<Candidate> {

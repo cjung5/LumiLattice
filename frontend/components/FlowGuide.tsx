@@ -1,0 +1,100 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
+export type StepId = "goal" | "host" | "candidate" | "evidence";
+export const STEPS: StepId[] = ["goal", "host", "candidate", "evidence"];
+export type ExampleStage = "goal" | "host" | "candidate" | "done";
+export type ExampleState = { stage: ExampleStage | null; error: string | null };
+
+type Props = {
+  done: Record<StepId, boolean>;
+  hostLabel: string;
+  candidateId: string | null;
+  example: ExampleState;
+  onJump: (step: StepId) => void;
+  onExample: () => void;
+};
+
+// The four steps of the spec's workflow, with what to do next. Steps stay clickable in any order.
+export function FlowGuide({ done, hostLabel, candidateId, example, onJump, onExample }: Props) {
+  const t = useTranslations("Guide");
+  const next = STEPS.find((s) => !done[s]) ?? null;
+  const running = example.stage !== null && example.stage !== "done";
+
+  let message;
+  if (example.error) {
+    message = <span className="text-danger">{t("exampleError", { error: example.error })}</span>;
+  } else if (running) {
+    message = <span>{t(`exampleStage.${example.stage}`)}</span>;
+  } else if (next) {
+    message = (
+      <span>
+        <span className="font-semibold">{t("next")}</span> {t(`hint.${next}`, { host: hostLabel, id: candidateId ?? "" })}
+      </span>
+    );
+  } else {
+    message = <span>{t("allDone")}</span>;
+  }
+
+  return (
+    <nav aria-label={t("label")} className="z-20 rounded-lg border border-line bg-surface p-3 shadow-sm md:sticky md:top-0">
+      <div className="flex flex-wrap items-center gap-2">
+        <ol className="flex flex-1 flex-wrap items-center gap-1.5 text-sm">
+          {STEPS.map((step, i) => {
+            const state = done[step] ? "done" : step === next ? "current" : "todo";
+            return (
+              <li key={step} className="flex items-center gap-1.5">
+                {i > 0 && <span aria-hidden className="hidden text-muted sm:inline">→</span>}
+                <button
+                  type="button"
+                  onClick={() => onJump(step)}
+                  aria-current={state === "current" ? "step" : undefined}
+                  className={`flex items-center gap-1.5 rounded-full py-1 pl-1 pr-3 ${state === "current" ? "bg-accent text-white" : "border border-line"}`}
+                >
+                  <span
+                    aria-hidden
+                    className={`flex h-5 w-5 items-center justify-center rounded-full text-xs font-semibold ${
+                      state === "current" ? "bg-white/25" : state === "done" ? "bg-accent/15" : "border border-line text-muted"
+                    }`}
+                  >
+                    {state === "done" ? "✓" : i + 1}
+                  </span>
+                  <span className={state === "todo" ? "text-muted" : undefined}>{t(`step.${step}`)}</span>
+                  <span className="sr-only">{t(`state.${state}`)}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+        <button
+          type="button"
+          onClick={onExample}
+          disabled={running}
+          className="w-full rounded-md border border-accent px-3 py-1.5 text-sm font-medium disabled:opacity-50 sm:w-auto"
+        >
+          <span aria-hidden>▶ </span>
+          {running ? t("exampleRunning") : t("example")}
+        </button>
+      </div>
+      <p className="mt-2 text-sm" aria-live="polite">{message}</p>
+    </nav>
+  );
+}
+
+/** The question the AR example asks, shown above the evidence it points to. */
+export function ExampleCallout({ onDismiss }: { onDismiss: () => void }) {
+  const t = useTranslations("Guide");
+  const te = useTranslations("Evidence");
+  return (
+    <div className="mb-3 flex items-start gap-3 rounded-lg border border-accent bg-surface p-4 text-sm">
+      <p className="flex-1">
+        <span className="font-semibold">{t("exampleTitle")}</span>{" "}
+        {t("exampleStory", { landscape: te("tabLandscape"), score: te("tabScore"), spatial: te("tabSpatial") })}
+      </p>
+      <button type="button" onClick={onDismiss} className="text-muted underline">
+        {t("dismiss")}
+      </button>
+    </div>
+  );
+}

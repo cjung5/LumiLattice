@@ -16,6 +16,10 @@ Built for the Meta Global AI Developer Hackathon (Oct 27 – Nov 4, 2026), track
 4. Each value carries one evidence tag: `Experimental`, `DFT-computed`, `Heuristic`, or `Unknown`.
 5. The researcher accepts, modifies, or rejects a candidate, and the agent revises it.
 
+A step bar at the top of the app shows the four steps (goal, host, candidate, evidence and decision), marks the steps that are done, and tells the researcher what to do next. Each step scrolls to its section; the steps can be done in any order.
+
+**Try the AR example** runs the steps once with real data: the AR waveguide goal (n ≥ 2.2, band gap ≥ 3.0 eV), SrTiO3 (mp-5229) as the host, and a candidate with La on 25% of the Sr sites and Al on 25% of the Ti sites. SrTiO3 has a high n; LaAlO3 has a wider gap. The example asks whether the co-substituted candidate keeps both, and points to the evidence views that answer it. It uses the same API calls as a researcher would, so it stays within the free-tier caps.
+
 ## Repository layout
 
 | Path | Contents |
@@ -127,7 +131,22 @@ Each candidate also has:
 - **CHGNet relaxation (local install only):** moves atoms and the cell with a machine-learned potential and runs the same checks on the relaxed geometry; the UI switches between unrelaxed and relaxed views. It needs PyTorch, which does not fit the free server, so the live demo says "local install". CHGNet energies are never compared with DFT energies.
 - **Measurements:** the researcher can add a measured n (with wavelength) or band gap, with sample type, method, and reference. The app shows whether a measured n falls inside the candidate's end-member range. LumiLattice records these values as given.
 - **Share link:** `?candidate=LL-0003` opens that candidate on the same backend.
+- **Export:** a CIF of the candidate (and of its relaxed geometry, if relaxed) and a JSON research record (below).
 - **Registry:** all candidates in one table with filters, and a side-by-side comparison of up to 3 (checks, n range, ΔV after relaxation, measurements).
+
+### Export
+
+| File | Contents |
+|---|---|
+| `LL-0003.cif`, `LL-0003-relaxed.cif` | The P1 cell (every site, in the same order as the site indices in the app) with a comment header: candidate ID, original host and source, all substitutions from the root formula, the geometry (host positions or CHGNet settings), and the export time. ASCII only, as CIF 1.1 requires; tested with the pymatgen and ASE readers |
+| `LL-0003-record.json` | Format `lumilattice.candidate-record/1`: the full candidate (structure, substitutions, checks with their methods, n and band-gap evidence with tags, decisions, measurements, relaxation), its ancestry back to the original host, the goal and goal score, the 3D structure analysis (unrelaxed and relaxed), the data sources with versions, licenses, and SHA-256 of the bundled datasets, the evidence-tag definitions, and the caveats |
+
+The same files are available from the API:
+
+```bash
+curl -OJ "http://localhost:8000/api/candidates/LL-0003/export.cif"               # add ?relaxed=true
+curl -OJ "http://localhost:8000/api/candidates/LL-0003/export.json?target_n=2.2&min_band_gap=3.0&forbidden=Pb,Cd"
+```
 
 Candidates are **private by default**. Publishing needs explicit consent and a credit choice (by name/ORCID or anonymous). In this version, publishing records the choice only; nothing is sent outside LumiLattice.
 
