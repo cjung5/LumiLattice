@@ -43,6 +43,20 @@ class Transformation(BaseModel):
     # element_to -> site indices in the candidate structure
     substituted_sites: dict[str, list[int]]
     site_selection: str
+    # The original host and every substitution since then (for revisions of revisions).
+    root_formula: str
+    lineage: list[Substitution]
+
+
+DecisionKind = Literal["accept", "modify", "reject", "explore"]
+
+
+class Decision(BaseModel):
+    """A researcher's judgment on a candidate (spec section 4, step 5)."""
+
+    decision: DecisionKind
+    reason: str = Field(default="", max_length=2000)
+    created_at: datetime
 
 
 class Candidate(BaseModel):
@@ -53,3 +67,4 @@ class Candidate(BaseModel):
     transformation: Transformation
     assessment: StructuralAssessment
     created_at: datetime
+    decisions: list[Decision] = []

@@ -1,14 +1,18 @@
 from dataclasses import asdict
 from typing import Any, Literal
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from openai import APIError
 from pydantic import BaseModel, Field
 
 from app.agents.loop import AgentStepLimitReached, run_agent
 from app.agents.muse import ModelAPIKeyMissing, create_client
 from app.api.deps import LiteratureDep, OptionalMPDep, SettingsDep
+from app.models.candidates import DecisionKind
+from app.storage.memory import STORE
 from app.tools.catalog import build_registry
+from app.tools.registry import UpstreamError
+from app.tools.usage import AGENT_CAP, AGENT_RATE
 
 router = APIRouter(prefix="/api")
 
@@ -24,14 +28,63 @@ def health(settings: SettingsDep) -> dict[str, Any]:
     }
 
 
+class AgentContext(BaseModel):
+    """What the researcher sees in the workspace when they ask the agent."""
+
+    host_material_id: str | None = Field(default=None, max_length=40)
+    host_label: str | None = Field(default=None, max_length=200)
+    current_candidate_id: str | None = Field(default=None, max_length=20)
+    decision: DecisionKind | None = None
+    feedback: str | None = Field(default=None, max_length=2000)
+
+
 class AgentRequest(BaseModel):
     message: str = Field(min_length=1, max_length=4000)
     locale: Literal["en", "ko", "zh-Hans", "ja", "es", "de"] = "en"
+    previous_response_id: str | None = Field(default=None, max_length=200)
+    context: AgentContext | None = None
+
+
+def with_context(message: str, context: AgentContext | None) -> str:
+    if context is None:
+        return message
+    lines = []
+    if context.host_label or context.host_material_id:
+        host = context.host_label or ""
+        if context.host_material_id:
+            host += f" [Materials Project ID: {context.host_material_id}]"
+        else:
+            host += " [uploaded CIF: revise candidates made from it by candidate ID]"
+        lines.append(f"Host: {host.strip()}")
+    if context.current_candidate_id:
+        stored = STORE.get(context.current_candidate_id)
+        if stored:
+            candidate = stored[0]
+            lines.append(
+                f"Current candidate: {candidate.candidate_id} ({candidate.formula}), "
+                f"{candidate.assessment.status}"
+            )
+    if context.decision and context.current_candidate_id:
+        reason = f' Reason: "{context.feedback}"' if context.feedback else ""
+        lines.append(
+            f"Researcher decision on {context.current_candidate_id}: {context.decision}.{reason}"
+        )
+    if not lines:
+        return message
+    return "[Workspace]\n" + "\n".join(lines) + "\n[/Workspace]\n\n" + message
+
+
+def client_id(request: Request) -> str:
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.client.host if request.client else "unknown"
 
 
 @router.post("/agent/run")
 def agent_run(
-    request: AgentRequest,
+    body: AgentRequest,
+    request: Request,
     settings: SettingsDep,
     mp: OptionalMPDep,
     literature: LiteratureDep,
@@ -40,17 +93,31 @@ def agent_run(
         client = create_client(settings)
     except ModelAPIKeyMissing as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
+    if not AGENT_RATE.allow(client_id(request)):
+        raise HTTPException(status_code=429, detail="Too many agent requests. Wait a few minutes.")
+    try:
+        AGENT_CAP.take()
+    except UpstreamError as exc:
+        raise HTTPException(status_code=429, detail=str(exc)) from exc
+
     try:
         result = run_agent(
             client,
             settings.muse_model,
             build_registry(mp, literature),
-            request.message,
-            locale=request.locale,
+            with_context(body.message, body.context),
+            locale=body.locale,
             max_steps=settings.agent_max_steps,
+            previous_response_id=body.previous_response_id,
         )
     except AgentStepLimitReached as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
     except APIError as exc:
         raise HTTPException(status_code=502, detail=f"Meta Model API error: {exc}") from exc
-    return {"model": settings.muse_model, **asdict(result)}
+
+    candidate_ids = [
+        call.output["candidate_id"]
+        for call in result.tool_calls
+        if call.name == "create_candidate" and "candidate_id" in call.output
+    ]
+    return {"model": settings.muse_model, "candidate_ids": candidate_ids, **asdict(result)}

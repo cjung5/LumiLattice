@@ -105,3 +105,36 @@ def test_agent_tool_revises_a_candidate(srtio3):
 
     assert result["parent_id"] == seed.candidate_id
     assert result["assessment_status"] == "Structurally Plausible"
+
+
+def test_revision_analogs_follow_the_whole_lineage(srtio3):
+    from app.models.candidates import Substitution
+    from app.models.evidence import Provenance
+    from app.tools.candidates import create_candidate
+
+    store = CandidateStore()
+    seen: list[str] = []
+
+    class FakeMP:
+        def search(self, formula, limit):
+            seen.append(formula)
+            return []
+
+    first = create_candidate(
+        store,
+        srtio3,
+        Provenance(source="t"),
+        [Substitution(element_from="Sr", element_to="La", fraction=0.5)],
+    )
+    second = create_candidate(
+        store,
+        store.get(first.candidate_id)[1],
+        Provenance(source="t", reference=first.candidate_id),
+        [Substitution(element_from="Ti", element_to="Al", fraction=0.5)],
+        parent_id=first.candidate_id,
+        mp=FakeMP(),
+    )
+
+    assert second.transformation.root_formula == "SrTiO3"
+    assert [s.element_to for s in second.transformation.lineage] == ["La", "Al"]
+    assert seen == ["LaAlO3", "LaTiO3", "SrAlO3"]

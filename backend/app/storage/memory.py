@@ -5,7 +5,7 @@ from threading import Lock
 
 from pymatgen.core import Structure
 
-from app.models.candidates import Candidate
+from app.models.candidates import Candidate, Decision
 
 
 class CandidateStore:
@@ -26,6 +26,16 @@ class CandidateStore:
     def get(self, candidate_id: str) -> tuple[Candidate, Structure] | None:
         with self._lock:
             return self._items.get(candidate_id)
+
+    def add_decision(self, candidate_id: str, decision: Decision) -> Candidate | None:
+        with self._lock:
+            stored = self._items.get(candidate_id)
+            if stored is None:
+                return None
+            candidate, structure = stored
+            updated = candidate.model_copy(update={"decisions": [*candidate.decisions, decision]})
+            self._items[candidate_id] = (updated, structure)
+            return updated
 
     def all(self) -> list[Candidate]:
         with self._lock:

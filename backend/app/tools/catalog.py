@@ -4,7 +4,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from app.models.candidates import Substitution
+from app.models.candidates import Candidate, Substitution
 from app.storage.memory import STORE, CandidateStore
 from app.tools.candidates import create_candidate, load_host
 from app.tools.composition import COMPOSITION_TOOL
@@ -54,6 +54,34 @@ class CreateCandidateArgs(BaseModel):
     )
 
 
+class GetCandidateArgs(BaseModel):
+    candidate_id: str = Field(min_length=1, max_length=20, description="e.g. 'LL-0001'.")
+
+
+def candidate_summary(candidate: Candidate) -> dict[str, Any]:
+    """Compact view of a candidate for the model (the full record has the CIF and all sites)."""
+    t = candidate.transformation
+    return {
+        "candidate_id": candidate.candidate_id,
+        "parent_id": candidate.parent_id,
+        "formula": candidate.formula,
+        "host": t.host.model_dump(exclude_none=True),
+        "substitutions": [s.model_dump() for s in t.substitutions],
+        "supercell": t.supercell,
+        "substituted_sites": t.substituted_sites,
+        "assessment_status": candidate.assessment.status,
+        "checks": [
+            {"id": c.id, "status": c.status, "message": c.message}
+            for c in candidate.assessment.checks
+            if c.status != "not_applicable"
+        ],
+        "notes": candidate.assessment.notes,
+        "researcher_decisions": [
+            {"decision": d.decision, "reason": d.reason} for d in candidate.decisions
+        ],
+    }
+
+
 def build_registry(
     mp: MaterialsProjectClient | None,
     literature: OpenAlexClient,
@@ -85,21 +113,13 @@ def build_registry(
             store, mp, material_id=args.host_material_id, candidate_id=args.host_candidate_id
         )
         candidate = create_candidate(store, host, host_ref, args.substitutions, parent_id, mp)
-        assessment = candidate.assessment
-        return {
-            "candidate_id": candidate.candidate_id,
-            "parent_id": candidate.parent_id,
-            "formula": candidate.formula,
-            "supercell": candidate.transformation.supercell,
-            "substituted_sites": candidate.transformation.substituted_sites,
-            "assessment_status": assessment.status,
-            "checks": [
-                {"id": c.id, "status": c.status, "message": c.message}
-                for c in assessment.checks
-                if c.status != "not_applicable"
-            ],
-            "notes": assessment.notes,
-        }
+        return candidate_summary(candidate)
+
+    def get_candidate(args: GetCandidateArgs) -> dict[str, Any]:
+        stored = store.get(args.candidate_id)
+        if stored is None:
+            raise ToolError(f"No candidate {args.candidate_id}.")
+        return candidate_summary(stored[0])
 
     return ToolRegistry(
         [
@@ -114,6 +134,15 @@ def build_registry(
                 ),
                 args_model=CreateCandidateArgs,
                 handler=new_candidate,
+            ),
+            Tool(
+                name="get_candidate",
+                description=(
+                    "Read an existing candidate: its host, substitutions, structural checks, "
+                    "and the researcher's decisions and reasons."
+                ),
+                args_model=GetCandidateArgs,
+                handler=get_candidate,
             ),
             Tool(
                 name="search_materials",

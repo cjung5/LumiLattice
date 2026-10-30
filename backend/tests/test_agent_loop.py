@@ -73,3 +73,15 @@ def test_step_limit():
 
     with pytest.raises(AgentStepLimitReached):
         run_agent(client, "muse-spark-1.3", REGISTRY, "loop", max_steps=3)
+
+
+def test_follow_up_turn_continues_the_conversation():
+    fake = FakeResponses([], final_text="ok")
+    client = SimpleNamespace(responses=fake)
+
+    run_agent(client, "muse-spark-1.3", REGISTRY, "and now?", previous_response_id="resp_prev")
+
+    [request] = fake.requests
+    assert request["previous_response_id"] == "resp_prev"
+    assert request["input"] == [{"role": "user", "content": "and now?"}]  # no second system prompt
+    assert request["tools"]

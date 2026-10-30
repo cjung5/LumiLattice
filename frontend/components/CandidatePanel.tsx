@@ -4,7 +4,14 @@ import { useTranslations } from "next-intl";
 import { useMemo, useState, type FormEvent } from "react";
 import { AssessmentPanel } from "@/components/AssessmentPanel";
 import { CrystalViewer } from "@/components/CrystalViewer";
-import { createCandidate, type Candidate, type HostRef, type Substitution } from "@/lib/api";
+import { DecisionBar } from "@/components/DecisionBar";
+import {
+  createCandidate,
+  type Candidate,
+  type DecisionKind,
+  type HostRef,
+  type Substitution,
+} from "@/lib/api";
 
 const FRACTIONS: { label: string; value: number }[] = [
   { label: "100%", value: 1 },
@@ -19,21 +26,34 @@ type Props = {
   host: HostRef;
   hostLabel: string;
   hostElements: string[];
+  history: Candidate[];
+  current: Candidate | null;
+  agentBusy: boolean;
+  onCandidate: (candidate: Candidate) => void;
+  onSelect: (candidate: Candidate) => void;
+  onDecide: (kind: DecisionKind, reason: string) => Promise<void>;
 };
 
-// The parent gives this panel a `key` per host, so history resets when the host changes.
-export function CandidatePanel({ host, hostLabel, hostElements }: Props) {
+export function CandidatePanel({
+  host,
+  hostLabel,
+  hostElements,
+  history,
+  current,
+  agentBusy,
+  onCandidate,
+  onSelect,
+  onDecide,
+}: Props) {
   const t = useTranslations("Candidate");
   const [rows, setRows] = useState<Substitution[]>([
     { element_from: hostElements[0] ?? "", element_to: "", fraction: 1 / 2 },
   ]);
-  const [history, setHistory] = useState<Candidate[]>([]);
-  const [current, setCurrent] = useState<Candidate | null>(null);
   const [selectedCheck, setSelectedCheck] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const elementsOfCurrent = useMemo(
+  const elementOptions = useMemo(
     () => (current ? [...new Set(current.structure.sites.map((s) => s.species))] : hostElements),
     [current, hostElements],
   );
@@ -59,8 +79,7 @@ export function CandidatePanel({ host, hostLabel, hostElements }: Props) {
         from,
         rows.map((r) => ({ ...r, element_to: r.element_to.trim() })),
       );
-      setHistory((old) => [...old, candidate]);
-      setCurrent(candidate);
+      onCandidate(candidate);
       setSelectedCheck(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -90,7 +109,7 @@ export function CandidatePanel({ host, hostLabel, hostElements }: Props) {
               value={row.element_from}
               onChange={(e) => updateRow(index, { element_from: e.target.value })}
             >
-              {elementsOfCurrent.map((el) => (
+              {elementOptions.map((el) => (
                 <option key={el} value={el}>
                   {el}
                 </option>
@@ -137,7 +156,7 @@ export function CandidatePanel({ host, hostLabel, hostElements }: Props) {
               onClick={() =>
                 setRows((old) => [
                   ...old,
-                  { element_from: elementsOfCurrent[0] ?? "", element_to: "", fraction: 1 / 2 },
+                  { element_from: elementOptions[0] ?? "", element_to: "", fraction: 1 / 2 },
                 ])
               }
             >
@@ -194,37 +213,49 @@ export function CandidatePanel({ host, hostLabel, hostElements }: Props) {
             />
           </div>
           <p className="text-xs text-muted">{current.transformation.site_selection}</p>
+          <DecisionBar
+            key={current.candidate_id}
+            candidate={current}
+            busy={agentBusy}
+            onDecide={onDecide}
+          />
         </div>
       )}
 
-      {history.length > 1 && (
+      {history.length > 0 && (
         <div className="mt-4">
           <h3 className="text-sm font-medium">{t("history")}</h3>
           <ol className="mt-1 space-y-1 text-sm">
-            {history.map((c) => (
-              <li key={c.candidate_id}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCurrent(c);
-                    setSelectedCheck(null);
-                  }}
-                  className={`underline-offset-2 hover:underline ${
-                    c.candidate_id === current?.candidate_id ? "font-semibold" : ""
-                  }`}
-                >
-                  {c.candidate_id} {c.formula}
-                </button>
-                <span className="text-muted">
-                  {" "}
-                  ← {c.parent_id ?? c.transformation.host.reference} ·{" "}
-                  {c.transformation.substitutions
-                    .map((s) => `${s.element_from}→${s.element_to} ${+(s.fraction * 100).toFixed(1)}%`)
-                    .join(", ")}{" "}
-                  · {c.assessment.status}
-                </span>
-              </li>
-            ))}
+            {history.map((c) => {
+              const last = c.decisions.at(-1);
+              return (
+                <li key={c.candidate_id}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onSelect(c);
+                      setSelectedCheck(null);
+                    }}
+                    className={`underline-offset-2 hover:underline ${
+                      c.candidate_id === current?.candidate_id ? "font-semibold" : ""
+                    }`}
+                  >
+                    {c.candidate_id} {c.formula}
+                  </button>
+                  <span className="text-muted">
+                    {" "}
+                    ← {c.parent_id ?? c.transformation.host.reference} ·{" "}
+                    {c.transformation.substitutions
+                      .map((s) => `${s.element_from}→${s.element_to} ${+(s.fraction * 100).toFixed(1)}%`)
+                      .join(", ")}{" "}
+                    · {c.assessment.status}
+                  </span>
+                  {last && (
+                    <span className="ml-1 rounded border border-line px-1 text-xs">{last.decision}</span>
+                  )}
+                </li>
+              );
+            })}
           </ol>
         </div>
       )}

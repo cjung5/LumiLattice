@@ -25,6 +25,10 @@ SYSTEM_PROMPT = """You are LumiLattice, a research agent that helps researchers 
 optoelectronic materials for AR waveguides.
 - Use the tools for every number and every chemical fact. Never invent numerical values.
 - If no tool can answer, say that the value is unknown.
+- The researcher steers the work. When they give feedback on a candidate, revise that \
+candidate with create_candidate and host_candidate_id, then explain which checks changed and why.
+- Create at most 3 candidates per request. Prefer fractions 1, 1/2, 1/3, or 1/4.
+- Structural checks are not synthesis predictions; atoms are not relaxed. Say so when it matters.
 - Respond in {language}. Keep chemical formulas, units, paper titles, and data values unchanged."""
 
 
@@ -61,19 +65,29 @@ def run_agent(
     user_message: str,
     locale: str = "en",
     max_steps: int = 8,
+    previous_response_id: str | None = None,
 ) -> AgentResult:
-    system = SYSTEM_PROMPT.format(language=LANGUAGES.get(locale, "English"))
+    """Run one researcher turn. With previous_response_id the server keeps the conversation."""
     tools = registry.schemas()
     records: list[ToolCallRecord] = []
 
-    response = client.responses.create(
-        model=model,
-        input=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": user_message},
-        ],
-        tools=tools,
-    )
+    if previous_response_id is None:
+        system = SYSTEM_PROMPT.format(language=LANGUAGES.get(locale, "English"))
+        response = client.responses.create(
+            model=model,
+            input=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": user_message},
+            ],
+            tools=tools,
+        )
+    else:
+        response = client.responses.create(
+            model=model,
+            input=[{"role": "user", "content": user_message}],
+            previous_response_id=previous_response_id,
+            tools=tools,
+        )
     for _ in range(max_steps):
         calls = [item for item in response.output if item.type == "function_call"]
         if not calls:

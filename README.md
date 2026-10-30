@@ -50,9 +50,22 @@ A candidate replaces a fraction of one element's sites in a known host (or in an
 
 Each failed or warned check lists its atom indices. The 3D viewer highlights those atoms, because the CIF is written in P1 and the viewer's atom order matches the backend's site order. The overall result is one of `Structurally Plausible`, `Structural Concerns`, or `Insufficient Evidence` (no anion, so the ionic checks do not apply). These checks do **not** predict whether a material can be synthesized.
 
-## Free-tier API use
+## Researcher in the loop
 
-Materials Project and OpenAlex responses are cached for 24 hours. OpenAlex stops at 500 searches per day (half of its free daily budget) and stops early if the free budget left for the day falls below $0.05. Materials Project has a cap of 1,000 requests per day.
+The research agent sees the selected host and the current candidate, and it keeps the conversation (Responses API `previous_response_id`). For each candidate the researcher records a decision with a reason:
+
+| Decision | Effect |
+|---|---|
+| Accept / Reject | Recorded on the candidate |
+| Modify | Recorded, then the agent revises that candidate from the reason and compares the checks |
+| Explore alternatives | Recorded, then the agent tests up to 2 alternatives from the reason |
+
+Candidates from the form and from the agent share one version history (parent → child).
+
+## API usage limits
+
+- Materials Project and OpenAlex responses are cached for 24 hours. OpenAlex stops at 500 searches per day (half of its free daily budget) and stops early if the free budget left for the day falls below $0.05. Materials Project has a cap of 1,000 requests per day.
+- The public demo protects Meta Model API credits: at most 10 agent requests per client per 10 minutes and 200 per day, with at most 8 tool steps per request.
 
 ## Run locally
 
@@ -85,6 +98,16 @@ cd backend
 uv run pytest
 uv run python -m scripts.smoke_muse   # needs MODEL_API_KEY; Muse Spark calls a real tool
 ```
+
+## Deploy
+
+The backend runs on Render (Docker, free plan) and the frontend on Vercel.
+
+1. **Backend (Render):** New → Blueprint → select this repository. Render reads [`render.yaml`](render.yaml) and asks for `MODEL_API_KEY`, `MP_API_KEY`, and `OPENALEX_API_KEY`. When the deploy finishes, open `https://<service>.onrender.com/api/health`.
+2. **Frontend (Vercel):** New Project → import this repository → Root Directory `frontend`. Add the environment variable `NEXT_PUBLIC_API_BASE_URL` = the Render URL (no trailing slash), then deploy.
+3. **CORS:** `CORS_ORIGIN_REGEX` in `render.yaml` allows `https://lumilattice*.vercel.app`. If the Vercel project has another name, change it in the Render dashboard.
+
+Limits of the free plan: the backend sleeps after 15 minutes without requests (the next request takes about a minute), and candidates are kept in memory, so they are lost when it sleeps. Open the health URL a minute before a demo.
 
 ## Built during the hackathon
 

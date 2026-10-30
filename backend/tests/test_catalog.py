@@ -18,6 +18,7 @@ def test_registry_exposes_agent_tools():
     assert names == [
         "composition_info",
         "create_candidate",
+        "get_candidate",
         "search_materials",
         "search_literature",
     ]

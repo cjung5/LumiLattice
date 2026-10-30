@@ -1,9 +1,17 @@
+from datetime import UTC, datetime
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from app.api.deps import OptionalMPDep
 from app.api.materials import to_http
-from app.models.candidates import Candidate, StructuralAssessment, Substitution
+from app.models.candidates import (
+    Candidate,
+    Decision,
+    DecisionKind,
+    StructuralAssessment,
+    Substitution,
+)
 from app.storage.memory import STORE
 from app.tools.candidates import assess_host, create_candidate, load_host
 from app.tools.registry import ToolError
@@ -45,6 +53,22 @@ def get_candidate(candidate_id: str) -> Candidate:
     if stored is None:
         raise HTTPException(status_code=404, detail=f"No candidate {candidate_id}.")
     return stored[0]
+
+
+class DecisionRequest(BaseModel):
+    decision: DecisionKind
+    reason: str = Field(default="", max_length=2000)
+
+
+@router.post("/candidates/{candidate_id}/decisions")
+def add_decision(candidate_id: str, request: DecisionRequest) -> Candidate:
+    decision = Decision(
+        decision=request.decision, reason=request.reason.strip(), created_at=datetime.now(UTC)
+    )
+    updated = STORE.add_decision(candidate_id, decision)
+    if updated is None:
+        raise HTTPException(status_code=404, detail=f"No candidate {candidate_id}.")
+    return updated
 
 
 @router.post("/structures/assess")

@@ -54,3 +54,13 @@ def test_agent_without_key_returns_503():
         app.dependency_overrides.clear()
 
     assert response.status_code == 503
+
+
+def test_cors_regex_allows_vercel_previews():
+    import re
+
+    pattern = re.compile(r"https://lumilattice[a-z0-9-]*\.vercel\.app")
+    assert pattern.fullmatch("https://lumilattice.vercel.app")
+    assert pattern.fullmatch("https://lumilattice-git-main-cjung5.vercel.app")
+    assert not pattern.fullmatch("https://evil.example.com")
+    assert not pattern.fullmatch("https://lumilattice.vercel.app.evil.com")

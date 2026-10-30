@@ -4,10 +4,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api import candidates, materials, routes
 from app.config import get_settings
 
+settings = get_settings()
 app = FastAPI(title="LumiLattice API", version="0.1.0")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=get_settings().cors_origins,
+    allow_origins=settings.cors_origins,
+    allow_origin_regex=settings.cors_origin_regex,
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type"],
 )

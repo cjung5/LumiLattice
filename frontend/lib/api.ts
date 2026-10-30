@@ -115,6 +115,7 @@ export type Candidate = {
   };
   assessment: StructuralAssessment;
   created_at: string;
+  decisions: { decision: "accept" | "modify" | "reject" | "explore"; reason: string; created_at: string }[];
 };
 
 export type HostRef =
@@ -130,6 +131,7 @@ export type ToolCall = {
 
 export type AgentResult = {
   model: string;
+  candidate_ids: string[];
   output_text: string;
   response_id: string;
   tool_calls: ToolCall[];
@@ -184,6 +186,41 @@ export function assessHost(host: HostRef): Promise<StructuralAssessment> {
   return postJson<StructuralAssessment>("/api/structures/assess", host);
 }
 
-export function runAgent(message: string, locale: string): Promise<AgentResult> {
-  return postJson<AgentResult>("/api/agent/run", { message, locale });
+export type DecisionKind = "accept" | "modify" | "reject" | "explore";
+
+export type AgentContext = {
+  host_material_id?: string;
+  host_label?: string;
+  current_candidate_id?: string;
+  decision?: DecisionKind;
+  feedback?: string;
+};
+
+export function runAgent(
+  message: string,
+  locale: string,
+  previousResponseId: string | null,
+  context: AgentContext,
+): Promise<AgentResult> {
+  return postJson<AgentResult>("/api/agent/run", {
+    message,
+    locale,
+    previous_response_id: previousResponseId,
+    context,
+  });
+}
+
+export function getCandidate(candidateId: string): Promise<Candidate> {
+  return request<Candidate>(`/api/candidates/${encodeURIComponent(candidateId)}`);
+}
+
+export function addDecision(
+  candidateId: string,
+  decision: DecisionKind,
+  reason: string,
+): Promise<Candidate> {
+  return postJson<Candidate>(`/api/candidates/${encodeURIComponent(candidateId)}/decisions`, {
+    decision,
+    reason,
+  });
 }

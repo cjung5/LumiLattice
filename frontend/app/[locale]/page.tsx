@@ -1,7 +1,6 @@
 import { useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { use } from "react";
-import { AgentConsole } from "@/components/AgentConsole";
 import { BackendStatus } from "@/components/BackendStatus";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Workspace } from "@/components/Workspace";
@@ -23,7 +22,6 @@ export default function HomePage({ params }: { params: Promise<{ locale: string 
       </header>
       <BackendStatus />
       <Workspace />
-      <AgentConsole />
     </main>
   );
 }

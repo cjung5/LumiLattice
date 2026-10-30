@@ -30,6 +30,8 @@ class Settings(BaseSettings):
 
     # JSON list in the environment, e.g. CORS_ORIGINS='["https://lumilattice.vercel.app"]'
     cors_origins: list[str] = ["http://localhost:3000"]
+    # Also allow origins that fully match this pattern (e.g. Vercel preview URLs).
+    cors_origin_regex: str | None = None
 
 
 @lru_cache

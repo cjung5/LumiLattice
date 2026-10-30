@@ -61,17 +61,6 @@
     "warnings": "파서 경고",
     "baseline": "기준 구조 검사 (비교 기준)"
   },
-  "Literature": {
-    "title": "4. 문헌",
-    "hint": "OpenAlex의 논문 메타데이터입니다. LumiLattice는 논문 본문을 읽지 않습니다.",
-    "placeholder": "예: SrTiO3 refractive index",
-    "search": "검색",
-    "searching": "검색 중…",
-    "empty": "논문을 찾지 못했습니다.",
-    "citedBy": "피인용 {count}회",
-    "openAccess": "오픈 액세스",
-    "source": "출처: {source}"
-  },
   "Candidate": {
     "title": "3. 후보",
     "hint": "{host}에서 한 원소 자리의 일부를 다른 원소로 바꿉니다. 원자 위치는 기준 구조 그대로입니다(relaxation 없음).",
@@ -94,14 +83,40 @@
     "atoms": "원자 {count}개"
   },
   "Agent": {
-    "title": "에이전트 콘솔",
-    "hint": "에이전트는 모든 수치를 도구로 구해야 합니다. 도구 호출 기록은 답변 아래에 표시됩니다.",
-    "placeholder": "예: SrTiO3의 가능한 산화수는?",
+    "title": "4. 연구 에이전트 (Muse Spark)",
+    "hint": "기준 구조나 후보에 대해 물어보세요. 에이전트는 선택한 기준 구조와 후보를 보고, 모든 수치를 도구로 구하며, 이 대화를 기억합니다.",
+    "placeholder": "예: 밴드갭을 넓게 유지하는 SrTiO3 치환을 제안해 줘.",
     "run": "실행",
     "running": "실행 중…",
-    "answer": "답변",
     "toolCalls": "도구 호출 ({count})",
-    "noToolCalls": "도구 호출이 없습니다. 이 답변의 수치는 검증되지 않은 것으로 보세요.",
-    "error": "오류: {message}"
+    "noToolCalls": "이 답변에는 도구 호출이 없습니다. 답변의 수치는 검증되지 않은 것으로 보세요.",
+    "error": "오류: {message}",
+    "reset": "새 대화",
+    "created": "생성됨:"
+  },
+  "Decision": {
+    "title": "{id}에 대한 결정",
+    "placeholder": "이유는? 예: Ti4+만 유지, 독성 원소 제외, 더 큰 A자리 이온 시도",
+    "hint": "채택·거절은 기록만 하고, 수정·대안 탐색은 기록한 뒤 이유와 함께 에이전트에게 보냅니다.",
+    "accept": "채택",
+    "modify": "수정",
+    "explore": "대안 탐색",
+    "reject": "거절",
+    "acceptHint": "이 후보를 유지합니다.",
+    "modifyHint": "에이전트가 이유에 맞춰 이 후보를 수정합니다.",
+    "exploreHint": "에이전트가 이유에 맞춰 대안을 최대 2개 시험합니다.",
+    "rejectHint": "이 후보가 쓸모없다는 판단과 이유를 기록합니다.",
+    "last": "마지막 결정: {decision}"
+  },
+  "Literature": {
+    "title": "5. 문헌",
+    "hint": "OpenAlex의 논문 메타데이터입니다. LumiLattice는 논문 본문을 읽지 않습니다.",
+    "placeholder": "예: SrTiO3 refractive index",
+    "search": "검색",
+    "searching": "검색 중…",
+    "empty": "논문을 찾지 못했습니다.",
+    "citedBy": "피인용 {count}회",
+    "openAccess": "오픈 액세스",
+    "source": "출처: {source}"
   }
 }

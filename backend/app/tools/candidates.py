@@ -44,13 +44,19 @@ def load_host(
     return host, Provenance(source="CIF upload", reference=filename), None
 
 
-def end_member_formulas(host: Structure, subs: list[Substitution]) -> list[str]:
-    """Formulas with each substitution taken to 100 %, e.g. SrTiO3 + Ti->Zr gives SrZrO3."""
-    base = host.composition.reduced_composition.as_dict()
-    formulas = []
-    for sub in subs:
-        swapped = {(sub.element_to if el == sub.element_from else el): n for el, n in base.items()}
-        formulas.append(Composition(swapped).reduced_formula)
+def end_member_formulas(root_formula: str, lineage: list[Substitution]) -> list[str]:
+    """Root host with substitutions taken to 100 %: all of them together, then each alone.
+
+    SrTiO3 + Sr->La + Ti->Al gives LaAlO3 (together), LaTiO3, and SrAlO3.
+    """
+    base = Composition(root_formula).reduced_composition.as_dict()
+
+    def swap(subs: list[Substitution]) -> str:
+        mapping = {s.element_from: s.element_to for s in subs}
+        return Composition({mapping.get(el, el): n for el, n in base.items()}).reduced_formula
+
+    formulas = [swap(lineage)] if len({s.element_from for s in lineage}) > 1 else []
+    formulas += [swap([s]) for s in lineage]
     return list(dict.fromkeys(formulas))
 
 
@@ -80,9 +86,18 @@ def create_candidate(
     parent_id: str | None = None,
     mp: MaterialsProjectClient | None = None,
 ) -> Candidate:
+    parent = store.get(parent_id)[0] if parent_id else None
+    if parent:
+        root_formula = parent.transformation.root_formula
+        lineage = [*parent.transformation.lineage, *subs]
+    else:
+        root_formula, lineage = host.composition.reduced_formula, list(subs)
+
     structure, supercell, replaced = substitute(host, subs)
     focus = sorted(i for sites in replaced.values() for i in sites)
-    assessment = assess(structure, focus, end_member_formulas(host, subs), mp_analog_lookup(mp))
+    assessment = assess(
+        structure, focus, end_member_formulas(root_formula, lineage), mp_analog_lookup(mp)
+    )
 
     def build(candidate_id: str) -> tuple[Candidate, Structure]:
         payload = structure_payload(
@@ -99,6 +114,8 @@ def create_candidate(
                 substitutions=subs,
                 substituted_sites=replaced,
                 site_selection=SITE_SELECTION,
+                root_formula=root_formula,
+                lineage=lineage,
             ),
             assessment=assessment,
             created_at=datetime.now(UTC),

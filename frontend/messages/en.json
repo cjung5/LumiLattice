@@ -61,17 +61,6 @@
     "warnings": "Parser warnings",
     "baseline": "Host check (baseline)"
   },
-  "Literature": {
-    "title": "4. Literature",
-    "hint": "Paper metadata from OpenAlex. LumiLattice does not read full texts.",
-    "placeholder": "Example: SrTiO3 refractive index",
-    "search": "Search",
-    "searching": "Searching…",
-    "empty": "No papers found.",
-    "citedBy": "Cited by {count}",
-    "openAccess": "Open access",
-    "source": "Source: {source}"
-  },
   "Candidate": {
     "title": "3. Candidates",
     "hint": "Replace a fraction of one element's sites in {host}. Atom positions stay at the host positions (no relaxation).",
@@ -94,14 +83,40 @@
     "atoms": "{count} atoms"
   },
   "Agent": {
-    "title": "Agent console",
-    "hint": "The agent must use a tool for every number. Tool calls are shown below the answer.",
-    "placeholder": "Example: What are the likely oxidation states in SrTiO3?",
+    "title": "4. Research agent (Muse Spark)",
+    "hint": "Ask about the host or a candidate. The agent sees the selected host and candidate, uses tools for every number, and remembers this conversation.",
+    "placeholder": "Example: Suggest a substitution for SrTiO3 that keeps the band gap wide.",
     "run": "Run",
     "running": "Running…",
-    "answer": "Answer",
     "toolCalls": "Tool calls ({count})",
-    "noToolCalls": "No tool calls. Treat any numbers in this answer as unverified.",
-    "error": "Error: {message}"
+    "noToolCalls": "No tool calls in this answer. Treat any numbers in it as unverified.",
+    "error": "Error: {message}",
+    "reset": "New conversation",
+    "created": "Created:"
+  },
+  "Decision": {
+    "title": "Your decision on {id}",
+    "placeholder": "Why? e.g. keep Ti4+ only, avoid toxic elements, try a larger A-site ion",
+    "hint": "Accept and Reject are recorded. Modify and Explore are recorded and sent to the agent with your reason.",
+    "accept": "Accept",
+    "modify": "Modify",
+    "explore": "Explore alternatives",
+    "reject": "Reject",
+    "acceptHint": "Keep this candidate.",
+    "modifyHint": "The agent revises this candidate from your reason.",
+    "exploreHint": "The agent tests up to 2 alternatives from your reason.",
+    "rejectHint": "Record that this candidate is not useful, and why.",
+    "last": "Last decision: {decision}"
+  },
+  "Literature": {
+    "title": "5. Literature",
+    "hint": "Paper metadata from OpenAlex. LumiLattice does not read full texts.",
+    "placeholder": "Example: SrTiO3 refractive index",
+    "search": "Search",
+    "searching": "Searching…",
+    "empty": "No papers found.",
+    "citedBy": "Cited by {count}",
+    "openAccess": "Open access",
+    "source": "Source: {source}"
   }
 }

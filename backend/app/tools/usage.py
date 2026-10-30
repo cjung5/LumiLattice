@@ -85,5 +85,35 @@ OPENALEX_CAP = DailyCap("OpenAlex", limit=500)
 OPENALEX_MIN_REMAINING_USD = 0.05
 
 
+class RateLimiter:
+    """Sliding-window limit per client (e.g. IP address)."""
+
+    def __init__(self, max_requests: int, window_seconds: float):
+        self.max_requests = max_requests
+        self.window = window_seconds
+        self._hits: dict[str, list[float]] = {}
+        self._lock = Lock()
+
+    def allow(self, client: str) -> bool:
+        now = time.monotonic()
+        with self._lock:
+            hits = [t for t in self._hits.get(client, []) if now - t < self.window]
+            if len(hits) >= self.max_requests:
+                self._hits[client] = hits
+                return False
+            hits.append(now)
+            self._hits[client] = hits
+            return True
+
+    def reset(self) -> None:
+        with self._lock:
+            self._hits.clear()
+
+
+# The live demo is public, and Muse Spark calls spend Meta Model API credits.
+AGENT_CAP = DailyCap("Muse Spark agent", limit=200)
+AGENT_RATE = RateLimiter(max_requests=10, window_seconds=10 * 60)
+
+
 def cache_key(path: str, params: dict[str, Any]) -> str:
     return path + "?" + "&".join(f"{k}={params[k]}" for k in sorted(params) if k != "api_key")
