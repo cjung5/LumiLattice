@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 
 from app.models.evidence import Provenance
 from app.models.materials import StructurePayload
+from app.models.optical import OpticalEstimate
 
 CheckStatus = Literal["pass", "warn", "fail", "info", "not_applicable"]
 AssessmentStatus = Literal["Structurally Plausible", "Structural Concerns", "Insufficient Evidence"]
@@ -66,5 +67,6 @@ class Candidate(BaseModel):
     structure: StructurePayload
     transformation: Transformation
     assessment: StructuralAssessment
+    optical_estimate: OpticalEstimate | None = None
     created_at: datetime
     decisions: list[Decision] = []

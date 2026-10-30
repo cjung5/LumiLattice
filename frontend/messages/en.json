@@ -59,7 +59,8 @@
     "sites": "Sites in cell",
     "source": "Source",
     "warnings": "Parser warnings",
-    "baseline": "Host check (baseline)"
+    "baseline": "Host check (baseline)",
+    "optical": "Refractive index evidence (by formula)"
   },
   "Candidate": {
     "title": "3. Candidates",
@@ -76,7 +77,8 @@
     "reviseCurrent": "Revise {id}",
     "lineage": "from {parent} · supercell {supercell}",
     "viewerLegend": "Larger atoms: substituted sites. Pink atoms with labels: atoms in the selected check.",
-    "history": "Version history"
+    "history": "Version history",
+    "nEstimate": "Refractive index (end-member range)"
   },
   "Assessment": {
     "clickHint": "Select a check to show its atoms.",
@@ -107,6 +109,18 @@
     "exploreHint": "The agent tests up to 2 alternatives from your reason.",
     "rejectHint": "Record that this candidate is not useful, and why.",
     "last": "Last decision: {decision}"
+  },
+  "Optical": {
+    "loading": "Loading optical data…",
+    "bestN": "Best available n for {formula}:",
+    "measured": "Measured n, k ({count} sources, refractiveindex.info)",
+    "computed": "DFT gaps and n ({count} entries, JARVIS-DFT)",
+    "computedNote": "TBmBJ gaps are usually closer to measured gaps than OptB88vdW. n = sqrt(eps) is a long-wavelength value, not n(550 nm).",
+    "source": "Source",
+    "form": "Form",
+    "spacegroup": "Space group",
+    "gapOpt": "Gap OptB88vdW (eV)",
+    "gapMbj": "Gap TBmBJ (eV)"
   },
   "Literature": {
     "title": "5. Literature",

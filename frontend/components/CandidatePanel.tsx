@@ -5,6 +5,7 @@ import { useMemo, useState, type FormEvent } from "react";
 import { AssessmentPanel } from "@/components/AssessmentPanel";
 import { CrystalViewer } from "@/components/CrystalViewer";
 import { DecisionBar } from "@/components/DecisionBar";
+import { PropertyValueView } from "@/components/EvidenceTag";
 import {
   createCandidate,
   type Candidate,
@@ -212,6 +213,25 @@ export function CandidatePanel({
               onSelectCheck={setSelectedCheck}
             />
           </div>
+          {current.optical_estimate && (
+            <div className="rounded-md border border-line p-3 text-sm">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-medium">{t("nEstimate")}</span>
+                <PropertyValueView pv={current.optical_estimate.estimate} />
+              </div>
+              <ul className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+                {current.optical_estimate.end_members.map((m) => (
+                  <li key={m.formula} className="flex items-center gap-1">
+                    <span>{m.formula}:</span>
+                    <PropertyValueView pv={m.n} />
+                  </li>
+                ))}
+              </ul>
+              {current.optical_estimate.estimate.conditions && (
+                <p className="mt-1 text-xs text-muted">{current.optical_estimate.estimate.conditions}</p>
+              )}
+            </div>
+          )}
           <p className="text-xs text-muted">{current.transformation.site_selection}</p>
           <DecisionBar
             key={current.candidate_id}

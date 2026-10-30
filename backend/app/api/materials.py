@@ -4,7 +4,9 @@ from pydantic import BaseModel, Field
 from app.api.deps import LiteratureDep, MPDep
 from app.models.evidence import Provenance
 from app.models.materials import MaterialRecord, PaperEvidence, StructurePayload
+from app.models.optical import OpticalReference
 from app.tools.materials import parse_query
+from app.tools.reference_db import get_reference_db
 from app.tools.registry import ToolError, UpstreamError
 from app.tools.structures import parse_cif, structure_payload
 
@@ -15,6 +17,15 @@ def to_http(exc: ToolError) -> HTTPException:
     return HTTPException(
         status_code=502 if isinstance(exc, UpstreamError) else 400, detail=str(exc)
     )
+
+
+@router.get("/reference/{formula}")
+def optical_reference(formula: str) -> OpticalReference:
+    """Measured n (refractiveindex.info) and DFT gaps and n (JARVIS-DFT) for a formula."""
+    try:
+        return get_reference_db().reference(formula)
+    except ToolError as exc:
+        raise to_http(exc) from exc
 
 
 @router.get("/materials/search")

@@ -1,0 +1,145 @@
+import sqlite3
+
+import pytest
+
+from app.tools.reference_db import ReferenceDB, get_reference_db, normalize
+from app.tools.registry import ToolError
+from scripts.build_reference_db import SCHEMA
+
+
+@pytest.fixture
+def tiny_db(tmp_path) -> ReferenceDB:
+    """A small database with the real schema; values are test fixtures."""
+    path = tmp_path / "ref.sqlite"
+    db = sqlite3.connect(path)
+    db.executescript(SCHEMA)
+    db.executemany(
+        "INSERT INTO ri_pages (formula, book, page, title, category, direction, reference, doi, "
+        "comments, wl_min, wl_max, n_450, n_550, n_650, k_550, data_path) "
+        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        [
+            (
+                "AB",
+                "AB",
+                "x-o",
+                "X o",
+                "Crystal",
+                "o",
+                "Ref X",
+                "10.1/x",
+                None,
+                0.4,
+                1.0,
+                2.1,
+                2.0,
+                1.9,
+                None,
+                "p",
+            ),
+            (
+                "AB",
+                "AB",
+                "x-e",
+                "X e",
+                "Crystal",
+                "e",
+                "Ref X",
+                "10.1/x",
+                None,
+                0.4,
+                1.0,
+                2.3,
+                2.2,
+                2.1,
+                None,
+                "p",
+            ),
+            (
+                "AB",
+                "AB",
+                "film",
+                "Film",
+                "Thin film",
+                None,
+                "Ref F",
+                None,
+                None,
+                0.4,
+                1.0,
+                1.8,
+                1.7,
+                1.6,
+                None,
+                "p",
+            ),
+        ],
+    )
+    db.executemany(
+        "INSERT INTO jarvis VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+        [
+            ("JVASP-1", "AB", "mp-1", 1, "P1", 1, 2.0, 3.0, None, 6.25, 4.0),  # n_mbj = 2.0
+            ("JVASP-2", "CD", None, 1, "P1", 0, 1.0, None, None, 9.0, None),  # OptB88 only
+        ],
+    )
+    db.commit()
+    db.close()
+    return ReferenceDB(path)
+
+
+def test_best_n_prefers_measured_bulk(tiny_db):
+    best = tiny_db.best_n("AB")
+
+    assert best.status == "Experimental"
+    assert best.value == pytest.approx(2.1)  # median of 2.0 (o) and 2.2 (e); thin film ignored
+    assert "median of 2 sources" in best.conditions
+
+
+def test_best_n_falls_back_to_dft(tiny_db):
+    best = tiny_db.best_n("CD")
+
+    assert best.status == "DFT-computed"
+    assert best.value == pytest.approx(3.0)  # sqrt(9.0), OptB88vdW
+    assert best.provenance.method == "OptB88vdW"
+    assert "not n(550 nm)" in best.conditions
+
+
+def test_unknown_formula(tiny_db):
+    assert tiny_db.best_n("EF").status == "Unknown"
+
+
+def test_estimate_range_is_heuristic(tiny_db):
+    estimate = tiny_db.estimate(["AB", "CD"])
+
+    assert estimate.estimate.status == "Heuristic"
+    assert estimate.estimate.value_range == (2.1, 3.0)
+    assert estimate.estimate.value is None  # a range only, never a single number
+    assert [m.n.status for m in estimate.end_members] == ["Experimental", "DFT-computed"]
+
+
+def test_estimate_needs_two_values(tiny_db):
+    assert tiny_db.estimate(["AB", "EF"]).estimate.status == "Unknown"
+
+
+def test_missing_database_is_safe(tmp_path):
+    db = ReferenceDB(tmp_path / "missing.sqlite")
+
+    assert db.available is False
+    assert db.best_n("SrTiO3").status == "Unknown"
+
+
+def test_normalize():
+    assert normalize("Ti2O4") == "TiO2"
+    with pytest.raises(ToolError):
+        normalize("Xx2")
+
+
+def test_bundled_database_srtio3():
+    db = get_reference_db()
+    if not db.available:
+        pytest.skip("reference.sqlite is not built")
+    ref = db.reference("SrTiO3")
+
+    assert ref.best_n.status == "Experimental"
+    assert ref.best_n.value == pytest.approx(2.432, abs=0.01)  # Bond (1965), 550 nm
+    assert any(m.doi == "10.1063/1.1703106" for m in ref.measured)
+    assert any(c.mp_id == "mp-5229" for c in ref.computed)

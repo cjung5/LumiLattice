@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { AssessmentPanel } from "@/components/AssessmentPanel";
 import { CrystalViewer } from "@/components/CrystalViewer";
+import { OpticalPanel } from "@/components/OpticalPanel";
 import type { MaterialRecord, StructuralAssessment, StructurePayload } from "@/lib/api";
 
 type Props = {
@@ -76,6 +77,13 @@ export function StructurePanel({ structure, record, assessment, loading, error }
               </div>
             )}
           </dl>
+        </div>
+      )}
+
+      {structure && !loading && (
+        <div className="mt-4">
+          <h3 className="mb-1 text-sm font-medium">{t("optical")}</h3>
+          <OpticalPanel key={structure.formula} formula={structure.formula} />
         </div>
       )}
 

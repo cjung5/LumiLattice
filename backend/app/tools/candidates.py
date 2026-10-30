@@ -8,6 +8,7 @@ from app.models.candidates import Candidate, StructuralAssessment, Substitution,
 from app.models.evidence import Provenance
 from app.storage.memory import CandidateStore
 from app.tools.materials import MaterialsProjectClient
+from app.tools.reference_db import ReferenceDB, get_reference_db
 from app.tools.registry import ToolError, UpstreamError
 from app.tools.structures import parse_cif_structure, structure_payload
 from app.tools.substitution import SITE_SELECTION, substitute
@@ -60,6 +61,15 @@ def end_member_formulas(root_formula: str, lineage: list[Substitution]) -> list[
     return list(dict.fromkeys(formulas))
 
 
+def solid_solution_ends(root_formula: str, lineage: list[Substitution]) -> list[str]:
+    """Compounds a candidate lies between: SrTiO3 + Sr->La + Ti->Al lies between SrTiO3 and
+    LaAlO3; SrTiO3 + Ti->Zr + Ti->Hf lies among SrTiO3, SrZrO3, and SrHfO3."""
+    ends = end_member_formulas(root_formula, lineage)
+    if len({s.element_from for s in lineage}) > 1:
+        ends = ends[:1]
+    return [root_formula, *ends]
+
+
 def mp_analog_lookup(mp: MaterialsProjectClient | None) -> AnalogLookup | None:
     if mp is None:
         return None
@@ -85,7 +95,9 @@ def create_candidate(
     subs: list[Substitution],
     parent_id: str | None = None,
     mp: MaterialsProjectClient | None = None,
+    reference: ReferenceDB | None = None,
 ) -> Candidate:
+    reference = reference or get_reference_db()
     parent = store.get(parent_id)[0] if parent_id else None
     if parent:
         root_formula = parent.transformation.root_formula
@@ -98,6 +110,7 @@ def create_candidate(
     assessment = assess(
         structure, focus, end_member_formulas(root_formula, lineage), mp_analog_lookup(mp)
     )
+    optical = reference.estimate(solid_solution_ends(root_formula, lineage))
 
     def build(candidate_id: str) -> tuple[Candidate, Structure]:
         payload = structure_payload(
@@ -118,6 +131,7 @@ def create_candidate(
                 lineage=lineage,
             ),
             assessment=assessment,
+            optical_estimate=optical,
             created_at=datetime.now(UTC),
         )
         return candidate, structure

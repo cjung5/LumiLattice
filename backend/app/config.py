@@ -24,6 +24,9 @@ class Settings(BaseSettings):
 
     # Materials Project (free key: https://next-gen.materialsproject.org/api)
     mp_api_key: SecretStr | None = None
+    # Built by scripts/build_reference_db.py (JARVIS-DFT + refractiveindex.info subset).
+    reference_db_path: Path = BACKEND_DIR / "data" / "reference.sqlite"
+
     # OpenAlex works without a key but then shares a small daily budget per IP address.
     # A free key (https://openalex.org/settings/api) gives the app its own budget.
     openalex_api_key: SecretStr | None = None

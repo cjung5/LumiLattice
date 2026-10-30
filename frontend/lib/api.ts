@@ -76,6 +76,45 @@ export type PaperEvidence = {
   provenance: Provenance;
 };
 
+export type MeasuredIndex = {
+  title: string;
+  category: string;
+  direction: string | null;
+  n_450: number | null;
+  n_550: number | null;
+  n_650: number | null;
+  k_550: number | null;
+  wavelength_range_um: [number, number];
+  reference: string;
+  doi: string | null;
+  url: string;
+};
+
+export type ComputedOptics = {
+  jid: string;
+  mp_id: string | null;
+  spacegroup: string | null;
+  has_icsd: boolean;
+  band_gap_optb88vdw: number | null;
+  band_gap_mbj: number | null;
+  n_optb88vdw: number | null;
+  n_mbj: number | null;
+  url: string;
+};
+
+export type OpticalReference = {
+  formula: string;
+  best_n: PropertyValue;
+  measured: MeasuredIndex[];
+  computed: ComputedOptics[];
+  note: string;
+};
+
+export type OpticalEstimate = {
+  estimate: PropertyValue;
+  end_members: { formula: string; n: PropertyValue }[];
+};
+
 export type Substitution = { element_from: string; element_to: string; fraction: number };
 
 export type CheckStatus = "pass" | "warn" | "fail" | "info" | "not_applicable";
@@ -114,6 +153,7 @@ export type Candidate = {
     site_selection: string;
   };
   assessment: StructuralAssessment;
+  optical_estimate: OpticalEstimate | null;
   created_at: string;
   decisions: { decision: "accept" | "modify" | "reject" | "explore"; reason: string; created_at: string }[];
 };
@@ -172,6 +212,10 @@ export function getStructure(materialId: string): Promise<StructurePayload> {
 
 export function uploadCif(filename: string, cif: string): Promise<StructurePayload> {
   return postJson<StructurePayload>("/api/structures/cif", { filename, cif });
+}
+
+export function getOpticalReference(formula: string): Promise<OpticalReference> {
+  return request<OpticalReference>(`/api/reference/${encodeURIComponent(formula)}`);
 }
 
 export function searchLiterature(query: string): Promise<PaperEvidence[]> {

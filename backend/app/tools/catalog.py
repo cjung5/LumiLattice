@@ -10,6 +10,7 @@ from app.tools.candidates import create_candidate, load_host
 from app.tools.composition import COMPOSITION_TOOL
 from app.tools.literature import OpenAlexClient
 from app.tools.materials import MaterialsProjectClient
+from app.tools.reference_db import get_reference_db
 from app.tools.registry import Tool, ToolError, ToolRegistry
 
 
@@ -54,6 +55,10 @@ class CreateCandidateArgs(BaseModel):
     )
 
 
+class OpticalReferenceArgs(BaseModel):
+    formula: str = Field(min_length=1, max_length=60, description="Formula, e.g. 'SrTiO3'.")
+
+
 class GetCandidateArgs(BaseModel):
     candidate_id: str = Field(min_length=1, max_length=20, description="e.g. 'LL-0001'.")
 
@@ -76,6 +81,11 @@ def candidate_summary(candidate: Candidate) -> dict[str, Any]:
             if c.status != "not_applicable"
         ],
         "notes": candidate.assessment.notes,
+        "refractive_index_estimate": (
+            candidate.optical_estimate.model_dump(exclude_none=True)
+            if candidate.optical_estimate
+            else None
+        ),
         "researcher_decisions": [
             {"decision": d.decision, "reason": d.reason} for d in candidate.decisions
         ],
@@ -115,6 +125,20 @@ def build_registry(
         candidate = create_candidate(store, host, host_ref, args.substitutions, parent_id, mp)
         return candidate_summary(candidate)
 
+    def optical_reference(args: OpticalReferenceArgs) -> dict[str, Any]:
+        ref = get_reference_db().reference(args.formula)
+        return {
+            "formula": ref.formula,
+            "best_n": ref.best_n.model_dump(exclude_none=True),
+            "measured": [
+                m.model_dump(exclude={"url"}, exclude_none=True) for m in ref.measured[:6]
+            ],
+            "computed": [
+                c.model_dump(exclude={"url"}, exclude_none=True) for c in ref.computed[:5]
+            ],
+            "note": ref.note,
+        }
+
     def get_candidate(args: GetCandidateArgs) -> dict[str, Any]:
         stored = store.get(args.candidate_id)
         if stored is None:
@@ -143,6 +167,16 @@ def build_registry(
                 ),
                 args_model=GetCandidateArgs,
                 handler=get_candidate,
+            ),
+            Tool(
+                name="get_optical_reference",
+                description=(
+                    "Refractive index evidence for a formula: measured n at 450/550/650 nm "
+                    "(refractiveindex.info, with sources) and DFT band gaps and n from JARVIS-DFT "
+                    "(OptB88vdW and TBmBJ). Matched by formula, so the polymorph can differ."
+                ),
+                args_model=OpticalReferenceArgs,
+                handler=optical_reference,
             ),
             Tool(
                 name="search_materials",

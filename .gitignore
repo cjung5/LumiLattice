@@ -33,6 +33,9 @@ data/raw/
 *.db
 *.sqlite
 *.sqlite3
+# Public reference data (JARVIS-DFT CC BY 4.0 + refractiveindex.info CC0), built by
+# backend/scripts/build_reference_db.py; the deployed backend needs it.
+!backend/data/reference.sqlite
 
 # OS / editor
 .DS_Store

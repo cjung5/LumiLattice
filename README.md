@@ -31,8 +31,31 @@ Built for the Meta Global AI Developer Hackathon (Oct 27 – Nov 4, 2026), track
 | `search_materials` | Materials Project | Known structures with DFT band gap, energy above hull, and refractive index, each tagged |
 | `search_literature` | OpenAlex | Paper metadata (title, authors, year, venue, DOI, open-access link) |
 | `create_candidate` | LumiLattice | Substitutes elements on a host or on an earlier candidate, then runs the structural checks below |
+| `get_candidate` | LumiLattice | A candidate's substitutions, checks, n range, and the researcher's decisions |
+| `get_optical_reference` | refractiveindex.info, JARVIS-DFT | Measured n at 450/550/650 nm with sources; DFT band gaps and n (OptB88vdW, TBmBJ) |
 
 When a source is not available, the tool returns an error and the agent reports the value as unknown instead of guessing.
+
+## Refractive index evidence
+
+Every n value carries one tag, shown with its own color, icon, and text:
+
+| Tag | Where it comes from |
+|---|---|
+| `Experimental` | refractiveindex.info, measured n at 550 nm (bulk or crystal pages; thin films are listed but not used for the best value) |
+| `DFT-computed` | JARVIS-DFT n = √ε from DFT linear optics (TBmBJ preferred, then OptB88vdW), or Materials Project n. This is a long-wavelength value, not n(550 nm) |
+| `Heuristic` | A candidate's **range** spanned by its end members, e.g. SrTiO3 → LaAlO3 for Sr→La + Ti→Al. Never a single number, and not a prediction |
+| `Unknown` | No data |
+
+The reference data is matched by formula, so the polymorph can differ from the selected structure; the app says so next to each value.
+
+The bundled `backend/data/reference.sqlite` (9 MB) holds a subset of JARVIS-DFT 3D (2025-09-24, 93,902 entries) and the refractiveindex.info database (release 2026-05-24, 868 measured pages with n in the visible range; "Models and simulations" pages are excluded). To rebuild it:
+
+```bash
+cd backend
+uv run python -m scripts.download_data       # pinned versions, SHA-256 checked; about 62 MB into data/raw/
+uv run python -m scripts.build_reference_db
+```
 
 ## Candidates and structural checks
 
@@ -123,8 +146,10 @@ In use:
 - **Shannon ionic radii** — R. D. Shannon, *Acta Cryst.* A32, 751 (1976), as tabulated in pymatgen.
 - **Bond valence parameters** — M. O'Keeffe and N. E. Brese, *J. Am. Chem. Soc.* 113, 3226 (1991), as tabulated in pymatgen.
 - **3Dmol.js** — 3D viewer, BSD-3-Clause license.
+- **JARVIS-DFT** — 3D dataset version 2025-09-24, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), [doi:10.6084/m9.figshare.6815699](https://doi.org/10.6084/m9.figshare.6815699). K. Choudhary et al., *npj Comput. Mater.* 6, 173 (2020); optics: K. Choudhary et al., *Sci. Data* 5, 180082 (2018).
+- **refractiveindex.info database** — release 2026-05-24, [CC0](https://creativecommons.org/publicdomain/zero/1.0/). M. N. Polyanskiy, *Sci. Data* 11, 94 (2024). Each measured value links to its page and original reference.
 
-Planned: JARVIS-DFT (CC BY 4.0), refractiveindex.info (CC0), Crystallography Open Database, Crossref, and arXiv.
+Planned: Crystallography Open Database, Crossref, and arXiv.
 
 ## License
 

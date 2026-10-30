@@ -59,7 +59,8 @@
     "sites": "셀 안의 원자 수",
     "source": "출처",
     "warnings": "파서 경고",
-    "baseline": "기준 구조 검사 (비교 기준)"
+    "baseline": "기준 구조 검사 (비교 기준)",
+    "optical": "굴절률 근거 (화학식 기준)"
   },
   "Candidate": {
     "title": "3. 후보",
@@ -76,7 +77,8 @@
     "reviseCurrent": "{id} 수정",
     "lineage": "출발: {parent} · 슈퍼셀 {supercell}",
     "viewerLegend": "큰 원자: 치환된 자리. 분홍색 원자와 라벨: 선택한 검사에 해당하는 원자.",
-    "history": "버전 기록"
+    "history": "버전 기록",
+    "nEstimate": "굴절률 (끝 조성 범위)"
   },
   "Assessment": {
     "clickHint": "검사 항목을 누르면 해당 원자가 표시됩니다.",
@@ -107,6 +109,18 @@
     "exploreHint": "에이전트가 이유에 맞춰 대안을 최대 2개 시험합니다.",
     "rejectHint": "이 후보가 쓸모없다는 판단과 이유를 기록합니다.",
     "last": "마지막 결정: {decision}"
+  },
+  "Optical": {
+    "loading": "광학 데이터를 불러오는 중…",
+    "bestN": "{formula}의 가장 신뢰할 수 있는 n:",
+    "measured": "측정 n, k (출처 {count}개, refractiveindex.info)",
+    "computed": "DFT 밴드갭과 n (항목 {count}개, JARVIS-DFT)",
+    "computedNote": "TBmBJ 밴드갭은 보통 OptB88vdW보다 측정값에 가깝습니다. n = sqrt(eps)는 장파장 값이며 n(550 nm)이 아닙니다.",
+    "source": "출처",
+    "form": "형태",
+    "spacegroup": "공간군",
+    "gapOpt": "밴드갭 OptB88vdW (eV)",
+    "gapMbj": "밴드갭 TBmBJ (eV)"
   },
   "Literature": {
     "title": "5. 문헌",

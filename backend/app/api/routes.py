@@ -11,6 +11,7 @@ from app.api.deps import LiteratureDep, OptionalMPDep, SettingsDep
 from app.models.candidates import DecisionKind
 from app.storage.memory import STORE
 from app.tools.catalog import build_registry
+from app.tools.reference_db import get_reference_db
 from app.tools.registry import UpstreamError
 from app.tools.usage import AGENT_CAP, AGENT_RATE
 
@@ -25,6 +26,7 @@ def health(settings: SettingsDep) -> dict[str, Any]:
         "model_api_key_configured": settings.model_api_key is not None,
         "materials_project_configured": settings.mp_api_key is not None,
         "openalex_api_key_configured": settings.openalex_api_key is not None,
+        "reference_db_available": get_reference_db().available,
     }
 
 
