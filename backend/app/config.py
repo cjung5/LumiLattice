@@ -24,6 +24,9 @@ class Settings(BaseSettings):
 
     # Materials Project (free key: https://next-gen.materialsproject.org/api)
     mp_api_key: SecretStr | None = None
+    # Hosted Postgres for candidates (e.g. Neon or Supabase). Unset: kept in memory only.
+    database_url: SecretStr | None = None
+
     # Built by scripts/build_reference_db.py (JARVIS-DFT + refractiveindex.info subset).
     reference_db_path: Path = BACKEND_DIR / "data" / "reference.sqlite"
 

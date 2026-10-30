@@ -1,0 +1,163 @@
+{
+  "Agent": {
+    "created": "创建时间：",
+    "error": "错误：{message}",
+    "hint": "咨询主体或候选材料相关问题。智能体可见所选主体和候选材料，所有数据均通过工具获取，并记住本次对话。",
+    "noToolCalls": "此回答未调用工具，其中的数字视为未经验证。",
+    "placeholder": "示例：为 SrTiO3 推荐一种保持宽带隙的取代方案。",
+    "reset": "新建对话",
+    "run": "运行",
+    "running": "运行中…",
+    "title": "4. 研究智能体 (Muse Spark)",
+    "toolCalls": "工具调用 ({count})"
+  },
+  "Assessment": {
+    "atoms": "{count} 个原子",
+    "clickHint": "选择一项校验以显示其原子。"
+  },
+  "Candidate": {
+    "addRow": "+ 共取代",
+    "fraction": "替换比例",
+    "from": "待替换元素",
+    "generateFromHost": "由主体生成",
+    "generating": "生成中…",
+    "hint": "替换 {host} 中某一元素部分格点。原子位置保持主体位置不变（不弛豫）。",
+    "history": "版本历史",
+    "lineage": "来自 {parent} · 超胞 {supercell}",
+    "nEstimate": "折射率（端元范围）",
+    "ofSites": "占 {element} 格点比例",
+    "remove": "删除",
+    "reviseCurrent": "修订 {id}",
+    "title": "3. 候选材料",
+    "to": "新元素",
+    "toPlaceholder": "例如 Zr",
+    "viewerLegend": "大球原子：取代位点。粉色带标签原子：所选校验中的原子。"
+  },
+  "Decision": {
+    "accept": "接受",
+    "acceptHint": "保留此候选材料。",
+    "explore": "探索替代方案",
+    "exploreHint": "智能体将根据您的原因测试最多 2 个替代方案。",
+    "hint": "接受与拒绝将被记录。修改与探索将连同您的原因一起记录并发送给智能体。",
+    "last": "上次决策：{decision}",
+    "modify": "修改",
+    "modifyHint": "智能体将根据您的原因修订此候选材料。",
+    "placeholder": "原因？例如仅保留 Ti4+、避免有毒元素、尝试更大的 A 位离子",
+    "reject": "拒绝",
+    "rejectHint": "记录此候选材料不可用及原因。",
+    "title": "您对 {id} 的决策"
+  },
+  "Evidence": {
+    "dftComputed": "由密度泛函理论（DFT）计算得出，非测量值。",
+    "experimental": "来自实验的测量值。",
+    "heuristic": "根据相似材料估算的范围，非预测值。",
+    "unknown": "暂无可靠数值。"
+  },
+  "Home": {
+    "intro": "与 Muse Spark 一起探索用于 AR 波导的候选材料。每个数据均来自数据库或计算，并标注来源。",
+    "tagline": "用于光电材料发现的协作式 AI 科学家"
+  },
+  "Host": {
+    "codCredit": "结构来自 Crystallography Open Database (CC0)，请致谢原作者。",
+    "columns": {
+      "bandGap": "带隙",
+      "eHull": "E above hull",
+      "formula": "化学式",
+      "n": "n",
+      "reference": "参考文献",
+      "spacegroup": "空间群",
+      "status": "状态"
+    },
+    "experimental": "实验观测 (ICSD)",
+    "hint": "按化学式（SrTiO3、*TiO3）、元素（Sr,Ti,O）或 ID（mp-5229）在 Materials Project 中搜索，或上传自己的 CIF。",
+    "hintCod": "按化学式在 Crystallography Open Database 中搜索实测晶体结构 (CC0)，请致谢原作者。",
+    "loadingCod": "正在从 COD 加载结构…",
+    "noResults": "未找到材料。",
+    "placeholder": "SrTiO3、Sr,Ti,O 或 mp-5229",
+    "placeholderCod": "化学式，如 SrTiO3",
+    "search": "搜索",
+    "searching": "搜索中…",
+    "sourceCod": "COD (实验)",
+    "sourceMp": "Materials Project (DFT)",
+    "stable": "稳定",
+    "theoretical": "理论预测",
+    "title": "1. 选择主体结构",
+    "upload": "上传 CIF",
+    "uploading": "读取中…"
+  },
+  "Language": {
+    "label": "语言",
+    "machineTranslated": "由 Muse Spark 机器翻译，部分术语可能不准确。"
+  },
+  "Literature": {
+    "citedBy": "被引用 {count} 次",
+    "empty": "未找到论文。",
+    "hint": "论文元数据来自 OpenAlex、Crossref 和 arXiv，按 DOI 合并。LumiLattice 不读取全文。",
+    "openAccess": "开放获取",
+    "placeholder": "示例：SrTiO3 折射率",
+    "search": "搜索",
+    "searching": "搜索中…",
+    "source": "来源：{source}",
+    "sourceFailed": "{source}：{reason}",
+    "title": "5. 文献"
+  },
+  "Metadata": {
+    "description": "用于光电材料发现的协作式 AI 科学家。",
+    "title": "LumiLattice"
+  },
+  "Optical": {
+    "bestN": "{formula} 的最佳可用 n：",
+    "computed": "DFT 带隙与 n（{count} 条记录，JARVIS-DFT）",
+    "computedNote": "TBmBJ 带隙通常比 OptB88vdW 更接近实测值。n = sqrt(eps) 为长波极限值，而非 n(550 nm)。",
+    "form": "形态",
+    "gapMbj": "带隙 TBmBJ (eV)",
+    "gapOpt": "带隙 OptB88vdW (eV)",
+    "loading": "正在加载光学数据…",
+    "measured": "实测 n、k（{count} 个来源，refractiveindex.info）",
+    "source": "来源",
+    "spacegroup": "空间群"
+  },
+  "Publish": {
+    "anonymous": "匿名",
+    "byName": "具名署名",
+    "cancel": "取消",
+    "confirm": "发布",
+    "consent": "我选择将 {id} 公开，采用上述署名方式。",
+    "credit": "署名",
+    "creditAnonymous": "署名：匿名",
+    "creditName": "署名：{name}",
+    "demoNote": "候选材料默认私密。在此版本中，发布仅记录您的选择与署名，不会向 LumiLattice 之外发送任何内容。",
+    "makePrivate": "设为私密",
+    "namePlaceholder": "姓名或 ORCID",
+    "private": "私密",
+    "publish": "发布…",
+    "published": "已发布"
+  },
+  "Status": {
+    "checking": "检查中…",
+    "keyConfigured": "Meta Model API 密钥已配置",
+    "keyMissing": "缺少 Meta Model API 密钥。请将 MODEL_API_KEY 添加到 backend/.env。",
+    "model": "模型",
+    "mpConfigured": "Materials Project 密钥已配置",
+    "mpMissing": "缺少 Materials Project 密钥。请将 MP_API_KEY 添加到 backend/.env。",
+    "offline": "离线。请在 {url} 启动后端。",
+    "online": "在线",
+    "openAlexConfigured": "OpenAlex 密钥已配置",
+    "openAlexMissing": "未设置 OpenAlex 密钥：文献搜索使用少量共享每日额度。",
+    "storeMemory": "候选材料暂存于内存（重启后丢失）。设置 DATABASE_URL 以保存。",
+    "storePostgres": "候选材料保存在 Postgres 中",
+    "title": "后端"
+  },
+  "Structure": {
+    "baseline": "主体校验（基线）",
+    "empty": "选择一种材料或上传 CIF 以查看其结构。",
+    "lattice": "晶格",
+    "loading": "正在加载结构…",
+    "optical": "折射率证据（按化学式）",
+    "sites": "单胞原子数",
+    "source": "来源",
+    "spacegroup": "空间群",
+    "title": "2. 结构",
+    "warnings": "解析警告"
+  }
+}

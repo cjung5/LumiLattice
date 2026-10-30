@@ -27,6 +27,8 @@ MAX_AUTHORS = 3
 
 
 class OpenAlexClient:
+    name = "OpenAlex"
+
     def __init__(
         self,
         api_key: str | None = None,
@@ -94,4 +96,5 @@ def to_evidence(work: dict[str, Any]) -> PaperEvidence:
         open_access=bool(open_access.get("is_oa")),
         open_access_url=open_access.get("oa_url"),
         provenance=Provenance(source="OpenAlex", reference=work.get("id")),
+        sources=["OpenAlex"],
     )

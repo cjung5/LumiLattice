@@ -1,0 +1,163 @@
+{
+  "Agent": {
+    "created": "Erstellt:",
+    "error": "Fehler: {message}",
+    "hint": "Zum Host oder Kandidaten fragen. Der Agent sieht den gewählten Host und Kandidaten, nutzt Tools für jede Zahl und merkt sich diese Unterhaltung.",
+    "noToolCalls": "Keine Tool-Aufrufe in dieser Antwort. Zahlen darin als unbestätigt behandeln.",
+    "placeholder": "Beispiel: Substitution für SrTiO3 vorschlagen, die die Bandlücke groß hält.",
+    "reset": "Neue Unterhaltung",
+    "run": "Ausführen",
+    "running": "Läuft…",
+    "title": "4. Forschungsagent (Muse Spark)",
+    "toolCalls": "Tool-Aufrufe ({count})"
+  },
+  "Assessment": {
+    "atoms": "{count} Atome",
+    "clickHint": "Prüfung wählen, um ihre Atome zu zeigen."
+  },
+  "Candidate": {
+    "addRow": "+ Co-Substitution",
+    "fraction": "Anteil",
+    "from": "Zu ersetzendes Element",
+    "generateFromHost": "Aus Host erzeugen",
+    "generating": "Wird erzeugt…",
+    "hint": "Einen Anteil der Plätze eines Elements in {host} ersetzen. Atompositionen bleiben auf den Host-Positionen (keine Relaxation).",
+    "history": "Versionsverlauf",
+    "lineage": "aus {parent} · Superzelle {supercell}",
+    "nEstimate": "Brechungsindex (Endglied-Bereich)",
+    "ofSites": "der {element}-Plätze",
+    "remove": "Entfernen",
+    "reviseCurrent": "{id} überarbeiten",
+    "title": "3. Kandidaten",
+    "to": "Neues Element",
+    "toPlaceholder": "z. B. Zr",
+    "viewerLegend": "Größere Atome: substituierte Plätze. Rosa Atome mit Beschriftung: Atome in der gewählten Prüfung."
+  },
+  "Decision": {
+    "accept": "Akzeptieren",
+    "acceptHint": "Diesen Kandidaten behalten.",
+    "explore": "Alternativen erkunden",
+    "exploreHint": "Der Agent testet bis zu 2 Alternativen anhand Ihrer Begründung.",
+    "hint": "Akzeptieren und Ablehnen werden gespeichert. Ändern und Alternativen werden gespeichert und mit Ihrer Begründung an den Agenten gesendet.",
+    "last": "Letzte Entscheidung: {decision}",
+    "modify": "Ändern",
+    "modifyHint": "Der Agent überarbeitet diesen Kandidaten anhand Ihrer Begründung.",
+    "placeholder": "Warum? z. B. nur Ti4+ behalten, toxische Elemente vermeiden, größeres A-Platz-Ion versuchen",
+    "reject": "Ablehnen",
+    "rejectHint": "Festhalten, dass dieser Kandidat nicht geeignet ist, und warum.",
+    "title": "Ihre Entscheidung zu {id}"
+  },
+  "Evidence": {
+    "dftComputed": "Berechnet mit Dichtefunktionaltheorie (DFT). Keine Messung.",
+    "experimental": "Gemessener Wert aus einem Experiment.",
+    "heuristic": "Geschätzter Bereich aus ähnlichen Materialien. Keine Vorhersage.",
+    "unknown": "Kein verlässlicher Wert verfügbar."
+  },
+  "Home": {
+    "intro": "Kandidatenmaterialien für AR-Wellenleiter mit Muse Spark erkunden. Jede Zahl stammt aus einer Datenbank oder einer Berechnung, mit Quellenangabe.",
+    "tagline": "Ein kollaborativer KI-Wissenschaftler für die Entdeckung optoelektronischer Materialien"
+  },
+  "Host": {
+    "codCredit": "Strukturen aus der Crystallography Open Database (CC0). Bitte die Originalautoren angeben.",
+    "columns": {
+      "bandGap": "Bandlücke",
+      "eHull": "E above hull",
+      "formula": "Formel",
+      "n": "n",
+      "reference": "Referenz",
+      "spacegroup": "Raumgruppe",
+      "status": "Status"
+    },
+    "experimental": "Beobachtet (ICSD)",
+    "hint": "Materials Project nach Formel (SrTiO3, *TiO3), Elementen (Sr,Ti,O) oder ID (mp-5229) durchsuchen. Oder eigene CIF hochladen.",
+    "hintCod": "Die Crystallography Open Database nach Formel nach gemessenen Kristallstrukturen durchsuchen (CC0). Die Originalautoren nennen.",
+    "loadingCod": "Struktur aus COD wird geladen…",
+    "noResults": "Keine Materialien gefunden.",
+    "placeholder": "SrTiO3, Sr,Ti,O oder mp-5229",
+    "placeholderCod": "Formel, z. B. SrTiO3",
+    "search": "Suchen",
+    "searching": "Suche…",
+    "sourceCod": "COD (experimentell)",
+    "sourceMp": "Materials Project (DFT)",
+    "stable": "Stabil",
+    "theoretical": "Theoretisch",
+    "title": "1. Wirtsstruktur wählen",
+    "upload": "CIF hochladen",
+    "uploading": "Lese…"
+  },
+  "Language": {
+    "label": "Sprache",
+    "machineTranslated": "Maschinell übersetzt mit Muse Spark. Einige Begriffe können ungenau sein."
+  },
+  "Literature": {
+    "citedBy": "Zitiert von {count}",
+    "empty": "Keine Publikationen gefunden.",
+    "hint": "Papier-Metadaten aus OpenAlex, Crossref und arXiv, per DOI zusammengeführt. LumiLattice liest keine Volltexte.",
+    "openAccess": "Open Access",
+    "placeholder": "Beispiel: SrTiO3 Brechungsindex",
+    "search": "Suchen",
+    "searching": "Suche…",
+    "source": "Quelle: {source}",
+    "sourceFailed": "{source}: {reason}",
+    "title": "5. Literatur"
+  },
+  "Metadata": {
+    "description": "Ein kollaborativer KI-Wissenschaftler für die Entdeckung optoelektronischer Materialien.",
+    "title": "LumiLattice"
+  },
+  "Optical": {
+    "bestN": "Bestes verfügbares n für {formula}:",
+    "computed": "DFT-Lücken und n ({count} Einträge, JARVIS-DFT)",
+    "computedNote": "TBmBJ-Lücken liegen meist näher an gemessenen Lücken als OptB88vdW. n = sqrt(eps) ist ein langwelliger Wert, nicht n(550 nm).",
+    "form": "Form",
+    "gapMbj": "Lücke TBmBJ (eV)",
+    "gapOpt": "Lücke OptB88vdW (eV)",
+    "loading": "Optische Daten werden geladen…",
+    "measured": "Gemessene n, k ({count} Quellen, refractiveindex.info)",
+    "source": "Quelle",
+    "spacegroup": "Raumgruppe"
+  },
+  "Publish": {
+    "anonymous": "Anonym",
+    "byName": "Mich namentlich nennen",
+    "cancel": "Abbrechen",
+    "confirm": "Veröffentlichen",
+    "consent": "Ich wähle, {id} öffentlich zu machen, mit der obigen Nennung.",
+    "credit": "Nennung",
+    "creditAnonymous": "Nennung: anonym",
+    "creditName": "Nennung: {name}",
+    "demoNote": "Kandidaten sind standardmäßig privat. In dieser Version speichert Veröffentlichen nur Ihre Wahl und Nennung; nichts wird außerhalb von LumiLattice gesendet.",
+    "makePrivate": "Privat machen",
+    "namePlaceholder": "Name oder ORCID",
+    "private": "Privat",
+    "publish": "Veröffentlichen…",
+    "published": "Veröffentlicht"
+  },
+  "Status": {
+    "checking": "Prüfe…",
+    "keyConfigured": "Meta Model-API-Schlüssel konfiguriert",
+    "keyMissing": "Meta Model-API-Schlüssel fehlt. MODEL_API_KEY zu backend/.env hinzufügen.",
+    "model": "Modell",
+    "mpConfigured": "Materials Project-Schlüssel konfiguriert",
+    "mpMissing": "Materials Project-Schlüssel fehlt. MP_API_KEY zu backend/.env hinzufügen.",
+    "offline": "Offline. Backend unter {url} starten.",
+    "online": "Online",
+    "openAlexConfigured": "OpenAlex-Schlüssel konfiguriert",
+    "openAlexMissing": "Kein OpenAlex-Schlüssel: Literatursuche nutzt ein kleines gemeinsames Tagesbudget.",
+    "storeMemory": "Kandidaten werden im Speicher gehalten (gehen bei Neustart verloren). DATABASE_URL setzen, um sie zu behalten.",
+    "storePostgres": "Kandidaten werden in Postgres gespeichert",
+    "title": "Backend"
+  },
+  "Structure": {
+    "baseline": "Host-Prüfung (Baseline)",
+    "empty": "Material wählen oder CIF hochladen, um die Struktur zu sehen.",
+    "lattice": "Gitter",
+    "loading": "Struktur wird geladen…",
+    "optical": "Belege zum Brechungsindex (nach Formel)",
+    "sites": "Plätze in der Zelle",
+    "source": "Quelle",
+    "spacegroup": "Raumgruppe",
+    "title": "2. Struktur",
+    "warnings": "Parser-Warnungen"
+  }
+}

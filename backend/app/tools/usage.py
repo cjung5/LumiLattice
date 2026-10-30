@@ -83,6 +83,33 @@ OPENALEX_CACHE = ResponseCache()
 OPENALEX_CAP = DailyCap("OpenAlex", limit=500)
 # Stop early when the free OpenAlex budget for the day falls below this (USD).
 OPENALEX_MIN_REMAINING_USD = 0.05
+# Crossref, arXiv, and COD are free and keyless; caps and throttles keep use polite.
+CROSSREF_CACHE = ResponseCache()
+CROSSREF_CAP = DailyCap("Crossref", limit=1000)
+ARXIV_CACHE = ResponseCache()
+ARXIV_CAP = DailyCap("arXiv", limit=300)
+COD_CACHE = ResponseCache()
+COD_CAP = DailyCap("COD", limit=500)
+
+
+class Throttle:
+    """At most one request per `min_interval` seconds (callers wait their turn)."""
+
+    def __init__(self, min_interval: float):
+        self.min_interval = min_interval
+        self._last = 0.0
+        self._lock = Lock()
+
+    def wait(self) -> None:
+        with self._lock:
+            delay = self._last + self.min_interval - time.monotonic()
+            if delay > 0:
+                time.sleep(delay)
+            self._last = time.monotonic()
+
+
+CROSSREF_THROTTLE = Throttle(1.0)  # public pool: 1 request per second, 1 at a time
+ARXIV_THROTTLE = Throttle(3.0)  # arXiv API terms: no more than 1 request every 3 seconds
 
 
 class RateLimiter:

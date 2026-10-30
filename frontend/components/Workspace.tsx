@@ -101,7 +101,11 @@ export function Workspace() {
     : structure
       ? { cif: structure.cif, filename: structure.provenance.reference ?? "upload.cif" }
       : null;
-  const hostLabel = record ? `${record.formula} (${record.material_id})` : (formula ?? "");
+  const hostLabel = record
+    ? `${record.formula} (${record.material_id})`
+    : structure
+      ? `${structure.formula} (${structure.provenance.reference ?? structure.provenance.source})`
+      : "";
 
   async function askAgent(message: string, shown: string, extra: Partial<AgentContext> = {}) {
     setTurns((old) => [...old, { role: "user", text: shown }]);

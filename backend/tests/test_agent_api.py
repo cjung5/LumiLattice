@@ -9,7 +9,7 @@ from app.config import Settings, get_settings
 from app.main import app
 from app.models.candidates import Substitution
 from app.models.evidence import Provenance
-from app.storage.memory import STORE
+from app.storage.memory import get_store
 from app.tools.candidates import create_candidate
 from app.tools.usage import AGENT_RATE
 
@@ -38,7 +38,7 @@ def fake_agent(monkeypatch):
 
 def test_context_and_decision_reach_the_model(fake_agent, srtio3):
     seed = create_candidate(
-        STORE,
+        get_store(),
         srtio3,
         Provenance(source="test"),
         [Substitution(element_from="Sr", element_to="La", fraction=0.5)],
@@ -78,7 +78,7 @@ def test_agent_rate_limit(fake_agent):
 
 def test_decision_is_recorded(srtio3):
     seed = create_candidate(
-        STORE,
+        get_store(),
         srtio3,
         Provenance(source="test"),
         [Substitution(element_from="Ti", element_to="Zr", fraction=0.5)],

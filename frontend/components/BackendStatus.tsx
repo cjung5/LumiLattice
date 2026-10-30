@@ -42,6 +42,9 @@ export function BackendStatus() {
               ? `✓ ${t("mpConfigured")}`
               : `✗ ${t("mpMissing")}`}
           </li>
+          <li className={state.health.candidate_store === "postgres" ? "" : "text-warning"}>
+            {state.health.candidate_store === "postgres" ? `✓ ${t("storePostgres")}` : `! ${t("storeMemory")}`}
+          </li>
           <li className={state.health.openalex_api_key_configured ? "" : "text-warning"}>
             {state.health.openalex_api_key_configured
               ? `✓ ${t("openAlexConfigured")}`

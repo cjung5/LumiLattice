@@ -9,7 +9,7 @@ from app.agents.loop import AgentStepLimitReached, run_agent
 from app.agents.muse import ModelAPIKeyMissing, create_client
 from app.api.deps import LiteratureDep, OptionalMPDep, SettingsDep
 from app.models.candidates import DecisionKind
-from app.storage.memory import STORE
+from app.storage.memory import get_store
 from app.tools.catalog import build_registry
 from app.tools.reference_db import get_reference_db
 from app.tools.registry import UpstreamError
@@ -27,6 +27,7 @@ def health(settings: SettingsDep) -> dict[str, Any]:
         "materials_project_configured": settings.mp_api_key is not None,
         "openalex_api_key_configured": settings.openalex_api_key is not None,
         "reference_db_available": get_reference_db().available,
+        "candidate_store": "postgres" if settings.database_url else "memory",
     }
 
 
@@ -59,7 +60,7 @@ def with_context(message: str, context: AgentContext | None) -> str:
             host += " [uploaded CIF: revise candidates made from it by candidate ID]"
         lines.append(f"Host: {host.strip()}")
     if context.current_candidate_id:
-        stored = STORE.get(context.current_candidate_id)
+        stored = get_store().get(context.current_candidate_id)
         if stored:
             candidate = stored[0]
             lines.append(

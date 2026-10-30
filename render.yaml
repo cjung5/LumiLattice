@@ -16,6 +16,9 @@ services:
         sync: false
       - key: OPENALEX_API_KEY
         sync: false
+      # Hosted Postgres (Neon or Supabase free plan) keeps candidates when the service sleeps.
+      - key: DATABASE_URL
+        sync: false
       # Allows the Vercel production URL and its preview URLs.
       - key: CORS_ORIGIN_REGEX
         value: https://lumilattice[a-z0-9-]*\.vercel\.app

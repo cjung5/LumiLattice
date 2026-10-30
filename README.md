@@ -21,7 +21,7 @@ Built for the Meta Global AI Developer Hackathon (Oct 27 – Nov 4, 2026), track
 | Path | Contents |
 |---|---|
 | `backend/` | FastAPI app: Muse Spark agent loop, tool registry, scientific tools (pymatgen, Materials Project, OpenAlex) |
-| `frontend/` | Next.js app with English and Korean UI (more languages planned): host search, CIF upload, 3D viewer (3Dmol.js), literature panel, agent console |
+| `frontend/` | Next.js app in 6 languages: host search (Materials Project or COD), CIF upload, 3D viewer (3Dmol.js), candidates, optical evidence, literature, research agent |
 
 ## Agent tools
 
@@ -29,7 +29,7 @@ Built for the Meta Global AI Developer Hackathon (Oct 27 – Nov 4, 2026), track
 |---|---|---|
 | `composition_info` | pymatgen | Reduced formula, molar mass, charge-balanced oxidation states |
 | `search_materials` | Materials Project | Known structures with DFT band gap, energy above hull, and refractive index, each tagged |
-| `search_literature` | OpenAlex | Paper metadata (title, authors, year, venue, DOI, open-access link) |
+| `search_literature` | OpenAlex, Crossref, arXiv | Paper metadata merged by DOI or title, with the sources that found each paper |
 | `create_candidate` | LumiLattice | Substitutes elements on a host or on an earlier candidate, then runs the structural checks below |
 | `get_candidate` | LumiLattice | A candidate's substitutions, checks, n range, and the researcher's decisions |
 | `get_optical_reference` | refractiveindex.info, JARVIS-DFT | Measured n at 450/550/650 nm with sources; DFT band gaps and n (OptB88vdW, TBmBJ) |
@@ -73,6 +73,12 @@ A candidate replaces a fraction of one element's sites in a known host (or in an
 
 Each failed or warned check lists its atom indices. The 3D viewer highlights those atoms, because the CIF is written in P1 and the viewer's atom order matches the backend's site order. The overall result is one of `Structurally Plausible`, `Structural Concerns`, or `Insufficient Evidence` (no anion, so the ionic checks do not apply). These checks do **not** predict whether a material can be synthesized.
 
+## Host structures
+
+- **Materials Project** (DFT): search by formula, elements, or ID.
+- **Crystallography Open Database** (experimental, CC0): search by formula; each entry shows its authors, journal, year, and DOI. Oxidation-state labels in CIFs (e.g. `Sr2+`) are removed on import.
+- **Your own CIF**.
+
 ## Researcher in the loop
 
 The research agent sees the selected host and the current candidate, and it keeps the conversation (Responses API `previous_response_id`). For each candidate the researcher records a decision with a reason:
@@ -85,9 +91,14 @@ The research agent sees the selected host and the current candidate, and it keep
 
 Candidates from the form and from the agent share one version history (parent → child).
 
+Candidates are **private by default**. Publishing needs explicit consent and a credit choice (by name/ORCID or anonymous). In this version, publishing records the choice only; nothing is sent outside LumiLattice.
+
+Candidates are kept in memory unless `DATABASE_URL` points to a Postgres database (for example the free plan of Neon or Supabase); then they survive restarts.
+
 ## API usage limits
 
 - Materials Project and OpenAlex responses are cached for 24 hours. OpenAlex stops at 500 searches per day (half of its free daily budget) and stops early if the free budget left for the day falls below $0.05. Materials Project has a cap of 1,000 requests per day.
+- Crossref (public pool, 1 request per second), arXiv (1 request per 3 seconds, as its API terms ask), and COD are free and keyless; they are cached and capped too. If arXiv rate-limits or times out, it is skipped for 10 minutes so the other sources still answer quickly. No personal email address is sent.
 - The public demo protects Meta Model API credits: at most 10 agent requests per client per 10 minutes and 200 per day, with at most 8 tool steps per request.
 
 ## Run locally
@@ -122,15 +133,24 @@ uv run pytest
 uv run python -m scripts.smoke_muse   # needs MODEL_API_KEY; Muse Spark calls a real tool
 ```
 
+## Languages
+
+English and Korean are written by hand. Chinese (Simplified), Japanese, Spanish, and German are machine-translated by Muse Spark with a strict JSON schema; the script rejects any output that drops a key or a `{placeholder}`, and the UI marks these languages as machine-translated.
+
+```bash
+cd backend
+uv run python -m scripts.translate_ui          # all four, or e.g.: ja de
+```
+
 ## Deploy
 
 The backend runs on Render (Docker, free plan) and the frontend on Vercel.
 
-1. **Backend (Render):** New → Blueprint → select this repository. Render reads [`render.yaml`](render.yaml) and asks for `MODEL_API_KEY`, `MP_API_KEY`, and `OPENALEX_API_KEY`. When the deploy finishes, open `https://<service>.onrender.com/api/health`.
+1. **Backend (Render):** New → Blueprint → select this repository. Render reads [`render.yaml`](render.yaml) and asks for `MODEL_API_KEY`, `MP_API_KEY`, `OPENALEX_API_KEY`, and `DATABASE_URL` (optional: a Neon or Supabase Postgres URL; leave it empty to keep candidates in memory). When the deploy finishes, open `https://<service>.onrender.com/api/health`.
 2. **Frontend (Vercel):** New Project → import this repository → Root Directory `frontend`. Add the environment variable `NEXT_PUBLIC_API_BASE_URL` = the Render URL (no trailing slash), then deploy.
 3. **CORS:** `CORS_ORIGIN_REGEX` in `render.yaml` allows `https://lumilattice*.vercel.app`. If the Vercel project has another name, change it in the Render dashboard.
 
-Limits of the free plan: the backend sleeps after 15 minutes without requests (the next request takes about a minute), and candidates are kept in memory, so they are lost when it sleeps. Open the health URL a minute before a demo.
+Limits of the free plan: the backend sleeps after 15 minutes without requests (the next request takes about a minute). Without `DATABASE_URL`, candidates are lost when it sleeps. Open the health URL a minute before a demo.
 
 ## Built during the hackathon
 
@@ -149,7 +169,9 @@ In use:
 - **JARVIS-DFT** — 3D dataset version 2025-09-24, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), [doi:10.6084/m9.figshare.6815699](https://doi.org/10.6084/m9.figshare.6815699). K. Choudhary et al., *npj Comput. Mater.* 6, 173 (2020); optics: K. Choudhary et al., *Sci. Data* 5, 180082 (2018).
 - **refractiveindex.info database** — release 2026-05-24, [CC0](https://creativecommons.org/publicdomain/zero/1.0/). M. N. Polyanskiy, *Sci. Data* 11, 94 (2024). Each measured value links to its page and original reference.
 
-Planned: Crystallography Open Database, Crossref, and arXiv.
+- **Crystallography Open Database** — experimental structures, [CC0](https://creativecommons.org/publicdomain/zero/1.0/). S. Gražulis et al., *J. Appl. Cryst.* 42, 726 (2009). Credit the original authors shown with each entry.
+- **Crossref** — scholarly metadata (public REST API).
+- **arXiv** — preprint metadata via the arXiv API. Thank you to arXiv for use of its open access interoperability.
 
 ## License
 

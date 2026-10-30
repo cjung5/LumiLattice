@@ -56,6 +56,10 @@ def _read_cif(text: str, filename: str) -> tuple[list[Structure], list[str]]:
             raise ToolError(f"Cannot read CIF {filename!r}: {exc}") from exc
     if not structures:
         raise ToolError(f"CIF {filename!r} has no structure.")
+    # Experimental CIFs (e.g. COD) often label atoms with charges ("Sr2+"). The app works
+    # with element symbols and assigns oxidation states itself, so the labels are removed.
+    for structure in structures:
+        structure.remove_oxidation_states()
     return structures, sorted({str(w.message) for w in caught})[:5]
 
 

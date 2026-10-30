@@ -56,6 +56,14 @@ class PaperEvidence(BaseModel):
     doi: str | None
     url: str | None
     cited_by_count: int | None
-    open_access: bool
+    open_access: bool | None  # None: the source does not say
     open_access_url: str | None
     provenance: Provenance
+    # Every source that returned this paper (results with the same DOI are merged).
+    sources: list[str] = []
+
+
+class LiteratureResult(BaseModel):
+    papers: list[PaperEvidence]
+    # Per source: "ok", or why it returned nothing (e.g. rate limit).
+    source_status: dict[str, str]

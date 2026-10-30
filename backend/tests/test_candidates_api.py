@@ -6,9 +6,10 @@ from pymatgen.io.cif import CifWriter
 
 from app.config import Settings, get_settings
 from app.main import app
-from app.storage.memory import CandidateStore
+from app.storage.memory import MemoryStore
 from app.tools.catalog import build_registry
 from app.tools.literature import OpenAlexClient
+from app.tools.literature_sources import LiteratureSearch
 
 
 def client() -> TestClient:
@@ -76,11 +77,11 @@ def test_assess_host(srtio3):
 
 
 def test_agent_tool_revises_a_candidate(srtio3):
-    store = CandidateStore()
+    store = MemoryStore()
     literature = OpenAlexClient(
         transport=httpx.MockTransport(lambda r: httpx.Response(200, json={"results": []}))
     )
-    registry = build_registry(None, literature, store)
+    registry = build_registry(None, LiteratureSearch([literature]), store)
 
     # Seed a candidate the way the API would, then let the tool revise it.
     from app.models.candidates import Substitution
@@ -112,7 +113,7 @@ def test_revision_analogs_follow_the_whole_lineage(srtio3):
     from app.models.evidence import Provenance
     from app.tools.candidates import create_candidate
 
-    store = CandidateStore()
+    store = MemoryStore()
     seen: list[str] = []
 
     class FakeMP:

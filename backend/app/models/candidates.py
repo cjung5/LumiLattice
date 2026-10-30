@@ -60,6 +60,17 @@ class Decision(BaseModel):
     created_at: datetime
 
 
+Visibility = Literal["private", "published"]
+
+
+class Credit(BaseModel):
+    """How the researcher wants to be credited when a candidate is published (spec section 7)."""
+
+    display: Literal["name", "anonymous"]
+    name: str | None = Field(default=None, max_length=200)
+    published_at: datetime
+
+
 class Candidate(BaseModel):
     candidate_id: str
     parent_id: str | None = None
@@ -70,3 +81,6 @@ class Candidate(BaseModel):
     optical_estimate: OpticalEstimate | None = None
     created_at: datetime
     decisions: list[Decision] = []
+    # Private by default. Stage 1 records the choice only; nothing is shared outside the app.
+    visibility: Visibility = "private"
+    credit: Credit | None = None

@@ -6,6 +6,7 @@ import { AssessmentPanel } from "@/components/AssessmentPanel";
 import { CrystalViewer } from "@/components/CrystalViewer";
 import { DecisionBar } from "@/components/DecisionBar";
 import { PropertyValueView } from "@/components/EvidenceTag";
+import { PublishControl } from "@/components/PublishControl";
 import {
   createCandidate,
   type Candidate,
@@ -233,6 +234,7 @@ export function CandidatePanel({
             </div>
           )}
           <p className="text-xs text-muted">{current.transformation.site_selection}</p>
+          <PublishControl key={`pub-${current.candidate_id}`} candidate={current} onChange={onCandidate} />
           <DecisionBar
             key={current.candidate_id}
             candidate={current}

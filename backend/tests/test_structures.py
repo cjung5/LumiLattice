@@ -29,3 +29,11 @@ def test_parse_cif_round_trip(srtio3):
 def test_parse_cif_rejects_garbage():
     with pytest.raises(ToolError):
         parse_cif("this is not a cif", "bad.cif")
+
+
+def test_cif_with_oxidation_state_labels_uses_element_symbols(srtio3):
+    decorated = srtio3.copy()
+    decorated.add_oxidation_state_by_element({"Sr": 2, "Ti": 4, "O": -2})
+    payload = parse_cif(str(CifWriter(decorated)), "cod.cif")
+
+    assert {s.species for s in payload.sites} == {"Sr", "Ti", "O"}

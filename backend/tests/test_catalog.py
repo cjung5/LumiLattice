@@ -4,11 +4,16 @@ import httpx
 
 from app.tools.catalog import build_registry
 from app.tools.literature import OpenAlexClient
+from app.tools.literature_sources import LiteratureSearch
 
 
-def offline_literature() -> OpenAlexClient:
-    return OpenAlexClient(
-        transport=httpx.MockTransport(lambda r: httpx.Response(200, json={"results": []}))
+def offline_literature() -> LiteratureSearch:
+    return LiteratureSearch(
+        [
+            OpenAlexClient(
+                transport=httpx.MockTransport(lambda r: httpx.Response(200, json={"results": []}))
+            )
+        ]
     )
 
 
@@ -39,4 +44,4 @@ def test_search_literature_tool():
 
     result = registry.execute("search_literature", json.dumps({"query": "TiO2 waveguide"}))
 
-    assert result == {"count": 0, "results": []}
+    assert result == {"count": 0, "results": [], "source_status": {"OpenAlex": "ok"}}

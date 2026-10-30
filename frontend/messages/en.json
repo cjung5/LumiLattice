@@ -8,7 +8,8 @@
     "intro": "Explore candidate materials for AR waveguides with Muse Spark. Every number comes from a database or a calculation, with its source."
   },
   "Language": {
-    "label": "Language"
+    "label": "Language",
+    "machineTranslated": "Machine-translated with Muse Spark. Some terms can be inaccurate."
   },
   "Status": {
     "title": "Backend",
@@ -21,7 +22,9 @@
     "mpConfigured": "Materials Project key configured",
     "mpMissing": "Materials Project key missing. Add MP_API_KEY to backend/.env.",
     "openAlexConfigured": "OpenAlex key configured",
-    "openAlexMissing": "No OpenAlex key: literature search uses a small shared daily budget."
+    "openAlexMissing": "No OpenAlex key: literature search uses a small shared daily budget.",
+    "storePostgres": "Candidates are saved in Postgres",
+    "storeMemory": "Candidates are kept in memory (lost on restart). Set DATABASE_URL to keep them."
   },
   "Evidence": {
     "experimental": "Measured value from an experiment.",
@@ -44,11 +47,18 @@
       "eHull": "E above hull",
       "bandGap": "Band gap",
       "n": "n",
-      "status": "Status"
+      "status": "Status",
+      "reference": "Reference"
     },
     "stable": "Stable",
     "experimental": "Observed (ICSD)",
-    "theoretical": "Theoretical"
+    "theoretical": "Theoretical",
+    "sourceMp": "Materials Project (DFT)",
+    "sourceCod": "COD (experimental)",
+    "hintCod": "Search the Crystallography Open Database by formula for measured crystal structures (CC0). Credit the original authors.",
+    "placeholderCod": "Formula, e.g. SrTiO3",
+    "loadingCod": "Loading structure from COD…",
+    "codCredit": "Structures from the Crystallography Open Database (CC0). Please acknowledge the original authors."
   },
   "Structure": {
     "title": "2. Structure",
@@ -122,15 +132,32 @@
     "gapOpt": "Gap OptB88vdW (eV)",
     "gapMbj": "Gap TBmBJ (eV)"
   },
+  "Publish": {
+    "private": "Private",
+    "published": "Published",
+    "publish": "Publish…",
+    "makePrivate": "Make private",
+    "demoNote": "Candidates are private by default. In this version, publishing only records your choice and credit; nothing is sent outside LumiLattice.",
+    "credit": "Credit",
+    "anonymous": "Anonymous",
+    "byName": "Credit me by name",
+    "namePlaceholder": "Name or ORCID",
+    "consent": "I choose to make {id} public, with the credit above.",
+    "confirm": "Publish",
+    "cancel": "Cancel",
+    "creditName": "Credit: {name}",
+    "creditAnonymous": "Credit: anonymous"
+  },
   "Literature": {
     "title": "5. Literature",
-    "hint": "Paper metadata from OpenAlex. LumiLattice does not read full texts.",
+    "hint": "Paper metadata from OpenAlex, Crossref, and arXiv, merged by DOI. LumiLattice does not read full texts.",
     "placeholder": "Example: SrTiO3 refractive index",
     "search": "Search",
     "searching": "Searching…",
     "empty": "No papers found.",
     "citedBy": "Cited by {count}",
     "openAccess": "Open access",
-    "source": "Source: {source}"
+    "source": "Source: {source}",
+    "sourceFailed": "{source}: {reason}"
   }
 }

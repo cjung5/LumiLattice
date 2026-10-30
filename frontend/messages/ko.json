@@ -8,7 +8,8 @@
     "intro": "Muse Spark와 함께 AR 도파관용 후보 소재를 탐색하세요. 모든 수치는 출처가 있는 데이터베이스나 계산에서 나옵니다."
   },
   "Language": {
-    "label": "언어"
+    "label": "언어",
+    "machineTranslated": "Muse Spark로 기계 번역한 화면입니다. 일부 용어가 정확하지 않을 수 있습니다."
   },
   "Status": {
     "title": "백엔드",
@@ -21,7 +22,9 @@
     "mpConfigured": "Materials Project 키 설정됨",
     "mpMissing": "Materials Project 키가 없습니다. backend/.env에 MP_API_KEY를 추가하세요.",
     "openAlexConfigured": "OpenAlex 키 설정됨",
-    "openAlexMissing": "OpenAlex 키 없음: 문헌 검색이 여럿이 함께 쓰는 작은 일일 한도를 사용합니다."
+    "openAlexMissing": "OpenAlex 키 없음: 문헌 검색이 여럿이 함께 쓰는 작은 일일 한도를 사용합니다.",
+    "storePostgres": "후보가 Postgres에 저장됩니다",
+    "storeMemory": "후보가 메모리에만 있어 재시작하면 사라집니다. 유지하려면 DATABASE_URL을 설정하세요."
   },
   "Evidence": {
     "experimental": "실험으로 측정한 값입니다.",
@@ -44,11 +47,18 @@
       "eHull": "E above hull",
       "bandGap": "밴드갭",
       "n": "n",
-      "status": "상태"
+      "status": "상태",
+      "reference": "참고문헌"
     },
     "stable": "안정",
     "experimental": "실험 관측 (ICSD)",
-    "theoretical": "이론 구조"
+    "theoretical": "이론 구조",
+    "sourceMp": "Materials Project (DFT)",
+    "sourceCod": "COD (실험 구조)",
+    "hintCod": "Crystallography Open Database에서 화학식으로 측정된 결정구조를 검색합니다(CC0). 원저자를 표시해 주세요.",
+    "placeholderCod": "화학식, 예: SrTiO3",
+    "loadingCod": "COD에서 구조를 불러오는 중…",
+    "codCredit": "Crystallography Open Database의 구조입니다(CC0). 원저자를 밝혀 주세요."
   },
   "Structure": {
     "title": "2. 결정구조",
@@ -122,15 +132,32 @@
     "gapOpt": "밴드갭 OptB88vdW (eV)",
     "gapMbj": "밴드갭 TBmBJ (eV)"
   },
+  "Publish": {
+    "private": "비공개",
+    "published": "공개",
+    "publish": "공개하기…",
+    "makePrivate": "비공개로 전환",
+    "demoNote": "후보는 기본적으로 비공개입니다. 현재 버전에서 공개는 선택과 크레딧만 기록하며, LumiLattice 밖으로 아무것도 보내지 않습니다.",
+    "credit": "크레딧",
+    "anonymous": "익명",
+    "byName": "이름으로 표시",
+    "namePlaceholder": "이름 또는 ORCID",
+    "consent": "위 크레딧으로 {id}을(를) 공개하는 데 동의합니다.",
+    "confirm": "공개",
+    "cancel": "취소",
+    "creditName": "크레딧: {name}",
+    "creditAnonymous": "크레딧: 익명"
+  },
   "Literature": {
     "title": "5. 문헌",
-    "hint": "OpenAlex의 논문 메타데이터입니다. LumiLattice는 논문 본문을 읽지 않습니다.",
+    "hint": "OpenAlex, Crossref, arXiv의 논문 메타데이터를 DOI 기준으로 합쳐 보여줍니다. LumiLattice는 논문 본문을 읽지 않습니다.",
     "placeholder": "예: SrTiO3 refractive index",
     "search": "검색",
     "searching": "검색 중…",
     "empty": "논문을 찾지 못했습니다.",
     "citedBy": "피인용 {count}회",
     "openAccess": "오픈 액세스",
-    "source": "출처: {source}"
+    "source": "출처: {source}",
+    "sourceFailed": "{source}: {reason}"
   }
 }

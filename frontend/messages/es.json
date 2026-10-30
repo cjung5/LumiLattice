@@ -1,0 +1,163 @@
+{
+  "Agent": {
+    "created": "Creado:",
+    "error": "Error: {message}",
+    "hint": "Pregunta sobre el anfitrión o un candidato. El agente ve el anfitrión y el candidato seleccionados, usa herramientas para cada valor y recuerda esta conversación.",
+    "noToolCalls": "Sin llamadas a herramientas en esta respuesta. Considera no verificados los valores que contenga.",
+    "placeholder": "Ejemplo: Sugiere una sustitución para SrTiO3 que mantenga amplia la brecha de banda.",
+    "reset": "Nueva conversación",
+    "run": "Ejecutar",
+    "running": "Ejecutando…",
+    "title": "4. Agente de investigación (Muse Spark)",
+    "toolCalls": "Llamadas a herramientas ({count})"
+  },
+  "Assessment": {
+    "atoms": "{count} átomos",
+    "clickHint": "Selecciona una comprobación para mostrar sus átomos."
+  },
+  "Candidate": {
+    "addRow": "+ Cosustitución",
+    "fraction": "Fracción",
+    "from": "Elemento a sustituir",
+    "generateFromHost": "Generar desde el anfitrión",
+    "generating": "Generando…",
+    "hint": "Sustituye una fracción de los sitios de un elemento en {host}. Las posiciones atómicas se mantienen en las posiciones del anfitrión (sin relajación).",
+    "history": "Historial de versiones",
+    "lineage": "de {parent} · supercelda {supercell}",
+    "nEstimate": "Índice de refracción (rango de miembros extremos)",
+    "ofSites": "de los sitios de {element}",
+    "remove": "Eliminar",
+    "reviseCurrent": "Revisar {id}",
+    "title": "3. Candidatos",
+    "to": "Nuevo elemento",
+    "toPlaceholder": "p. ej. Zr",
+    "viewerLegend": "Átomos más grandes: sitios sustituidos. Átomos rosas con etiquetas: átomos de la comprobación seleccionada."
+  },
+  "Decision": {
+    "accept": "Aceptar",
+    "acceptHint": "Conservar este candidato.",
+    "explore": "Explorar alternativas",
+    "exploreHint": "El agente prueba hasta 2 alternativas a partir de tu motivo.",
+    "hint": "Aceptar y Rechazar se registran. Modificar y Explorar alternativas se registran y se envían al agente con tu motivo.",
+    "last": "Última decisión: {decision}",
+    "modify": "Modificar",
+    "modifyHint": "El agente revisa este candidato a partir de tu motivo.",
+    "placeholder": "¿Por qué? p. ej. mantener solo Ti4+, evitar elementos tóxicos, probar un ion de sitio A más grande",
+    "reject": "Rechazar",
+    "rejectHint": "Registra que este candidato no es útil, y por qué.",
+    "title": "Tu decisión sobre {id}"
+  },
+  "Evidence": {
+    "dftComputed": "Calculado con la teoría del funcional de la densidad (DFT). No es una medición.",
+    "experimental": "Valor medido en un experimento.",
+    "heuristic": "Rango estimado a partir de materiales similares. No es una predicción.",
+    "unknown": "No hay ningún valor fiable disponible."
+  },
+  "Home": {
+    "intro": "Explora materiales candidatos para guías de onda de RA con Muse Spark. Cada valor proviene de una base de datos o de un cálculo, con su fuente.",
+    "tagline": "Un científico colaborativo de IA para el descubrimiento de materiales optoelectrónicos"
+  },
+  "Host": {
+    "codCredit": "Estructuras de Crystallography Open Database (CC0). Reconoce a los autores originales.",
+    "columns": {
+      "bandGap": "Brecha de banda",
+      "eHull": "E above hull",
+      "formula": "Fórmula",
+      "n": "n",
+      "reference": "Referencia",
+      "spacegroup": "Grupo espacial",
+      "status": "Estado"
+    },
+    "experimental": "Observado (ICSD)",
+    "hint": "Busca en Materials Project por fórmula (SrTiO3, *TiO3), elementos (Sr,Ti,O) o ID (mp-5229). O sube tu propio CIF.",
+    "hintCod": "Busca en Crystallography Open Database por fórmula estructuras cristalinas medidas (CC0). Cita a los autores originales.",
+    "loadingCod": "Cargando estructura desde COD…",
+    "noResults": "No se encontraron materiales.",
+    "placeholder": "SrTiO3, Sr,Ti,O o mp-5229",
+    "placeholderCod": "Fórmula, p. ej. SrTiO3",
+    "search": "Buscar",
+    "searching": "Buscando…",
+    "sourceCod": "COD (experimental)",
+    "sourceMp": "Materials Project (DFT)",
+    "stable": "Estable",
+    "theoretical": "Teórico",
+    "title": "1. Seleccionar una estructura anfitriona",
+    "upload": "Subir CIF",
+    "uploading": "Leyendo…"
+  },
+  "Language": {
+    "label": "Idioma",
+    "machineTranslated": "Traducción automática con Muse Spark. Algunos términos pueden ser inexactos."
+  },
+  "Literature": {
+    "citedBy": "Citado por {count}",
+    "empty": "No se encontraron artículos.",
+    "hint": "Metadatos de artículos de OpenAlex, Crossref y arXiv, combinados por DOI. LumiLattice no lee textos completos.",
+    "openAccess": "Acceso abierto",
+    "placeholder": "Ejemplo: SrTiO3 índice de refracción",
+    "search": "Buscar",
+    "searching": "Buscando…",
+    "source": "Fuente: {source}",
+    "sourceFailed": "{source}: {reason}",
+    "title": "5. Bibliografía"
+  },
+  "Metadata": {
+    "description": "Un científico colaborativo de IA para el descubrimiento de materiales optoelectrónicos.",
+    "title": "LumiLattice"
+  },
+  "Optical": {
+    "bestN": "Mejor n disponible para {formula}:",
+    "computed": "Brechas DFT y n ({count} entradas, JARVIS-DFT)",
+    "computedNote": "Las brechas TBmBJ suelen estar más cerca de las brechas medidas que OptB88vdW. n = sqrt(eps) es un valor de longitud de onda larga, no n(550 nm).",
+    "form": "Forma",
+    "gapMbj": "Brecha TBmBJ (eV)",
+    "gapOpt": "Brecha OptB88vdW (eV)",
+    "loading": "Cargando datos ópticos…",
+    "measured": "n, k medidos ({count} fuentes, refractiveindex.info)",
+    "source": "Fuente",
+    "spacegroup": "Grupo espacial"
+  },
+  "Publish": {
+    "anonymous": "Anónimo",
+    "byName": "Reconóceme por mi nombre",
+    "cancel": "Cancelar",
+    "confirm": "Publicar",
+    "consent": "Elijo hacer público {id}, con la autoría indicada arriba.",
+    "credit": "Autoría",
+    "creditAnonymous": "Autoría: anónima",
+    "creditName": "Autoría: {name}",
+    "demoNote": "Los candidatos son privados por defecto. En esta versión, publicar solo registra tu elección y autoría; no se envía nada fuera de LumiLattice.",
+    "makePrivate": "Hacer privado",
+    "namePlaceholder": "Nombre u ORCID",
+    "private": "Privado",
+    "publish": "Publicar…",
+    "published": "Publicado"
+  },
+  "Status": {
+    "checking": "Comprobando…",
+    "keyConfigured": "Clave de API del modelo de Meta configurada",
+    "keyMissing": "Falta la clave de API del modelo de Meta. Añade MODEL_API_KEY a backend/.env.",
+    "model": "Modelo",
+    "mpConfigured": "Clave de Materials Project configurada",
+    "mpMissing": "Falta la clave de Materials Project. Añade MP_API_KEY a backend/.env.",
+    "offline": "Sin conexión. Inicia el backend en {url}.",
+    "online": "En línea",
+    "openAlexConfigured": "Clave de OpenAlex configurada",
+    "openAlexMissing": "Sin clave de OpenAlex: la búsqueda bibliográfica usa un presupuesto diario compartido reducido.",
+    "storeMemory": "Los candidatos se conservan en memoria (se pierden al reiniciar). Configura DATABASE_URL para conservarlos.",
+    "storePostgres": "Los candidatos se guardan en Postgres",
+    "title": "Backend"
+  },
+  "Structure": {
+    "baseline": "Verificación del anfitrión (base)",
+    "empty": "Selecciona un material o sube un CIF para ver su estructura.",
+    "lattice": "Red",
+    "loading": "Cargando estructura…",
+    "optical": "Evidencia del índice de refracción (por fórmula)",
+    "sites": "Sitios en la celda",
+    "source": "Fuente",
+    "spacegroup": "Grupo espacial",
+    "title": "2. Estructura",
+    "warnings": "Advertencias del analizador"
+  }
+}

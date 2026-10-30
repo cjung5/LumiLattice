@@ -7,9 +7,22 @@ from app.tools import usage
 @pytest.fixture(autouse=True)
 def fresh_api_usage():
     """Shared caches and daily caps must not leak between tests."""
-    for item in (usage.MP_CACHE, usage.OPENALEX_CACHE):
+    for item in (
+        usage.MP_CACHE,
+        usage.OPENALEX_CACHE,
+        usage.CROSSREF_CACHE,
+        usage.ARXIV_CACHE,
+        usage.COD_CACHE,
+    ):
         item.clear()
-    for cap in (usage.MP_CAP, usage.OPENALEX_CAP, usage.AGENT_CAP):
+    for cap in (
+        usage.MP_CAP,
+        usage.OPENALEX_CAP,
+        usage.CROSSREF_CAP,
+        usage.ARXIV_CAP,
+        usage.COD_CAP,
+        usage.AGENT_CAP,
+    ):
         cap.reset()
     usage.AGENT_RATE.reset()
 

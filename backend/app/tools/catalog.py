@@ -5,10 +5,10 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from app.models.candidates import Candidate, Substitution
-from app.storage.memory import STORE, CandidateStore
+from app.storage.memory import CandidateStore, get_store
 from app.tools.candidates import create_candidate, load_host
 from app.tools.composition import COMPOSITION_TOOL
-from app.tools.literature import OpenAlexClient
+from app.tools.literature_sources import LiteratureSearch
 from app.tools.materials import MaterialsProjectClient
 from app.tools.reference_db import get_reference_db
 from app.tools.registry import Tool, ToolError, ToolRegistry
@@ -94,9 +94,11 @@ def candidate_summary(candidate: Candidate) -> dict[str, Any]:
 
 def build_registry(
     mp: MaterialsProjectClient | None,
-    literature: OpenAlexClient,
-    store: CandidateStore = STORE,
+    literature: LiteratureSearch,
+    store: CandidateStore | None = None,
 ) -> ToolRegistry:
+    store = store or get_store()
+
     def search_materials(args: SearchMaterialsArgs) -> dict[str, Any]:
         if mp is None:
             raise ToolError(
@@ -115,8 +117,12 @@ def build_registry(
         }
 
     def search_literature(args: SearchLiteratureArgs) -> dict[str, Any]:
-        papers = literature.search(args.query, limit=args.limit)
-        return {"count": len(papers), "results": [p.model_dump(exclude_none=True) for p in papers]}
+        result = literature.search(args.query, limit=args.limit)
+        return {
+            "count": len(result.papers),
+            "results": [p.model_dump(exclude_none=True) for p in result.papers],
+            "source_status": result.source_status,
+        }
 
     def new_candidate(args: CreateCandidateArgs) -> dict[str, Any]:
         host, host_ref, parent_id = load_host(
@@ -191,8 +197,9 @@ def build_registry(
             Tool(
                 name="search_literature",
                 description=(
-                    "Search OpenAlex for scientific papers. Returns titles, authors, year, "
-                    "venue, DOI, and open-access status. Only metadata, not full text."
+                    "Search OpenAlex, Crossref, and arXiv for scientific papers (merged by DOI). "
+                    "Returns titles, authors, year, venue, DOI, open-access links, and which "
+                    "sources found each paper. Only metadata, not full text."
                 ),
                 args_model=SearchLiteratureArgs,
                 handler=search_literature,

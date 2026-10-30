@@ -7,6 +7,8 @@ export type Health = {
   model_api_key_configured: boolean;
   materials_project_configured: boolean;
   openalex_api_key_configured: boolean;
+  reference_db_available: boolean;
+  candidate_store: "memory" | "postgres";
 };
 
 export type EvidenceStatus = "Experimental" | "DFT-computed" | "Heuristic" | "Unknown";
@@ -71,9 +73,29 @@ export type PaperEvidence = {
   doi: string | null;
   url: string | null;
   cited_by_count: number | null;
-  open_access: boolean;
+  open_access: boolean | null;
   open_access_url: string | null;
   provenance: Provenance;
+  sources: string[];
+};
+
+export type LiteratureResult = {
+  papers: PaperEvidence[];
+  source_status: Record<string, string>;
+};
+
+export type CodEntry = {
+  cod_id: string;
+  formula: string;
+  spacegroup: string | null;
+  spacegroup_number: number | null;
+  cell: [number | null, number | null, number | null];
+  year: number | null;
+  authors: string | null;
+  title: string | null;
+  journal: string | null;
+  doi: string | null;
+  url: string;
 };
 
 export type MeasuredIndex = {
@@ -156,6 +178,8 @@ export type Candidate = {
   optical_estimate: OpticalEstimate | null;
   created_at: string;
   decisions: { decision: "accept" | "modify" | "reject" | "explore"; reason: string; created_at: string }[];
+  visibility: "private" | "published";
+  credit: { display: "name" | "anonymous"; name: string | null; published_at: string } | null;
 };
 
 export type HostRef =
@@ -218,8 +242,30 @@ export function getOpticalReference(formula: string): Promise<OpticalReference> 
   return request<OpticalReference>(`/api/reference/${encodeURIComponent(formula)}`);
 }
 
-export function searchLiterature(query: string): Promise<PaperEvidence[]> {
-  return request<PaperEvidence[]>(`/api/literature/search?${new URLSearchParams({ q: query })}`);
+export function searchLiterature(query: string): Promise<LiteratureResult> {
+  return request<LiteratureResult>(`/api/literature/search?${new URLSearchParams({ q: query })}`);
+}
+
+export function searchCod(formula: string): Promise<CodEntry[]> {
+  return request<CodEntry[]>(`/api/cod/search?${new URLSearchParams({ formula })}`);
+}
+
+export function getCodStructure(codId: string): Promise<StructurePayload> {
+  return request<StructurePayload>(`/api/cod/${encodeURIComponent(codId)}/structure`);
+}
+
+export type Visibility = "private" | "published";
+
+export function setVisibility(
+  candidateId: string,
+  body: {
+    visibility: Visibility;
+    credit_display?: "name" | "anonymous";
+    display_name?: string;
+    consent?: boolean;
+  },
+): Promise<Candidate> {
+  return postJson<Candidate>(`/api/candidates/${encodeURIComponent(candidateId)}/visibility`, body);
 }
 
 export function createCandidate(host: HostRef, substitutions: Substitution[]): Promise<Candidate> {
