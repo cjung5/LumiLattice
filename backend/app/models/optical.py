@@ -44,10 +44,43 @@ class OpticalReference(BaseModel):
 class EndMemberIndex(BaseModel):
     formula: str
     n: PropertyValue
+    band_gap: PropertyValue | None = None
 
 
 class OpticalEstimate(BaseModel):
-    """Heuristic n range for a candidate, spanned by its end-member compounds (spec D3)."""
+    """Heuristic n and band-gap ranges for a candidate, spanned by its end members (spec D3)."""
 
     estimate: PropertyValue
     end_members: list[EndMemberIndex]
+    band_gap: PropertyValue | None = None
+
+
+class DispersionCurve(BaseModel):
+    title: str
+    category: str
+    direction: str | None
+    n: list[float | None]  # one value per wavelength in DispersionData.wavelengths_nm
+
+
+class DispersionData(BaseModel):
+    formula: str
+    wavelengths_nm: list[int]
+    curves: list[DispersionCurve]
+    # Median of the bulk/crystal curves at each wavelength (what charts and ranges use).
+    bulk_median: list[float | None] | None
+
+
+class LandscapePoint(BaseModel):
+    formula: str
+    n: float
+    band_gap: float
+
+
+class Landscape(BaseModel):
+    """n vs band gap: the trade-off every high-index transparent material faces."""
+
+    measured: list[LandscapePoint]  # measured bulk n(550 nm), JARVIS TBmBJ gap
+    computed: list[tuple[float, float]]  # sample of JARVIS (TBmBJ gap, TBmBJ n = sqrt(eps))
+    computed_total: int
+    moss: list[tuple[float, float]]  # empirical Moss relation n^4 * Eg = 95 eV
+    notes: list[str]

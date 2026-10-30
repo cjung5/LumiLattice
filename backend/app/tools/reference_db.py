@@ -5,6 +5,7 @@ refractiveindex.info database (CC0). Data is matched by reduced formula, so the
 polymorph can differ from the selected structure; every value says so.
 """
 
+import json
 import math
 import sqlite3
 import statistics
@@ -18,7 +19,11 @@ from app.config import get_settings
 from app.models.evidence import PropertyValue, Provenance
 from app.models.optical import (
     ComputedOptics,
+    DispersionCurve,
+    DispersionData,
     EndMemberIndex,
+    Landscape,
+    LandscapePoint,
     MeasuredIndex,
     OpticalEstimate,
     OpticalReference,
@@ -28,6 +33,9 @@ from app.tools.registry import ToolError
 # Measured pages that describe the bulk material (thin films and nanoparticles differ).
 BULK_CATEGORIES = {"bulk", "crystal", ""}
 MATCH_NOTE = "Matched by formula; the polymorph may differ from the selected structure."
+CURVE_NM = list(range(380, 781, 10))
+LANDSCAPE_SAMPLE = 2500
+MOSS_CONSTANT_EV = 95.0  # empirical Moss relation, n^4 * Eg ≈ 95 eV
 DFT_N_CONDITIONS = (
     "n = sqrt(eps) from DFT linear optics (electronic, zero frequency): "
     "long-wavelength limit, not n(550 nm)"
@@ -147,33 +155,148 @@ class ReferenceDB:
             note=MATCH_NOTE if self.available else "Reference database is not built.",
         )
 
+    def best_gap(self, formula: str) -> PropertyValue:
+        """JARVIS TBmBJ band gap (closer to measured), else OptB88vdW; median over ICSD entries."""
+        computed = self.computed(formula)
+        for field, method, note in (
+            ("band_gap_mbj", "TBmBJ", "TBmBJ gaps are usually close to measured gaps"),
+            ("band_gap_optb88vdw", "OptB88vdW", "OptB88vdW (GGA-type) gaps are usually too small"),
+        ):
+            icsd = [
+                getattr(c, field) for c in computed if c.has_icsd and getattr(c, field) is not None
+            ]
+            values = icsd or [getattr(c, field) for c in computed if getattr(c, field) is not None]
+            if values:
+                return PropertyValue(
+                    name="band_gap",
+                    value=_round(statistics.median(values)),
+                    units="eV",
+                    status="DFT-computed",
+                    conditions=f"{note}. {MATCH_NOTE}",
+                    provenance=Provenance(source="JARVIS-DFT", method=method, reference=formula),
+                )
+        return PropertyValue(name="band_gap", units="eV", status="Unknown", conditions=MATCH_NOTE)
+
     def estimate(self, end_members: list[str]) -> OpticalEstimate:
-        """Range spanned by the end members' best n values (needs at least two)."""
-        members = [EndMemberIndex(formula=f, n=self.best_n(f)) for f in dict.fromkeys(end_members)]
-        values = [m.n.value for m in members if m.n.value is not None]
+        """Ranges spanned by the end members' best n and band gap (each needs two values)."""
+        members = [
+            EndMemberIndex(formula=f, n=self.best_n(f), band_gap=self.best_gap(f))
+            for f in dict.fromkeys(end_members)
+        ]
         names = ", ".join(m.formula for m in members)
-        if len(values) < 2:
-            estimate = PropertyValue(
-                name="refractive_index",
-                status="Unknown",
-                conditions=f"Not enough end-member data ({names}) for a range.",
-            )
-        else:
-            estimate = PropertyValue(
-                name="refractive_index",
-                value_range=(min(values), max(values)),
-                status="Heuristic",
-                conditions=(
-                    f"Range spanned by end members {names}. Not a prediction: it assumes the "
-                    "value lies between them, and it can mix measured and DFT values."
+        note = (
+            f"Range spanned by end members {names}. Not a prediction: it assumes the value "
+            "lies between them"
+        )
+        n_values = [m.n.value for m in members if m.n.value is not None]
+        gap_values = [
+            m.band_gap.value for m in members if m.band_gap and m.band_gap.value is not None
+        ]
+        return OpticalEstimate(
+            estimate=_range(
+                "refractive_index",
+                n_values,
+                None,
+                f"{note}, and it can mix measured and DFT values.",
+                names,
+            ),
+            band_gap=_range("band_gap", gap_values, "eV", f"{note}. Gaps are DFT (JARVIS).", names),
+            end_members=members,
+        )
+
+    def dispersion(self, formula: str) -> DispersionData:
+        formula = normalize(formula)
+        rows = (
+            self._db.execute(
+                "SELECT title, category, direction, curve FROM ri_pages WHERE formula = ? "
+                "ORDER BY category, page",
+                (formula,),
+            ).fetchall()
+            if self._db
+            else []
+        )
+        curves = [
+            DispersionCurve(title=r[0], category=r[1], direction=r[2], n=json.loads(r[3]))
+            for r in rows
+            if r[3]
+        ]
+        bulk = [c.n for c in curves if c.category.lower() in BULK_CATEGORIES]
+        median = None
+        if bulk:
+            median = [
+                _round(statistics.median(vals))
+                if (vals := [c[i] for c in bulk if c[i] is not None])
+                else None
+                for i in range(len(CURVE_NM))
+            ]
+        return DispersionData(
+            formula=formula, wavelengths_nm=CURVE_NM, curves=curves, bulk_median=median
+        )
+
+    def landscape(self) -> Landscape:
+        measured: list[LandscapePoint] = []
+        computed: list[tuple[float, float]] = []
+        total = 0
+        if self._db is not None:
+            formulas = [r[0] for r in self._db.execute("SELECT DISTINCT formula FROM ri_pages")]
+            for formula in formulas:
+                n, gap = self.best_n(formula), self.best_gap(formula)
+                if (
+                    n.status == "Experimental"
+                    and gap.value is not None
+                    and gap.provenance.method == "TBmBJ"
+                ):
+                    measured.append(LandscapePoint(formula=formula, n=n.value, band_gap=gap.value))
+            rows = self._db.execute(
+                "SELECT mbj_gap, eps_mbj FROM jarvis WHERE mbj_gap > 0 AND eps_mbj >= 1 ORDER BY jid"
+            ).fetchall()
+            total = len(rows)
+            step = max(1, math.ceil(total / LANDSCAPE_SAMPLE))
+            computed = [(round(g, 3), round(math.sqrt(e), 3)) for g, e in rows[::step]]
+        moss = [(g / 10, round((MOSS_CONSTANT_EV / (g / 10)) ** 0.25, 3)) for g in range(5, 101, 5)]
+        return Landscape(
+            measured=sorted(measured, key=lambda p: p.formula),
+            computed=computed,
+            computed_total=total,
+            moss=moss,
+            notes=[
+                "Measured: refractiveindex.info bulk n at 550 nm, with the JARVIS TBmBJ band gap.",
+                (
+                    "Computed: JARVIS TBmBJ gap and n = sqrt(eps), a long-wavelength value "
+                    f"(an evenly spaced sample of {total} entries)."
                 ),
-                provenance=Provenance(source="LumiLattice", method="end-member range"),
-            )
-        return OpticalEstimate(estimate=estimate, end_members=members)
+                "Moss relation (n^4 * Eg = 95 eV) is an empirical trend, not a limit.",
+            ],
+        )
+
+
+def _range(
+    name: str, values: list[float], units: str | None, conditions: str, names: str
+) -> PropertyValue:
+    if len(values) < 2:
+        return PropertyValue(
+            name=name,
+            units=units,
+            status="Unknown",
+            conditions=f"Not enough end-member data ({names}) for a range.",
+        )
+    return PropertyValue(
+        name=name,
+        value_range=(min(values), max(values)),
+        units=units,
+        status="Heuristic",
+        conditions=conditions,
+        provenance=Provenance(source="LumiLattice", method="end-member range"),
+    )
 
 
 def _round(value: float | None, digits: int = 3) -> float | None:
     return None if value is None else round(value, digits)
+
+
+@lru_cache
+def get_landscape() -> Landscape:
+    return get_reference_db().landscape()
 
 
 @lru_cache

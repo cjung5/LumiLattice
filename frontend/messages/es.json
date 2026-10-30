@@ -2,13 +2,13 @@
   "Agent": {
     "created": "Creado:",
     "error": "Error: {message}",
-    "hint": "Pregunta sobre el anfitrión o un candidato. El agente ve el anfitrión y el candidato seleccionados, usa herramientas para cada número y recuerda esta conversación.",
-    "noToolCalls": "Sin llamadas a herramientas en esta respuesta. Trata cualquier número como no verificado.",
-    "placeholder": "Ejemplo: Sugiere una sustitución para SrTiO3 que mantenga amplia la banda prohibida.",
+    "hint": "Pregunta sobre el anfitrión o un candidato. El agente ve el anfitrión y el candidato seleccionados, usa herramientas para cada cifra y recuerda esta conversación.",
+    "noToolCalls": "Sin llamadas a herramientas en esta respuesta. Trata cualquier cifra como no verificada.",
+    "placeholder": "Ejemplo: sugiere una sustitución para SrTiO3 que mantenga amplia la banda prohibida.",
     "reset": "Nueva conversación",
     "run": "Ejecutar",
     "running": "Ejecutando…",
-    "title": "4. Agente de investigación (Muse Spark)",
+    "title": "6. Agente de investigación (Muse Spark)",
     "toolCalls": "Llamadas a herramientas ({count})"
   },
   "Assessment": {
@@ -19,10 +19,10 @@
     "addRow": "+ Cosustitución",
     "copyLink": "Copiar enlace",
     "fraction": "Fracción",
-    "from": "Elemento a sustituir",
+    "from": "Elemento que sustituir",
     "generateFromHost": "Generar desde el anfitrión",
     "generating": "Generando…",
-    "hint": "Sustituye una fracción de los sitios de un elemento en {host}. Las posiciones atómicas permanecen en las posiciones del anfitrión (sin relajación).",
+    "hint": "Sustituye una fracción de los sitios de un elemento en {host}. Las posiciones atómicas permanecen en las del anfitrión (sin relajación).",
     "history": "Historial de versiones",
     "lineage": "de {parent} · supercelda {supercell}",
     "linkCopied": "Enlace copiado",
@@ -31,10 +31,47 @@
     "ofSites": "de los sitios de {element}",
     "remove": "Eliminar",
     "reviseCurrent": "Revisar {id}",
-    "title": "3. Candidatos",
-    "to": "Nuevo elemento",
-    "toPlaceholder": "p. ej. Zr",
-    "viewerLegend": "Átomos grandes: sitios sustituidos. Átomos rosas con etiquetas: átomos en la verificación seleccionada."
+    "title": "4. Candidatos",
+    "to": "Elemento nuevo",
+    "toPlaceholder": "p. ej., Zr",
+    "viewerLegend": "Átomos más grandes: sitios sustituidos. Átomos rosas con etiquetas: átomos de la verificación seleccionada."
+  },
+  "Charts": {
+    "axisGap": "Banda prohibida (eV)",
+    "axisN": "Índice de refracción n",
+    "axisWavelength": "Longitud de onda (nm)",
+    "bvsPanel": "Desajuste de valencia de enlace",
+    "dispersionNote": "Las curvas proceden solo de datos medidos; no se extrapola fuera del rango de longitud de onda de cada fuente.",
+    "dispersionSubtitle": "Curvas medidas en volumen (refractiveindex.info, mediana de fuentes)",
+    "dispersionTitle": "Dispersión n(λ) en el rango visible",
+    "expectedBond": "Esperado (Å)",
+    "gapTbmbj": "Banda prohibida TBmBJ (eV)",
+    "goalRegion": "Objetivo: n ≥ {n}, banda ≥ {gap} eV",
+    "hiddenPoints": "{count} materiales medidos quedan fuera del rango graficado y solo aparecen en la tabla.",
+    "inGoal": "En la región objetivo",
+    "landscapeSubtitle": "{measured} materiales con n medido y {computed} entradas JARVIS-DFT (muestra)",
+    "landscapeTitle": "Índice de refracción frente a banda prohibida",
+    "legendBand": "Rango de {id} entre miembros extremos (heurístico)",
+    "legendComputed": "n y banda DFT (JARVIS TBmBJ)",
+    "legendGoal": "Región objetivo",
+    "legendMeasured": "n medido (550 nm), banda TBmBJ",
+    "legendMeasuredCurve": "n(λ) medido",
+    "legendMoss": "Relación de Moss (empírica)",
+    "legendRange": "Rango del candidato (heurístico)",
+    "legendTooLarge": "Sitio demasiado grande para el ion (infraenlazado)",
+    "legendTooSmall": "Sitio demasiado pequeño para el ion (sobreenlazado)",
+    "material": "Material",
+    "meanBond": "Enlace medio (Å)",
+    "noCurve": "Sin n(λ) medido para {formulas}.",
+    "noCurveAtAll": "Sin n(λ) medido para estos materiales.",
+    "showChart": "Gráfico",
+    "showTable": "Tabla",
+    "site": "Sitio",
+    "sitesNote": "Las zonas sombreadas son los umbrales de aviso (!) y fallo (✗). El desajuste de tamaño usa radios de Shannon; el desajuste de valencia es el cambio de longitud de enlace que corregiría el BVS.",
+    "sitesSubtitle": "Desviación de cada catión respecto a su sitio ideal, por dos métodos independientes",
+    "sitesTitle": "Verificaciones por sitio: {subject}",
+    "sizePanel": "Desajuste de tamaño iónico",
+    "srcMeasured": "n medido, banda TBmBJ"
   },
   "Decision": {
     "accept": "Aceptar",
@@ -45,16 +82,28 @@
     "last": "Última decisión: {decision}",
     "modify": "Modificar",
     "modifyHint": "El agente revisa este candidato a partir de tu motivo.",
-    "placeholder": "¿Por qué? p. ej. mantener solo Ti4+, evitar elementos tóxicos, probar un ion de sitio A más grande",
+    "placeholder": "¿Por qué? p. ej., solo Ti4+, evita elementos tóxicos, prueba un ion de sitio A más grande",
     "reject": "Rechazar",
     "rejectHint": "Registra que este candidato no es útil, y por qué.",
     "title": "Tu decisión sobre {id}"
   },
   "Evidence": {
+    "candidateScore": "Candidato {id}",
     "dftComputed": "Calculado con teoría del funcional de la densidad (DFT). No es una medición.",
     "experimental": "Valor medido de un experimento.",
-    "heuristic": "Rango estimado a partir de materiales similares. No es una predicción.",
-    "unknown": "No hay ningún valor fiable disponible."
+    "heuristic": "Rango estimado de materiales similares. No es una predicción.",
+    "hint": "Datos del anfitrión y del candidato actual: posición entre materiales conocidos, variación de n con la longitud de onda, cifras por sitio de cada verificación y puntuación del objetivo.",
+    "hostScore": "Anfitrión {formula}",
+    "loading": "Cargando datos…",
+    "needSubject": "Selecciona un anfitrión o un candidato para ver esto.",
+    "relaxed": "relajado",
+    "tabDispersion": "Dispersión n(λ)",
+    "tabLandscape": "n frente a banda prohibida",
+    "tabScore": "Puntuación del objetivo",
+    "tabSites": "Métricas por sitio",
+    "title": "5. Evidencia",
+    "unknown": "No hay ningún valor fiable disponible.",
+    "unrelaxed": "Sin relajar"
   },
   "Experiment": {
     "add": "Añadir",
@@ -64,7 +113,7 @@
     "inside": "dentro del rango de miembros extremos {lo}–{hi}",
     "measured": "{count} medición(es)",
     "method": "Método",
-    "methodPlaceholder": "p. ej. elipsometría",
+    "methodPlaceholder": "p. ej., elipsometría",
     "notTested": "Experimento aún no realizado",
     "other": "otro",
     "outside": "fuera del rango de miembros extremos {lo}–{hi}",
@@ -77,8 +126,19 @@
     "value": "Valor",
     "wavelength": "Longitud de onda (nm)"
   },
+  "Goal": {
+    "forbidden": "Elementos prohibidos",
+    "forbiddenPlaceholder": "p. ej., Pb, Cd",
+    "hint": "Define primero los objetivos. Cada anfitrión y candidato se evalúa según ellos, con la evidencia de cada veredicto.",
+    "minGap": "Banda prohibida mínima (eV)",
+    "note": "Una banda prohibida de unos 3,1 eV sitúa el borde de absorción cerca de 400 nm, el extremo azul del espectro visible.",
+    "presetAr": "Preajuste de guía de onda RA",
+    "presetToxic": "+ Elementos tóxicos",
+    "targetN": "n mínimo (cerca de 550 nm)",
+    "title": "1. Objetivo de investigación"
+  },
   "Home": {
-    "intro": "Explora materiales candidatos para guías de onda de RA con Muse Spark. Cada número proviene de una base de datos o de un cálculo, con su fuente.",
+    "intro": "Explora materiales candidatos para guías de onda de RA con Muse Spark. Cada cifra procede de una base de datos o de un cálculo, con su fuente.",
     "tagline": "Un científico colaborativo de IA para el descubrimiento de materiales optoelectrónicos"
   },
   "Host": {
@@ -98,20 +158,20 @@
     "loadingCod": "Cargando estructura desde COD…",
     "noResults": "No se encontraron materiales.",
     "placeholder": "SrTiO3, Sr,Ti,O o mp-5229",
-    "placeholderCod": "Fórmula, p. ej. SrTiO3",
+    "placeholderCod": "Fórmula, p. ej., SrTiO3",
     "search": "Buscar",
     "searching": "Buscando…",
     "sourceCod": "COD (experimental)",
     "sourceMp": "Materials Project (DFT)",
     "stable": "Estable",
     "theoretical": "Teórico",
-    "title": "1. Selecciona una estructura anfitriona",
+    "title": "2. Seleccionar estructura anfitriona",
     "upload": "Subir CIF",
     "uploading": "Leyendo…"
   },
   "Language": {
     "label": "Idioma",
-    "machineTranslated": "Traducido automáticamente con Muse Spark. Algunos términos pueden ser inexactos."
+    "machineTranslated": "Traducción automática con Muse Spark. Algunos términos pueden ser imprecisos."
   },
   "Literature": {
     "citedBy": "Citado por {count}",
@@ -123,7 +183,7 @@
     "searching": "Buscando…",
     "source": "Fuente: {source}",
     "sourceFailed": "{source}: {reason}",
-    "title": "6. Bibliografía"
+    "title": "8. Bibliografía"
   },
   "Metadata": {
     "description": "Un científico colaborativo de IA para el descubrimiento de materiales optoelectrónicos.",
@@ -131,11 +191,11 @@
   },
   "Optical": {
     "bestN": "Mejor n disponible para {formula}:",
-    "computed": "Gaps DFT y n ({count} entradas, JARVIS-DFT)",
-    "computedNote": "Los gaps TBmBJ suelen estar más cerca de los gaps medidos que OptB88vdW. n = sqrt(eps) es un valor de longitud de onda larga, no n(550 nm).",
+    "computed": "Bandas y n DFT ({count} entradas, JARVIS-DFT)",
+    "computedNote": "Las bandas TBmBJ suelen estar más cerca de las medidas que OptB88vdW. n = sqrt(eps) es un valor de longitud de onda larga, no n(550 nm).",
     "form": "Forma",
-    "gapMbj": "Gap TBmBJ (eV)",
-    "gapOpt": "Gap OptB88vdW (eV)",
+    "gapMbj": "Banda TBmBJ (eV)",
+    "gapOpt": "Banda OptB88vdW (eV)",
     "loading": "Cargando datos ópticos…",
     "measured": "n, k medidos ({count} fuentes, refractiveindex.info)",
     "source": "Fuente",
@@ -143,7 +203,7 @@
   },
   "Publish": {
     "anonymous": "Anónimo",
-    "byName": "Acredítame por nombre",
+    "byName": "Reconóceme por mi nombre",
     "cancel": "Cancelar",
     "confirm": "Publicar",
     "consent": "Elijo hacer público {id}, con el crédito anterior.",
@@ -167,23 +227,23 @@
       "all": "Todos",
       "decided": "Con decisión",
       "plausible": "Plausible",
-      "published": "Publicados"
+      "published": "Publicado"
     },
     "formula": "Fórmula",
-    "hint": "Todos los candidatos en este servidor, del formulario y del agente. Selecciona hasta {max} para comparar.",
+    "hint": "Todos los candidatos de este servidor, del formulario y del agente. Selecciona hasta {max} para comparar.",
     "nRange": "n (rango de miembros extremos)",
     "origin": "Origen",
     "relaxedVolume": "ΔV tras CHGNet",
     "status": "Estado",
     "substitutions": "Sustituciones (desde el anfitrión raíz)",
-    "title": "5. Registro de candidatos"
+    "title": "7. Registro de candidatos"
   },
   "Relax": {
     "converged": "convergido en {steps} pasos",
     "energy": "Energía CHGNet",
     "energyNote": "Potencial ML; no comparar con energías DFT",
-    "hint": "Mueve los átomos y la celda a menor energía con un potencial de aprendizaje automático, luego ejecuta las mismas verificaciones. Necesita PyTorch, por lo que solo se ejecuta en una instalación local.",
-    "maxShift": "Mayor desplazamiento atómico",
+    "hint": "Mueve los átomos y la celda a menor energía con un potencial de aprendizaje automático, y repite las mismas verificaciones. Requiere PyTorch, por lo que solo funciona en instalación local.",
+    "maxShift": "Desplazamiento atómico máximo",
     "notConverged": "no convergido tras {steps} pasos",
     "relaxed": "Relajado",
     "run": "Relajar con CHGNet",
@@ -192,17 +252,32 @@
     "title": "Relajación (CHGNet, instalación local)",
     "unrelaxed": "Sin relajar"
   },
+  "Score": {
+    "criterion": {
+      "band_gap": "Banda prohibida",
+      "elements": "Elementos",
+      "n": "Índice de refracción",
+      "structure": "Estructura"
+    },
+    "summary": "{meets} de {total} criterios cumplidos",
+    "verdict": {
+      "fails": "No cumple",
+      "meets": "Cumple",
+      "uncertain": "Incierto",
+      "unknown": "Desconocido"
+    }
+  },
   "Status": {
     "checking": "Comprobando…",
-    "keyConfigured": "Clave de API del modelo Meta configurada",
-    "keyMissing": "Falta la clave de API del modelo Meta. Añade MODEL_API_KEY a backend/.env.",
+    "keyConfigured": "Clave API de Meta Model configurada",
+    "keyMissing": "Falta la clave API de Meta Model. Añade MODEL_API_KEY a backend/.env.",
     "model": "Modelo",
     "mpConfigured": "Clave de Materials Project configurada",
     "mpMissing": "Falta la clave de Materials Project. Añade MP_API_KEY a backend/.env.",
     "offline": "Sin conexión. Inicia el backend en {url}.",
     "online": "En línea",
     "openAlexConfigured": "Clave de OpenAlex configurada",
-    "openAlexMissing": "Sin clave de OpenAlex: la búsqueda bibliográfica usa un presupuesto diario compartido pequeño.",
+    "openAlexMissing": "Sin clave de OpenAlex: la búsqueda bibliográfica usa un presupuesto diario compartido reducido.",
     "storeMemory": "Los candidatos se conservan en memoria (se pierden al reiniciar). Configura DATABASE_URL para conservarlos.",
     "storePostgres": "Los candidatos se guardan en Postgres",
     "title": "Backend"
@@ -212,11 +287,11 @@
     "empty": "Selecciona un material o sube un CIF para ver su estructura.",
     "lattice": "Red",
     "loading": "Cargando estructura…",
-    "optical": "Evidencia de índice de refracción (por fórmula)",
+    "optical": "Evidencia del índice de refracción (por fórmula)",
     "sites": "Sitios en la celda",
     "source": "Fuente",
     "spacegroup": "Grupo espacial",
-    "title": "2. Estructura",
-    "warnings": "Advertencias del analizador"
+    "title": "3. Estructura",
+    "warnings": "Avisos del analizador"
   }
 }

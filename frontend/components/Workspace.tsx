@@ -4,6 +4,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { AgentPanel, type AgentTurn } from "@/components/AgentPanel";
 import { CandidatePanel } from "@/components/CandidatePanel";
+import { EvidencePanel } from "@/components/EvidencePanel";
+import { GoalPanel } from "@/components/GoalPanel";
 import { HostSelector } from "@/components/HostSelector";
 import { LiteraturePanel } from "@/components/LiteraturePanel";
 import { RegistryPanel } from "@/components/RegistryPanel";
@@ -17,6 +19,7 @@ import {
   type AgentContext,
   type Candidate,
   type DecisionKind,
+  type Goal,
   type HostRef,
   type MaterialRecord,
   type StructuralAssessment,
@@ -39,6 +42,7 @@ export function Workspace() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [goal, setGoal] = useState<Goal>({ target_n: 2.2, min_band_gap: 3.0, forbidden_elements: [] });
   const [history, setHistory] = useState<Candidate[]>([]);
   const [current, setCurrent] = useState<Candidate | null>(null);
   const [registryVersion, setRegistryVersion] = useState(0);
@@ -130,6 +134,7 @@ export function Workspace() {
       host_material_id: record?.material_id,
       host_label: hostLabel || undefined,
       current_candidate_id: current?.candidate_id,
+      goal,
       ...extra,
     };
     try {
@@ -174,6 +179,7 @@ export function Workspace() {
 
   return (
     <>
+      <GoalPanel goal={goal} onChange={setGoal} />
       <HostSelector
         selectedId={record?.material_id ?? null}
         onSelectMaterial={selectMaterial}
@@ -198,6 +204,14 @@ export function Workspace() {
           onCandidate={showCandidate}
           onSelect={setCurrent}
           onDecide={decide}
+        />
+      )}
+      {(structure || current) && (
+        <EvidencePanel
+          goal={goal}
+          hostFormula={structure?.formula ?? null}
+          hostAssessment={hostAssessment}
+          candidate={current}
         />
       )}
       <AgentPanel

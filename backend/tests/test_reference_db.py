@@ -15,8 +15,8 @@ def tiny_db(tmp_path) -> ReferenceDB:
     db.executescript(SCHEMA)
     db.executemany(
         "INSERT INTO ri_pages (formula, book, page, title, category, direction, reference, doi, "
-        "comments, wl_min, wl_max, n_450, n_550, n_650, k_550, data_path) "
-        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        "comments, wl_min, wl_max, n_450, n_550, n_650, k_550, data_path, curve) "
+        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         [
             (
                 "AB",
@@ -35,6 +35,7 @@ def tiny_db(tmp_path) -> ReferenceDB:
                 1.9,
                 None,
                 "p",
+                None,
             ),
             (
                 "AB",
@@ -53,6 +54,7 @@ def tiny_db(tmp_path) -> ReferenceDB:
                 2.1,
                 None,
                 "p",
+                None,
             ),
             (
                 "AB",
@@ -71,6 +73,7 @@ def tiny_db(tmp_path) -> ReferenceDB:
                 1.6,
                 None,
                 "p",
+                None,
             ),
         ],
     )

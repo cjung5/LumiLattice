@@ -10,7 +10,7 @@ from collections.abc import Callable
 
 from pymatgen.core import Structure
 
-from app.models.candidates import CheckResult, StructuralAssessment
+from app.models.candidates import CheckResult, SiteMetric, StructuralAssessment
 from app.tools.ionic import (
     BV_B,
     IonicModel,
@@ -36,6 +36,16 @@ RELAXED_NOTE = (
     "Relaxed with CHGNet (machine-learned potential): atoms and cell moved to lower energy, "
     "so the checks describe the relaxed geometry. Still not a synthesis prediction."
 )
+THRESHOLDS = {
+    "size_warn": BOND_MISMATCH_WARN,
+    "size_fail": BOND_MISMATCH_FAIL,
+    "bvs_warn": BVS_WARN,
+    "bvs_fail": BVS_FAIL,
+    "t_pass_low": TOLERANCE_PASS[0],
+    "t_pass_high": TOLERANCE_PASS[1],
+    "t_warn_low": TOLERANCE_WARN[0],
+    "t_warn_high": TOLERANCE_WARN[1],
+}
 RADII_METHOD = "Shannon (1976) ionic radii"
 BVS_METHOD = f"Bond valence sum, O'Keeffe & Brese (1991) universal parameters, b = {BV_B} Å"
 
@@ -133,9 +143,15 @@ def check_distances(structure: Structure, model: IonicModel) -> CheckResult:
 
 
 def check_sites(
-    structure: Structure, model: IonicModel, sites: list[int]
+    structure: Structure,
+    model: IonicModel,
+    sites: list[int],
+    metrics: list[SiteMetric] | None = None,
 ) -> tuple[CheckResult, CheckResult, CheckResult]:
-    """Bond-length fit, coordination, and bond valence sum for each focus cation site."""
+    """Bond-length fit, coordination, and bond valence sum for each focus cation site.
+
+    The numbers behind each verdict are appended to `metrics` (for charts and tables).
+    """
     fit_status, fit_msgs, fit_atoms = "pass", [], []
     cn_status, cn_msgs, cn_atoms = "pass", [], []
     bvs_status, bvs_msgs, bvs_atoms = "pass", [], []
@@ -154,12 +170,24 @@ def check_sites(
         mean_d = sum(n.nn_distance for n in shell) / cn
         anion = shell[0].specie.symbol
         shell_atoms = [i] + [n.index for n in shell]
+        metric = SiteMetric(
+            index=i,
+            element=symbol,
+            oxidation_state=oxi,
+            coordination=cn,
+            bond_lengths=sorted(round(float(n.nn_distance), 4) for n in shell),
+            mean_bond=round(float(mean_d), 4),
+        )
+        if metrics is not None:
+            metrics.append(metric)
 
         rc = shannon_radius(symbol, oxi, cn)
         ra = shannon_radius(anion, model.oxidation_states[anion], 6)
         if rc and ra:
             expected = rc[0] + ra[0]
             dev = (expected - mean_d) / mean_d
+            metric.expected_bond = round(float(expected), 4)
+            metric.size_mismatch = round(float(dev), 4)
             status = _graded(dev, BOND_MISMATCH_WARN, BOND_MISMATCH_FAIL)
             if status != "pass":
                 size = "too large" if dev > 0 else "too small"
@@ -183,6 +211,8 @@ def check_sites(
         # Bond-length change that would bring the BVS to the oxidation state.
         delta_d = BV_B * math.log(bvs / oxi)
         dev = delta_d / mean_d
+        metric.bvs = round(float(bvs), 3)
+        metric.bvs_bond_change = round(float(dev), 4)
         status = _graded(dev, BVS_WARN, BVS_FAIL)
         if status != "pass":
             kind = "overbonded: site too small" if dev > 0 else "underbonded: site too large"
@@ -330,7 +360,8 @@ def assess(
         )
 
     sites = _cation_sites(structure, model, focus_sites)
-    fit, coordination, bvs = check_sites(structure, model, sites)
+    metrics: list[SiteMetric] = []
+    fit, coordination, bvs = check_sites(structure, model, sites, metrics)
     checks = [
         check_charge(structure, model, sites),
         check_distances(structure, model),
@@ -349,4 +380,6 @@ def assess(
         checks=checks,
         oxidation_states=model.oxidation_states,
         notes=[note],
+        site_metrics=metrics,
+        thresholds=THRESHOLDS,
     )

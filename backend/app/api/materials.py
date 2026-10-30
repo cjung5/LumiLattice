@@ -4,10 +4,10 @@ from pydantic import BaseModel, Field
 from app.api.deps import CodDep, LiteratureDep, MPDep
 from app.models.evidence import Provenance
 from app.models.materials import LiteratureResult, MaterialRecord, StructurePayload
-from app.models.optical import OpticalReference
+from app.models.optical import DispersionData, Landscape, OpticalReference
 from app.tools.cod import CodEntry
 from app.tools.materials import parse_query
-from app.tools.reference_db import get_reference_db
+from app.tools.reference_db import get_landscape, get_reference_db
 from app.tools.registry import ToolError, UpstreamError
 from app.tools.structures import parse_cif, structure_payload
 
@@ -50,6 +50,22 @@ def material_structure(material_id: str, mp: MPDep) -> StructurePayload:
             structure,
             Provenance(source="Materials Project", reference=material_id),
         )
+    except ToolError as exc:
+        raise to_http(exc) from exc
+
+
+@router.get("/landscape")
+def landscape() -> Landscape:
+    """n vs band gap for every material with a measured n, plus a sample of JARVIS DFT."""
+    return get_landscape()
+
+
+@router.get("/dispersion")
+def dispersion(formulas: str = Query(min_length=1, max_length=200)) -> list[DispersionData]:
+    """n(λ) curves (380–780 nm) for up to 6 comma-separated formulas."""
+    names = [f.strip() for f in formulas.split(",") if f.strip()][:6]
+    try:
+        return [get_reference_db().dispersion(f) for f in names]
     except ToolError as exc:
         raise to_http(exc) from exc
 

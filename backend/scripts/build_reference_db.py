@@ -25,6 +25,8 @@ from scripts.download_data import DATASETS, REPO_ROOT, sha256
 OUT = BACKEND_DIR / "data" / "reference.sqlite"
 JARVIS_ZIP, RII_ZIP = DATASETS[0]["path"], DATASETS[1]["path"]
 WAVELENGTHS = {"n_450": 0.45, "n_550": 0.55, "n_650": 0.65}
+# n(λ) curve for charts: 380-780 nm every 10 nm (None outside the measured range).
+CURVE_NM = list(range(380, 781, 10))
 
 SCHEMA = """
 CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
@@ -37,7 +39,8 @@ CREATE INDEX jarvis_formula ON jarvis(formula);
 CREATE TABLE ri_pages (
     id INTEGER PRIMARY KEY, formula TEXT NOT NULL, book TEXT, page TEXT, title TEXT,
     category TEXT, direction TEXT, reference TEXT, doi TEXT, comments TEXT,
-    wl_min REAL, wl_max REAL, n_450 REAL, n_550 REAL, n_650 REAL, k_550 REAL, data_path TEXT
+    wl_min REAL, wl_max REAL, n_450 REAL, n_550 REAL, n_650 REAL, k_550 REAL, data_path TEXT,
+    curve TEXT
 );
 CREATE INDEX ri_formula ON ri_pages(formula);
 """
@@ -91,6 +94,10 @@ def build_jarvis(db: sqlite3.Connection) -> int:
     return len(rows)
 
 
+def _r(value: float | None) -> float | None:
+    return None if value is None else round(value, 4)
+
+
 def plain(text: str | None) -> str:
     return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", text or ""))).strip()
 
@@ -142,12 +149,13 @@ def build_refractiveindex(db: sqlite3.Connection) -> int:
                         values["n_650"],
                         evaluate(data, 0.55)[1],
                         f"main/{item['data'].split('main/', 1)[-1]}",
+                        json.dumps([_r(evaluate(data, nm / 1000)[0]) for nm in CURVE_NM]),
                     )
                 )
     db.executemany(
         "INSERT INTO ri_pages (formula, book, page, title, category, direction, reference, doi, "
-        "comments, wl_min, wl_max, n_450, n_550, n_650, k_550, data_path) "
-        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        "comments, wl_min, wl_max, n_450, n_550, n_650, k_550, data_path, curve) "
+        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         rows,
     )
     return len(rows)

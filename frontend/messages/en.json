@@ -26,14 +26,19 @@
     "storePostgres": "Candidates are saved in Postgres",
     "storeMemory": "Candidates are kept in memory (lost on restart). Set DATABASE_URL to keep them."
   },
-  "Evidence": {
-    "experimental": "Measured value from an experiment.",
-    "dftComputed": "Computed with density functional theory (DFT). Not a measurement.",
-    "heuristic": "Estimated range from similar materials. Not a prediction.",
-    "unknown": "No reliable value is available."
+  "Goal": {
+    "hint": "Set the targets first. Every host and candidate is scored against them, with the evidence behind each verdict.",
+    "targetN": "Minimum n (near 550 nm)",
+    "minGap": "Minimum band gap (eV)",
+    "forbidden": "Forbidden elements",
+    "forbiddenPlaceholder": "e.g. Pb, Cd",
+    "presetAr": "AR waveguide preset",
+    "presetToxic": "+ Toxic elements",
+    "note": "A band gap of about 3.1 eV puts the absorption edge near 400 nm, the blue end of the visible range.",
+    "title": "1. Research goal"
   },
   "Host": {
-    "title": "1. Select a host structure",
+    "title": "2. Select a host structure",
     "hint": "Search Materials Project by formula (SrTiO3, *TiO3), elements (Sr,Ti,O), or ID (mp-5229). Or upload your own CIF.",
     "placeholder": "SrTiO3, Sr,Ti,O, or mp-5229",
     "search": "Search",
@@ -61,7 +66,7 @@
     "codCredit": "Structures from the Crystallography Open Database (CC0). Please acknowledge the original authors."
   },
   "Structure": {
-    "title": "2. Structure",
+    "title": "3. Structure",
     "empty": "Select a material or upload a CIF to see its structure.",
     "loading": "Loading structure…",
     "spacegroup": "Space group",
@@ -73,7 +78,7 @@
     "optical": "Refractive index evidence (by formula)"
   },
   "Candidate": {
-    "title": "3. Candidates",
+    "title": "4. Candidates",
     "hint": "Replace a fraction of one element's sites in {host}. Atom positions stay at the host positions (no relaxation).",
     "from": "Element to replace",
     "to": "New element",
@@ -93,12 +98,82 @@
     "copyLink": "Copy link",
     "linkCopied": "Link copied"
   },
+  "Evidence": {
+    "experimental": "Measured value from an experiment.",
+    "dftComputed": "Computed with density functional theory (DFT). Not a measurement.",
+    "heuristic": "Estimated range from similar materials. Not a prediction.",
+    "unknown": "No reliable value is available.",
+    "hint": "Data behind the host and the current candidate: where they sit among known materials, how n changes with wavelength, the per-site numbers behind each check, and the goal score.",
+    "tabLandscape": "n vs band gap",
+    "tabDispersion": "Dispersion n(λ)",
+    "tabSites": "Site metrics",
+    "tabScore": "Goal score",
+    "hostScore": "Host {formula}",
+    "candidateScore": "Candidate {id}",
+    "needSubject": "Select a host or a candidate to see this.",
+    "loading": "Loading data…",
+    "relaxed": "relaxed",
+    "unrelaxed": "Unrelaxed",
+    "title": "5. Evidence"
+  },
+  "Score": {
+    "summary": "{meets} of {total} criteria met",
+    "verdict": {
+      "meets": "Meets",
+      "uncertain": "Uncertain",
+      "fails": "Fails",
+      "unknown": "Unknown"
+    },
+    "criterion": {
+      "n": "Refractive index",
+      "band_gap": "Band gap",
+      "elements": "Elements",
+      "structure": "Structure"
+    }
+  },
+  "Charts": {
+    "showTable": "Table",
+    "showChart": "Chart",
+    "material": "Material",
+    "gapTbmbj": "Band gap TBmBJ (eV)",
+    "inGoal": "In goal region",
+    "srcMeasured": "measured n, TBmBJ gap",
+    "landscapeTitle": "Refractive index vs band gap",
+    "landscapeSubtitle": "{measured} materials with measured n, and {computed} JARVIS DFT entries (sampled)",
+    "legendMeasured": "Measured n(550 nm), TBmBJ gap",
+    "legendComputed": "DFT n and gap (JARVIS TBmBJ)",
+    "legendRange": "Candidate range (Heuristic)",
+    "legendGoal": "Goal region",
+    "legendMoss": "Moss relation (empirical)",
+    "goalRegion": "Goal: n ≥ {n}, gap ≥ {gap} eV",
+    "hiddenPoints": "{count} measured materials lie outside the plotted range and are listed only in the table.",
+    "axisGap": "Band gap (eV)",
+    "axisN": "Refractive index n",
+    "dispersionTitle": "Dispersion n(λ) in the visible range",
+    "dispersionSubtitle": "Measured bulk curves (refractiveindex.info, median of sources)",
+    "legendMeasuredCurve": "Measured n(λ)",
+    "legendBand": "{id} range between end members (Heuristic)",
+    "dispersionNote": "Curves come only from measured data; nothing is extrapolated beyond each source's wavelength range.",
+    "noCurve": "No measured n(λ) for {formulas}.",
+    "noCurveAtAll": "No measured n(λ) for these materials.",
+    "axisWavelength": "Wavelength (nm)",
+    "sitesTitle": "Per-site checks: {subject}",
+    "sitesSubtitle": "How far each cation is from its ideal site, by two independent methods",
+    "sizePanel": "Ionic size mismatch",
+    "bvsPanel": "Bond-valence misfit",
+    "legendTooSmall": "Site too small for the ion (overbonded)",
+    "legendTooLarge": "Site too large for the ion (underbonded)",
+    "sitesNote": "Shaded zones are the warn (!) and fail (✗) thresholds. Size mismatch uses Shannon radii; bond-valence misfit is the bond-length change that would fix the BVS.",
+    "site": "Site",
+    "meanBond": "Mean bond (Å)",
+    "expectedBond": "Expected (Å)"
+  },
   "Assessment": {
     "clickHint": "Select a check to show its atoms.",
     "atoms": "{count} atoms"
   },
   "Agent": {
-    "title": "4. Research agent (Muse Spark)",
+    "title": "6. Research agent (Muse Spark)",
     "hint": "Ask about the host or a candidate. The agent sees the selected host and candidate, uses tools for every number, and remembers this conversation.",
     "placeholder": "Example: Suggest a substitution for SrTiO3 that keeps the band gap wide.",
     "run": "Run",
@@ -187,7 +262,7 @@
     "hint": "Add your own measurement to compare prediction and experiment. LumiLattice records it as given and does not verify it."
   },
   "Registry": {
-    "title": "5. Candidate registry",
+    "title": "7. Candidate registry",
     "hint": "Every candidate on this server, from the form and from the agent. Select up to {max} to compare.",
     "filter": {
       "all": "All",
@@ -208,7 +283,7 @@
     "experiments": "Measurements"
   },
   "Literature": {
-    "title": "6. Literature",
+    "title": "8. Literature",
     "hint": "Paper metadata from OpenAlex, Crossref, and arXiv, merged by DOI. LumiLattice does not read full texts.",
     "placeholder": "Example: SrTiO3 refractive index",
     "search": "Search",

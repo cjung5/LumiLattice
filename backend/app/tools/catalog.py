@@ -8,6 +8,7 @@ from app.models.candidates import Candidate, Substitution
 from app.storage.memory import CandidateStore, get_store
 from app.tools.candidates import create_candidate, load_host
 from app.tools.composition import COMPOSITION_TOOL
+from app.tools.goals import Goal, score_candidate
 from app.tools.literature_sources import LiteratureSearch
 from app.tools.materials import MaterialsProjectClient
 from app.tools.reference_db import get_reference_db
@@ -99,6 +100,7 @@ def build_registry(
     mp: MaterialsProjectClient | None,
     literature: LiteratureSearch,
     store: CandidateStore | None = None,
+    goal: Goal | None = None,
 ) -> ToolRegistry:
     store = store or get_store()
 
@@ -148,6 +150,14 @@ def build_registry(
             "note": ref.note,
         }
 
+    def score_against_goal(args: GetCandidateArgs) -> dict[str, Any]:
+        if goal is None:
+            raise ToolError("The researcher has not set a goal.")
+        stored = store.get(args.candidate_id)
+        if stored is None:
+            raise ToolError(f"No candidate {args.candidate_id}.")
+        return score_candidate(stored[0], goal).model_dump(exclude_none=True)
+
     def get_candidate(args: GetCandidateArgs) -> dict[str, Any]:
         stored = store.get(args.candidate_id)
         if stored is None:
@@ -176,6 +186,16 @@ def build_registry(
                 ),
                 args_model=GetCandidateArgs,
                 handler=get_candidate,
+            ),
+            Tool(
+                name="score_against_goal",
+                description=(
+                    "Score a candidate against the researcher's goal (target n, minimum band gap, "
+                    "forbidden elements, structure). Each verdict is meets, uncertain, fails, or "
+                    "unknown, with the evidence it used."
+                ),
+                args_model=GetCandidateArgs,
+                handler=score_against_goal,
             ),
             Tool(
                 name="get_optical_reference",

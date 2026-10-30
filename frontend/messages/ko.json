@@ -26,14 +26,19 @@
     "storePostgres": "후보가 Postgres에 저장됩니다",
     "storeMemory": "후보가 메모리에만 있어 재시작하면 사라집니다. 유지하려면 DATABASE_URL을 설정하세요."
   },
-  "Evidence": {
-    "experimental": "실험으로 측정한 값입니다.",
-    "dftComputed": "밀도범함수이론(DFT)으로 계산한 값입니다. 측정값이 아닙니다.",
-    "heuristic": "유사 물질로부터 추정한 범위입니다. 예측값이 아닙니다.",
-    "unknown": "신뢰할 수 있는 값이 없습니다."
+  "Goal": {
+    "hint": "목표를 먼저 정하세요. 모든 기준 구조와 후보가 이 목표로 점수가 매겨지고, 판정마다 근거가 붙습니다.",
+    "targetN": "최소 n (550 nm 부근)",
+    "minGap": "최소 밴드갭 (eV)",
+    "forbidden": "금지 원소",
+    "forbiddenPlaceholder": "예: Pb, Cd",
+    "presetAr": "AR 도파관 기본값",
+    "presetToxic": "+ 독성 원소",
+    "note": "밴드갭이 약 3.1 eV면 흡수단이 가시광의 파란 끝인 400 nm 부근에 옵니다.",
+    "title": "1. 연구 목표"
   },
   "Host": {
-    "title": "1. 기준 구조 선택",
+    "title": "2. 기준 구조 선택",
     "hint": "Materials Project에서 화학식(SrTiO3, *TiO3), 원소(Sr,Ti,O), ID(mp-5229)로 검색하세요. 직접 가진 CIF를 올려도 됩니다.",
     "placeholder": "SrTiO3, Sr,Ti,O 또는 mp-5229",
     "search": "검색",
@@ -61,7 +66,7 @@
     "codCredit": "Crystallography Open Database의 구조입니다(CC0). 원저자를 밝혀 주세요."
   },
   "Structure": {
-    "title": "2. 결정구조",
+    "title": "3. 결정구조",
     "empty": "물질을 선택하거나 CIF를 올리면 구조가 표시됩니다.",
     "loading": "구조를 불러오는 중…",
     "spacegroup": "공간군",
@@ -73,7 +78,7 @@
     "optical": "굴절률 근거 (화학식 기준)"
   },
   "Candidate": {
-    "title": "3. 후보",
+    "title": "4. 후보",
     "hint": "{host}에서 한 원소 자리의 일부를 다른 원소로 바꿉니다. 원자 위치는 기준 구조 그대로입니다(relaxation 없음).",
     "from": "바꿀 원소",
     "to": "새 원소",
@@ -93,12 +98,82 @@
     "copyLink": "링크 복사",
     "linkCopied": "링크를 복사했습니다"
   },
+  "Evidence": {
+    "experimental": "실험으로 측정한 값입니다.",
+    "dftComputed": "밀도범함수이론(DFT)으로 계산한 값입니다. 측정값이 아닙니다.",
+    "heuristic": "유사 물질로부터 추정한 범위입니다. 예측값이 아닙니다.",
+    "unknown": "신뢰할 수 있는 값이 없습니다.",
+    "hint": "기준 구조와 현재 후보의 데이터 근거입니다: 알려진 물질 사이에서의 위치, 파장에 따른 n 변화, 검사별 사이트 수치, 목표 점수.",
+    "tabLandscape": "n–밴드갭",
+    "tabDispersion": "분산 n(λ)",
+    "tabSites": "사이트 지표",
+    "tabScore": "목표 점수",
+    "hostScore": "기준 구조 {formula}",
+    "candidateScore": "후보 {id}",
+    "needSubject": "기준 구조나 후보를 선택하면 표시됩니다.",
+    "loading": "데이터를 불러오는 중…",
+    "relaxed": "이완 후",
+    "unrelaxed": "이완 전",
+    "title": "5. 근거"
+  },
+  "Score": {
+    "summary": "기준 {total}개 중 {meets}개 충족",
+    "verdict": {
+      "meets": "충족",
+      "uncertain": "불확실",
+      "fails": "미달",
+      "unknown": "알 수 없음"
+    },
+    "criterion": {
+      "n": "굴절률",
+      "band_gap": "밴드갭",
+      "elements": "원소",
+      "structure": "구조"
+    }
+  },
+  "Charts": {
+    "showTable": "표",
+    "showChart": "차트",
+    "material": "물질",
+    "gapTbmbj": "밴드갭 TBmBJ (eV)",
+    "inGoal": "목표 영역",
+    "srcMeasured": "측정 n, TBmBJ 밴드갭",
+    "landscapeTitle": "굴절률–밴드갭 분포",
+    "landscapeSubtitle": "측정 n이 있는 물질 {measured}개와 JARVIS DFT 항목 {computed}개(표본)",
+    "legendMeasured": "측정 n(550 nm), TBmBJ 밴드갭",
+    "legendComputed": "DFT n과 밴드갭 (JARVIS TBmBJ)",
+    "legendRange": "후보 범위 (Heuristic)",
+    "legendGoal": "목표 영역",
+    "legendMoss": "Moss 관계식 (경험식)",
+    "goalRegion": "목표: n ≥ {n}, 밴드갭 ≥ {gap} eV",
+    "hiddenPoints": "측정 물질 {count}개는 그래프 범위 밖이라 표에만 있습니다.",
+    "axisGap": "밴드갭 (eV)",
+    "axisN": "굴절률 n",
+    "dispersionTitle": "가시광 영역의 분산 n(λ)",
+    "dispersionSubtitle": "측정된 벌크 곡선 (refractiveindex.info, 출처들의 중앙값)",
+    "legendMeasuredCurve": "측정 n(λ)",
+    "legendBand": "끝 조성 사이 {id} 범위 (Heuristic)",
+    "dispersionNote": "곡선은 측정 데이터에서만 그리며, 출처의 파장 범위 밖으로는 외삽하지 않습니다.",
+    "noCurve": "{formulas}의 측정 n(λ)가 없습니다.",
+    "noCurveAtAll": "이 물질들의 측정 n(λ)가 없습니다.",
+    "axisWavelength": "파장 (nm)",
+    "sitesTitle": "사이트별 검사: {subject}",
+    "sitesSubtitle": "두 가지 독립된 방법으로 본, 각 양이온이 이상적인 자리에서 벗어난 정도",
+    "sizePanel": "이온 크기 불일치",
+    "bvsPanel": "결합원자가 불일치",
+    "legendTooSmall": "이온에 비해 자리가 작음 (과결합)",
+    "legendTooLarge": "이온에 비해 자리가 큼 (저결합)",
+    "sitesNote": "음영은 경고(!)와 실패(✗) 기준입니다. 크기 불일치는 Shannon 반경, 결합원자가 불일치는 BVS를 맞추는 데 필요한 결합 길이 변화입니다.",
+    "site": "사이트",
+    "meanBond": "평균 결합 (Å)",
+    "expectedBond": "기대값 (Å)"
+  },
   "Assessment": {
     "clickHint": "검사 항목을 누르면 해당 원자가 표시됩니다.",
     "atoms": "원자 {count}개"
   },
   "Agent": {
-    "title": "4. 연구 에이전트 (Muse Spark)",
+    "title": "6. 연구 에이전트 (Muse Spark)",
     "hint": "기준 구조나 후보에 대해 물어보세요. 에이전트는 선택한 기준 구조와 후보를 보고, 모든 수치를 도구로 구하며, 이 대화를 기억합니다.",
     "placeholder": "예: 밴드갭을 넓게 유지하는 SrTiO3 치환을 제안해 줘.",
     "run": "실행",
@@ -187,7 +262,7 @@
     "hint": "직접 측정한 값을 넣어 예측과 실험을 비교하세요. LumiLattice는 입력한 그대로 기록하며 검증하지 않습니다."
   },
   "Registry": {
-    "title": "5. 후보 목록",
+    "title": "7. 후보 목록",
     "hint": "이 서버의 모든 후보(입력 폼과 에이전트가 만든 것)입니다. 최대 {max}개를 골라 비교하세요.",
     "filter": {
       "all": "전체",
@@ -208,7 +283,7 @@
     "experiments": "측정값"
   },
   "Literature": {
-    "title": "6. 문헌",
+    "title": "8. 문헌",
     "hint": "OpenAlex, Crossref, arXiv의 논문 메타데이터를 DOI 기준으로 합쳐 보여줍니다. LumiLattice는 논문 본문을 읽지 않습니다.",
     "placeholder": "예: SrTiO3 refractive index",
     "search": "검색",

@@ -9,11 +9,27 @@
   --accent: #4f46e5;
   --danger: #c0262d;
   --warning: #a15c00;
-  /* Evidence tags (spec 3.4): Experimental, DFT-computed, Heuristic, Unknown */
-  --tag-exp: #1e7d3a;
-  --tag-dft: #1d5fc4;
-  --tag-heur: #a15c00;
+  /* Evidence tag text (spec 3.4), >= 4.5:1 on the surfaces: same hue family as the chart marks */
+  --tag-exp: #0b7a52;
+  --tag-dft: #1c5cab;
+  --tag-heur: #b4471a;
   --tag-unknown: #6b6b78;
+  /* Chart marks: validated 3-slot categorical palette (aqua, blue, orange), all-pairs */
+  --series-exp: #1baf7a;
+  --series-dft: #2a78d6;
+  --series-heur: #eb6834;
+  --chart-surface: #fcfcfb;
+  --chart-grid: #e1e0d9;
+  --chart-axis: #c3c2b7;
+  --chart-ink: #0b0b0b;
+  --chart-ink-2: #52514e;
+  --chart-muted: #898781;
+  /* Diverging pair (blue <-> red, gray midpoint) and status (always with icon + label) */
+  --div-neg: #2a78d6;
+  --div-pos: #e34948;
+  --status-good: #0ca30c;
+  --status-warning: #fab219;
+  --status-critical: #d03b3b;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -26,10 +42,21 @@
     --accent: #6d67f0;
     --danger: #ff6b6b;
     --warning: #f0b45a;
-    --tag-exp: #5fd17f;
-    --tag-dft: #6aa8ff;
-    --tag-heur: #f0b45a;
+    --tag-exp: #4fd1a2;
+    --tag-dft: #86b6ef;
+    --tag-heur: #f29a6e;
     --tag-unknown: #9a9aaa;
+    --series-exp: #199e70;
+    --series-dft: #3987e5;
+    --series-heur: #d95926;
+    --chart-surface: #1a1a19;
+    --chart-grid: #2c2c2a;
+    --chart-axis: #383835;
+    --chart-ink: #f0efec;
+    --chart-ink-2: #c3c2b7;
+    --chart-muted: #898781;
+    --div-neg: #3987e5;
+    --div-pos: #e66767;
   }
 }
 
@@ -46,6 +73,10 @@
   --color-tag-dft: var(--tag-dft);
   --color-tag-heur: var(--tag-heur);
   --color-tag-unknown: var(--tag-unknown);
+  --color-series-exp: var(--series-exp);
+  --color-series-dft: var(--series-dft);
+  --color-series-heur: var(--series-heur);
+  --color-chart-surface: var(--chart-surface);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

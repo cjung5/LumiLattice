@@ -30,11 +30,28 @@ class CheckResult(BaseModel):
     method: str | None = None
 
 
+class SiteMetric(BaseModel):
+    """The numbers behind the per-site checks for one cation site."""
+
+    index: int
+    element: str
+    oxidation_state: float
+    coordination: int
+    bond_lengths: list[float]  # Å, first anion shell
+    mean_bond: float  # Å
+    expected_bond: float | None = None  # Å, Shannon radii sum
+    size_mismatch: float | None = None  # (expected - mean) / mean
+    bvs: float | None = None
+    bvs_bond_change: float | None = None  # bond change that would fix the BVS, / mean
+
+
 class StructuralAssessment(BaseModel):
     status: AssessmentStatus
     checks: list[CheckResult]
     oxidation_states: dict[str, float] | None = None
     notes: list[str] = []
+    site_metrics: list[SiteMetric] = []
+    thresholds: dict[str, float] = {}
 
 
 class Transformation(BaseModel):

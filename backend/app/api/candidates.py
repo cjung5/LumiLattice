@@ -20,6 +20,8 @@ from app.models.candidates import (
 from app.models.evidence import Provenance
 from app.storage.memory import add_decision, get_store
 from app.tools.candidates import assess_host, create_candidate, load_host
+from app.tools.goals import Goal, GoalScore, score_candidate, score_formula
+from app.tools.reference_db import get_reference_db
 from app.tools.registry import ToolError
 from app.tools.relaxation import displacement_summary, relax, relaxation_available
 from app.tools.structures import structure_payload
@@ -172,6 +174,28 @@ def relax_candidate(candidate_id: str) -> Candidate:
         assessment=assess(outcome.structure, focus, note=RELAXED_NOTE),
     )
     return store.update(candidate_id, {"relaxation": relaxation})
+
+
+class ScoreRequest(BaseModel):
+    goal: Goal
+    candidate_id: str | None = Field(default=None, max_length=20)
+    formula: str | None = Field(default=None, max_length=60)
+
+
+@router.post("/score")
+def score(request: ScoreRequest) -> GoalScore:
+    """Score a candidate (or a known formula) against the research goal, with evidence."""
+    try:
+        if request.candidate_id:
+            stored = get_store().get(request.candidate_id)
+            if stored is None:
+                raise not_found(request.candidate_id)
+            return score_candidate(stored[0], request.goal)
+        if request.formula:
+            return score_formula(request.formula, request.goal, get_reference_db())
+    except ToolError as exc:
+        raise to_http(exc) from exc
+    raise HTTPException(status_code=400, detail="Give a candidate_id or a formula.")
 
 
 @router.post("/structures/assess")

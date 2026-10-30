@@ -11,6 +11,7 @@ from app.api.deps import LiteratureDep, OptionalMPDep, SettingsDep
 from app.models.candidates import DecisionKind
 from app.storage.memory import get_store
 from app.tools.catalog import build_registry
+from app.tools.goals import Goal
 from app.tools.reference_db import get_reference_db
 from app.tools.registry import UpstreamError
 from app.tools.relaxation import relaxation_available
@@ -41,6 +42,7 @@ class AgentContext(BaseModel):
     current_candidate_id: str | None = Field(default=None, max_length=20)
     decision: DecisionKind | None = None
     feedback: str | None = Field(default=None, max_length=2000)
+    goal: Goal | None = None
 
 
 class AgentRequest(BaseModel):
@@ -61,6 +63,13 @@ def with_context(message: str, context: AgentContext | None) -> str:
         else:
             host += " [uploaded CIF: revise candidates made from it by candidate ID]"
         lines.append(f"Host: {host.strip()}")
+    if context.goal:
+        g = context.goal
+        banned = f"; avoid {', '.join(g.forbidden_elements)}" if g.forbidden_elements else ""
+        lines.append(
+            f"Research goal: n >= {g.target_n} near 550 nm, band gap >= {g.min_band_gap} eV{banned}. "
+            "Use score_against_goal to check candidates."
+        )
     if context.current_candidate_id:
         stored = get_store().get(context.current_candidate_id)
         if stored:
@@ -109,7 +118,7 @@ def agent_run(
         result = run_agent(
             client,
             settings.muse_model,
-            build_registry(mp, literature),
+            build_registry(mp, literature, goal=body.context.goal if body.context else None),
             with_context(body.message, body.context),
             locale=body.locale,
             max_steps=settings.agent_max_steps,

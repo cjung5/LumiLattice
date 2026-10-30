@@ -135,7 +135,53 @@ export type OpticalReference = {
 
 export type OpticalEstimate = {
   estimate: PropertyValue;
-  end_members: { formula: string; n: PropertyValue }[];
+  band_gap: PropertyValue | null;
+  end_members: { formula: string; n: PropertyValue; band_gap: PropertyValue | null }[];
+};
+
+export type DispersionData = {
+  formula: string;
+  wavelengths_nm: number[];
+  curves: { title: string; category: string; direction: string | null; n: (number | null)[] }[];
+  bulk_median: (number | null)[] | null;
+};
+
+export type Landscape = {
+  measured: { formula: string; n: number; band_gap: number }[];
+  computed: [number, number][];
+  computed_total: number;
+  moss: [number, number][];
+  notes: string[];
+};
+
+export type Goal = { target_n: number; min_band_gap: number; forbidden_elements: string[] };
+
+export type Verdict = "meets" | "uncertain" | "fails" | "unknown";
+
+export type GoalScore = {
+  subject: string;
+  goal: Goal;
+  criteria: {
+    id: "n" | "band_gap" | "elements" | "structure";
+    verdict: Verdict;
+    detail: string;
+    evidence?: PropertyValue | null;
+  }[];
+  meets: number;
+  total: number;
+};
+
+export type SiteMetric = {
+  index: number;
+  element: string;
+  oxidation_state: number;
+  coordination: number;
+  bond_lengths: number[];
+  mean_bond: number;
+  expected_bond: number | null;
+  size_mismatch: number | null;
+  bvs: number | null;
+  bvs_bond_change: number | null;
 };
 
 export type Substitution = { element_from: string; element_to: string; fraction: number };
@@ -161,6 +207,8 @@ export type StructuralAssessment = {
   checks: CheckResult[];
   oxidation_states: Record<string, number> | null;
   notes: string[];
+  site_metrics: SiteMetric[];
+  thresholds: Record<string, number>;
 };
 
 export type Candidate = {
@@ -267,6 +315,18 @@ export function uploadCif(filename: string, cif: string): Promise<StructurePaylo
   return postJson<StructurePayload>("/api/structures/cif", { filename, cif });
 }
 
+export function getLandscape(): Promise<Landscape> {
+  return request<Landscape>("/api/landscape");
+}
+
+export function getDispersion(formulas: string[]): Promise<DispersionData[]> {
+  return request<DispersionData[]>(`/api/dispersion?${new URLSearchParams({ formulas: formulas.join(",") })}`);
+}
+
+export function scoreGoal(goal: Goal, subject: { candidate_id?: string; formula?: string }): Promise<GoalScore> {
+  return postJson<GoalScore>("/api/score", { goal, ...subject });
+}
+
 export function getOpticalReference(formula: string): Promise<OpticalReference> {
   return request<OpticalReference>(`/api/reference/${encodeURIComponent(formula)}`);
 }
@@ -313,6 +373,7 @@ export type AgentContext = {
   current_candidate_id?: string;
   decision?: DecisionKind;
   feedback?: string;
+  goal?: Goal;
 };
 
 export function runAgent(

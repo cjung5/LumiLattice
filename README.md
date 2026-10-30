@@ -33,8 +33,24 @@ Built for the Meta Global AI Developer Hackathon (Oct 27 – Nov 4, 2026), track
 | `create_candidate` | LumiLattice | Substitutes elements on a host or on an earlier candidate, then runs the structural checks below |
 | `get_candidate` | LumiLattice | A candidate's substitutions, checks, n range, measurements, and the researcher's decisions |
 | `get_optical_reference` | refractiveindex.info, JARVIS-DFT | Measured n at 450/550/650 nm with sources; DFT band gaps and n (OptB88vdW, TBmBJ) |
+| `score_against_goal` | LumiLattice | A candidate's verdicts against the researcher's goal, with evidence |
 
 When a source is not available, the tool returns an error and the agent reports the value as unknown instead of guessing.
+
+## Research goal and evidence charts
+
+The researcher sets a **goal** first: minimum n near 550 nm, minimum band gap, and forbidden elements. Every host and candidate is scored against it (`meets`, `uncertain`, `fails`, `unknown`). Each verdict cites its evidence and tag; a Heuristic range that spans the target is `uncertain`, never `meets`.
+
+The **Evidence** section shows the data behind each decision, in four views. Every chart has a legend, notes on what the data is, hover tooltips, and a table view:
+
+| View | What it shows |
+|---|---|
+| n vs band gap | All materials with a measured n (refractiveindex.info, with JARVIS TBmBJ gaps), a sample of JARVIS DFT entries, the empirical Moss relation (n⁴·Eg ≈ 95 eV), the goal region, the host, the end members, and the candidate's n × gap range box |
+| Dispersion n(λ) | Measured bulk n(λ) from 380 to 780 nm for the host and end members (no extrapolation), with the candidate's Heuristic band between them |
+| Site metrics | For each checked cation site: ionic size mismatch and bond-valence misfit against the warn/fail thresholds, unrelaxed or CHGNet-relaxed |
+| Goal score | The scored criteria for the host and the candidate |
+
+Chart colors encode the evidence type (aqua = measured, blue = DFT, orange = Heuristic), from a palette validated for color-vision deficiency in light and dark modes.
 
 ## Refractive index evidence
 

@@ -2,18 +2,18 @@
   "Agent": {
     "created": "Erstellt:",
     "error": "Fehler: {message}",
-    "hint": "Nach Host oder Kandidat fragen. Der Agent sieht den ausgewählten Host und Kandidaten, nutzt Tools für jede Zahl und merkt sich diese Unterhaltung.",
-    "noToolCalls": "Keine Tool-Aufrufe in dieser Antwort. Zahlen darin als unbestätigt behandeln.",
+    "hint": "Zum Host oder Kandidaten fragen. Der Agent sieht den gewählten Host und Kandidaten, nutzt Werkzeuge für jede Zahl und merkt sich diese Unterhaltung.",
+    "noToolCalls": "Keine Werkzeugaufrufe in dieser Antwort. Zahlen darin als unbestätigt betrachten.",
     "placeholder": "Beispiel: Substitution für SrTiO3 vorschlagen, die die Bandlücke groß hält.",
     "reset": "Neue Unterhaltung",
     "run": "Ausführen",
     "running": "Läuft…",
-    "title": "4. Forschungsagent (Muse Spark)",
-    "toolCalls": "Tool-Aufrufe ({count})"
+    "title": "6. Forschungsagent (Muse Spark)",
+    "toolCalls": "Werkzeugaufrufe ({count})"
   },
   "Assessment": {
     "atoms": "{count} Atome",
-    "clickHint": "Eine Prüfung auswählen, um ihre Atome zu zeigen."
+    "clickHint": "Prüfung wählen, um ihre Atome zu zeigen."
   },
   "Candidate": {
     "addRow": "+ Co-Substitution",
@@ -22,39 +22,88 @@
     "from": "Zu ersetzendes Element",
     "generateFromHost": "Aus Host erzeugen",
     "generating": "Wird erzeugt…",
-    "hint": "Einen Anteil der Plätze eines Elements in {host} ersetzen. Atompositionen bleiben auf den Host-Positionen (keine Relaxation).",
+    "hint": "Einen Anteil der Lagen eines Elements in {host} ersetzen. Atompositionen bleiben auf den Hostpositionen (keine Relaxation).",
     "history": "Versionsverlauf",
     "lineage": "aus {parent} · Superzelle {supercell}",
     "linkCopied": "Link kopiert",
     "nEstimate": "Brechungsindex (Endglied-Bereich)",
-    "noHost": "Dieser Kandidat wurde ohne Host geöffnet. Überarbeiten oder Host wählen, um neue Kandidaten zu erstellen.",
-    "ofSites": "der {element}-Plätze",
+    "noHost": "Dieser Kandidat wurde ohne Host geöffnet. Er kann überarbeitet werden, oder einen Host wählen, um neue Kandidaten zu erstellen.",
+    "ofSites": "der {element}-Lagen",
     "remove": "Entfernen",
     "reviseCurrent": "{id} überarbeiten",
-    "title": "3. Kandidaten",
+    "title": "4. Kandidaten",
     "to": "Neues Element",
     "toPlaceholder": "z. B. Zr",
-    "viewerLegend": "Größere Atome: substituierte Plätze. Rosa Atome mit Beschriftung: Atome in der ausgewählten Prüfung."
+    "viewerLegend": "Größere Atome: substituierte Lagen. Rosa Atome mit Labels: Atome in der gewählten Prüfung."
+  },
+  "Charts": {
+    "axisGap": "Bandlücke (eV)",
+    "axisN": "Brechungsindex n",
+    "axisWavelength": "Wellenlänge (nm)",
+    "bvsPanel": "Bindungsvalenz-Fehlpassung",
+    "dispersionNote": "Kurven nur aus gemessenen Daten; nichts wird über den Wellenlängenbereich der jeweiligen Quelle hinaus extrapoliert.",
+    "dispersionSubtitle": "Gemessene Bulk-Kurven (refractiveindex.info, Median der Quellen)",
+    "dispersionTitle": "Dispersion n(λ) im sichtbaren Bereich",
+    "expectedBond": "Erwartet (Å)",
+    "gapTbmbj": "Bandlücke TBmBJ (eV)",
+    "goalRegion": "Ziel: n ≥ {n}, Lücke ≥ {gap} eV",
+    "hiddenPoints": "{count} gemessene Materialien liegen außerhalb des dargestellten Bereichs und sind nur in der Tabelle aufgeführt.",
+    "inGoal": "Im Zielbereich",
+    "landscapeSubtitle": "{measured} Materialien mit gemessenem n und {computed} JARVIS DFT-Einträge (Stichprobe)",
+    "landscapeTitle": "Brechungsindex vs. Bandlücke",
+    "legendBand": "{id}-Bereich zwischen Endgliedern (Heuristik)",
+    "legendComputed": "DFT-n und -Lücke (JARVIS TBmBJ)",
+    "legendGoal": "Zielbereich",
+    "legendMeasured": "Gemessenes n(550 nm), TBmBJ-Lücke",
+    "legendMeasuredCurve": "Gemessenes n(λ)",
+    "legendMoss": "Moss-Relation (empirisch)",
+    "legendRange": "Kandidatenbereich (Heuristik)",
+    "legendTooLarge": "Lage zu groß für das Ion (unterbunden)",
+    "legendTooSmall": "Lage zu klein für das Ion (überbunden)",
+    "material": "Material",
+    "meanBond": "Mittlere Bindung (Å)",
+    "noCurve": "Kein gemessenes n(λ) für {formulas}.",
+    "noCurveAtAll": "Kein gemessenes n(λ) für diese Materialien.",
+    "showChart": "Diagramm",
+    "showTable": "Tabelle",
+    "site": "Lage",
+    "sitesNote": "Schattierte Zonen sind die Warn- (!) und Fehler-Schwellen (✗). Größenfehlpassung nutzt Shannon-Radien; Bindungsvalenz-Fehlpassung ist die Bindungslängenänderung, die die BVS korrigieren würde.",
+    "sitesSubtitle": "Abweichung jedes Kations von seiner Ideallage, nach zwei unabhängigen Methoden",
+    "sitesTitle": "Prüfungen pro Lage: {subject}",
+    "sizePanel": "Ionengrößen-Fehlpassung",
+    "srcMeasured": "gemessenes n, TBmBJ-Lücke"
   },
   "Decision": {
     "accept": "Akzeptieren",
     "acceptHint": "Diesen Kandidaten behalten.",
     "explore": "Alternativen erkunden",
-    "exploreHint": "Der Agent testet bis zu 2 Alternativen anhand deiner Begründung.",
-    "hint": "Akzeptieren und Ablehnen werden gespeichert. Ändern und Alternativen erkunden werden gespeichert und mit der Begründung an den Agenten gesendet.",
+    "exploreHint": "Der Agent testet bis zu 2 Alternativen anhand Ihrer Begründung.",
+    "hint": "Akzeptieren und Ablehnen werden protokolliert. Ändern und Alternativen werden protokolliert und mit Ihrer Begründung an den Agenten gesendet.",
     "last": "Letzte Entscheidung: {decision}",
     "modify": "Ändern",
-    "modifyHint": "Der Agent überarbeitet diesen Kandidaten anhand deiner Begründung.",
-    "placeholder": "Warum? z. B. nur Ti4+ behalten, toxische Elemente vermeiden, größeres A-Platz-Ion versuchen",
+    "modifyHint": "Der Agent überarbeitet diesen Kandidaten anhand Ihrer Begründung.",
+    "placeholder": "Warum? z. B. nur Ti4+ behalten, toxische Elemente vermeiden, größeres A-Lagen-Ion versuchen",
     "reject": "Ablehnen",
     "rejectHint": "Festhalten, dass dieser Kandidat nicht nützlich ist, und warum.",
-    "title": "Entscheidung zu {id}"
+    "title": "Ihre Entscheidung zu {id}"
   },
   "Evidence": {
+    "candidateScore": "Kandidat {id}",
     "dftComputed": "Mit Dichtefunktionaltheorie (DFT) berechnet. Keine Messung.",
     "experimental": "Gemessener Wert aus einem Experiment.",
     "heuristic": "Geschätzter Bereich aus ähnlichen Materialien. Keine Vorhersage.",
-    "unknown": "Kein verlässlicher Wert verfügbar."
+    "hint": "Daten hinter Host und aktuellem Kandidaten: Position unter bekannten Materialien, Änderung von n mit der Wellenlänge, Kennzahlen pro Lage hinter jeder Prüfung sowie Zielbewertung.",
+    "hostScore": "Host {formula}",
+    "loading": "Daten werden geladen…",
+    "needSubject": "Host oder Kandidat wählen, um dies zu sehen.",
+    "relaxed": "relaxiert",
+    "tabDispersion": "Dispersion n(λ)",
+    "tabLandscape": "n vs. Bandlücke",
+    "tabScore": "Zielbewertung",
+    "tabSites": "Lagenkennzahlen",
+    "title": "5. Belege",
+    "unknown": "Kein verlässlicher Wert verfügbar.",
+    "unrelaxed": "Unrelaxiert"
   },
   "Experiment": {
     "add": "Hinzufügen",
@@ -66,7 +115,7 @@
     "method": "Methode",
     "methodPlaceholder": "z. B. Ellipsometrie",
     "notTested": "Experiment noch nicht durchgeführt",
-    "other": "andere",
+    "other": "sonstige",
     "outside": "außerhalb des Endglied-Bereichs {lo}–{hi}",
     "powder": "Pulver",
     "property": "Eigenschaft",
@@ -76,6 +125,17 @@
     "title": "Messungen",
     "value": "Wert",
     "wavelength": "Wellenlänge (nm)"
+  },
+  "Goal": {
+    "forbidden": "Verbotene Elemente",
+    "forbiddenPlaceholder": "z. B. Pb, Cd",
+    "hint": "Zuerst die Ziele festlegen. Jeder Host und Kandidat wird dagegen bewertet, mit Belegen für jedes Urteil.",
+    "minGap": "Minimale Bandlücke (eV)",
+    "note": "Eine Bandlücke von etwa 3,1 eV legt die Absorptionskante nahe 400 nm, ans blaue Ende des sichtbaren Bereichs.",
+    "presetAr": "AR-Wellenleiter-Preset",
+    "presetToxic": "+ Toxische Elemente",
+    "targetN": "Minimales n (nahe 550 nm)",
+    "title": "1. Forschungsziel"
   },
   "Home": {
     "intro": "Kandidatenmaterialien für AR-Wellenleiter mit Muse Spark erkunden. Jede Zahl stammt aus einer Datenbank oder einer Berechnung, mit Quellenangabe.",
@@ -94,8 +154,8 @@
     },
     "experimental": "Beobachtet (ICSD)",
     "hint": "Materials Project nach Formel (SrTiO3, *TiO3), Elementen (Sr,Ti,O) oder ID (mp-5229) durchsuchen. Oder eigene CIF hochladen.",
-    "hintCod": "Crystallography Open Database nach Formel nach gemessenen Kristallstrukturen durchsuchen (CC0). Originalautoren angeben.",
-    "loadingCod": "Struktur aus COD wird geladen…",
+    "hintCod": "Die Crystallography Open Database nach Formel nach gemessenen Kristallstrukturen durchsuchen (CC0). Originalautoren angeben.",
+    "loadingCod": "Struktur von COD wird geladen…",
     "noResults": "Keine Materialien gefunden.",
     "placeholder": "SrTiO3, Sr,Ti,O oder mp-5229",
     "placeholderCod": "Formel, z. B. SrTiO3",
@@ -105,9 +165,9 @@
     "sourceMp": "Materials Project (DFT)",
     "stable": "Stabil",
     "theoretical": "Theoretisch",
-    "title": "1. Wirtsstruktur auswählen",
+    "title": "2. Hoststruktur wählen",
     "upload": "CIF hochladen",
-    "uploading": "Lese…"
+    "uploading": "Wird gelesen…"
   },
   "Language": {
     "label": "Sprache",
@@ -115,15 +175,15 @@
   },
   "Literature": {
     "citedBy": "Zitiert von {count}",
-    "empty": "Keine Publikationen gefunden.",
-    "hint": "Paper-Metadaten aus OpenAlex, Crossref und arXiv, nach DOI zusammengeführt. LumiLattice liest keine Volltexte.",
+    "empty": "Keine Artikel gefunden.",
+    "hint": "Artikelmetadaten von OpenAlex, Crossref und arXiv, per DOI zusammengeführt. LumiLattice liest keine Volltexte.",
     "openAccess": "Open Access",
     "placeholder": "Beispiel: SrTiO3 Brechungsindex",
     "search": "Suchen",
     "searching": "Suche…",
     "source": "Quelle: {source}",
     "sourceFailed": "{source}: {reason}",
-    "title": "6. Literatur"
+    "title": "8. Literatur"
   },
   "Metadata": {
     "description": "Ein kollaborativer KI-Wissenschaftler für die Entdeckung optoelektronischer Materialien.",
@@ -137,7 +197,7 @@
     "gapMbj": "Lücke TBmBJ (eV)",
     "gapOpt": "Lücke OptB88vdW (eV)",
     "loading": "Optische Daten werden geladen…",
-    "measured": "Gemessene n, k ({count} Quellen, refractiveindex.info)",
+    "measured": "Gemessenes n, k ({count} Quellen, refractiveindex.info)",
     "source": "Quelle",
     "spacegroup": "Raumgruppe"
   },
@@ -146,12 +206,12 @@
     "byName": "Mich namentlich nennen",
     "cancel": "Abbrechen",
     "confirm": "Veröffentlichen",
-    "consent": "Ich möchte {id} öffentlich machen, mit obiger Nennung.",
-    "credit": "Nennung",
-    "creditAnonymous": "Nennung: anonym",
-    "creditName": "Nennung: {name}",
-    "demoNote": "Kandidaten sind standardmäßig privat. In dieser Version erfasst Veröffentlichen nur deine Auswahl und Nennung; nichts wird außerhalb von LumiLattice gesendet.",
-    "makePrivate": "Privat setzen",
+    "consent": "Ich wähle, {id} öffentlich zu machen, mit obiger Namensnennung.",
+    "credit": "Namensnennung",
+    "creditAnonymous": "Namensnennung: anonym",
+    "creditName": "Namensnennung: {name}",
+    "demoNote": "Kandidaten sind standardmäßig privat. In dieser Version erfasst das Veröffentlichen nur Ihre Wahl und Namensnennung; nichts wird außerhalb von LumiLattice gesendet.",
+    "makePrivate": "Privat machen",
     "namePlaceholder": "Name oder ORCID",
     "private": "Privat",
     "publish": "Veröffentlichen…",
@@ -170,30 +230,45 @@
       "published": "Veröffentlicht"
     },
     "formula": "Formel",
-    "hint": "Alle Kandidaten auf diesem Server, aus Formular und Agent. Bis zu {max} zum Vergleichen auswählen.",
+    "hint": "Alle Kandidaten auf diesem Server, aus Formular und Agent. Bis zu {max} zum Vergleichen wählen.",
     "nRange": "n (Endglied-Bereich)",
     "origin": "Von",
     "relaxedVolume": "ΔV nach CHGNet",
     "status": "Status",
     "substitutions": "Substitutionen (ab Root-Host)",
-    "title": "5. Kandidatenregister"
+    "title": "7. Kandidatenregister"
   },
   "Relax": {
     "converged": "in {steps} Schritten konvergiert",
     "energy": "CHGNet-Energie",
     "energyNote": "ML-Potenzial; nicht mit DFT-Energien vergleichen",
-    "hint": "Bewegt Atome und Zelle mit einem maschinell gelernten Potenzial zu niedrigerer Energie und führt dann dieselben Prüfungen aus. Benötigt PyTorch, daher nur in lokaler Installation.",
+    "hint": "Verschiebt Atome und Zelle mit einem maschinell gelernten Potenzial zu niedrigerer Energie und führt dann dieselben Prüfungen aus. Benötigt PyTorch, läuft daher nur in lokaler Installation.",
     "maxShift": "Größte Atomverschiebung",
     "notConverged": "nach {steps} Schritten nicht konvergiert",
     "relaxed": "Relaxiert",
     "run": "Mit CHGNet relaxieren",
-    "running": "Relaxiere…",
+    "running": "Relaxiert…",
     "status": "Optimierer",
     "title": "Relaxation (CHGNet, lokale Installation)",
     "unrelaxed": "Unrelaxiert"
   },
+  "Score": {
+    "criterion": {
+      "band_gap": "Bandlücke",
+      "elements": "Elemente",
+      "n": "Brechungsindex",
+      "structure": "Struktur"
+    },
+    "summary": "{meets} von {total} Kriterien erfüllt",
+    "verdict": {
+      "fails": "Nicht erfüllt",
+      "meets": "Erfüllt",
+      "uncertain": "Unsicher",
+      "unknown": "Unbekannt"
+    }
+  },
   "Status": {
-    "checking": "Prüfe…",
+    "checking": "Wird geprüft…",
     "keyConfigured": "Meta Model API-Schlüssel konfiguriert",
     "keyMissing": "Meta Model API-Schlüssel fehlt. MODEL_API_KEY zu backend/.env hinzufügen.",
     "model": "Modell",
@@ -208,15 +283,15 @@
     "title": "Backend"
   },
   "Structure": {
-    "baseline": "Host-Check (Baseline)",
-    "empty": "Material auswählen oder CIF hochladen, um die Struktur zu sehen.",
+    "baseline": "Host-Prüfung (Basislinie)",
+    "empty": "Material wählen oder CIF hochladen, um die Struktur zu sehen.",
     "lattice": "Gitter",
     "loading": "Struktur wird geladen…",
     "optical": "Belege zum Brechungsindex (nach Formel)",
-    "sites": "Atomlagen in der Zelle",
+    "sites": "Lagen in der Zelle",
     "source": "Quelle",
     "spacegroup": "Raumgruppe",
-    "title": "2. Struktur",
+    "title": "3. Struktur",
     "warnings": "Parser-Warnungen"
   }
 }
