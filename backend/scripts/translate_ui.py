@@ -2,9 +2,11 @@
 
 Korean is written by hand; these languages are machine-translated and the UI says so.
 The model must return the same keys (strict JSON schema), and every {placeholder}
-must survive, or the language is rejected. Run from backend/:
-    uv run python -m scripts.translate_ui            # all languages
+must survive, or the language is rejected. Only strings that a language does not have
+yet are sent (use --all to translate everything again). Run from backend/:
+    uv run python -m scripts.translate_ui            # all languages, new strings only
     uv run python -m scripts.translate_ui ja de      # some languages
+    uv run python -m scripts.translate_ui --all      # translate every string again
 """
 
 import json
@@ -60,6 +62,36 @@ def flatten(value: Any, prefix: str = "") -> dict[str, str]:
     return {prefix.rstrip("."): value}
 
 
+def missing(source: dict[str, Any], existing: dict[str, Any]) -> dict[str, Any]:
+    """The part of source whose keys are not in existing (same nesting)."""
+    out: dict[str, Any] = {}
+    for key, value in source.items():
+        have = existing.get(key)
+        if isinstance(value, dict):
+            sub = missing(value, have if isinstance(have, dict) else {})
+            if sub:
+                out[key] = sub
+        elif not isinstance(have, str):
+            out[key] = value
+    return out
+
+
+def merge(source: dict[str, Any], existing: dict[str, Any], new: dict[str, Any]) -> dict[str, Any]:
+    """Source keys in source order; new values first, then existing ones. Drops stale keys."""
+    out: dict[str, Any] = {}
+    for key, value in source.items():
+        if isinstance(value, dict):
+            have, add = existing.get(key), new.get(key)
+            out[key] = merge(
+                value,
+                have if isinstance(have, dict) else {},
+                add if isinstance(add, dict) else {},
+            )
+        else:
+            out[key] = new.get(key, existing.get(key))
+    return out
+
+
 def problems(source: dict[str, Any], translated: dict[str, Any]) -> list[str]:
     src, out = flatten(source), flatten(translated)
     issues = [f"missing key {k}" for k in src if k not in out]
@@ -106,15 +138,23 @@ def translate(client: Any, model: str, source: dict[str, Any], language: str) ->
     raise RuntimeError(f"{language}: {'; '.join(issues[:5])}")
 
 
-def main(codes: list[str]) -> int:
+def main(args: list[str]) -> int:
     settings = get_settings()
     client = create_client(settings)
     source = json.loads((MESSAGES / "en.json").read_text())
+    everything = "--all" in args
+    codes = [a for a in args if a != "--all"]
     for code in codes or list(LANGUAGES):
-        translated = translate(client, settings.muse_model, source, LANGUAGES[code])
         path = MESSAGES / f"{code}.json"
-        path.write_text(json.dumps(translated, ensure_ascii=False, indent=2) + "\n")
-        print(f"ok  {path.name}  ({len(flatten(translated))} strings, {settings.muse_model})")
+        existing = {} if everything or not path.exists() else json.loads(path.read_text())
+        todo = missing(source, existing)
+        new = translate(client, settings.muse_model, todo, LANGUAGES[code]) if todo else {}
+        result = merge(source, existing, new)
+        path.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n")
+        print(
+            f"ok  {path.name}  ({len(flatten(new))} new of {len(flatten(result))} strings, "
+            f"{settings.muse_model})"
+        )
     return 0
 
 

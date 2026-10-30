@@ -154,6 +154,61 @@ export type Landscape = {
   notes: string[];
 };
 
+export type SymmetryInfo = {
+  spacegroup: string | null;
+  number: number | null;
+  crystal_system: string | null;
+  optical_class: "isotropic" | "uniaxial" | "biaxial" | null;
+};
+
+export type Polyhedron = {
+  index: number;
+  element: string;
+  coordination: number;
+  shape: string;
+  shape_score: number | null;
+  distortion_index: number;
+  quadratic_elongation: number | null;
+  bond_angle_variance: number | null;
+  volume: number | null;
+};
+
+export type Linkages = {
+  corner: number;
+  edge: number;
+  face: number;
+  bxb_angles: number[];
+  mean_tilt: number | null;
+};
+
+export type SpatialAnalysis = {
+  symmetry: SymmetryInfo;
+  parent_symmetry: SymmetryInfo | null;
+  polyhedra: Polyhedron[];
+  linkages: Linkages;
+  parent_polyhedra: Polyhedron[];
+  parent_linkages: Linkages | null;
+  dopants: {
+    element: string;
+    sites: number[];
+    nearest_distances: number[];
+    shortest: number | null;
+    cation_spacing: number;
+  }[];
+  ordering: {
+    energies: number[];
+    chosen: number;
+    chosen_rank: number;
+    distinct: number;
+    total: number;
+    truncated: boolean;
+    analysis_cell: [number, number, number];
+    method: string;
+  } | null;
+  findings: string[];
+  notes: string[];
+};
+
 export type Goal = { target_n: number; min_band_gap: number; forbidden_elements: string[] };
 
 export type Verdict = "meets" | "uncertain" | "fails" | "unknown";
@@ -321,6 +376,16 @@ export function getLandscape(): Promise<Landscape> {
 
 export function getDispersion(formulas: string[]): Promise<DispersionData[]> {
   return request<DispersionData[]>(`/api/dispersion?${new URLSearchParams({ formulas: formulas.join(",") })}`);
+}
+
+export function getCandidateSpatial(candidateId: string, relaxed = false): Promise<SpatialAnalysis> {
+  return request<SpatialAnalysis>(
+    `/api/candidates/${encodeURIComponent(candidateId)}/spatial?relaxed=${relaxed}`,
+  );
+}
+
+export function getHostSpatial(host: HostRef): Promise<SpatialAnalysis> {
+  return postJson<SpatialAnalysis>("/api/structures/spatial", host);
 }
 
 export function scoreGoal(goal: Goal, subject: { candidate_id?: string; formula?: string }): Promise<GoalScore> {

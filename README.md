@@ -41,16 +41,31 @@ When a source is not available, the tool returns an error and the agent reports 
 
 The researcher sets a **goal** first: minimum n near 550 nm, minimum band gap, and forbidden elements. Every host and candidate is scored against it (`meets`, `uncertain`, `fails`, `unknown`). Each verdict cites its evidence and tag; a Heuristic range that spans the target is `uncertain`, never `meets`.
 
-The **Evidence** section shows the data behind each decision, in four views. Every chart has a legend, notes on what the data is, hover tooltips, and a table view:
+The **Evidence** section shows the data behind each decision, in five views. Every chart has a legend, notes on what the data is, hover tooltips, and a table view:
 
 | View | What it shows |
 |---|---|
 | n vs band gap | All materials with a measured n (refractiveindex.info, with JARVIS TBmBJ gaps), a sample of JARVIS DFT entries, the empirical Moss relation (n⁴·Eg ≈ 95 eV), the goal region, the host, the end members, and the candidate's n × gap range box |
 | Dispersion n(λ) | Measured bulk n(λ) from 380 to 780 nm for the host and end members (no extrapolation), with the candidate's Heuristic band between them |
 | Site metrics | For each checked cation site: ionic size mismatch and bond-valence misfit against the warn/fail thresholds, unrelaxed or CHGNet-relaxed |
+| 3D structure | Spatial analysis of the host, the candidate, and its relaxed geometry (see below) |
 | Goal score | The scored criteria for the host and the candidate |
 
 Chart colors encode the evidence type (aqua = measured, blue = DFT, orange = Heuristic), from a palette validated for color-vision deficiency in light and dark modes.
+
+### 3D structure analysis
+
+The structural checks (see "Candidates and structural checks") look at one site at a time. The 3D structure view looks at the arrangement in space, before substitution, after it, and after CHGNet relaxation (if run):
+
+| Analysis | Method | Why it matters for a waveguide |
+|---|---|---|
+| Symmetry and optical class | Space group (spglib via pymatgen) → crystal system → isotropic (cubic), uniaxial (tetragonal, trigonal, hexagonal), or biaxial | A non-cubic crystal is birefringent: n depends on polarization and direction |
+| Polyhedra | Shape match (octahedron, tetrahedron, square planar), bond-length distortion index Δ (Baur 1974), quadratic elongation ⟨λ⟩, bond-angle variance σ², volume | Distorted polyhedra change local polarizability and can lower symmetry |
+| Connectivity | Corner, edge, and face sharing between cation polyhedra, with periodic images; B–X–B angles through corner-shared anions; mean octahedral tilt (180° − angle)/2 for corner-only frameworks such as perovskites | Tilts and bent links are how many oxides accommodate a size mismatch |
+| Dopant arrangement | Nearest same-element distance against the shortest possible spacing; flags clustered dopants | Clustering is a sign of a poor model of a random alloy |
+| Ordering rank | All arrangements of the same dopants in a repeated cell (at least two dopants each, at most 80 atoms; a seeded random sample of 300 if there are more), ranked by Ewald energy with formal charges | Shows whether the chosen arrangement is electrostatically favorable among the alternatives |
+
+Limits, also shown in the app: an ordered supercell is one model of a disordered solid solution, so its symmetry and arrangement are properties of that model. Small cells cannot show every tilt pattern. Ewald energies are unscreened point-charge energies, for ranking only; when all dopants have the same charge as the ions they replace, every arrangement has the same energy and only relaxation can rank them. The relaxed geometry is compared with the unrelaxed candidate, because relaxation does not move ions between sites.
 
 ## Refractive index evidence
 
@@ -158,11 +173,12 @@ uv run python -m scripts.smoke_muse   # needs MODEL_API_KEY; Muse Spark calls a 
 
 ## Languages
 
-English and Korean are written by hand. Chinese (Simplified), Japanese, Spanish, and German are machine-translated by Muse Spark with a strict JSON schema; the script rejects any output that drops a key or a `{placeholder}`, and the UI marks these languages as machine-translated.
+English and Korean are written by hand. Chinese (Simplified), Japanese, Spanish, and German are machine-translated by Muse Spark with a strict JSON schema; the script rejects any output that drops a key or a `{placeholder}`, and the UI marks these languages as machine-translated. Only strings that a language does not have yet are sent, so earlier translations stay stable. Scientific messages from the backend (check results, findings) are in English.
 
 ```bash
 cd backend
-uv run python -m scripts.translate_ui          # all four, or e.g.: ja de
+uv run python -m scripts.translate_ui          # new strings, all four; or e.g.: ja de
+uv run python -m scripts.translate_ui --all    # translate every string again
 ```
 
 ## Deploy

@@ -209,6 +209,7 @@ export function Workspace() {
       {(structure || current) && (
         <EvidencePanel
           goal={goal}
+          host={structure && !loading ? host : null}
           hostFormula={structure?.formula ?? null}
           hostAssessment={hostAssessment}
           candidate={current}

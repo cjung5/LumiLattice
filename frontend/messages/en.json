@@ -114,7 +114,8 @@
     "loading": "Loading data…",
     "relaxed": "relaxed",
     "unrelaxed": "Unrelaxed",
-    "title": "5. Evidence"
+    "title": "5. Evidence",
+    "tabSpatial": "3D structure"
   },
   "Score": {
     "summary": "{meets} of {total} criteria met",
@@ -281,6 +282,61 @@
     "nRange": "n (end-member range)",
     "relaxedVolume": "ΔV after CHGNet",
     "experiments": "Measurements"
+  },
+  "Spatial": {
+    "loading": "Analyzing the 3D structure…",
+    "optical": {
+      "isotropic": "optically isotropic",
+      "uniaxial": "uniaxial (birefringent)",
+      "biaxial": "biaxial (birefringent)"
+    },
+    "system": {
+      "triclinic": "triclinic",
+      "monoclinic": "monoclinic",
+      "orthorhombic": "orthorhombic",
+      "tetragonal": "tetragonal",
+      "trigonal": "trigonal",
+      "hexagonal": "hexagonal",
+      "cubic": "cubic"
+    },
+    "state": {
+      "before": "Before substitution",
+      "after": "Candidate",
+      "relaxed": "Relaxed (CHGNet)"
+    },
+    "stateCol": "State",
+    "site": "Site",
+    "shape": "Polyhedron",
+    "distortionTitle": "Polyhedron distortion",
+    "distortionSubtitle": "Bond-length distortion index Δ of each substituted site's polyhedron",
+    "distortionAxis": "Δ (0 = all bonds equal)",
+    "distortionNote": "Δ = mean |d − d̄| / d̄ (Baur 1974). The shaded zone (Δ > 0.02) marks clearly distorted polyhedra. The table adds quadratic elongation ⟨λ⟩ and bond-angle variance σ² for octahedra.",
+    "angleTitle": "Corner-sharing B–X–B angles",
+    "angleSubtitle": "Angles through anions shared by two 6-coordinate cations",
+    "angleAxis": "B–X–B angle (180° = straight link)",
+    "angleNote": "Bending below 180° means the octahedra tilt or buckle. Tilt = (180° − angle)/2, reported only for corner-sharing frameworks such as perovskites.",
+    "noAngles": "No corner-sharing octahedra in this structure.",
+    "links": "Shared links",
+    "linkCounts": "{corner} corner, {edge} edge, {face} face",
+    "angles": "Angles",
+    "tilt": "Mean tilt",
+    "orderingTitle": "Where the substituted ions sit: ordering energies",
+    "orderingSubtitle": "{total} arrangements in a {cell} repeat of the candidate cell; {distinct} distinct energies",
+    "orderingAxis": "Ewald energy above the lowest arrangement (meV/atom, point charges)",
+    "otherOrderings": "Other arrangements",
+    "thisOrdering": "This candidate ({id})",
+    "allEqual": "Every arrangement has the same Ewald energy (same charges), so this model cannot rank them.",
+    "sampled": "Too many arrangements to list all: a reproducible random sample of 300 is shown.",
+    "count": "Arrangements",
+    "dopant": "Substituted ion",
+    "sites": "Sites",
+    "nearest": "Nearest same ion",
+    "spacing": "Closest possible",
+    "stateShort": {
+      "before": "Before",
+      "after": "Candidate",
+      "relaxed": "Relaxed"
+    }
   },
   "Literature": {
     "title": "8. Literature",

@@ -6,6 +6,7 @@ import { DispersionChart } from "@/components/charts/DispersionChart";
 import { LandscapeChart, type MarkedPoint, type RangeBox } from "@/components/charts/LandscapeChart";
 import { SiteMetricsChart } from "@/components/charts/SiteMetricsChart";
 import { ScoreCard } from "@/components/ScoreCard";
+import { SpatialPanel } from "@/components/SpatialPanel";
 import {
   getDispersion,
   getLandscape,
@@ -14,14 +15,16 @@ import {
   type DispersionData,
   type Goal,
   type GoalScore,
+  type HostRef,
   type Landscape,
   type StructuralAssessment,
 } from "@/lib/api";
 
-type Tab = "score" | "landscape" | "dispersion" | "sites";
+type Tab = "score" | "landscape" | "dispersion" | "sites" | "spatial";
 
 type Props = {
   goal: Goal;
+  host: HostRef | null;
   hostFormula: string | null;
   hostAssessment: StructuralAssessment | null;
   candidate: Candidate | null;
@@ -49,7 +52,7 @@ function useLoad<T>(key: string | null, load: () => Promise<T>, delay = 300): T 
   return value && value.key === key ? value.data : null;
 }
 
-export function EvidencePanel({ goal, hostFormula, hostAssessment, candidate }: Props) {
+export function EvidencePanel({ goal, host, hostFormula, hostAssessment, candidate }: Props) {
   const t = useTranslations("Evidence");
   const [tab, setTab] = useState<Tab>("landscape");
   const [relaxedView, setRelaxedView] = useState(false);
@@ -100,6 +103,7 @@ export function EvidencePanel({ goal, hostFormula, hostAssessment, candidate }: 
     { id: "landscape", label: t("tabLandscape") },
     { id: "dispersion", label: t("tabDispersion") },
     { id: "sites", label: t("tabSites") },
+    { id: "spatial", label: t("tabSpatial") },
     { id: "score", label: t("tabScore") },
   ];
 
@@ -141,6 +145,7 @@ export function EvidencePanel({ goal, hostFormula, hostAssessment, candidate }: 
         ) : (
           <p className="text-sm text-muted">{formulas.length ? t("loading") : t("needSubject")}</p>
         ))}
+      {tab === "spatial" && <SpatialPanel candidate={candidate} host={host} hostFormula={hostFormula} />}
       {tab === "sites" && (
         <div className="space-y-2">
           {relaxation && (

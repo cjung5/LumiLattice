@@ -114,7 +114,8 @@
     "loading": "데이터를 불러오는 중…",
     "relaxed": "이완 후",
     "unrelaxed": "이완 전",
-    "title": "5. 근거"
+    "title": "5. 근거",
+    "tabSpatial": "3D 구조"
   },
   "Score": {
     "summary": "기준 {total}개 중 {meets}개 충족",
@@ -281,6 +282,61 @@
     "nRange": "n (끝 조성 범위)",
     "relaxedVolume": "CHGNet 후 ΔV",
     "experiments": "측정값"
+  },
+  "Spatial": {
+    "loading": "3D 구조를 분석하는 중…",
+    "optical": {
+      "isotropic": "광학적 등방",
+      "uniaxial": "단축 (복굴절)",
+      "biaxial": "이축 (복굴절)"
+    },
+    "system": {
+      "triclinic": "삼사정계",
+      "monoclinic": "단사정계",
+      "orthorhombic": "사방정계",
+      "tetragonal": "정방정계",
+      "trigonal": "삼방정계",
+      "hexagonal": "육방정계",
+      "cubic": "입방정계"
+    },
+    "state": {
+      "before": "치환 전",
+      "after": "후보",
+      "relaxed": "이완 후 (CHGNet)"
+    },
+    "stateCol": "상태",
+    "site": "사이트",
+    "shape": "다면체",
+    "distortionTitle": "다면체 왜곡",
+    "distortionSubtitle": "치환된 사이트 다면체의 결합 길이 왜곡 지수 Δ",
+    "distortionAxis": "Δ (0 = 모든 결합 길이가 같음)",
+    "distortionNote": "Δ = 평균 |d − d̄| / d̄ (Baur 1974). 음영(Δ > 0.02)은 뚜렷하게 왜곡된 다면체입니다. 표에는 팔면체의 quadratic elongation ⟨λ⟩와 결합각 분산 σ²도 있습니다.",
+    "angleTitle": "꼭짓점 공유 B–X–B 각",
+    "angleSubtitle": "6배위 양이온 두 개가 공유하는 음이온을 지나는 각",
+    "angleAxis": "B–X–B 각 (180° = 곧은 연결)",
+    "angleNote": "180°보다 작으면 팔면체가 기울거나 휜 것입니다. 기울기 = (180° − 각)/2이며, 페로브스카이트처럼 꼭짓점만 공유하는 골격에서만 표시합니다.",
+    "noAngles": "이 구조에는 꼭짓점을 공유하는 팔면체가 없습니다.",
+    "links": "공유 연결",
+    "linkCounts": "꼭짓점 {corner}, 모서리 {edge}, 면 {face}",
+    "angles": "각",
+    "tilt": "평균 기울기",
+    "orderingTitle": "치환 이온의 위치: 배열 에너지",
+    "orderingSubtitle": "후보 셀을 {cell}로 반복한 셀의 배열 {total}개, 서로 다른 에너지 {distinct}개",
+    "orderingAxis": "가장 낮은 배열 대비 Ewald 에너지 (meV/atom, 점전하)",
+    "otherOrderings": "다른 배열",
+    "thisOrdering": "이 후보 ({id})",
+    "allEqual": "모든 배열의 Ewald 에너지가 같아서(전하가 같음) 이 모델로는 순위를 매길 수 없습니다.",
+    "sampled": "배열이 너무 많아 재현 가능한 무작위 표본 300개를 보여줍니다.",
+    "count": "배열 수",
+    "dopant": "치환 이온",
+    "sites": "사이트",
+    "nearest": "가장 가까운 같은 이온",
+    "spacing": "가능한 최소 거리",
+    "stateShort": {
+      "before": "치환 전",
+      "after": "후보",
+      "relaxed": "이완 후"
+    }
   },
   "Literature": {
     "title": "8. 문헌",

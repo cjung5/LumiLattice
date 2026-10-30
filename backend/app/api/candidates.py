@@ -24,7 +24,8 @@ from app.tools.goals import Goal, GoalScore, score_candidate, score_formula
 from app.tools.reference_db import get_reference_db
 from app.tools.registry import ToolError
 from app.tools.relaxation import displacement_summary, relax, relaxation_available
-from app.tools.structures import structure_payload
+from app.tools.spatial import SpatialAnalysis, analyze
+from app.tools.structures import parse_cif_structure, structure_payload
 from app.tools.validation import RELAXED_NOTE, assess
 
 router = APIRouter(prefix="/api")
@@ -196,6 +197,51 @@ def score(request: ScoreRequest) -> GoalScore:
     except ToolError as exc:
         raise to_http(exc) from exc
     raise HTTPException(status_code=400, detail="Give a candidate_id or a formula.")
+
+
+_spatial_cache: dict[tuple[str, bool, bool], SpatialAnalysis] = {}
+
+
+@router.get("/candidates/{candidate_id}/spatial")
+def candidate_spatial(candidate_id: str, relaxed: bool = False) -> SpatialAnalysis:
+    """Symmetry/optical class, polyhedra, connectivity, dopant arrangement, ordering rank."""
+    stored = get_store().get(candidate_id)
+    if stored is None:
+        raise not_found(candidate_id)
+    candidate, structure = stored
+    key = (candidate_id, relaxed, candidate.relaxation is not None)
+    if key in _spatial_cache:
+        return _spatial_cache[key]
+    replaced = candidate.transformation.substituted_sites
+    origin = {s.element_to: s.element_from for s in candidate.transformation.substitutions}
+    parent = structure.copy()  # the same supercell before this step's substitutions
+    for element, sites in replaced.items():
+        for i in sites:
+            parent.replace(i, origin[element])
+    focus = sorted(i for sites in replaced.values() for i in sites)
+    if relaxed:
+        if candidate.relaxation is None:
+            raise HTTPException(status_code=400, detail=f"{candidate_id} has not been relaxed.")
+        geometry = parse_cif_structure(
+            candidate.relaxation.structure.cif, f"{candidate_id}-relaxed"
+        )
+        # Compared with the unrelaxed candidate; the ordering rank does not change on relaxing.
+        result = analyze(geometry, focus, structure, replaced, rank=False)
+    else:
+        result = analyze(structure, focus, parent, replaced)
+    if len(_spatial_cache) > 256:
+        _spatial_cache.clear()
+    _spatial_cache[key] = result
+    return result
+
+
+@router.post("/structures/spatial")
+def host_spatial(host: HostRef, mp: OptionalMPDep) -> SpatialAnalysis:
+    try:
+        structure, _, _ = load_host(get_store(), mp, **host.model_dump())
+    except ToolError as exc:
+        raise to_http(exc) from exc
+    return analyze(structure)
 
 
 @router.post("/structures/assess")
