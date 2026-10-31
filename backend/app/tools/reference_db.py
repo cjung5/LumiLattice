@@ -13,7 +13,9 @@ from functools import lru_cache
 from pathlib import Path
 from urllib.parse import quote
 
+import numpy as np
 from pymatgen.core import Composition
+from scipy.optimize import nnls
 
 from app.config import get_settings
 from app.models.evidence import PropertyValue, Provenance
@@ -24,6 +26,7 @@ from app.models.optical import (
     EndMemberIndex,
     Landscape,
     LandscapePoint,
+    LinearMix,
     MeasuredIndex,
     OpticalEstimate,
     OpticalReference,
@@ -38,6 +41,15 @@ MATCH_NOTE = "Matched by formula; the polymorph may differ from the selected str
 # of computed wide-gap oxide mixes fall inside at 0.2, but only 12 measured mixes exist, not reviewed.
 GAP_MARGIN_EV = 0.3
 N_MARGIN = 0.2
+# Median error of a linear mix on tested oxides (scripts/validate_score.py): 43 hand-checked band
+# gaps and 12 unreviewed n values. tests/test_validate_score.py keeps these in step with the report.
+MIX_TYPICAL_GAP_ERROR_EV = 0.6
+MIX_TYPICAL_N_ERROR = 0.3
+MIX_TOLERANCE = 1e-3
+MIX_NOTE = (
+    "End-member values weighted by each one's share of the composition. A guide, not a prediction: "
+    "real mixes can bend away from a straight line. Verdicts and the score use the range."
+)
 N_NOTE = f"Widened by {N_MARGIN} on each side, from tests on computed mixes."
 GAP_NOTE_RANGE = (
     f"Widened by {GAP_MARGIN_EV} eV on each side, from tests on measured oxide solid solutions."
@@ -286,7 +298,9 @@ class ReferenceDB:
         note = f"{note}, and it can mix measured and DFT values."
         n = self.best_n(exact) if exact else None
         gap = self.best_gap(exact) if exact else None
+        mix = _linear_mix(members, exact, _good(n), _good(gap))
         return OpticalEstimate(
+            linear_mix=mix,
             estimate=n
             if _good(n)
             else _range(
@@ -366,7 +380,7 @@ class ReferenceDB:
             notes=[
                 (
                     "Measured: refractiveindex.info bulk n at 550 nm, with a measured band gap "
-                    "(Zhuo et al. 2018) or, as an open ring, the JARVIS TBmBJ band gap."
+                    "(Zhuo et al. 2018 or Dong & Cole 2022) or, as an open ring, the JARVIS TBmBJ band gap."
                 ),
                 (
                     "Computed: JARVIS TBmBJ gap and n = sqrt(eps), a long-wavelength value "
@@ -403,6 +417,57 @@ def _range(
         status="Heuristic",
         conditions=conditions,
         provenance=Provenance(source="LumiLattice", method="end-member range"),
+    )
+
+
+def mix_shares(formula: str, ends: list[str]) -> dict[str, float] | None:
+    """Each end member's share of `formula`, or None if it is not a mix of them.
+
+    Sr3LaTi3AlO12 is 3/4 SrTiO3 and 1/4 LaAlO3. Sr→La 1/4 with Ti→Al 1/2 lies off that line.
+    """
+    try:
+        target = Composition(formula).fractional_composition.as_dict()
+        parts = [Composition(end).fractional_composition.as_dict() for end in ends]
+    except (ValueError, KeyError):
+        return None
+    elements = sorted(set(target).union(*parts))
+    # The heavily weighted last row makes the shares sum to 1.
+    a = np.array([[p.get(e, 0.0) for p in parts] for e in elements] + [[100.0] * len(parts)])
+    b = np.array([target.get(e, 0.0) for e in elements] + [100.0])
+    shares, _ = nnls(a, b)
+    if np.abs(a[:-1] @ shares - b[:-1]).max() > MIX_TOLERANCE:
+        return None
+    found = {end: round(float(s), 4) for end, s in zip(ends, shares, strict=True) if s > 1e-4}
+    return found if len(found) > 1 else None
+
+
+def _linear_mix(
+    members: list[EndMemberIndex], exact: str | None, n_is_exact: bool, gap_is_exact: bool
+) -> LinearMix | None:
+    """Only for what is still a range: exact-formula values are better evidence than a guess."""
+    if exact is None or (n_is_exact and gap_is_exact):
+        return None
+    shares = mix_shares(exact, [m.formula for m in members])
+    if shares is None:
+        return None
+    used = [m for m in members if m.formula in shares]
+
+    def blend(values: list[float | None]) -> float | None:
+        if any(v is None for v in values):
+            return None
+        return _round(sum(v * shares[m.formula] for v, m in zip(values, used, strict=True)))
+
+    n = None if n_is_exact else blend([m.n.value for m in used])
+    gap = None if gap_is_exact else blend([m.band_gap.value if m.band_gap else None for m in used])
+    if n is None and gap is None:
+        return None
+    return LinearMix(
+        shares=shares,
+        n=n,
+        band_gap=gap,
+        typical_n_error=MIX_TYPICAL_N_ERROR,
+        typical_gap_error_ev=MIX_TYPICAL_GAP_ERROR_EV,
+        note=MIX_NOTE,
     )
 
 

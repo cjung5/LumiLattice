@@ -196,7 +196,9 @@
     "generateGuided": "새 소재 만들기",
     "suggest": "Muse Spark에게 제안받기",
     "moreTools": "다른 도구: 내보내기, 이완, 공개, 실험 결과",
-    "checkDetails": "구조 검사 상세"
+    "checkDetails": "구조 검사 상세",
+    "mixTitle": "선형 혼합 (참고용, 판정은 범위를 씀):",
+    "mixValues": "n ≈ {n} (약 ±{nError}), 밴드갭 ≈ {gap} eV (약 ±{gapError} eV), 구성:"
   },
   "Critique": {
     "title": "Muse Spark 비평",
@@ -314,7 +316,9 @@
     "srcMeasuredBoth": "측정 n, 측정 밴드갭",
     "gapColumn": "밴드갭 (eV)",
     "gapSource": "밴드갭 출처",
-    "gapSourceMeasured": "측정"
+    "gapSourceMeasured": "측정",
+    "legendMix": "선형 혼합 (참고용)",
+    "srcMix": "말단 물질의 선형 혼합, 참고용"
   },
   "Assessment": {
     "clickHint": "검사 항목을 누르면 해당 원자가 표시됩니다.",
@@ -570,6 +574,10 @@
     "unknown": {
       "name": "Unknown",
       "text": "믿을 만한 값이 없습니다."
+    },
+    "mix": {
+      "name": "직선 혼합 값",
+      "text": "혼합물의 값이 부모 소재들의 비율대로 그 사이에 놓인다고 어림한 값입니다. 실제 혼합물은 이 직선에서 벗어날 수 있으니 참고용으로 보세요."
     }
   },
   "Viewer": {
@@ -633,7 +641,10 @@
     "explain": "쉽게 설명해 주세요",
     "improve": "더 나은 치환 제안받기",
     "seeEvidence": "알려진 소재와 비교하기",
-    "dftGapNote": "이 값은 계산값이며, 계산한 밴드갭은 보통 실제보다 낮게 나옵니다. 실제 소재는 더 투명할 수 있습니다."
+    "dftGapNote": "이 값은 계산값이며, 계산한 밴드갭은 보통 실제보다 낮게 나옵니다. 실제 소재는 더 투명할 수 있습니다.",
+    "mixName": "직선 혼합 값",
+    "mixN": "약 {value}, 보통 {error}쯤 어긋납니다. 판정은 전체 범위를 씁니다.",
+    "mixGap": "약 {value} eV, 보통 {error} eV쯤 어긋납니다. 판정은 전체 범위를 씁니다."
   },
   "Workspace": {
     "sharedAndPapers": "공유된 후보와 연구 논문"

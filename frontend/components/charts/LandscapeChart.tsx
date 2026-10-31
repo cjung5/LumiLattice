@@ -14,7 +14,13 @@ export type MarkedPoint = {
   role: "host" | "end";
 };
 
-export type RangeBox = { label: string; n: [number, number]; gap: [number, number] };
+export type RangeBox = {
+  label: string;
+  n: [number, number];
+  gap: [number, number];
+  /** The linear-mix guess, inside the box. */
+  mix?: { n: number; gap: number } | null;
+};
 
 type Props = {
   data: Landscape;
@@ -55,8 +61,9 @@ export function LandscapeChart({ data, goal, points, box }: Props) {
     () => [
       ...measured.map((p) => ({ label: p.formula, n: p.n, gap: p.band_gap, source: t(p.gap_measured ? "srcMeasuredBoth" : "srcMeasured") })),
       ...points.map((p) => ({ label: p.label, n: p.n, gap: p.gap, source: `n: ${p.nStatus} · gap: ${p.gapStatus}` })),
+      ...(box?.mix ? [{ label: box.label, n: box.mix.n, gap: box.mix.gap, source: t("srcMix") }] : []),
     ],
-    [measured, points, t],
+    [measured, points, box, t],
   );
 
   function onMove(event: React.PointerEvent<SVGRectElement>) {
@@ -112,6 +119,7 @@ export function LandscapeChart({ data, goal, points, box }: Props) {
         { label: t("legendMeasured"), kind: "ring", color: "var(--series-exp)" },
         { label: t("legendComputed"), kind: "dot", color: "var(--series-dft)" },
         ...(box ? [{ label: t("legendRange"), kind: "box" as const, color: "var(--series-heur)" }] : []),
+        ...(box?.mix ? [{ label: t("legendMix"), kind: "diamond" as const, color: "var(--chart-ink)" }] : []),
         { label: t("legendGoal"), kind: "wash", color: "var(--chart-ink)" },
         { label: t("legendMoss"), kind: "line", color: "var(--chart-muted)" },
       ]}
@@ -169,25 +177,27 @@ export function LandscapeChart({ data, goal, points, box }: Props) {
                 stroke="var(--series-heur)"
                 strokeWidth="2"
               />
-              {/* The host is a corner of the box and is labeled outside it, so this label goes inside
-                  the top-right corner, or below the box when the box is too small. */}
-              {(() => {
-                const inside = y(box.n[0]) - y(box.n[1]) >= 24 && x(box.gap[1]) - x(box.gap[0]) >= box.label.length * 7 + 12;
-                return (
-                  <text
-                    x={x(box.gap[1]) - (inside ? 8 : 0)}
-                    y={inside ? y(box.n[1]) + 16 : y(box.n[0]) + 14}
-                    textAnchor="end"
-                    fontSize="11"
-                    fontWeight="600"
-                    fill="var(--chart-ink)"
-                    {...HALO}
-                  >
-                    {box.label}
-                  </text>
-                );
-              })()}
+              {/* Above the box: the host and end members are labeled inside and around it. */}
+              <text
+                x={x(box.gap[1])}
+                y={Math.max(y(box.n[1]) - 6, M.t + 12)}
+                textAnchor="end"
+                fontSize="11"
+                fontWeight="600"
+                fill="var(--chart-ink)"
+                {...HALO}
+              >
+                {box.label}
+              </text>
             </g>
+          )}
+          {box?.mix && inside(box.mix.gap, box.mix.n) && (
+            <path
+              d={`M${x(box.mix.gap)} ${y(box.mix.n) - 6} l6 6 l-6 6 l-6 -6Z`}
+              fill="var(--chart-surface)"
+              stroke="var(--chart-ink)"
+              strokeWidth="1.5"
+            />
           )}
           {/* host and end members, labeled */}
           {points.filter((p) => inside(p.gap, p.n)).map((p) => (

@@ -4,7 +4,12 @@ import pytest
 from pymatgen.core import Composition
 
 from app.tools import scorecard
-from app.tools.reference_db import GAP_MARGIN_EV, N_MARGIN
+from app.tools.reference_db import (
+    GAP_MARGIN_EV,
+    MIX_TYPICAL_GAP_ERROR_EV,
+    MIX_TYPICAL_N_ERROR,
+    N_MARGIN,
+)
 from scripts.validate_score import (
     area_under_curve,
     end_members,
@@ -79,3 +84,12 @@ def test_committed_report_loads_with_the_applied_margins():
     assert loaded.oxide_other_rank == other["rank_correlation_midpoint"]
     assert loaded.oxide_other_cases == other["cases"]
     assert report["applied_margins"] == {"gap_ev": GAP_MARGIN_EV, "n": N_MARGIN}
+
+
+def test_stated_mix_errors_match_the_report():
+    oxides = json.loads(scorecard.VALIDATION_FILE.read_text())["oxides"]
+    gap = oxides["gap_reviewed_clear"]["median_error_of_linear_mix"]
+    n = oxides["n_mined_unreviewed"]["median_error_of_linear_mix"]
+
+    assert round(gap, 1) == MIX_TYPICAL_GAP_ERROR_EV
+    assert round(n, 1) == MIX_TYPICAL_N_ERROR

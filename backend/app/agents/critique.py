@@ -237,6 +237,20 @@ def evidence_pack(
                     f"{_conditions(est.band_gap)}",
                 )
             )
+        if est.linear_mix:
+            mix = est.linear_mix
+            items.append(
+                EvidenceItem(
+                    id="optics.linear_mix",
+                    group="optics",
+                    text=(
+                        f"Linear mix of end members: n {_f(mix.n) if mix.n is not None else 'unknown'}, "
+                        f"band gap {_f(mix.band_gap) if mix.band_gap is not None else 'unknown'} eV. "
+                        f"Typically off by about {_f(mix.typical_n_error)} (n) and "
+                        f"{_f(mix.typical_gap_error_ev)} eV (gap). {mix.note}"
+                    ),
+                )
+            )
         for m in est.end_members:
             items.append(
                 EvidenceItem(

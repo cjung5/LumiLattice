@@ -135,7 +135,17 @@ export type OpticalReference = {
   note: string;
 };
 
+export type LinearMix = {
+  shares: Record<string, number>;
+  n?: number | null;
+  band_gap?: number | null;
+  typical_n_error: number;
+  typical_gap_error_ev: number;
+  note: string;
+};
+
 export type OpticalEstimate = {
+  linear_mix?: LinearMix | null;
   estimate: PropertyValue;
   band_gap: PropertyValue | null;
   end_members: { formula: string; n: PropertyValue; band_gap: PropertyValue | null }[];

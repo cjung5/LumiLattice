@@ -6,7 +6,7 @@ import { AssessmentPanel } from "@/components/AssessmentPanel";
 import { CritiquePanel } from "@/components/CritiquePanel";
 import { CrystalViewer, type ViewerHandle } from "@/components/CrystalViewer";
 import { DecisionBar } from "@/components/DecisionBar";
-import { PropertyValueView } from "@/components/EvidenceTag";
+import { EvidenceTag, PropertyValueView } from "@/components/EvidenceTag";
 import { ExperimentPanel } from "@/components/ExperimentPanel";
 import { Advanced, useLevel } from "@/components/Level";
 import { PlainResult } from "@/components/PlainResult";
@@ -382,6 +382,22 @@ export function CandidatePanel({
                   </li>
                 ))}
               </ul>
+              {current.optical_estimate.linear_mix && (
+                <p className="mt-1 text-xs">
+                  <span aria-hidden>◆ </span>
+                  <span className="font-medium">{t("mixTitle")}</span>{" "}
+                  {t("mixValues", {
+                    n: current.optical_estimate.linear_mix.n?.toFixed(2) ?? "—",
+                    gap: current.optical_estimate.linear_mix.band_gap?.toFixed(2) ?? "—",
+                    nError: current.optical_estimate.linear_mix.typical_n_error,
+                    gapError: current.optical_estimate.linear_mix.typical_gap_error_ev,
+                  })}{" "}
+                  {Object.entries(current.optical_estimate.linear_mix.shares)
+                    .map(([formula, share]) => `${formula} ${+(share * 100).toFixed(1)}%`)
+                    .join(" + ")}
+                  <span className="ml-1 align-middle"><EvidenceTag status="Heuristic" /></span>
+                </p>
+              )}
               {current.optical_estimate.estimate.conditions && (
                 <p className="mt-1 text-xs text-muted">{current.optical_estimate.estimate.conditions}</p>
               )}

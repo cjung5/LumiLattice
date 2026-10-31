@@ -6,6 +6,16 @@ const percent = (x: number, lo: number, hi: number) => Math.max(0, Math.min(100,
 
 type Range = [number, number];
 
+/** The linear-mix guess on a scale: a diamond, with a dark edge so it shows on any color. */
+export function MixMark({ left }: { left: number }) {
+  return (
+    <div
+      className="absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rotate-45 border border-black bg-white"
+      style={{ left: `${left}%` }}
+    />
+  );
+}
+
 const N_MIN = 1.3;
 const N_MAX = 3;
 // Textbook values for scale only (near 550 nm). They are not scored.
@@ -16,7 +26,7 @@ const N_REFERENCES = [
 ] as const;
 
 /** Where a material's n sits between everyday materials. */
-export function NScale({ goal, range, host }: { goal: number; range?: Range | null; host?: number | null }) {
+export function NScale({ goal, range, host, mix }: { goal: number; range?: Range | null; host?: number | null; mix?: number | null }) {
   const t = useTranslations("Plain");
   const at = (x: number) => percent(x, N_MIN, N_MAX);
   return (
@@ -34,6 +44,7 @@ export function NScale({ goal, range, host }: { goal: number; range?: Range | nu
             style={{ left: `${at(host)}%` }}
           />
         )}
+        {mix != null && <MixMark left={at(mix)} />}
         <div className="absolute -top-1 h-4 w-0.5 -translate-x-1/2 bg-foreground" style={{ left: `${at(goal)}%` }} />
         <div className="absolute -top-6 -translate-x-1/2 whitespace-nowrap text-xs font-medium" style={{ left: `${at(goal)}%` }}>
           {t("goalAtLeast", { value: goal })}
@@ -63,7 +74,7 @@ const COLORS = [
 export const edgeNm = (gap: number) => Math.round(1240 / gap);
 
 /** The visible spectrum, with the part the material absorbs darkened. */
-export function GapScale({ goal, range }: { goal: number; range?: Range | null }) {
+export function GapScale({ goal, range, mix }: { goal: number; range?: Range | null; mix?: number | null }) {
   const t = useTranslations("Plain");
   const at = (nm: number) => percent(nm, NM_MIN, NM_MAX);
   const sure = range ? at(1240 / range[1]) : 0; // absorbed even at the widest gap in the range
@@ -82,6 +93,7 @@ export function GapScale({ goal, range }: { goal: number; range?: Range | null }
             }}
           />
         )}
+        {mix != null && mix > 0 && <MixMark left={at(1240 / mix)} />}
         <div className="absolute -top-1 h-5 w-0.5 -translate-x-1/2 bg-foreground" style={{ left: `${at(1240 / goal)}%` }} />
         <div
           className="absolute -top-6 whitespace-nowrap text-xs font-medium"

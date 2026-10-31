@@ -196,7 +196,9 @@
     "generateGuided": "生成新材料",
     "suggest": "让 Muse Spark 推荐替换方案",
     "moreTools": "更多工具：导出、弛豫、发表、实验结果",
-    "checkDetails": "结构检查详情"
+    "checkDetails": "结构检查详情",
+    "mixTitle": "线性混合（参考；判定使用区间）：",
+    "mixValues": "n ≈ {n}（±约 {nError}），带隙 ≈ {gap} eV（±约 {gapError} eV），来自"
   },
   "Critique": {
     "title": "Muse Spark 评价",
@@ -314,7 +316,9 @@
     "srcMeasuredBoth": "实测 n，实测带隙",
     "gapColumn": "带隙 (eV)",
     "gapSource": "带隙来源",
-    "gapSourceMeasured": "实测"
+    "gapSourceMeasured": "实测",
+    "legendMix": "线性混合（参考）",
+    "srcMix": "端元线性混合，仅供参考"
   },
   "Assessment": {
     "clickHint": "选择一项校验以显示其原子。",
@@ -570,6 +574,10 @@
     "unknown": {
       "name": "未知",
       "text": "暂无可靠数值。"
+    },
+    "mix": {
+      "name": "线性混合",
+      "text": "按组分比例，假设混合物性质介于母体材料之间的估计值。实际混合物可能偏离该直线，仅供参考。"
     }
   },
   "Viewer": {
@@ -633,7 +641,10 @@
     "explain": "为我解释",
     "improve": "推荐更优的替换方案",
     "seeEvidence": "与已知材料比较",
-    "dftGapNote": "该值为计算值，计算带隙通常偏低，因此实际材料可能更透明。"
+    "dftGapNote": "该值为计算值，计算带隙通常偏低，因此实际材料可能更透明。",
+    "mixName": "线性混合",
+    "mixN": "约 {value}，常偏差约 {error}。判定使用完整区间。",
+    "mixGap": "约 {value} eV，常偏差约 {error} eV。判定使用完整区间。"
   },
   "Workspace": {
     "sharedAndPapers": "共享的候选材料和研究论文"

@@ -10,8 +10,9 @@ Six tests:
 6. Band-gap and n ranges on oxide solid solutions from text-mined databases, with the end-member
    values the app really uses. data/oxide_gap_review.json holds the hand-checked subset.
 
-Tests 4 and 5 use about 200 Materials Project requests. Run from backend/:
-    uv run python -m scripts.validate_score
+Tests 4 and 5 use about 200 Materials Project requests, so their last results are reused unless
+you pass --with-mp. Run from backend/:
+    uv run python -m scripts.validate_score [--with-mp]
 """
 
 import ast
@@ -109,6 +110,7 @@ HELD_OUT_IMPLAUSIBLE = (
     ("mp-1249", "Mg", "La"),
 )
 REAL_CRYSTALS = 40
+MP_SECTIONS = ("real_crystals", "atom_fit_tuning", "atom_fit_holdout")
 
 
 MIN_SHARE = 0.1  # below this, a dopant more than a solid solution
@@ -258,6 +260,12 @@ def range_summary(cases: list[dict]) -> dict | None:
         ),
         "error_of_linear_mix": round(
             statistics.fmean(abs(c["linear"] - c["measured"]) for c in cases), 3
+        ),
+        "median_error_of_linear_mix": round(
+            statistics.median(abs(c["linear"] - c["measured"]) for c in cases), 3
+        ),
+        "mean_signed_error_of_linear_mix": round(
+            statistics.fmean(c["linear"] - c["measured"] for c in cases), 3
         ),
         "rank_correlation_midpoint": rank_correlation(middle, measured),
         "rank_correlation_linear": rank_correlation([c["linear"] for c in cases], measured),
@@ -705,8 +713,12 @@ def main(path: Path = OUT) -> int:
         "oxides": oxide_tests(),
         "mined_gaps_against_computed": mined_against_computed(),
     }
-    if settings.mp_api_key is None:
-        print("MP_API_KEY is not set: skipping the atom-fit test.", file=sys.stderr)
+    # The Materials Project tests change only when the checks do, so reuse them unless asked.
+    if "--with-mp" not in sys.argv and path.exists():
+        previous = json.loads(path.read_text())
+        report |= {k: previous[k] for k in MP_SECTIONS if k in previous}
+    elif settings.mp_api_key is None:
+        print("MP_API_KEY is not set: skipping the Materials Project tests.", file=sys.stderr)
     else:
         mp = MaterialsProjectClient(settings.mp_api_key.get_secret_value())
         try:

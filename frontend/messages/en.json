@@ -196,7 +196,9 @@
     "generateGuided": "Make the new material",
     "suggest": "Let Muse Spark suggest a swap",
     "moreTools": "More tools: export, relaxation, publishing, lab results",
-    "checkDetails": "Details of the structure checks"
+    "checkDetails": "Details of the structure checks",
+    "mixTitle": "Linear mix (a guide; verdicts use the range):",
+    "mixValues": "n ≈ {n} (± about {nError}), band gap ≈ {gap} eV (± about {gapError} eV), from"
   },
   "Critique": {
     "title": "Muse Spark critique",
@@ -314,7 +316,9 @@
     "srcMeasuredBoth": "measured n, measured gap",
     "gapColumn": "Band gap (eV)",
     "gapSource": "Gap source",
-    "gapSourceMeasured": "measured"
+    "gapSourceMeasured": "measured",
+    "legendMix": "Linear mix (a guide)",
+    "srcMix": "linear mix of the end members, a guide"
   },
   "Assessment": {
     "clickHint": "Select a check to show its atoms.",
@@ -570,6 +574,10 @@
     "unknown": {
       "name": "Unknown",
       "text": "No reliable value is available."
+    },
+    "mix": {
+      "name": "Straight-line mix",
+      "text": "A guess that a blend lies part way between its parent materials, in proportion to how much of each it has. Real blends can bend away from this line, so treat it as a guide."
     }
   },
   "Viewer": {
@@ -633,7 +641,10 @@
     "explain": "Explain this to me",
     "improve": "Suggest a better swap",
     "seeEvidence": "Compare with known materials",
-    "dftGapNote": "This value is computed, and computed band gaps usually come out too low, so the real material may be clearer."
+    "dftGapNote": "This value is computed, and computed band gaps usually come out too low, so the real material may be clearer.",
+    "mixName": "Straight-line mix",
+    "mixN": "about {value}, often off by about {error}. The verdict uses the full range.",
+    "mixGap": "about {value} eV, often off by about {error} eV. The verdict uses the full range."
   },
   "Workspace": {
     "sharedAndPapers": "Shared candidates and research papers"

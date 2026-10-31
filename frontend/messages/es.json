@@ -196,7 +196,9 @@
     "generateGuided": "Crear el material nuevo",
     "suggest": "Deja que Muse Spark sugiera una sustitución",
     "moreTools": "Más herramientas: exportación, relajación, publicación, resultados de laboratorio",
-    "checkDetails": "Detalles de las comprobaciones estructurales"
+    "checkDetails": "Detalles de las comprobaciones estructurales",
+    "mixTitle": "Mezcla lineal (guía; los veredictos usan el rango):",
+    "mixValues": "n ≈ {n} (± aprox. {nError}), brecha de banda ≈ {gap} eV (± aprox. {gapError} eV), de"
   },
   "Critique": {
     "title": "Crítica de Muse Spark",
@@ -314,7 +316,9 @@
     "srcMeasuredBoth": "n medida, brecha medida",
     "gapColumn": "Brecha de banda (eV)",
     "gapSource": "Fuente de la brecha",
-    "gapSourceMeasured": "medida"
+    "gapSourceMeasured": "medida",
+    "legendMix": "Mezcla lineal (guía)",
+    "srcMix": "mezcla lineal de los miembros extremos, una guía"
   },
   "Assessment": {
     "clickHint": "Selecciona una verificación para mostrar sus átomos.",
@@ -570,6 +574,10 @@
     "unknown": {
       "name": "Desconocido",
       "text": "No hay ningún valor fiable disponible."
+    },
+    "mix": {
+      "name": "Mezcla lineal",
+      "text": "Estimación de que una mezcla se sitúa entre sus materiales de partida, en proporción a la cantidad de cada uno. Las mezclas reales pueden desviarse de esta línea, así que tómela solo como guía."
     }
   },
   "Viewer": {
@@ -633,7 +641,10 @@
     "explain": "Explícamelo",
     "improve": "Sugerir una mejor sustitución",
     "seeEvidence": "Comparar con materiales conocidos",
-    "dftGapNote": "Este valor es calculado, y los band gaps calculados suelen salir demasiado bajos, por lo que el material real podría ser más transparente."
+    "dftGapNote": "Este valor es calculado, y los band gaps calculados suelen salir demasiado bajos, por lo que el material real podría ser más transparente.",
+    "mixName": "Mezcla lineal",
+    "mixN": "aprox. {value}, a menudo con error de aprox. {error}. El veredicto usa el rango completo.",
+    "mixGap": "aprox. {value} eV, a menudo con error de aprox. {error} eV. El veredicto usa el rango completo."
   },
   "Workspace": {
     "sharedAndPapers": "Candidatos compartidos y artículos científicos"

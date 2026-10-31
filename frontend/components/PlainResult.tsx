@@ -6,13 +6,13 @@ import { formatValue, EvidenceTag } from "@/components/EvidenceTag";
 import { GapScale, NScale } from "@/components/LightScales";
 import { VERDICT } from "@/components/ScoreCard";
 import { Term } from "@/components/Term";
-import { scoreGoal, type Candidate, type Goal, type GoalScore, type PropertyValue, type Verdict } from "@/lib/api";
+import { scoreGoal, type Candidate, type Goal, type GoalScore, type LinearMix, type PropertyValue, type Verdict } from "@/lib/api";
 
 const rangeOf = (pv?: PropertyValue | null): [number, number] | null =>
   pv?.value_range ?? (pv?.value != null ? [pv.value, pv.value] : null);
 
 /** The goal score in everyday words, with the same verdicts and evidence as the Goal score tab. */
-export function PlainScore({ score, hostN }: { score: GoalScore; hostN?: number | null }) {
+export function PlainScore({ score, hostN, mix }: { score: GoalScore; hostN?: number | null; mix?: LinearMix | null }) {
   const t = useTranslations("Plain");
   // "No forbidden elements" adds nothing unless the researcher ruled some out.
   const rows = score.criteria.filter((c) => c.id !== "elements" || score.goal.forbidden_elements.length > 0);
@@ -44,12 +44,24 @@ export function PlainScore({ score, hostN }: { score: GoalScore; hostN?: number 
           </p>
           {c.id === "n" && (
             <div className="pl-7">
-              <NScale goal={score.goal.target_n} range={rangeOf(c.evidence)} host={hostN} />
+              <NScale goal={score.goal.target_n} range={rangeOf(c.evidence)} host={hostN} mix={mix?.n} />
+              {mix?.n != null && (
+                <p className="text-xs">
+                  <span aria-hidden>◆ </span>
+                  <Term id="mix">{t("mixName")}</Term>: {t("mixN", { value: mix.n.toFixed(2), error: mix.typical_n_error })}
+                </p>
+              )}
             </div>
           )}
           {c.id === "band_gap" && (
             <div className="pl-7">
-              <GapScale goal={score.goal.min_band_gap} range={rangeOf(c.evidence)} />
+              <GapScale goal={score.goal.min_band_gap} range={rangeOf(c.evidence)} mix={mix?.band_gap} />
+              {mix?.band_gap != null && (
+                <p className="text-xs">
+                  <span aria-hidden>◆ </span>
+                  <Term id="mix">{t("mixName")}</Term>: {t("mixGap", { value: mix.band_gap.toFixed(2), error: mix.typical_gap_error_ev })}
+                </p>
+              )}
             </div>
           )}
         </li>
@@ -128,7 +140,7 @@ export function PlainResult({ candidate, goal, hostFormula, onAskAgent, onSeeEvi
           <p className="mt-1 text-muted">{t("loading")}</p>
         )}
       </div>
-      {score && <PlainScore score={score} hostN={hostN} />}
+      {score && <PlainScore score={score} hostN={hostN} mix={candidate.optical_estimate?.linear_mix} />}
       {hostN != null && hostFormula && <p className="text-xs text-muted">{t("hostMark", { formula: hostFormula })}</p>}
       <p className="text-xs text-muted">{t("caveat")}</p>
       <div className="flex flex-wrap gap-2">

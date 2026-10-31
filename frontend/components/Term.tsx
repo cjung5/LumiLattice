@@ -13,7 +13,8 @@ export type TermId =
   | "experimental"
   | "dft"
   | "heuristic"
-  | "unknown";
+  | "unknown"
+  | "mix";
 
 const WIDTH = 288;
 const GUTTER = 16;

@@ -2,7 +2,7 @@ import sqlite3
 
 import pytest
 
-from app.tools.reference_db import ReferenceDB, get_reference_db, normalize
+from app.tools.reference_db import ReferenceDB, get_reference_db, mix_shares, normalize
 from app.tools.registry import ToolError
 from scripts.build_reference_db import SCHEMA, measured_gap_rows, mined_gap_rows
 
@@ -92,6 +92,25 @@ def tiny_db(tmp_path) -> ReferenceDB:
     return ReferenceDB(path)
 
 
+@pytest.fixture
+def real_like_db(tmp_path) -> ReferenceDB:
+    """Real formulas with fixture values, so compositions can be parsed."""
+    path = tmp_path / "real.sqlite"
+    db = sqlite3.connect(path)
+    db.executescript(SCHEMA)
+    db.executemany(
+        "INSERT INTO jarvis VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+        [
+            ("J1", "SrTiO3", None, 1, "P1", 1, 1.0, 1.5, None, 4.0, 5.76),  # n_mbj = 2.4
+            ("J2", "LaAlO3", None, 1, "P1", 1, 2.0, 2.5, None, 4.0, 4.0),  # n_mbj = 2.0
+        ],
+    )
+    db.executemany("INSERT INTO expt_gaps VALUES (?, ?)", [("SrTiO3", 3.2), ("LaAlO3", 5.6)])
+    db.commit()
+    db.close()
+    return ReferenceDB(path)
+
+
 def test_best_n_prefers_measured_bulk(tiny_db):
     best = tiny_db.best_n("AB")
 
@@ -135,6 +154,38 @@ def test_a_low_quality_exact_value_does_not_replace_the_range(tiny_db):
 
     assert estimate.band_gap.status == "Heuristic"
     assert estimate.estimate.status == "Heuristic"
+
+
+def test_mix_shares_of_a_co_substitution():
+    assert mix_shares("Sr3LaTi3AlO12", ["SrTiO3", "LaAlO3"]) == pytest.approx(
+        {"SrTiO3": 0.75, "LaAlO3": 0.25}, abs=1e-3
+    )
+
+
+def test_mix_shares_of_two_new_elements_on_one_site():
+    assert mix_shares("Sr4Ti2ZrHfO12", ["SrTiO3", "SrZrO3", "SrHfO3"]) == pytest.approx(
+        {"SrTiO3": 0.5, "SrZrO3": 0.25, "SrHfO3": 0.25}, abs=1e-3
+    )
+
+
+def test_a_composition_off_the_line_has_no_shares():
+    # Sr->La 1/4 with Ti->Al 1/2 cannot be made from SrTiO3 and LaAlO3 alone.
+    assert mix_shares("Sr3LaTi2Al2O12", ["SrTiO3", "LaAlO3"]) is None
+    assert mix_shares("SrTiO3", ["SrTiO3", "LaAlO3"]) is None  # a pure end member is not a mix
+
+
+def test_linear_mix_weights_the_end_member_values(real_like_db):
+    estimate = real_like_db.estimate(["SrTiO3", "LaAlO3"], exact="Sr3LaTi3AlO12")
+
+    mix = estimate.linear_mix
+    assert mix.n == pytest.approx(0.75 * 2.4 + 0.25 * 2.0, abs=1e-3)
+    assert mix.band_gap == pytest.approx(0.75 * 3.2 + 0.25 * 5.6, abs=1e-3)
+    assert estimate.estimate.value_range == (1.8, 2.6)  # the verdict still uses the range
+    assert mix.note and mix.typical_gap_error_ev > 0
+
+
+def test_no_linear_mix_without_a_candidate_formula(real_like_db):
+    assert real_like_db.estimate(["SrTiO3", "LaAlO3"]).linear_mix is None
 
 
 def test_estimate_needs_two_values(tiny_db):

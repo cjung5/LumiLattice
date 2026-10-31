@@ -196,7 +196,9 @@
     "generateGuided": "Neues Material erzeugen",
     "suggest": "Von Muse Spark einen Austausch vorschlagen lassen",
     "moreTools": "Weitere Tools: Export, Relaxierung, Publikation, Laborergebnisse",
-    "checkDetails": "Details der Strukturprüfungen"
+    "checkDetails": "Details der Strukturprüfungen",
+    "mixTitle": "Lineare Mischung (Orientierung; Bewertung nutzt Bereich):",
+    "mixValues": "n ≈ {n} (± ca. {nError}), Bandlücke ≈ {gap} eV (± ca. {gapError} eV), aus"
   },
   "Critique": {
     "title": "Muse Spark-Kritik",
@@ -314,7 +316,9 @@
     "srcMeasuredBoth": "gemessenes n, gemessene Bandlücke",
     "gapColumn": "Bandlücke (eV)",
     "gapSource": "Bandlückenquelle",
-    "gapSourceMeasured": "gemessen"
+    "gapSourceMeasured": "gemessen",
+    "legendMix": "Lineare Mischung (Orientierung)",
+    "srcMix": "lineare Mischung der Endglieder, Orientierung"
   },
   "Assessment": {
     "clickHint": "Prüfung wählen, um ihre Atome zu zeigen.",
@@ -570,6 +574,10 @@
     "unknown": {
       "name": "Unbekannt",
       "text": "Kein verlässlicher Wert verfügbar."
+    },
+    "mix": {
+      "name": "Lineare Mischung",
+      "text": "Annahme, dass eine Mischung anteilig zwischen den Ausgangsmaterialien liegt. Reale Mischungen können von dieser Linie abweichen, daher nur als Orientierung verwenden."
     }
   },
   "Viewer": {
@@ -633,7 +641,10 @@
     "explain": "Erklär mir das",
     "improve": "Besseren Austausch vorschlagen",
     "seeEvidence": "Mit bekannten Materialien vergleichen",
-    "dftGapNote": "Dieser Wert ist berechnet, und berechnete Bandlücken fallen meist zu niedrig aus, daher kann das reale Material klarer sein."
+    "dftGapNote": "Dieser Wert ist berechnet, und berechnete Bandlücken fallen meist zu niedrig aus, daher kann das reale Material klarer sein.",
+    "mixName": "Lineare Mischung",
+    "mixN": "ca. {value}, oft um ca. {error} abweichend. Die Bewertung nutzt den vollen Bereich.",
+    "mixGap": "ca. {value} eV, oft um ca. {error} eV abweichend. Die Bewertung nutzt den vollen Bereich."
   },
   "Workspace": {
     "sharedAndPapers": "Geteilte Kandidaten und Forschungspapiere"

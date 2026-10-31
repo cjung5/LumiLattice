@@ -49,12 +49,28 @@ class EndMemberIndex(BaseModel):
     band_gap: PropertyValue | None = None
 
 
+class LinearMix(BaseModel):
+    """A central guess: end-member values weighted by each one's share of the composition.
+
+    A guide only. Verdicts and the score use the range, because this guess did not rank tested
+    oxides better than the range's midpoint once MgO-ZnO was left out.
+    """
+
+    shares: dict[str, float]  # end member -> share of the composition, 0 to 1
+    n: float | None = None
+    band_gap: float | None = None
+    typical_n_error: float
+    typical_gap_error_ev: float
+    note: str
+
+
 class OpticalEstimate(BaseModel):
     """Heuristic n and band-gap ranges for a candidate, spanned by its end members (spec D3)."""
 
     estimate: PropertyValue
     end_members: list[EndMemberIndex]
     band_gap: PropertyValue | None = None
+    linear_mix: LinearMix | None = None
 
 
 class DispersionCurve(BaseModel):

@@ -101,7 +101,12 @@ export function EvidencePanel({ goal, host, hostFormula, hostAssessment, candida
   const est = candidate?.optical_estimate;
   const box: RangeBox | null =
     candidate && est?.estimate.value_range && est.band_gap?.value_range
-      ? { label: candidate.candidate_id, n: est.estimate.value_range, gap: est.band_gap.value_range }
+      ? {
+          label: candidate.candidate_id,
+          n: est.estimate.value_range,
+          gap: est.band_gap.value_range,
+          mix: est.linear_mix?.n != null && est.linear_mix.band_gap != null ? { n: est.linear_mix.n, gap: est.linear_mix.band_gap } : null,
+        }
       : null;
 
   const relaxation = candidate?.relaxation ?? null;
