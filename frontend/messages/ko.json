@@ -89,7 +89,7 @@
       "candidate": "{host}에서 바꿀 원자를 고르거나 Muse Spark의 제안을 받으세요.",
       "evidence": "{id}의 의미를 읽고, 알려진 소재와 비교한 뒤 결정을 기록하세요."
     },
-    "exampleStoryGuided": "SrTiO3는 빛을 강하게 꺾지만, 파란색 끝 근처부터 빛을 흡수합니다. LaAlO3는 투명하지만 빛을 덜 꺾습니다. Sr의 4분의 1을 La로, Ti의 4분의 1을 Al로 바꾸면 두 장점을 모두 지킬 수 있을까요? 결과는 아래에 있습니다."
+    "exampleStoryGuided": "SrTiO3는 빛을 강하게 꺾지만, 보라색 빛을 흡수하기 시작하는 한계에 가깝습니다. LaAlO3는 여유가 더 있지만 빛을 덜 꺾습니다. Sr의 4분의 1을 La로, Ti의 4분의 1을 Al로 바꾸면 여유를 얻으면서도 빛을 충분히 꺾을 수 있을까요? 결과는 아래에 있습니다."
   },
   "Host": {
     "title": "2. 기준 구조 선택",
@@ -279,7 +279,6 @@
     "showTable": "표",
     "showChart": "차트",
     "material": "물질",
-    "gapTbmbj": "밴드갭 TBmBJ (eV)",
     "inGoal": "목표 영역",
     "srcMeasured": "측정 n, TBmBJ 밴드갭",
     "landscapeTitle": "굴절률–밴드갭 분포",
@@ -310,7 +309,12 @@
     "sitesNote": "음영은 경고(!)와 실패(✗) 기준입니다. 크기 불일치는 Shannon 반경, 결합원자가 불일치는 BVS를 맞추는 데 필요한 결합 길이 변화입니다.",
     "site": "사이트",
     "meanBond": "평균 결합 (Å)",
-    "expectedBond": "기대값 (Å)"
+    "expectedBond": "기대값 (Å)",
+    "legendMeasuredBoth": "측정 n(550 nm), 측정 밴드갭",
+    "srcMeasuredBoth": "측정 n, 측정 밴드갭",
+    "gapColumn": "밴드갭 (eV)",
+    "gapSource": "밴드갭 출처",
+    "gapSourceMeasured": "측정"
   },
   "Assessment": {
     "clickHint": "검사 항목을 누르면 해당 원자가 표시됩니다.",
@@ -363,7 +367,9 @@
     "form": "형태",
     "spacegroup": "공간군",
     "gapOpt": "밴드갭 OptB88vdW (eV)",
-    "gapMbj": "밴드갭 TBmBJ (eV)"
+    "gapMbj": "밴드갭 TBmBJ (eV)",
+    "bestGap": "{formula}의 가장 좋은 밴드갭:",
+    "gapReports": "보고된 값: {values} eV"
   },
   "Publish": {
     "private": "비공개",

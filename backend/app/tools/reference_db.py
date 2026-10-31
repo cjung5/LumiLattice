@@ -1,7 +1,7 @@
 """Read-only lookups in the bundled reference database (backend/data/reference.sqlite).
 
-Built by scripts/build_reference_db.py from JARVIS-DFT (CC BY 4.0) and the
-refractiveindex.info database (CC0). Data is matched by reduced formula, so the
+Built by scripts/build_reference_db.py from JARVIS-DFT (CC BY 4.0), the refractiveindex.info
+database (CC0), and the Zhuo et al. band-gap compilation (MIT). Data is matched by reduced formula, so the
 polymorph can differ from the selected structure; every value says so.
 """
 
@@ -33,6 +33,7 @@ from app.tools.registry import ToolError
 # Measured pages that describe the bulk material (thin films and nanoparticles differ).
 BULK_CATEGORIES = {"bulk", "crystal", ""}
 MATCH_NOTE = "Matched by formula; the polymorph may differ from the selected structure."
+GAP_NOTE = "Reported in the literature; the compilation does not record the measurement method."
 CURVE_NM = list(range(380, 781, 10))
 LANDSCAPE_SAMPLE = 2500
 MOSS_CONSTANT_EV = 95.0  # empirical Moss relation, n^4 * Eg ≈ 95 eV
@@ -156,13 +157,40 @@ class ReferenceDB:
         return OpticalReference(
             formula=formula,
             best_n=self.best_n(formula),
+            best_gap=self.best_gap(formula),
+            measured_gaps=self.measured_gaps(formula),
             measured=self.measured(formula),
             computed=self.computed(formula),
             note=MATCH_NOTE if self.available else "Reference database is not built.",
         )
 
+    def measured_gaps(self, formula: str) -> list[float]:
+        if self._db is None:
+            return []
+        rows = self._db.execute(
+            "SELECT gap FROM expt_gaps WHERE formula = ? ORDER BY gap", (formula,)
+        ).fetchall()
+        return [r[0] for r in rows]
+
     def best_gap(self, formula: str) -> PropertyValue:
-        """JARVIS TBmBJ band gap (closer to measured), else OptB88vdW; median over ICSD entries."""
+        """Measured gap first, then JARVIS TBmBJ, then OptB88vdW (median over ICSD entries)."""
+        measured = self.measured_gaps(formula)
+        if measured:
+            spread = (
+                f"Median of {len(measured)} reports ({measured[0]}–{measured[-1]} eV). "
+                if len(measured) > 1
+                else ""
+            )
+            return PropertyValue(
+                name="band_gap",
+                value=_round(statistics.median(measured)),
+                units="eV",
+                status="Experimental",
+                conditions=f"{spread}{GAP_NOTE} {MATCH_NOTE}",
+                provenance=Provenance(
+                    source="Zhuo et al. 2018", method="literature compilation", reference=formula
+                ),
+            )
         computed = self.computed(formula)
         for field, method, note in (
             ("band_gap_mbj", "TBmBJ", "TBmBJ gaps are usually close to measured gaps"),
@@ -206,7 +234,13 @@ class ReferenceDB:
                 f"{note}, and it can mix measured and DFT values.",
                 names,
             ),
-            band_gap=_range("band_gap", gap_values, "eV", f"{note}. Gaps are DFT (JARVIS).", names),
+            band_gap=_range(
+                "band_gap",
+                gap_values,
+                "eV",
+                f"{note}, and it can mix measured and DFT values.",
+                names,
+            ),
             end_members=members,
         )
 
@@ -247,12 +281,20 @@ class ReferenceDB:
             formulas = [r[0] for r in self._db.execute("SELECT DISTINCT formula FROM ri_pages")]
             for formula in formulas:
                 n, gap = self.best_n(formula), self.best_gap(formula)
+                # Measured gap, or TBmBJ. OptB88vdW gaps are too low to plot beside them.
                 if (
                     n.status == "Experimental"
                     and gap.value is not None
-                    and gap.provenance.method == "TBmBJ"
+                    and (gap.status == "Experimental" or gap.provenance.method == "TBmBJ")
                 ):
-                    measured.append(LandscapePoint(formula=formula, n=n.value, band_gap=gap.value))
+                    measured.append(
+                        LandscapePoint(
+                            formula=formula,
+                            n=n.value,
+                            band_gap=gap.value,
+                            gap_measured=gap.status == "Experimental",
+                        )
+                    )
             rows = self._db.execute(
                 "SELECT mbj_gap, eps_mbj FROM jarvis WHERE mbj_gap > 0 AND eps_mbj >= 1 ORDER BY jid"
             ).fetchall()
@@ -266,7 +308,10 @@ class ReferenceDB:
             computed_total=total,
             moss=moss,
             notes=[
-                "Measured: refractiveindex.info bulk n at 550 nm, with the JARVIS TBmBJ band gap.",
+                (
+                    "Measured: refractiveindex.info bulk n at 550 nm, with a measured band gap "
+                    "(Zhuo et al. 2018) or, as an open ring, the JARVIS TBmBJ band gap."
+                ),
                 (
                     "Computed: JARVIS TBmBJ gap and n = sqrt(eps), a long-wavelength value "
                     f"(an evenly spaced sample of {total} entries)."

@@ -89,7 +89,7 @@
       "candidate": "选择要替换 {host} 中的哪些原子，或让 Muse Spark 推荐替换方案。",
       "evidence": "了解 {id} 的含义，与已知材料比较，然后记录您的决定。"
     },
-    "exampleStoryGuided": "SrTiO3 折光能力强，但在接近蓝光端开始吸收光。LaAlO3 保持透明，但折光较弱。如果将四分之一的 Sr 替换为 La、四分之一的 Ti 替换为 Al，能否兼具两者优点？结果如下。"
+    "exampleStoryGuided": "SrTiO3 折射率高，但接近开始吸收紫光的界限。LaAlO3 裕度更大，但折射率较低。如果将四分之一的 Sr 换成 La、四分之一的 Ti 换成 Al，能否增加裕度并仍保持足够的折射率？结果如下。"
   },
   "Host": {
     "title": "2. 选择主体结构",
@@ -279,7 +279,6 @@
     "showTable": "表格",
     "showChart": "图表",
     "material": "材料",
-    "gapTbmbj": "带隙 TBmBJ (eV)",
     "inGoal": "目标区域内",
     "srcMeasured": "实测 n、TBmBJ 带隙",
     "landscapeTitle": "折射率与带隙关系",
@@ -310,7 +309,12 @@
     "sitesNote": "阴影区为警告 (!) 与失败 (✗) 阈值。尺寸失配采用 Shannon 半径；键价失配为修正 BVS 所需的键长变化。",
     "site": "位点",
     "meanBond": "平均键长 (Å)",
-    "expectedBond": "预期值 (Å)"
+    "expectedBond": "预期值 (Å)",
+    "legendMeasuredBoth": "实测 n(550 nm)，实测带隙",
+    "srcMeasuredBoth": "实测 n，实测带隙",
+    "gapColumn": "带隙 (eV)",
+    "gapSource": "带隙来源",
+    "gapSourceMeasured": "实测"
   },
   "Assessment": {
     "clickHint": "选择一项校验以显示其原子。",
@@ -363,7 +367,9 @@
     "form": "形态",
     "spacegroup": "空间群",
     "gapOpt": "带隙 OptB88vdW (eV)",
-    "gapMbj": "带隙 TBmBJ (eV)"
+    "gapMbj": "带隙 TBmBJ (eV)",
+    "bestGap": "{formula} 的最佳可用带隙：",
+    "gapReports": "报道值：{values} eV"
   },
   "Publish": {
     "private": "私有",

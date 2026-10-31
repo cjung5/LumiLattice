@@ -89,7 +89,7 @@
       "candidate": "Choose which atoms in {host} to swap, or let Muse Spark suggest a swap.",
       "evidence": "Read what {id} means, compare it with known materials, then record your decision."
     },
-    "exampleStoryGuided": "SrTiO3 bends light strongly, but it starts to absorb light close to the blue end. LaAlO3 stays clear, but it bends light less. If we swap a quarter of the Sr for La and a quarter of the Ti for Al, do we keep the best of both? The result is below."
+    "exampleStoryGuided": "SrTiO3 bends light strongly, but it is close to the limit where it starts to absorb violet light. LaAlO3 has more margin, but it bends light less. If we swap a quarter of the Sr for La and a quarter of the Ti for Al, do we gain margin and still bend light enough? The result is below."
   },
   "Host": {
     "title": "2. Select a host structure",
@@ -279,7 +279,6 @@
     "showTable": "Table",
     "showChart": "Chart",
     "material": "Material",
-    "gapTbmbj": "Band gap TBmBJ (eV)",
     "inGoal": "In goal region",
     "srcMeasured": "measured n, TBmBJ gap",
     "landscapeTitle": "Refractive index vs band gap",
@@ -310,7 +309,12 @@
     "sitesNote": "Shaded zones are the warn (!) and fail (✗) thresholds. Size mismatch uses Shannon radii; bond-valence misfit is the bond-length change that would fix the BVS.",
     "site": "Site",
     "meanBond": "Mean bond (Å)",
-    "expectedBond": "Expected (Å)"
+    "expectedBond": "Expected (Å)",
+    "legendMeasuredBoth": "Measured n(550 nm), measured gap",
+    "srcMeasuredBoth": "measured n, measured gap",
+    "gapColumn": "Band gap (eV)",
+    "gapSource": "Gap source",
+    "gapSourceMeasured": "measured"
   },
   "Assessment": {
     "clickHint": "Select a check to show its atoms.",
@@ -363,7 +367,9 @@
     "form": "Form",
     "spacegroup": "Space group",
     "gapOpt": "Gap OptB88vdW (eV)",
-    "gapMbj": "Gap TBmBJ (eV)"
+    "gapMbj": "Gap TBmBJ (eV)",
+    "bestGap": "Best available band gap for {formula}:",
+    "gapReports": "Reported values: {values} eV"
   },
   "Publish": {
     "private": "Private",

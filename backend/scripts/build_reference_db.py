@@ -1,10 +1,11 @@
-"""Build backend/data/reference.sqlite from the raw JARVIS and refractiveindex.info files.
+"""Build backend/data/reference.sqlite from the raw JARVIS, refractiveindex.info, and band-gap files.
 
 The full JARVIS JSON needs about 1.7 GB of RAM to load, so the server cannot read it.
 This script keeps only the fields the app shows. Run from backend/ after download_data:
     uv run python -m scripts.build_reference_db
 """
 
+import csv
 import html
 import json
 import math
@@ -13,6 +14,7 @@ import sqlite3
 import statistics
 import sys
 import zipfile
+from collections.abc import Iterable
 from datetime import UTC, datetime
 
 import yaml
@@ -23,7 +25,7 @@ from app.tools.dispersion import evaluate, wavelength_range
 from scripts.download_data import DATASETS, REPO_ROOT, sha256
 
 OUT = BACKEND_DIR / "data" / "reference.sqlite"
-JARVIS_ZIP, RII_ZIP = DATASETS[0]["path"], DATASETS[1]["path"]
+JARVIS_ZIP, RII_ZIP, GAP_CSV = (d["path"] for d in DATASETS)
 WAVELENGTHS = {"n_450": 0.45, "n_550": 0.55, "n_650": 0.65}
 # n(λ) curve for charts: 380-780 nm every 10 nm (None outside the measured range).
 CURVE_NM = list(range(380, 781, 10))
@@ -43,6 +45,8 @@ CREATE TABLE ri_pages (
     curve TEXT
 );
 CREATE INDEX ri_formula ON ri_pages(formula);
+CREATE TABLE expt_gaps (formula TEXT NOT NULL, gap REAL NOT NULL);
+CREATE INDEX expt_gaps_formula ON expt_gaps(formula);
 """
 
 
@@ -161,6 +165,23 @@ def build_refractiveindex(db: sqlite3.Connection) -> int:
     return len(rows)
 
 
+def measured_gap_rows(lines: Iterable[str]) -> list[tuple[str, float]]:
+    """(formula, gap) per reported value. A gap of 0 is a label for a metal, not a measurement."""
+    rows = []
+    for row in csv.DictReader(lines):
+        formula, gap = reduced(row["composition"]), float(row["Eg (eV)"])
+        if formula is not None and gap > 0:
+            rows.append((formula, gap))
+    return rows
+
+
+def build_measured_gaps(db: sqlite3.Connection) -> int:
+    with GAP_CSV.open(encoding="utf-8-sig", newline="") as f:
+        rows = measured_gap_rows(f)
+    db.executemany("INSERT INTO expt_gaps VALUES (?, ?)", rows)
+    return len(rows)
+
+
 def main() -> int:
     for item in DATASETS:
         if not item["path"].exists():
@@ -173,12 +194,15 @@ def main() -> int:
     db.executescript(SCHEMA)
     n_jarvis = build_jarvis(db)
     n_pages = build_refractiveindex(db)
+    n_gaps = build_measured_gaps(db)
     meta = {
         "built_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "jarvis": DATASETS[0]["about"],
         "jarvis_sha256": sha256(JARVIS_ZIP),
         "refractiveindex": DATASETS[1]["about"],
         "refractiveindex_sha256": sha256(RII_ZIP),
+        "expt_gap": DATASETS[2]["about"],
+        "expt_gap_sha256": sha256(GAP_CSV),
     }
     db.executemany("INSERT INTO meta VALUES (?, ?)", meta.items())
     db.commit()
@@ -187,7 +211,8 @@ def main() -> int:
     tmp.replace(OUT)
     size = OUT.stat().st_size / 1e6
     print(
-        f"{OUT.relative_to(REPO_ROOT)}: {n_jarvis} JARVIS rows, {n_pages} refractiveindex pages, {size:.1f} MB"
+        f"{OUT.relative_to(REPO_ROOT)}: {n_jarvis} JARVIS rows, {n_pages} refractiveindex pages, "
+        f"{n_gaps} measured gaps, {size:.1f} MB"
     )
     return 0
 

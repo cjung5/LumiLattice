@@ -5,8 +5,8 @@ import { useState, type ReactNode } from "react";
 
 export type LegendItem = {
   label: string;
-  /** dot, line, box (outlined range), wash (filled region) */
-  kind: "dot" | "line" | "box" | "wash";
+  /** dot, ring (open dot), line, box (outlined range), wash (filled region) */
+  kind: "dot" | "ring" | "line" | "box" | "wash";
   color: string;
 };
 
@@ -19,6 +19,9 @@ export function LegendKey({ item }: { item: LegendItem }) {
   }
   if (item.kind === "wash") {
     return <svg width="14" height="12" aria-hidden><rect x="1" y="1" width="12" height="10" rx="2" fill={item.color} fillOpacity="0.12" /></svg>;
+  }
+  if (item.kind === "ring") {
+    return <svg width="10" height="10" aria-hidden><circle cx="5" cy="5" r="3.5" fill="none" stroke={item.color} strokeWidth="2" /></svg>;
   }
   return <svg width="10" height="10" aria-hidden><circle cx="5" cy="5" r="4" fill={item.color} /></svg>;
 }

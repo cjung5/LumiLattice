@@ -4,7 +4,7 @@ import pytest
 
 from app.tools.reference_db import ReferenceDB, get_reference_db, normalize
 from app.tools.registry import ToolError
-from scripts.build_reference_db import SCHEMA
+from scripts.build_reference_db import SCHEMA, measured_gap_rows
 
 
 @pytest.fixture
@@ -84,6 +84,7 @@ def tiny_db(tmp_path) -> ReferenceDB:
             ("JVASP-2", "CD", None, 1, "P1", 0, 1.0, None, None, 9.0, None),  # OptB88 only
         ],
     )
+    db.executemany("INSERT INTO expt_gaps VALUES (?, ?)", [("AB", 4.0), ("AB", 3.4), ("AB", 3.2)])
     db.commit()
     db.close()
     return ReferenceDB(path)
@@ -123,6 +124,42 @@ def test_estimate_needs_two_values(tiny_db):
     assert tiny_db.estimate(["AB", "EF"]).estimate.status == "Unknown"
 
 
+def test_best_gap_prefers_measured(tiny_db):
+    gap = tiny_db.best_gap("AB")
+
+    assert gap.status == "Experimental"
+    assert gap.value == 3.4  # the median, not the 3.0 eV TBmBJ value
+    assert "Median of 3 reports (3.2–4.0 eV)" in gap.conditions
+    assert tiny_db.measured_gaps("AB") == [3.2, 3.4, 4.0]
+
+
+def test_best_gap_falls_back_to_dft(tiny_db):
+    gap = tiny_db.best_gap("CD")
+
+    assert gap.status == "DFT-computed"
+    assert gap.provenance.method == "OptB88vdW"
+
+
+def test_estimate_range_can_mix_measured_and_dft_gaps(tiny_db):
+    gap = tiny_db.estimate(["AB", "CD"]).band_gap
+
+    assert gap.status == "Heuristic"
+    assert gap.value_range == (1.0, 3.4)
+    assert "mix measured and DFT" in gap.conditions
+
+
+def test_landscape_marks_which_gaps_are_measured(tiny_db):
+    points = {p.formula: p for p in tiny_db.landscape().measured}
+
+    assert points["AB"].band_gap == 3.4 and points["AB"].gap_measured
+
+
+def test_measured_gap_rows_skip_metal_labels_and_bad_formulas():
+    lines = ["composition,Eg (eV)\n", "SrTiO3,3.25\n", "UAl4,0\n", '"AgCNO,65",0\n', "Xx2,1.0\n"]
+
+    assert measured_gap_rows(lines) == [("SrTiO3", 3.25)]
+
+
 def test_missing_database_is_safe(tmp_path):
     db = ReferenceDB(tmp_path / "missing.sqlite")
 
@@ -146,3 +183,5 @@ def test_bundled_database_srtio3():
     assert ref.best_n.value == pytest.approx(2.432, abs=0.01)  # Bond (1965), 550 nm
     assert any(m.doi == "10.1063/1.1703106" for m in ref.measured)
     assert any(c.mp_id == "mp-5229" for c in ref.computed)
+    assert ref.best_gap.status == "Experimental"
+    assert 3.0 <= ref.best_gap.value <= 3.5  # reports span 3.0-4.1 eV

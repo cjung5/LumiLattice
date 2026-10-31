@@ -89,7 +89,7 @@
       "candidate": "Wähle, welche Atome in {host} ausgetauscht werden, oder lasse dir von Muse Spark einen Austausch vorschlagen.",
       "evidence": "Lies, was {id} bedeutet, vergleiche es mit bekannten Materialien und halte dann deine Entscheidung fest."
     },
-    "exampleStoryGuided": "SrTiO3 bricht Licht stark, absorbiert aber nahe dem blauen Ende. LaAlO3 bleibt klar, bricht Licht aber schwächer. Wenn wir ein Viertel des Sr durch La und ein Viertel des Ti durch Al ersetzen, behalten wir das Beste aus beiden? Das Ergebnis steht unten."
+    "exampleStoryGuided": "SrTiO3 bricht Licht stark, liegt aber nahe an der Grenze, ab der es violettes Licht absorbiert. LaAlO3 hat mehr Spielraum, bricht Licht aber schwächer. Wenn wir ein Viertel des Sr durch La und ein Viertel des Ti durch Al ersetzen, gewinnen wir Spielraum und bleibt die Lichtbrechung ausreichend? Das Ergebnis unten."
   },
   "Host": {
     "title": "2. Hoststruktur wählen",
@@ -279,7 +279,6 @@
     "showTable": "Tabelle",
     "showChart": "Diagramm",
     "material": "Material",
-    "gapTbmbj": "Bandlücke TBmBJ (eV)",
     "inGoal": "Im Zielbereich",
     "srcMeasured": "gemessenes n, TBmBJ-Lücke",
     "landscapeTitle": "Brechungsindex vs. Bandlücke",
@@ -310,7 +309,12 @@
     "sitesNote": "Schattierte Zonen sind die Warn- (!) und Fehler-Schwellen (✗). Größenfehlpassung nutzt Shannon-Radien; Bindungsvalenz-Fehlpassung ist die Bindungslängenänderung, die die BVS korrigieren würde.",
     "site": "Lage",
     "meanBond": "Mittlere Bindung (Å)",
-    "expectedBond": "Erwartet (Å)"
+    "expectedBond": "Erwartet (Å)",
+    "legendMeasuredBoth": "Gemessenes n(550 nm), gemessene Bandlücke",
+    "srcMeasuredBoth": "gemessenes n, gemessene Bandlücke",
+    "gapColumn": "Bandlücke (eV)",
+    "gapSource": "Bandlückenquelle",
+    "gapSourceMeasured": "gemessen"
   },
   "Assessment": {
     "clickHint": "Prüfung wählen, um ihre Atome zu zeigen.",
@@ -363,7 +367,9 @@
     "form": "Form",
     "spacegroup": "Raumgruppe",
     "gapOpt": "Lücke OptB88vdW (eV)",
-    "gapMbj": "Lücke TBmBJ (eV)"
+    "gapMbj": "Lücke TBmBJ (eV)",
+    "bestGap": "Beste verfügbare Bandlücke für {formula}:",
+    "gapReports": "Gemeldete Werte: {values} eV"
   },
   "Publish": {
     "private": "Privat",

@@ -53,7 +53,7 @@ export function LandscapeChart({ data, goal, points, box }: Props) {
   // Nearest labeled point (measured materials, host, end members) within 24 px.
   const targets = useMemo(
     () => [
-      ...measured.map((p) => ({ label: p.formula, n: p.n, gap: p.band_gap, source: t("srcMeasured") })),
+      ...measured.map((p) => ({ label: p.formula, n: p.n, gap: p.band_gap, source: t(p.gap_measured ? "srcMeasuredBoth" : "srcMeasured") })),
       ...points.map((p) => ({ label: p.label, n: p.n, gap: p.gap, source: `n: ${p.nStatus} · gap: ${p.gapStatus}` })),
     ],
     [measured, points, t],
@@ -82,7 +82,8 @@ export function LandscapeChart({ data, goal, points, box }: Props) {
         <tr>
           <th className="py-1 pr-2 font-normal">{t("material")}</th>
           <th className="py-1 pr-2 font-normal">n (550 nm)</th>
-          <th className="py-1 pr-2 font-normal">{t("gapTbmbj")}</th>
+          <th className="py-1 pr-2 font-normal">{t("gapColumn")}</th>
+          <th className="py-1 pr-2 font-normal">{t("gapSource")}</th>
           <th className="py-1 font-normal">{t("inGoal")}</th>
         </tr>
       </thead>
@@ -94,6 +95,7 @@ export function LandscapeChart({ data, goal, points, box }: Props) {
               <td className="py-0.5 pr-2">{p.formula}</td>
               <td className="py-0.5 pr-2">{p.n}</td>
               <td className="py-0.5 pr-2">{p.band_gap}</td>
+              <td className="py-0.5 pr-2">{p.gap_measured ? t("gapSourceMeasured") : "TBmBJ"}</td>
               <td className="py-0.5">{p.n >= goal.target_n && p.band_gap >= goal.min_band_gap ? "✓" : ""}</td>
             </tr>
           ))}
@@ -106,7 +108,8 @@ export function LandscapeChart({ data, goal, points, box }: Props) {
       title={t("landscapeTitle")}
       subtitle={t("landscapeSubtitle", { measured: data.measured.length, computed: data.computed_total })}
       legend={[
-        { label: t("legendMeasured"), kind: "dot", color: "var(--series-exp)" },
+        { label: t("legendMeasuredBoth"), kind: "dot", color: "var(--series-exp)" },
+        { label: t("legendMeasured"), kind: "ring", color: "var(--series-exp)" },
         { label: t("legendComputed"), kind: "dot", color: "var(--series-dft)" },
         ...(box ? [{ label: t("legendRange"), kind: "box" as const, color: "var(--series-heur)" }] : []),
         { label: t("legendGoal"), kind: "wash", color: "var(--chart-ink)" },
@@ -145,9 +148,13 @@ export function LandscapeChart({ data, goal, points, box }: Props) {
             <circle key={i} cx={x(g)} cy={y(n)} r="1.8" fill="var(--series-dft)" fillOpacity="0.28" />
           ))}
           {/* measured materials */}
-          {measured.map((p) => (
-            <circle key={p.formula} cx={x(p.band_gap)} cy={y(p.n)} r="4" fill="var(--series-exp)" stroke="var(--chart-surface)" strokeWidth="2" />
-          ))}
+          {measured.map((p) =>
+            p.gap_measured ? (
+              <circle key={p.formula} cx={x(p.band_gap)} cy={y(p.n)} r="4" fill="var(--series-exp)" stroke="var(--chart-surface)" strokeWidth="2" />
+            ) : (
+              <circle key={p.formula} cx={x(p.band_gap)} cy={y(p.n)} r="3.5" fill="var(--chart-surface)" stroke="var(--series-exp)" strokeWidth="2" />
+            ),
+          )}
           {/* candidate range */}
           {box && (
             <g>

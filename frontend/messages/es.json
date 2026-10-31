@@ -89,7 +89,7 @@
       "candidate": "Elige qué átomos de {host} sustituir o deja que Muse Spark sugiera una sustitución.",
       "evidence": "Lee lo que significa {id}, compáralo con materiales conocidos y registra tu decisión."
     },
-    "exampleStoryGuided": "SrTiO3 desvía mucho la luz, pero empieza a absorber luz cerca del extremo azul. LaAlO3 se mantiene transparente, pero desvía menos la luz. Si sustituimos una cuarta parte del Sr por La y una cuarta parte del Ti por Al, ¿conservamos lo mejor de ambos? El resultado está abajo."
+    "exampleStoryGuided": "SrTiO3 desvía mucho la luz, pero está cerca del límite donde empieza a absorber la luz violeta. LaAlO3 tiene más margen, pero desvía menos la luz. Si sustituimos una cuarta parte del Sr por La y una cuarta parte del Ti por Al, ¿ganamos margen y mantenemos suficiente desviación? El resultado está abajo."
   },
   "Host": {
     "title": "2. Seleccionar estructura anfitriona",
@@ -279,7 +279,6 @@
     "showTable": "Tabla",
     "showChart": "Gráfico",
     "material": "Material",
-    "gapTbmbj": "Banda prohibida TBmBJ (eV)",
     "inGoal": "En la región objetivo",
     "srcMeasured": "n medido, banda TBmBJ",
     "landscapeTitle": "Índice de refracción frente a banda prohibida",
@@ -310,7 +309,12 @@
     "sitesNote": "Las zonas sombreadas son los umbrales de aviso (!) y fallo (✗). El desajuste de tamaño usa radios de Shannon; el desajuste de valencia es el cambio de longitud de enlace que corregiría el BVS.",
     "site": "Sitio",
     "meanBond": "Enlace medio (Å)",
-    "expectedBond": "Esperado (Å)"
+    "expectedBond": "Esperado (Å)",
+    "legendMeasuredBoth": "n(550 nm) medida, brecha medida",
+    "srcMeasuredBoth": "n medida, brecha medida",
+    "gapColumn": "Brecha de banda (eV)",
+    "gapSource": "Fuente de la brecha",
+    "gapSourceMeasured": "medida"
   },
   "Assessment": {
     "clickHint": "Selecciona una verificación para mostrar sus átomos.",
@@ -363,7 +367,9 @@
     "form": "Forma",
     "spacegroup": "Grupo espacial",
     "gapOpt": "Banda OptB88vdW (eV)",
-    "gapMbj": "Banda TBmBJ (eV)"
+    "gapMbj": "Banda TBmBJ (eV)",
+    "bestGap": "Mejor brecha de banda disponible para {formula}:",
+    "gapReports": "Valores reportados: {values} eV"
   },
   "Publish": {
     "private": "Privado",

@@ -88,7 +88,11 @@ def _criteria(
             id="band_gap",
             verdict=threshold_verdict(gap, goal.min_band_gap),
             detail=_describe(gap, "Band gap", goal.min_band_gap, " eV")
-            + " DFT gaps can differ from measured gaps by up to about 1 eV.",
+            + (
+                " DFT gaps can differ from measured gaps by up to about 1 eV."
+                if gap is None or gap.status != "Experimental"
+                else ""
+            ),
             evidence=gap,
         ),
         Criterion(

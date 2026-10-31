@@ -34,6 +34,15 @@ export function OpticalPanel({ formula }: { formula: string }) {
       </div>
       {data.best_n.conditions && <p className="text-xs text-muted">{data.best_n.conditions}</p>}
 
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="font-medium">{t("bestGap", { formula: data.formula })}</span>
+        <PropertyValueView pv={data.best_gap} />
+      </div>
+      {data.best_gap.conditions && <p className="text-xs text-muted">{data.best_gap.conditions}</p>}
+      {data.measured_gaps.length > 1 && (
+        <p className="text-xs tabular-nums">{t("gapReports", { values: data.measured_gaps.join(", ") })}</p>
+      )}
+
       {data.measured.length > 0 && (
         <details open>
           <summary className="cursor-pointer font-medium">

@@ -36,6 +36,8 @@ class ComputedOptics(BaseModel):
 class OpticalReference(BaseModel):
     formula: str
     best_n: PropertyValue
+    best_gap: PropertyValue
+    measured_gaps: list[float] = []  # every reported value in eV, lowest first
     measured: list[MeasuredIndex]
     computed: list[ComputedOptics]
     note: str
@@ -74,12 +76,13 @@ class LandscapePoint(BaseModel):
     formula: str
     n: float
     band_gap: float
+    gap_measured: bool = False  # False: JARVIS TBmBJ
 
 
 class Landscape(BaseModel):
     """n vs band gap: the trade-off every high-index transparent material faces."""
 
-    measured: list[LandscapePoint]  # measured bulk n(550 nm), JARVIS TBmBJ gap
+    measured: list[LandscapePoint]  # measured bulk n(550 nm), measured or TBmBJ gap
     computed: list[tuple[float, float]]  # sample of JARVIS (TBmBJ gap, TBmBJ n = sqrt(eps))
     computed_total: int
     moss: list[tuple[float, float]]  # empirical Moss relation n^4 * Eg = 95 eV

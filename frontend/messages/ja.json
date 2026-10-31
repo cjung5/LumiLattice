@@ -89,7 +89,7 @@
       "candidate": "{host} のどの原子を置換するか選ぶか、Muse Spark に置換を提案させてください。",
       "evidence": "{id} の意味を読み、既知材料と比較して、判断を記録してください。"
     },
-    "exampleStoryGuided": "SrTiO3 は光を強く曲げますが、青色側近くで吸収が始まります。LaAlO3 は透明ですが、光の曲げ方は弱めです。Sr の1/4をLaに、Ti の1/4をAlに置換したら、両方の良さを保てるでしょうか？結果は下の通りです。"
+    "exampleStoryGuided": "SrTiO3は光を強く屈折させますが、紫色光を吸収し始める限界に近くなっています。LaAlO3は余裕が大きいですが、光の屈折は弱くなります。Srの4分の1をLaに、Tiの4分の1をAlに置換すると、余裕を確保しつつ十分な屈折を維持できるでしょうか。結果は以下のとおりです。"
   },
   "Host": {
     "title": "2. ホスト構造の選択",
@@ -279,7 +279,6 @@
     "showTable": "表",
     "showChart": "グラフ",
     "material": "材料",
-    "gapTbmbj": "バンドギャップ TBmBJ（eV）",
     "inGoal": "目標域内",
     "srcMeasured": "実測n、TBmBJギャップ",
     "landscapeTitle": "屈折率 vs バンドギャップ",
@@ -310,7 +309,12 @@
     "sitesNote": "網掛け域は警告（!）および不合格（✗）のしきい値。サイズ不整合はShannon半径使用。ボンドバレンス不整合はBVSを満たすための結合長変化。",
     "site": "サイト",
     "meanBond": "平均結合（Å）",
-    "expectedBond": "期待値（Å）"
+    "expectedBond": "期待値（Å）",
+    "legendMeasuredBoth": "測定n(550 nm)、測定ギャップ",
+    "srcMeasuredBoth": "測定n、測定ギャップ",
+    "gapColumn": "バンドギャップ (eV)",
+    "gapSource": "バンドギャップ出典",
+    "gapSourceMeasured": "測定"
   },
   "Assessment": {
     "clickHint": "チェックを選択して原子を表示。",
@@ -363,7 +367,9 @@
     "form": "形態",
     "spacegroup": "空間群",
     "gapOpt": "ギャップ OptB88vdW（eV）",
-    "gapMbj": "ギャップ TBmBJ（eV）"
+    "gapMbj": "ギャップ TBmBJ（eV）",
+    "bestGap": "{formula}の最適バンドギャップ:",
+    "gapReports": "報告値: {values} eV"
   },
   "Publish": {
     "private": "非公開",

@@ -28,6 +28,12 @@ DATASETS = [
         "sha256": "6cdebebd17fe02b6dc2b03189e15e6c689afc6619c558e1df7b9ac307b6d14eb",
         "about": "refractiveindex.info database, release 2026-05-24 (CC0)",
     },
+    {
+        "path": RAW_DIR / "expt_gap" / "zhuo_gap_expt.csv",
+        "url": "https://ndownloader.figshare.com/files/13464431",
+        "sha256": "b204d8d792451cd55d2efa1163f266e6be430dedb96ce35e6ceec54af55ea3bd",
+        "about": "Experimental band gaps, Zhuo et al. 2018 (MIT), doi:10.6084/m9.figshare.7289687.v1",
+    },
 ]
 
 

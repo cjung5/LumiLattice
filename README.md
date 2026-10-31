@@ -92,14 +92,16 @@ Every n value carries one tag, shown with its own color, icon, and text:
 
 | Tag | Where it comes from |
 |---|---|
-| `Experimental` | refractiveindex.info, measured n at 550 nm (bulk or crystal pages; thin films are listed but not used for the best value) |
+| `Experimental` | refractiveindex.info, measured n at 550 nm (bulk or crystal pages; thin films are listed but not used for the best value). For band gaps: literature values from Zhuo et al. (2018) |
 | `DFT-computed` | JARVIS-DFT n = √ε from DFT linear optics (TBmBJ preferred, then OptB88vdW), or Materials Project n. This is a long-wavelength value, not n(550 nm) |
 | `Heuristic` | A candidate's **range** spanned by its end members, e.g. SrTiO3 → LaAlO3 for Sr→La + Ti→Al. Never a single number, and not a prediction |
 | `Unknown` | No data |
 
+Band gaps follow the same order: a measured value first, then a JARVIS-DFT value (TBmBJ, then OptB88vdW). Measured gaps are the median of the reports for a formula in the Zhuo et al. compilation (3,895 reports; the 2,458 entries with a gap of 0 are labels for metals and are not used). The compilation does not record the method for each report, so a value can be an optical, direct, or indirect gap, and reports for one formula can disagree (SrTiO3: 3.0 to 4.1 eV). The app shows the median and the spread. Many materials have no measured gap (LaAlO3 and Al2O3 among them) and keep a `DFT-computed` value, so a candidate's range can mix measured and computed gaps.
+
 The reference data is matched by formula, so the polymorph can differ from the selected structure; the app says so next to each value.
 
-The bundled `backend/data/reference.sqlite` (9 MB) holds a subset of JARVIS-DFT 3D (2025-09-24, 93,902 entries) and the refractiveindex.info database (release 2026-05-24, 868 measured pages with n in the visible range; "Models and simulations" pages are excluded). To rebuild it:
+The bundled `backend/data/reference.sqlite` (10 MB) holds a subset of JARVIS-DFT 3D (2025-09-24, 93,902 entries) the refractiveindex.info database (release 2026-05-24, 868 measured pages with n in the visible range; "Models and simulations" pages are excluded), and the measured band gaps. To rebuild it:
 
 ```bash
 cd backend
@@ -265,6 +267,8 @@ In use:
 - **3Dmol.js** — 3D viewer, BSD-3-Clause license.
 - **JARVIS-DFT** — 3D dataset version 2025-09-24, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), [doi:10.6084/m9.figshare.6815699](https://doi.org/10.6084/m9.figshare.6815699). K. Choudhary et al., *npj Comput. Mater.* 6, 173 (2020); optics: K. Choudhary et al., *Sci. Data* 5, 180082 (2018).
 - **refractiveindex.info database** — release 2026-05-24, [CC0](https://creativecommons.org/publicdomain/zero/1.0/). M. N. Polyanskiy, *Sci. Data* 11, 94 (2024). Each measured value links to its page and original reference.
+
+- **Experimental band gaps** — [Expt Gap Data](https://doi.org/10.6084/m9.figshare.7289687.v1), MIT license on the Figshare record. Y. Zhuo, A. Mansouri Tehrani, J. Brgoch, "Predicting the Band Gaps of Inorganic Solids by Machine Learning", *J. Phys. Chem. Lett.* 9, 1668 (2018).
 
 - **Crystallography Open Database** — experimental structures, [CC0](https://creativecommons.org/publicdomain/zero/1.0/). S. Gražulis et al., *J. Appl. Cryst.* 42, 726 (2009). Credit the original authors shown with each entry.
 - **Crossref** — scholarly metadata (public REST API).

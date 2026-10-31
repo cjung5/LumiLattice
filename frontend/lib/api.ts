@@ -128,6 +128,8 @@ export type ComputedOptics = {
 export type OpticalReference = {
   formula: string;
   best_n: PropertyValue;
+  best_gap: PropertyValue;
+  measured_gaps: number[];
   measured: MeasuredIndex[];
   computed: ComputedOptics[];
   note: string;
@@ -147,7 +149,7 @@ export type DispersionData = {
 };
 
 export type Landscape = {
-  measured: { formula: string; n: number; band_gap: number }[];
+  measured: { formula: string; n: number; band_gap: number; gap_measured: boolean }[];
   computed: [number, number][];
   computed_total: number;
   moss: [number, number][];

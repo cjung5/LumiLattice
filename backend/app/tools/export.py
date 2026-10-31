@@ -23,7 +23,10 @@ RECORD_FORMAT = "lumilattice.candidate-record/1"
 ASCII = str.maketrans({"Å": "A", "→": "->", "×": "x", "–": "-", "—": "-", "°": " deg", "≈": "~"})
 
 EVIDENCE_TAGS = {
-    "Experimental": "Measured value (refractiveindex.info, n at 550 nm from bulk or crystal data).",
+    "Experimental": (
+        "Measured value: n at 550 nm from bulk or crystal data (refractiveindex.info), or a "
+        "literature band gap (Zhuo et al. 2018)."
+    ),
     "DFT-computed": (
         "Computed with density functional theory (JARVIS-DFT or Materials Project). "
         "DFT n is a long-wavelength value, not n(550 nm)."
@@ -38,6 +41,10 @@ CAVEATS = [
         "a measured structure, and one ordered cell is only one model of a disordered solid solution."
     ),
     "Heuristic values are ranges between end members, not predictions.",
+    (
+        "Measured band gaps come from a literature compilation, matched by formula, with no "
+        "record of the method or the polymorph."
+    ),
     "DFT band gaps (JARVIS TBmBJ, OptB88vdW) can underestimate measured gaps of some oxides.",
     (
         "Structural checks use heuristic thresholds. They do not predict whether the material can "
@@ -191,6 +198,7 @@ def data_sources(
         datasets = (
             ("jarvis", "JARVIS-DFT", "CC BY 4.0"),
             ("refractiveindex", "refractiveindex.info", "CC0"),
+            ("expt_gap", "Zhuo et al. 2018, J. Phys. Chem. Lett. 9, 1668", "MIT"),
         )
         for key, name, license_ in datasets:
             if key in reference_meta:

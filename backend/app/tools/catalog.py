@@ -209,9 +209,10 @@ def build_registry(
             Tool(
                 name="get_optical_reference",
                 description=(
-                    "Refractive index evidence for a formula: measured n at 450/550/650 nm "
-                    "(refractiveindex.info, with sources) and DFT band gaps and n from JARVIS-DFT "
-                    "(OptB88vdW and TBmBJ). Matched by formula, so the polymorph can differ."
+                    "Refractive index and band gap evidence for a formula: measured n at "
+                    "450/550/650 nm (refractiveindex.info, with sources), measured band gaps "
+                    "(Zhuo et al. 2018), and DFT band gaps and n from JARVIS-DFT (OptB88vdW and "
+                    "TBmBJ). Matched by formula, so the polymorph can differ."
                 ),
                 args_model=OpticalReferenceArgs,
                 handler=optical_reference,
