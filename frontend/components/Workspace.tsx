@@ -8,6 +8,8 @@ import { EvidencePanel } from "@/components/EvidencePanel";
 import { ExampleCallout, FlowGuide, type ExampleState, type StepId } from "@/components/FlowGuide";
 import { AR_GOAL, GoalPanel } from "@/components/GoalPanel";
 import { HostSelector } from "@/components/HostSelector";
+import { Intro } from "@/components/Intro";
+import { Advanced, LevelProvider, useLevel } from "@/components/Level";
 import { LiteraturePanel } from "@/components/LiteraturePanel";
 import { RegistryPanel } from "@/components/RegistryPanel";
 import { StructurePanel } from "@/components/StructurePanel";
@@ -51,8 +53,18 @@ const sameSubstitutions = (a: Substitution[], b: Substitution[]) =>
   a.every((s, i) => s.element_from === b[i].element_from && s.element_to === b[i].element_to && Math.abs(s.fraction - b[i].fraction) < 1e-6);
 
 export function Workspace() {
+  return (
+    <LevelProvider>
+      <WorkspaceBody />
+    </LevelProvider>
+  );
+}
+
+function WorkspaceBody() {
   const locale = useLocale();
   const t = useTranslations("Decision");
+  const tw = useTranslations("Workspace");
+  const guided = useLevel().level === "guided";
   const [record, setRecord] = useState<MaterialRecord | null>(null);
   const [structure, setStructure] = useState<StructurePayload | null>(null);
   const [hostAssessment, setHostAssessment] = useState<StructuralAssessment | null>(null);
@@ -62,7 +74,7 @@ export function Workspace() {
   const [goal, setGoal] = useState<Goal>({ ...AR_GOAL, forbidden_elements: [] });
   const [goalTouched, setGoalTouched] = useState(false);
   const [example, setExample] = useState<ExampleState>({ stage: null, error: null });
-  const [scrollTarget, setScrollTarget] = useState<StepId | "agent" | null>(null);
+  const [scrollTarget, setScrollTarget] = useState<StepId | "agent" | "structure" | "result" | null>(null);
   const alignTimer = useRef<number | undefined>(undefined);
   const [history, setHistory] = useState<Candidate[]>([]);
   const [current, setCurrent] = useState<Candidate | null>(null);
@@ -193,7 +205,7 @@ export function Workspace() {
       );
       showCandidate(known ?? (await createCandidate({ material_id: EXAMPLE.materialId }, EXAMPLE.substitutions)));
       setExample({ stage: "done", error: null });
-      setScrollTarget("evidence");
+      setScrollTarget(guided ? "result" : "evidence");
     } catch (err) {
       setExample({ stage: null, error: err instanceof Error ? err.message : String(err) });
     }
@@ -208,6 +220,7 @@ export function Workspace() {
       host_label: hostLabel || undefined,
       current_candidate_id: current?.candidate_id,
       goal,
+      audience: guided ? "beginner" : "expert",
       ...extra,
     };
     try {
@@ -250,8 +263,18 @@ export function Workspace() {
     }
   }
 
+  const callout = example.stage === "done" && (
+    <ExampleCallout onDismiss={() => setExample({ stage: null, error: null })} />
+  );
+
   return (
     <>
+      <Intro
+        folded={!!current}
+        exampleRunning={example.stage !== null && example.stage !== "done"}
+        onExample={() => void runExample()}
+        onStart={() => jump("goal")}
+      />
       <FlowGuide
         done={done}
         hostLabel={hostLabel}
@@ -272,17 +295,22 @@ export function Workspace() {
       <div id="step-host" className="scroll-mt-4 md:scroll-mt-28">
         <HostSelector
           selectedId={record?.material_id ?? null}
-          onSelectMaterial={selectMaterial}
+          onSelectMaterial={async (selected) => {
+            if ((await selectMaterial(selected)) && guided) setScrollTarget("structure");
+          }}
           onUploadedStructure={showUploadedStructure}
         />
       </div>
-      <StructurePanel
-        structure={structure}
-        record={record}
-        assessment={hostAssessment}
-        loading={loading}
-        error={error}
-      />
+      <div id="step-structure" className="scroll-mt-4 md:scroll-mt-28">
+        <StructurePanel
+          structure={structure}
+          record={record}
+          assessment={hostAssessment}
+          loading={loading}
+          error={error}
+          goal={goal}
+        />
+      </div>
       {((host && structure && !loading) || current) && (
         <div id="step-candidate" className="scroll-mt-4 md:scroll-mt-28">
           <CandidatePanel
@@ -295,10 +323,13 @@ export function Workspace() {
             goal={goal}
             agentBusy={agentBusy}
             onCandidate={showCandidate}
-            onAskAgent={(message) => {
-              void askAgent(message, message);
+            onAskAgent={(message, shown) => {
+              void askAgent(message, shown ?? message);
               setScrollTarget("agent");
             }}
+            onSeeEvidence={() => jump("evidence")}
+            hostFormula={structure?.formula ?? null}
+            notice={guided ? callout : null}
             onSelect={setCurrent}
             onDecide={decide}
           />
@@ -306,7 +337,7 @@ export function Workspace() {
       )}
       {(structure || current) && (
         <div id="step-evidence" className="scroll-mt-4 md:scroll-mt-28">
-          {example.stage === "done" && <ExampleCallout onDismiss={() => setExample({ stage: null, error: null })} />}
+          {!guided && callout}
           <EvidencePanel
             goal={goal}
             host={structure && !loading ? host : null}
@@ -330,8 +361,10 @@ export function Workspace() {
           onOpenCandidate={(id) => void openCandidate(id)}
         />
       </div>
-      <RegistryPanel version={registryVersion} onOpen={showCandidate} />
-      <LiteraturePanel key={formula ?? "none"} formula={formula} />
+      <Advanced label={tw("sharedAndPapers")}>
+        <RegistryPanel version={registryVersion} onOpen={showCandidate} />
+        <LiteraturePanel key={formula ?? "none"} formula={formula} />
+      </Advanced>
     </>
   );
 }

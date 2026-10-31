@@ -5,12 +5,19 @@ element's sites is replaced. Partial fractions use the smallest supercell that m
 number of replaced sites an integer.
 """
 
+import math
 from collections import defaultdict
+from typing import Literal
 
 from pymatgen.core import Element, Structure
 
 from app.models.candidates import Substitution
+from app.tools.ewald import Arrangements
+from app.tools.ionic import ionic_model
 from app.tools.registry import ToolError
+from app.tools.spatial import MAX_ANALYSIS_SITES, analysis_cell
+
+Arrangement = Literal["spread", "lowest_ewald"]
 
 # Number of host cells -> supercell scaling along a, b, c.
 SUPERCELLS: dict[int, tuple[int, int, int]] = {
@@ -100,3 +107,57 @@ def substitute(
             replaced[sub.element_to].append(i)
             taken.add(i)
     return candidate, scaling, {el: sorted(idx) for el, idx in replaced.items()}
+
+
+def substitute_lowest_ewald(
+    host: Structure, subs: list[Substitution]
+) -> tuple[Structure, tuple[int, int, int], dict[str, list[int]], str]:
+    """Place the dopants where their point-charge (Ewald) energy is lowest.
+
+    The search uses the same cell as the ordering rank in the 3D structure view (the smallest
+    repeat with at least 2 of each dopant), so the result ranks first there. Returns the
+    candidate, its supercell scaling, the replaced sites, and a note on how it was chosen.
+    """
+    spread, scaling, replaced = substitute(host, subs)
+    if all(s.fraction >= 1 - 1e-9 for s in subs):
+        return spread, scaling, replaced, "every site is replaced, so there is one arrangement"
+    model = ionic_model(spread)
+    if model is None:
+        raise ToolError(
+            "The lowest-Ewald arrangement needs formal charges, so the material must have an anion."
+        )
+    repeat = analysis_cell(spread, replaced) if len(spread) <= MAX_ANALYSIS_SITES else (1, 1, 1)
+    cell: tuple[int, int, int] = (
+        scaling[0] * repeat[0],
+        scaling[1] * repeat[1],
+        scaling[2] * repeat[2],
+    )
+    parent = host.copy()
+    parent.make_supercell(cell)
+    groups = [
+        (
+            sub.element_from,
+            sub.element_to,
+            round(host.composition[sub.element_from] * math.prod(cell) * sub.fraction),
+        )
+        for sub in subs
+    ]
+    space = Arrangements(parent, groups, model.oxidation_states)
+    choice, _, exhaustive = space.lowest()
+
+    candidate = parent.copy()
+    chosen: dict[str, list[int]] = defaultdict(list)
+    for (_, new, _), sites in zip(groups, choice, strict=True):
+        for i in sites:
+            candidate.replace(i, new)
+            chosen[new].append(i)
+    size = "x".join(map(str, cell))
+    note = (
+        f"lowest Ewald energy: the lowest of all {space.total:,} arrangements of these dopants "
+        f"in a {size} cell"
+        if exhaustive
+        else f"lowest Ewald energy found by a seeded search (random sample, then greedy swaps) "
+        f"over {space.total:,} arrangements in a {size} cell; not guaranteed to be the lowest"
+    )
+    note += " (formal charges, unscreened point charges: relaxation can change the order)"
+    return candidate, cell, {el: sorted(idx) for el, idx in chosen.items()}, note

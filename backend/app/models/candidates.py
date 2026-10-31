@@ -62,6 +62,8 @@ class Transformation(BaseModel):
     # element_to -> site indices in the candidate structure
     substituted_sites: dict[str, list[int]]
     site_selection: str
+    # "spread": dopants as far apart as possible; "lowest_ewald": lowest point-charge energy.
+    arrangement: Literal["spread", "lowest_ewald"] = "spread"
     # The original host and every substitution since then (for revisions of revisions).
     root_formula: str
     lineage: list[Substitution]

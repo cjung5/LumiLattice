@@ -4,8 +4,8 @@
     "description": "A collaborative AI scientist for optoelectronic materials discovery."
   },
   "Home": {
-    "tagline": "A collaborative AI scientist for optoelectronic materials discovery",
-    "intro": "Explore candidate materials for AR waveguides with Muse Spark. Every number comes from a database or a calculation, with its source."
+    "headline": "An AI research partner for finding new materials for AR glasses",
+    "lead": "Test an idea for a new material in seconds. Every number shows where it comes from."
   },
   "Language": {
     "label": "Language",
@@ -24,7 +24,9 @@
     "openAlexConfigured": "OpenAlex key configured",
     "openAlexMissing": "No OpenAlex key: literature search uses a small shared daily budget.",
     "storePostgres": "Candidates are saved in Postgres",
-    "storeMemory": "Candidates are kept in memory (lost on restart). Set DATABASE_URL to keep them."
+    "storeMemory": "Candidates are kept in memory (lost on restart). Set DATABASE_URL to keep them.",
+    "ready": "Connected: data and AI are ready. Show details",
+    "notReady": "Setup is not complete. Some features will not work."
   },
   "Goal": {
     "hint": "Set the targets first. Every host and candidate is scored against them, with the evidence behind each verdict.",
@@ -35,7 +37,13 @@
     "presetAr": "AR waveguide preset",
     "presetToxic": "+ Toxic elements",
     "note": "A band gap of about 3.1 eV puts the absorption edge near 400 nm, the blue end of the visible range.",
-    "title": "1. Research goal"
+    "title": "1. Research goal",
+    "titleGuided": "1. What should the material do?",
+    "hintGuided": "AR glasses need both of these. The numbers below are a good start for AR, so you can keep them.",
+    "nGuided": "Bend light strongly",
+    "gapGuided": "Stay clear (band gap, eV)",
+    "sentence": "You are looking for a material that bends light at least as strongly as n = {n}, and lets through visible light longer than {nm} nm.",
+    "avoidToxic": "Avoid toxic elements ({elements})"
   },
   "Guide": {
     "label": "Workflow steps",
@@ -68,7 +76,20 @@
     "exampleTitle": "Example question.",
     "exampleStory": "SrTiO3 has a high n (2.43, measured) but a band gap near the blue edge of the visible range. LaAlO3 has a wider gap but a lower n (2.07). If La replaces 25% of Sr and Al replaces 25% of Ti, does n stay at 2.2 or more while the gap widens? In \"{landscape}\", the orange box is the candidate's range between the two end members. Then open \"{score}\" and \"{spatial}\".",
     "exampleError": "The example did not run: {error}",
-    "dismiss": "Close"
+    "dismiss": "Close",
+    "stepGuided": {
+      "goal": "Your goal",
+      "host": "Starting crystal",
+      "candidate": "Swap atoms",
+      "evidence": "Read the result"
+    },
+    "hintGuided": {
+      "goal": "Keep the goal below or change it. Then pick a starting crystal.",
+      "host": "Pick one of the four starting crystals, or search for your own.",
+      "candidate": "Choose which atoms in {host} to swap, or let Muse Spark suggest a swap.",
+      "evidence": "Read what {id} means, compare it with known materials, then record your decision."
+    },
+    "exampleStoryGuided": "SrTiO3 bends light strongly, but it starts to absorb light close to the blue end. LaAlO3 stays clear, but it bends light less. If we swap a quarter of the Sr for La and a quarter of the Ti for Al, do we keep the best of both? The result is below."
   },
   "Host": {
     "title": "2. Select a host structure",
@@ -96,7 +117,20 @@
     "hintCod": "Search the Crystallography Open Database by formula for measured crystal structures (CC0). Credit the original authors.",
     "placeholderCod": "Formula, e.g. SrTiO3",
     "loadingCod": "Loading structure from COD…",
-    "codCredit": "Structures from the Crystallography Open Database (CC0). Please acknowledge the original authors."
+    "codCredit": "Structures from the Crystallography Open Database (CC0). Please acknowledge the original authors.",
+    "titleGuided": {
+      "before": "2. Pick a",
+      "term": "starting crystal"
+    },
+    "hintGuided": "You will change this crystal to make something new. If you are not sure, start with any of these.",
+    "starter": {
+      "srtio3": "A common crystal that bends light strongly and is easy to change.",
+      "anatase": "The white pigment in paint and sunscreen. It bends light very strongly.",
+      "zns": "A long-used optical material that is clear to the eye.",
+      "linbo3": "Used in lasers and telecom optics."
+    },
+    "searchInstead": "Or search by formula, for example ZrO2:",
+    "loadingStarter": "Loading the crystal…"
   },
   "Structure": {
     "title": "3. Structure",
@@ -108,7 +142,16 @@
     "source": "Source",
     "warnings": "Parser warnings",
     "baseline": "Host check (baseline)",
-    "optical": "Refractive index evidence (by formula)"
+    "optical": "Refractive index evidence (by formula)",
+    "titleGuided": "3. Look at the crystal",
+    "emptyGuided": "Pick a starting crystal above to see its atoms here.",
+    "howToRead": {
+      "before": "Each ball is an atom. One",
+      "term": "unit cell",
+      "after": "is the thin box. The whole crystal is this box repeated in every direction. Colors show the elements."
+    },
+    "details": "Crystal details",
+    "evidenceDetails": "Technical evidence for this crystal"
   },
   "Candidate": {
     "title": "4. Candidates",
@@ -117,6 +160,12 @@
     "to": "New element",
     "toPlaceholder": "e.g. Zr",
     "fraction": "Fraction",
+    "arrangement": "Site arrangement",
+    "arrangementOption": {
+      "spread": "Spread apart (default)",
+      "lowest_ewald": "Lowest Ewald energy"
+    },
+    "arrangementHint": "Compares every arrangement of the new atoms by point-charge (Ewald) energy with formal charges, in a cell with at least 2 of each new atom, so the cell can be larger. Relaxation can change the order.",
     "ofSites": "of {element} sites",
     "remove": "Remove",
     "addRow": "+ Co-substitution",
@@ -137,7 +186,17 @@
       "record": "JSON record"
     },
     "exporting": "Preparing…",
-    "exportNote": "The CIF lists every site (P1) with a provenance header. The JSON record adds the goal score, the 3D structure analysis, the data sources, and the caveats."
+    "exportNote": "The CIF lists every site (P1) with a provenance header. The JSON record adds the goal score, the 3D structure analysis, the data sources, and the caveats.",
+    "titleGuided": {
+      "before": "4.",
+      "term": "Swap atoms",
+      "after": "to make a new material"
+    },
+    "hintGuided": "Choose an element in {host}, the element to put in its place, and how much of it to replace. The app builds the new crystal and checks it.",
+    "generateGuided": "Make the new material",
+    "suggest": "Let Muse Spark suggest a swap",
+    "moreTools": "More tools: export, relaxation, publishing, lab results",
+    "checkDetails": "Details of the structure checks"
   },
   "Critique": {
     "title": "Muse Spark critique",
@@ -175,7 +234,8 @@
     "sent": "Sent to the research agent (section 6)",
     "warnings": "Problems the checks found in this critique",
     "evidence": "Evidence the model saw ({count} items)",
-    "older": "Earlier critiques ({count})"
+    "older": "Earlier critiques ({count})",
+    "hintGuided": "Muse Spark looks at pictures of this crystal and at the numbers, then gives a second opinion. Numbers that are not in the evidence are flagged."
   },
   "Evidence": {
     "experimental": "Measured value from an experiment.",
@@ -194,7 +254,11 @@
     "relaxed": "relaxed",
     "unrelaxed": "Unrelaxed",
     "title": "5. Evidence",
-    "tabSpatial": "3D structure"
+    "tabSpatial": "3D structure",
+    "titleGuided": "5. Compare with known materials",
+    "hintGuided": "See where your starting crystal and your candidate sit among materials that are already known.",
+    "readLandscape": "Each dot is a known material. Up means it bends light more, and right means it stays clearer. AR glasses need the upper-right area, and few dots reach it. That is why new materials are worth looking for.",
+    "readScore": "This is the same result as the summary above, with the source of each number."
   },
   "Score": {
     "summary": "{meets} of {total} criteria met",
@@ -262,7 +326,16 @@
     "noToolCalls": "No tool calls in this answer. Treat any numbers in it as unverified.",
     "error": "Error: {message}",
     "reset": "New conversation",
-    "created": "Created:"
+    "created": "Created:",
+    "titleGuided": "Ask Muse Spark",
+    "hintGuided": "Ask anything, even a basic question. Muse Spark can see what you have picked, and it looks up numbers with its tools.",
+    "placeholderGuided": "Ask a question in your own words",
+    "ask": {
+      "bandGap": "What is a band gap?",
+      "hard": "Why is a clear material that bends light strongly hard to find?",
+      "next": "What should I try next?"
+    },
+    "noToolCallsGuided": "This answer did not use the data tools. Treat any numbers in it as unchecked."
   },
   "Decision": {
     "title": "Your decision on {id}",
@@ -276,7 +349,9 @@
     "modifyHint": "The agent revises this candidate from your reason.",
     "exploreHint": "The agent tests up to 2 alternatives from your reason.",
     "rejectHint": "Record that this candidate is not useful, and why.",
-    "last": "Last decision: {decision}"
+    "last": "Last decision: {decision}",
+    "placeholderGuided": "Why? For example: it does not bend light enough, so try another element.",
+    "hintGuided": "Your decision is saved with your reason. Modify and Explore also ask Muse Spark to try again, so say what you want changed."
   },
   "Optical": {
     "loading": "Loading optical data…",
@@ -428,5 +503,133 @@
     "openAccess": "Open access",
     "source": "Source: {source}",
     "sourceFailed": "{source}: {reason}"
+  },
+  "Level": {
+    "label": "Display level",
+    "guided": "Guided",
+    "expert": "Expert",
+    "guidedHint": "Plain words and the main steps. Technical tools stay one click away.",
+    "expertHint": "Every tool and number on the screen."
+  },
+  "Intro": {
+    "problemTitle": "The problem",
+    "problemText": "AR glasses carry the picture through a thin, clear layer in the lens. The more strongly that layer bends light, the wider the picture can be. But materials that bend light strongly often absorb blue light, so they look yellow. Few materials do both.",
+    "doTitle": "What you do here",
+    "doText": "Pick a known crystal and swap some of its atoms for another element. That gives you a new candidate material. You need no lab and no simulation software.",
+    "getTitle": "What you get",
+    "getText": "In seconds: how close the candidate is to your goal, where each number comes from, and what to try next. Muse Spark, the AI, can explain the result and suggest changes.",
+    "limit": "A candidate is an idea to test, not a proven material. This tool helps you decide which ideas deserve a simulation or a lab sample.",
+    "example": "Show me an example",
+    "start": "Start on my own",
+    "whatIsThis": "What is this tool for?"
+  },
+  "Glossary": {
+    "about": "What does {term} mean?",
+    "n": {
+      "name": "Refractive index (n)",
+      "text": "How strongly a material bends light. Window glass is about 1.5 and diamond about 2.4. A higher n lets AR glasses show a wider picture."
+    },
+    "band_gap": {
+      "name": "Band gap",
+      "text": "The energy, in electronvolts (eV), that light needs before the material can absorb it. Above about 3.1 eV, all visible light passes and the material looks clear. A smaller gap absorbs blue first, so the material looks yellow or dark."
+    },
+    "host": {
+      "name": "Starting crystal (host)",
+      "text": "A known material that you change to make a candidate."
+    },
+    "candidate": {
+      "name": "Candidate",
+      "text": "A new material idea, made by swapping atoms in a starting crystal. Nobody has made or measured it yet."
+    },
+    "swap": {
+      "name": "Atom swap (substitution)",
+      "text": "Some atoms of one element are replaced by another element, in the same positions in the crystal."
+    },
+    "cell": {
+      "name": "Unit cell",
+      "text": "The small box of atoms that repeats in every direction to build the whole crystal."
+    },
+    "experimental": {
+      "name": "Experimental",
+      "text": "Measured in a lab. This is the strongest kind of evidence here."
+    },
+    "dft": {
+      "name": "DFT-computed",
+      "text": "Calculated by a computer simulation (density functional theory), not measured. Band gaps from it are usually too low."
+    },
+    "heuristic": {
+      "name": "Heuristic",
+      "text": "A rough range estimated from similar materials. It is neither a measurement nor a prediction."
+    },
+    "unknown": {
+      "name": "Unknown",
+      "text": "No reliable value is available."
+    }
+  },
+  "Viewer": {
+    "controls": "Drag to turn. Scroll to zoom."
+  },
+  "Plain": {
+    "nScale": "Refractive index scale from glass to diamond. Your goal is at least {goal}.",
+    "gapScale": "Visible light from blue to red. A band gap of {goal} eV means light longer than {nm} nm passes.",
+    "goalAtLeast": "Goal: {value} or more",
+    "goalClearFrom": "Goal: clear above {nm} nm",
+    "glass": "Glass",
+    "sapphire": "Sapphire",
+    "diamond": "Diamond",
+    "blue": "Blue",
+    "green": "Green",
+    "yellow": "Yellow",
+    "red": "Red",
+    "criterion": {
+      "n": "Bends light",
+      "band_gap": "Stays clear",
+      "elements": "Allowed elements",
+      "structure": "Atoms fit together"
+    },
+    "sentence": {
+      "n": {
+        "meets": "It bends light at least as strongly as your goal asks.",
+        "uncertain": "The estimate spans your goal, so it might or might not bend light enough.",
+        "fails": "It bends light less strongly than your goal asks.",
+        "unknown": "No value is known yet, so we cannot tell."
+      },
+      "band_gap": {
+        "meets": "It should let through the light your goal asks for.",
+        "uncertain": "The estimate spans your goal, so it might absorb some blue light (striped part).",
+        "fails": "It absorbs light your goal says should pass (dark part), so it would look tinted.",
+        "unknown": "No value is known yet, so we cannot tell."
+      },
+      "elements": {
+        "meets": "It has none of the elements you ruled out.",
+        "uncertain": "We could not fully check the elements.",
+        "fails": "It has an element you ruled out.",
+        "unknown": "We could not check the elements."
+      },
+      "structure": {
+        "meets": "The quick checks found no obvious problem with how the atoms fit.",
+        "uncertain": "The quick checks found a possible problem with how the atoms fit. This does not rule it out.",
+        "fails": "The quick checks found a serious problem with how the atoms fit.",
+        "unknown": "There is not enough information to check how the atoms fit."
+      }
+    },
+    "headline": {
+      "meets": "On target. Worth a closer look.",
+      "uncertain": "It could work, but it is not settled yet.",
+      "fails": "Not there yet."
+    },
+    "subject": "Candidate {id} ({formula})",
+    "swap": "{from} → {to} {percent}%",
+    "loading": "Working out the result…",
+    "hostTitle": "How {formula} compares with your goal",
+    "hostMark": "The ring on the scale marks the starting crystal, {formula}.",
+    "caveat": "This is an idea to test, not a proven material. The atoms are still at the positions of the starting crystal, and ranges are rough estimates. A simulation or a lab sample is the real test.",
+    "explain": "Explain this to me",
+    "improve": "Suggest a better swap",
+    "seeEvidence": "Compare with known materials",
+    "dftGapNote": "This value is computed, and computed band gaps usually come out too low, so the real material may be clearer."
+  },
+  "Workspace": {
+    "sharedAndPapers": "Shared candidates and research papers"
   }
 }

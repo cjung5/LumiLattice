@@ -1,29 +1,27 @@
-import { useTranslations } from "next-intl";
+import { Term, type TermId } from "@/components/Term";
 import type { EvidenceStatus, PropertyValue } from "@/lib/api";
 
 // Color is never the only signal: each tag also has its own icon, text, and border style.
-const TAG_STYLE: Record<EvidenceStatus, { icon: string; className: string; key: string }> = {
-  Experimental: { icon: "●", className: "border-tag-exp text-tag-exp", key: "experimental" },
-  "DFT-computed": { icon: "◆", className: "border-tag-dft text-tag-dft", key: "dftComputed" },
+const TAG_STYLE: Record<EvidenceStatus, { icon: string; className: string; term: TermId }> = {
+  Experimental: { icon: "●", className: "border-tag-exp text-tag-exp", term: "experimental" },
+  "DFT-computed": { icon: "◆", className: "border-tag-dft text-tag-dft", term: "dft" },
   Heuristic: {
     icon: "≈",
     className: "border-dashed border-tag-heur text-tag-heur italic",
-    key: "heuristic",
+    term: "heuristic",
   },
-  Unknown: { icon: "?", className: "border-tag-unknown text-tag-unknown", key: "unknown" },
+  Unknown: { icon: "?", className: "border-tag-unknown text-tag-unknown", term: "unknown" },
 };
 
 export function EvidenceTag({ status }: { status: EvidenceStatus }) {
-  const t = useTranslations("Evidence");
   const style = TAG_STYLE[status];
   return (
-    <span
-      title={t(style.key)}
-      className={`inline-flex items-center gap-1 whitespace-nowrap rounded border px-1.5 text-xs ${style.className}`}
-    >
-      <span aria-hidden>{style.icon}</span>
-      {status}
-    </span>
+    <Term id={style.term} bare>
+      <span className={`inline-flex items-center gap-1 whitespace-nowrap rounded border px-1.5 text-xs ${style.className}`}>
+        <span aria-hidden>{style.icon}</span>
+        {status}
+      </span>
+    </Term>
   );
 }
 

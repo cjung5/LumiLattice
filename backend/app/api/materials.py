@@ -9,7 +9,7 @@ from app.tools.cod import CodEntry
 from app.tools.materials import parse_query
 from app.tools.reference_db import get_landscape, get_reference_db
 from app.tools.registry import ToolError, UpstreamError
-from app.tools.structures import parse_cif, structure_payload
+from app.tools.structures import CELL_METHOD, parse_cif, structure_payload
 
 router = APIRouter(prefix="/api")
 
@@ -48,7 +48,7 @@ def material_structure(material_id: str, mp: MPDep) -> StructurePayload:
         structure = mp.get_structure(material_id)
         return structure_payload(
             structure,
-            Provenance(source="Materials Project", reference=material_id),
+            Provenance(source="Materials Project", method=CELL_METHOD, reference=material_id),
         )
     except ToolError as exc:
         raise to_http(exc) from exc

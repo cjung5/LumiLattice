@@ -8,7 +8,7 @@ https://dev.meta.ai/docs/tool-calling
 
 import json
 from dataclasses import dataclass, field
-from typing import Any, Protocol
+from typing import Any, Literal, Protocol
 
 from app.tools.registry import ToolRegistry
 
@@ -20,6 +20,15 @@ LANGUAGES = {
     "es": "Spanish",
     "de": "German",
 }
+
+# Guided mode: the reader may be new to the field, so the words change. The rules on numbers do not.
+Audience = Literal["beginner", "expert"]
+BEGINNER_NOTE = (
+    "The reader is new to materials science. Use short, everyday sentences. Explain each "
+    "technical term the first time you use it, and say what each number means for AR glasses "
+    "(does it bend light enough, does it stay clear). Keep the answer under about 150 words. "
+    "Do not leave out uncertainty."
+)
 
 SYSTEM_PROMPT = """You are LumiLattice, a research agent that helps researchers explore \
 optoelectronic materials for AR waveguides.

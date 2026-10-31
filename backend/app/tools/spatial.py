@@ -8,18 +8,17 @@ model structure; an ordered supercell is one model of a disordered solid solutio
 
 import itertools
 import math
-import random
 from collections import defaultdict
 from typing import Literal
 
 import numpy as np
 from pydantic import BaseModel
-from pymatgen.analysis.ewald import EwaldSummation
 from pymatgen.analysis.local_env import LocalStructOrderParams
 from pymatgen.core import Structure
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from scipy.spatial import ConvexHull
 
+from app.tools.ewald import Arrangements
 from app.tools.ionic import IonicModel, anion_shell, ionic_model
 
 OpticalClass = Literal["isotropic", "uniaxial", "biaxial"]
@@ -70,6 +69,9 @@ class DopantArrangement(BaseModel):
     nearest_distances: list[float]  # Å, each dopant to its nearest same-element dopant
     shortest: float | None
     cation_spacing: float  # Å, shortest host distance between sites of the replaced element
+    # True when each dopant's nearest same-element dopant is its own periodic image: the cell
+    # is one host cell thick in that direction, so every arrangement in it has these chains.
+    periodic_chains: bool = False
 
 
 class OrderingRank(BaseModel):
@@ -213,16 +215,12 @@ def dopant_arrangements(
             default=float(min(parent.lattice.abc)),
         )
         spacing = min(spacing, float(min(parent.lattice.abc)))  # a site's own periodic image
-        nearest = [
-            round(
-                min(
-                    [structure.get_distance(i, j) for j in sites if j != i]
-                    + [float(min(structure.lattice.abc))]
-                ),
-                3,
-            )
+        image = float(min(structure.lattice.abc))  # a dopant's own periodic image
+        others = [
+            min((structure.get_distance(i, j) for j in sites if j != i), default=math.inf)
             for i in sites
         ]
+        nearest = [round(min(o, image), 3) for o in others]
         out.append(
             DopantArrangement(
                 element=element,
@@ -230,6 +228,7 @@ def dopant_arrangements(
                 nearest_distances=nearest,
                 shortest=min(nearest) if nearest else None,
                 cation_spacing=round(spacing, 3),
+                periodic_chains=bool(sites) and all(o > image + 1e-3 for o in others),
             )
         )
     return out
@@ -268,50 +267,15 @@ def rank_orderings(
     groups = [
         (big_parent[sites[0]].specie.symbol, el, len(sites)) for el, sites in big_replaced.items()
     ]
-    pools = [
-        [i for i, s in enumerate(big_parent) if s.specie.symbol == orig] for orig, _, _ in groups
-    ]
-    total = math.prod(
-        math.comb(len(pool), k) for pool, (_, _, k) in zip(pools, groups, strict=True)
-    )
+    space = Arrangements(big_parent, groups, model.oxidation_states)
+    total = space.total
     if total < 2:
         return None
 
-    # E = q^T M q with M from unit charges: one Ewald sum for all configurations.
-    unit = big_parent.copy()
-    unit.add_oxidation_state_by_site([1.0] * len(unit))
-    matrix = EwaldSummation(unit).total_energy_matrix
-    base = np.array([model.oxidation_states.get(s.specie.symbol, 0.0) for s in big_parent])
-
-    def energy(choice: list[list[int]]) -> float:
-        q = base.copy()
-        used: set[int] = set()
-        for (_, new, _), sites in zip(groups, choice, strict=True):
-            if used & set(sites):
-                return math.inf  # two substitutions on the same site
-            used |= set(sites)
-            q[sites] = model.oxidation_states[new]
-        return float(q @ matrix @ q) / len(big_parent)
-
     truncated = total > MAX_ORDERINGS
-    if truncated:  # an even, reproducible random sample instead of the first N
-        rng = random.Random(0)
-        choices = [
-            [sorted(rng.sample(pool, k)) for pool, (_, _, k) in zip(pools, groups, strict=True)]
-            for _ in range(MAX_ORDERINGS)
-        ]
-    else:
-        choices = [
-            list(map(list, c))
-            for c in itertools.product(
-                *(
-                    itertools.combinations(pool, k)
-                    for pool, (_, _, k) in zip(pools, groups, strict=True)
-                )
-            )
-        ]
-    chosen = energy([big_replaced[new] for _, new, _ in groups])
-    energies = [e for e in map(energy, choices) if math.isfinite(e)]
+    choices = space.sample(MAX_ORDERINGS) if truncated else list(space.every())
+    chosen = space.energy([big_replaced[new] for _, new, _ in groups])
+    energies = [float(e) for e in space.energies(choices) if math.isfinite(e)]
     if not energies:
         return None
     lowest = min(min(energies), chosen)
@@ -408,7 +372,11 @@ def analyze(
                 and d.shortest <= d.cation_spacing * 1.05
             ):
                 findings.append(
-                    f"{d.element} ions sit on neighboring sites ({d.shortest:.2f} Å): clustered."
+                    f"{d.element} ions repeat every {d.shortest:.2f} Å along the shortest cell "
+                    "axis (their own periodic images): the cell is one host cell thick there, so "
+                    "every arrangement in it has these chains. A thicker cell would separate them."
+                    if d.periodic_chains
+                    else f"{d.element} ions sit on neighboring sites ({d.shortest:.2f} Å): clustered."
                 )
         ordering = rank_orderings(structure, parent, replaced, model)
         if ordering and ordering.distinct == 1:

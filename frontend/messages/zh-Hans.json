@@ -4,8 +4,8 @@
     "description": "面向光电材料发现的协作式 AI 科学家。"
   },
   "Home": {
-    "tagline": "面向光电材料发现的协作式 AI 科学家",
-    "intro": "与 Muse Spark 一起探索 AR 波导候选材料。所有数值均来自数据库或计算，并附有来源。"
+    "headline": "寻找 AR 眼镜新材料的 AI 研究伙伴",
+    "lead": "几秒钟验证一种新材料想法。每个数字都标明来源。"
   },
   "Language": {
     "label": "语言",
@@ -24,7 +24,9 @@
     "openAlexConfigured": "OpenAlex 密钥已配置",
     "openAlexMissing": "无 OpenAlex 密钥：文献检索使用少量共享每日额度。",
     "storePostgres": "候选材料保存在 Postgres 中",
-    "storeMemory": "候选材料暂存于内存（重启后丢失）。设置 DATABASE_URL 以保留。"
+    "storeMemory": "候选材料暂存于内存（重启后丢失）。设置 DATABASE_URL 以保留。",
+    "ready": "已连接：数据和 AI 已就绪。查看详情",
+    "notReady": "设置尚未完成。部分功能将无法使用。"
   },
   "Goal": {
     "hint": "先设定目标。所有主体结构和候选材料都将据此评分，并附每项结论的依据。",
@@ -35,7 +37,13 @@
     "presetAr": "AR 波导预设",
     "presetToxic": "+ 有毒元素",
     "note": "约 3.1 eV 的带隙对应吸收边在 400 nm 附近，即可见光蓝端。",
-    "title": "1. 研究目标"
+    "title": "1. 研究目标",
+    "titleGuided": "1. 材料需要实现什么性能？",
+    "hintGuided": "AR 眼镜需要同时满足这两项。以下数值是适合 AR 的初始值，可以保留。",
+    "nGuided": "强折光",
+    "gapGuided": "保持透明（带隙，eV）",
+    "sentence": "您正在寻找折光能力至少为 n = {n}、且能透过波长大于 {nm} nm 可见光的材料。",
+    "avoidToxic": "避开有毒元素（{elements}）"
   },
   "Guide": {
     "label": "工作流步骤",
@@ -68,7 +76,20 @@
     "exampleTitle": "示例问题。",
     "exampleStory": "SrTiO3 具有高 n（2.43，实测值），但带隙接近可见光蓝端。LaAlO3 带隙更宽，但 n 较低（2.07）。若 La 取代 25% Sr 且 Al 取代 25% Ti，n 能否保持在 2.2 以上同时增大带隙？在“{landscape}”中，橙色框为候选材料在两个端元之间的范围。然后打开“{score}”和“{spatial}”。",
     "exampleError": "示例运行失败：{error}",
-    "dismiss": "关闭"
+    "dismiss": "关闭",
+    "stepGuided": {
+      "goal": "您的目标",
+      "host": "起始晶体",
+      "candidate": "替换原子",
+      "evidence": "查看结果"
+    },
+    "hintGuided": {
+      "goal": "保留以下目标或进行修改，然后选择起始晶体。",
+      "host": "从四种起始晶体中选择一种，或自行搜索。",
+      "candidate": "选择要替换 {host} 中的哪些原子，或让 Muse Spark 推荐替换方案。",
+      "evidence": "了解 {id} 的含义，与已知材料比较，然后记录您的决定。"
+    },
+    "exampleStoryGuided": "SrTiO3 折光能力强，但在接近蓝光端开始吸收光。LaAlO3 保持透明，但折光较弱。如果将四分之一的 Sr 替换为 La、四分之一的 Ti 替换为 Al，能否兼具两者优点？结果如下。"
   },
   "Host": {
     "title": "2. 选择主体结构",
@@ -96,7 +117,20 @@
     "hintCod": "按化学式在 Crystallography Open Database 中搜索实测晶体结构 (CC0)。请注明原作者。",
     "placeholderCod": "化学式，例如 SrTiO3",
     "loadingCod": "正在从 COD 加载结构…",
-    "codCredit": "结构来自 Crystallography Open Database (CC0)。请致谢原作者。"
+    "codCredit": "结构来自 Crystallography Open Database (CC0)。请致谢原作者。",
+    "titleGuided": {
+      "before": "2. 选择",
+      "term": "起始晶体"
+    },
+    "hintGuided": "您将改变这种晶体以制造新材料。如不确定，可从以下任一种开始。",
+    "starter": {
+      "srtio3": "常见的强折光晶体，易于改性。",
+      "anatase": "油漆和防晒霜中的白色颜料，折光非常强。",
+      "zns": "长期使用的光学材料，肉眼看透明。",
+      "linbo3": "用于激光和通信光学。"
+    },
+    "searchInstead": "或按化学式搜索，例如 ZrO2：",
+    "loadingStarter": "正在加载晶体…"
   },
   "Structure": {
     "title": "3. 结构",
@@ -108,7 +142,16 @@
     "source": "来源",
     "warnings": "解析警告",
     "baseline": "主体校验（基线）",
-    "optical": "折射率依据（按化学式）"
+    "optical": "折射率依据（按化学式）",
+    "titleGuided": "3. 查看晶体",
+    "emptyGuided": "在上方选择起始晶体，以在此查看其原子。",
+    "howToRead": {
+      "before": "每个小球代表一个原子。一个",
+      "term": "单胞",
+      "after": "是细线框。整个晶体由该框沿各个方向重复构成。颜色表示元素。"
+    },
+    "details": "晶体详情",
+    "evidenceDetails": "该晶体的技术证据"
   },
   "Candidate": {
     "title": "4. 候选材料",
@@ -117,6 +160,12 @@
     "to": "新元素",
     "toPlaceholder": "例如 Zr",
     "fraction": "替换比例",
+    "arrangement": "位点排列",
+    "arrangementOption": {
+      "spread": "分散排布（默认）",
+      "lowest_ewald": "最低 Ewald 能量"
+    },
+    "arrangementHint": "以形式电荷按点电荷 (Ewald) 能量比较新原子的全部排布，晶胞中每种新原子至少含 2 个，因此晶胞可能变大。弛豫可能改变排序。",
     "ofSites": "{element} 位点占比",
     "remove": "删除",
     "addRow": "+ 共取代",
@@ -137,7 +186,17 @@
       "record": "JSON 记录"
     },
     "exporting": "准备中…",
-    "exportNote": "CIF 列出所有位点 (P1)，并包含溯源文件头。JSON 记录另含目标评分、3D 结构分析、数据来源和注意事项。"
+    "exportNote": "CIF 列出所有位点 (P1)，并包含溯源文件头。JSON 记录另含目标评分、3D 结构分析、数据来源和注意事项。",
+    "titleGuided": {
+      "before": "4.",
+      "term": "替换原子",
+      "after": "以制造新材料"
+    },
+    "hintGuided": "选择 {host} 中的一种元素、替代元素及替换比例。应用将构建新晶体并进行检查。",
+    "generateGuided": "生成新材料",
+    "suggest": "让 Muse Spark 推荐替换方案",
+    "moreTools": "更多工具：导出、弛豫、发表、实验结果",
+    "checkDetails": "结构检查详情"
   },
   "Critique": {
     "title": "Muse Spark 评价",
@@ -175,7 +234,8 @@
     "sent": "已发送至研究代理（第 6 节）",
     "warnings": "本次评价中检查发现的问题",
     "evidence": "模型所见证据（{count} 项）",
-    "older": "早期评价（{count}）"
+    "older": "早期评价（{count}）",
+    "hintGuided": "Muse Spark 查看该晶体图像和数字后给出第二意见。证据中没有的数字将被标记。"
   },
   "Evidence": {
     "experimental": "来自实验的实测值。",
@@ -194,7 +254,11 @@
     "relaxed": "已弛豫",
     "unrelaxed": "未弛豫",
     "title": "5. 依据",
-    "tabSpatial": "3D 结构"
+    "tabSpatial": "3D 结构",
+    "titleGuided": "5. 与已知材料比较",
+    "hintGuided": "查看起始晶体和候选材料在已知材料中的位置。",
+    "readLandscape": "每个点代表一种已知材料。越靠上折光越强，越靠右越透明。AR 眼镜需要右上区域的材料，而很少有材料能达到，因此值得寻找新材料。",
+    "readScore": "此处结果与上方摘要相同，并附每个数字的来源。"
   },
   "Score": {
     "summary": "已满足 {meets} / {total} 项标准",
@@ -262,7 +326,16 @@
     "noToolCalls": "此回答未调用工具，其中的数值请视为未经证实。",
     "error": "错误：{message}",
     "reset": "新对话",
-    "created": "创建时间："
+    "created": "创建时间：",
+    "titleGuided": "询问 Muse Spark",
+    "hintGuided": "可询问任何问题，即使是基础问题。Muse Spark 可看到您的选择，并用工具查找数字。",
+    "placeholderGuided": "用自己的话提问",
+    "ask": {
+      "bandGap": "什么是带隙？",
+      "hard": "为什么难找到透明且强折光的材料？",
+      "next": "接下来该尝试什么？"
+    },
+    "noToolCallsGuided": "此回答未使用数据工具，其中的数字请视为未经核验。"
   },
   "Decision": {
     "title": "你对 {id} 的决定",
@@ -276,7 +349,9 @@
     "modifyHint": "智能体根据你的原因修改该候选。",
     "exploreHint": "智能体根据你的原因测试最多 2 种替代方案。",
     "rejectHint": "记录该候选无用及原因。",
-    "last": "上次决定：{decision}"
+    "last": "上次决定：{decision}",
+    "placeholderGuided": "原因？例如：折光不够强，因此尝试其他元素。",
+    "hintGuided": "您的决定将与理由一起保存。修改和探索也会让 Muse Spark 重新尝试，请说明您想改变的内容。"
   },
   "Optical": {
     "loading": "正在加载光学数据…",
@@ -428,5 +503,133 @@
     "openAccess": "开放获取",
     "source": "来源：{source}",
     "sourceFailed": "{source}：{reason}"
+  },
+  "Level": {
+    "label": "显示级别",
+    "guided": "引导",
+    "expert": "专家",
+    "guidedHint": "通俗语言和主要步骤，技术工具一键可达。",
+    "expertHint": "屏幕上的所有工具和数字。"
+  },
+  "Intro": {
+    "problemTitle": "问题",
+    "problemText": "AR 眼镜通过镜片中的薄透明层传导图像。该层折光越强，画面可以越宽。但强折光材料常吸收蓝光，看起来发黄。很少有材料能兼顾两者。",
+    "doTitle": "您在这里做什么",
+    "doText": "选择一种已知晶体，将其中部分原子替换为另一种元素，即可得到新的候选材料。无需实验室，也无需仿真软件。",
+    "getTitle": "您将获得什么",
+    "getText": "几秒钟内获得：候选材料与目标的接近程度、每个数字的来源以及下一步建议。AI Muse Spark 可解释结果并提出改进建议。",
+    "limit": "候选材料是待验证的想法，而非已证实的材料。本工具帮助您判断哪些想法值得进行仿真或实验制样。",
+    "example": "查看示例",
+    "start": "自行开始",
+    "whatIsThis": "这个工具是做什么的？"
+  },
+  "Glossary": {
+    "about": "{term} 是什么意思？",
+    "n": {
+      "name": "折射率 (n)",
+      "text": "材料折射光线的能力。窗玻璃约为 1.5，金刚石约为 2.4。n 越高，AR 眼镜可显示的画面越宽。"
+    },
+    "band_gap": {
+      "name": "带隙",
+      "text": "材料吸收光所需的能量，以电子伏特 (eV) 计。高于约 3.1 eV 时，所有可见光都能通过，材料看起来透明。带隙较小则先吸收蓝光，因此材料看起来发黄或发暗。"
+    },
+    "host": {
+      "name": "起始晶体",
+      "text": "用于改性以制造候选材料的已知材料。"
+    },
+    "candidate": {
+      "name": "候选材料",
+      "text": "通过替换起始晶体中的原子得到的新材料想法，尚未有人合成或测量。"
+    },
+    "swap": {
+      "name": "原子替换（取代）",
+      "text": "晶体中同一位置上，一种元素的部分原子被另一种元素取代。"
+    },
+    "cell": {
+      "name": "单胞",
+      "text": "沿各个方向重复以构成整个晶体的小原子盒。"
+    },
+    "experimental": {
+      "name": "实验值",
+      "text": "在实验室中测量得到，是此处最有力的证据。"
+    },
+    "dft": {
+      "name": "DFT 计算值",
+      "text": "由计算机模拟（密度泛函理论）计算得到，而非测量值，其带隙通常偏低。"
+    },
+    "heuristic": {
+      "name": "启发式估计",
+      "text": "根据类似材料估计的粗略范围，既非测量值，也非预测值。"
+    },
+    "unknown": {
+      "name": "未知",
+      "text": "暂无可靠数值。"
+    }
+  },
+  "Viewer": {
+    "controls": "拖动旋转，滚动缩放。"
+  },
+  "Plain": {
+    "nScale": "折射率标尺（从玻璃到金刚石）。您的目标至少为 {goal}。",
+    "gapScale": "可见光（从蓝色到红色）。带隙为 {goal} eV 意味着波长大于 {nm} nm 的光可以通过。",
+    "goalAtLeast": "目标：{value} 或更高",
+    "goalClearFrom": "目标：{nm} nm 以上透明",
+    "glass": "玻璃",
+    "sapphire": "蓝宝石",
+    "diamond": "金刚石",
+    "blue": "蓝色",
+    "green": "绿色",
+    "yellow": "黄色",
+    "red": "红色",
+    "criterion": {
+      "n": "折光",
+      "band_gap": "透明",
+      "elements": "允许的元素",
+      "structure": "原子相容性"
+    },
+    "sentence": {
+      "n": {
+        "meets": "其折光能力达到或超过目标要求。",
+        "uncertain": "估计范围跨越目标值，折光可能达标，也可能不达标。",
+        "fails": "其折光能力低于目标要求。",
+        "unknown": "尚无已知数值，无法判断。"
+      },
+      "band_gap": {
+        "meets": "应能透过目标要求的光。",
+        "uncertain": "估计范围跨越目标值，可能吸收部分蓝光（条纹部分）。",
+        "fails": "吸收了目标要求透过的光（深色部分），因此看起来会有颜色。",
+        "unknown": "尚无已知数值，无法判断。"
+      },
+      "elements": {
+        "meets": "不含您排除的元素。",
+        "uncertain": "未能完全核查元素。",
+        "fails": "含有您排除的元素。",
+        "unknown": "未能核查元素。"
+      },
+      "structure": {
+        "meets": "快速检查未发现原子排布有明显问题。",
+        "uncertain": "快速检查发现原子排布可能存在问题，但不足以排除。",
+        "fails": "快速检查发现原子排布存在严重问题。",
+        "unknown": "信息不足，无法检查原子排布。"
+      }
+    },
+    "headline": {
+      "meets": "符合目标，值得进一步研究。",
+      "uncertain": "可能可行，但尚未确定。",
+      "fails": "尚未达标。"
+    },
+    "subject": "候选材料 {id}（{formula}）",
+    "swap": "{from} → {to} {percent}%",
+    "loading": "正在计算结果…",
+    "hostTitle": "{formula} 与目标的比较",
+    "hostMark": "标尺上的圆圈表示起始晶体 {formula}。",
+    "caveat": "这只是待验证的想法，而非已证实的材料。原子仍处于起始晶体的位置，范围为粗略估计。仿真或实验制样才是真正的验证。",
+    "explain": "为我解释",
+    "improve": "推荐更优的替换方案",
+    "seeEvidence": "与已知材料比较",
+    "dftGapNote": "该值为计算值，计算带隙通常偏低，因此实际材料可能更透明。"
+  },
+  "Workspace": {
+    "sharedAndPapers": "共享的候选材料和研究论文"
   }
 }

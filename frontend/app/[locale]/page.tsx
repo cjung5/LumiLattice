@@ -17,8 +17,8 @@ export default function HomePage({ params }: { params: Promise<{ locale: string 
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">LumiLattice</h1>
-          <p className="text-lg">{t("tagline")}</p>
-          <p className="mt-2 text-muted">{t("intro")}</p>
+          <p className="text-lg">{t("headline")}</p>
+          <p className="mt-2 text-muted">{t("lead")}</p>
           {MACHINE_TRANSLATED.has(locale) && (
             <p className="mt-1 text-xs text-warning">{tl("machineTranslated")}</p>
           )}

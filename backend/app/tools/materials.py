@@ -13,6 +13,7 @@ from pymatgen.core import Structure
 from app.models.evidence import PropertyValue, Provenance
 from app.models.materials import MaterialRecord
 from app.tools.registry import ToolError, UpstreamError
+from app.tools.structures import conventional_cell
 from app.tools.usage import MP_CACHE, MP_CAP, DailyCap, ResponseCache, cache_key
 
 MP_API_URL = "https://api.materialsproject.org"
@@ -104,7 +105,7 @@ class MaterialsProjectClient:
         )
         if not docs:
             raise ToolError(f"Materials Project has no material {material_id}.")
-        return Structure.from_dict(docs[0]["structure"])
+        return conventional_cell(Structure.from_dict(docs[0]["structure"]))
 
 
 def to_record(doc: dict[str, Any]) -> MaterialRecord:

@@ -5,7 +5,7 @@ import { EvidenceTag } from "@/components/EvidenceTag";
 import type { GoalScore, Verdict } from "@/lib/api";
 
 // Status colors always come with an icon and a word, never color alone.
-const VERDICT: Record<Verdict, { icon: string; color: string }> = {
+export const VERDICT: Record<Verdict, { icon: string; color: string }> = {
   meets: { icon: "✓", color: "var(--status-good)" },
   uncertain: { icon: "?", color: "var(--status-warning)" },
   fails: { icon: "✗", color: "var(--status-critical)" },

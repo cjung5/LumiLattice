@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { useLevel } from "@/components/Level";
 import type { Candidate, DecisionKind } from "@/lib/api";
 
 const BUTTONS: { kind: DecisionKind; icon: string; className: string }[] = [
@@ -20,6 +21,7 @@ type Props = {
 // Accept and reject are recorded. Modify and explore are recorded and sent to the agent.
 export function DecisionBar({ candidate, busy, onDecide }: Props) {
   const t = useTranslations("Decision");
+  const guided = useLevel().level === "guided";
   const [reason, setReason] = useState("");
   const last = candidate.decisions.at(-1);
 
@@ -38,7 +40,7 @@ export function DecisionBar({ candidate, busy, onDecide }: Props) {
         className="mt-1 w-full rounded-md border border-line bg-surface px-2 py-1.5 text-sm"
         rows={2}
         maxLength={2000}
-        placeholder={t("placeholder")}
+        placeholder={guided ? t("placeholderGuided") : t("placeholder")}
         value={reason}
         onChange={(e) => setReason(e.target.value)}
       />
@@ -56,7 +58,7 @@ export function DecisionBar({ candidate, busy, onDecide }: Props) {
           </button>
         ))}
       </div>
-      <p className="mt-1 text-xs text-muted">{t("hint")}</p>
+      <p className="mt-1 text-xs text-muted">{guided ? t("hintGuided") : t("hint")}</p>
       {last && (
         <p className="mt-1 text-xs">
           {t("last", { decision: t(last.decision) })}

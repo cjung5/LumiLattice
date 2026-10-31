@@ -1,6 +1,6 @@
 """The set of tools the research agent can call."""
 
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -54,6 +54,12 @@ class CreateCandidateArgs(BaseModel):
         description="Element replacements, e.g. [{'element_from': 'Ti', 'element_to': 'Zr', 'fraction': 0.5}]. "
         "Fractions like 1, 1/2, 1/3, 1/4 work best.",
     )
+    arrangement: Literal["spread", "lowest_ewald"] = Field(
+        default="spread",
+        description="Where the new atoms go. 'spread': as far apart as possible (default). "
+        "'lowest_ewald': the arrangement with the lowest point-charge (Ewald) energy, in a cell "
+        "with at least 2 of each new atom. Use it to test a more favorable ordering.",
+    )
 
 
 class OpticalReferenceArgs(BaseModel):
@@ -74,6 +80,7 @@ def candidate_summary(candidate: Candidate) -> dict[str, Any]:
         "host": t.host.model_dump(exclude_none=True),
         "substitutions": [s.model_dump() for s in t.substitutions],
         "supercell": t.supercell,
+        "site_selection": t.site_selection,
         "substituted_sites": t.substituted_sites,
         "assessment_status": candidate.assessment.status,
         "checks": [
@@ -133,7 +140,9 @@ def build_registry(
         host, host_ref, parent_id = load_host(
             store, mp, material_id=args.host_material_id, candidate_id=args.host_candidate_id
         )
-        candidate = create_candidate(store, host, host_ref, args.substitutions, parent_id, mp)
+        candidate = create_candidate(
+            store, host, host_ref, args.substitutions, parent_id, mp, arrangement=args.arrangement
+        )
         return candidate_summary(candidate)
 
     def optical_reference(args: OpticalReferenceArgs) -> dict[str, Any]:

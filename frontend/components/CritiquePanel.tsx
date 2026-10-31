@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import type { CapturedViews } from "@/components/CrystalViewer";
+import { useLevel } from "@/components/Level";
 import { critiqueCandidate, type Candidate, type Critique, type Goal } from "@/lib/api";
 
 type Props = {
@@ -36,6 +37,7 @@ const testPrompt = (id: string, change: string, rationale: string) =>
 export function CritiquePanel({ candidate, goal, geometry, capture, onChange, onAskAgent }: Props) {
   const t = useTranslations("Critique");
   const locale = useLocale();
+  const guided = useLevel().level === "guided";
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const critiques = candidate.critiques ?? [];
@@ -47,7 +49,7 @@ export function CritiquePanel({ candidate, goal, geometry, capture, onChange, on
     setError(null);
     try {
       const { views, legend } = await capture().catch(() => ({ views: [], legend: {} }));
-      onChange(await critiqueCandidate(candidate.candidate_id, { goal, locale, geometry, views, legend }));
+      onChange(await critiqueCandidate(candidate.candidate_id, { goal, locale, geometry, views, legend, audience: guided ? "beginner" : "expert" }));
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -63,7 +65,7 @@ export function CritiquePanel({ candidate, goal, geometry, capture, onChange, on
             {t("title")}
             <span className="ml-2 rounded border border-line px-1.5 py-0.5 text-xs font-normal text-muted">{t("aiTag")}</span>
           </h4>
-          <p className="mt-1 text-xs text-muted">{t("hint")}</p>
+          <p className="mt-1 text-xs text-muted">{guided ? t("hintGuided") : t("hint")}</p>
         </div>
         <button
           type="button"
@@ -102,12 +104,14 @@ function CritiqueView({
 }) {
   const t = useTranslations("Critique");
   const locale = useLocale();
+  const guided = useLevel().level === "guided";
   const [sent, setSent] = useState<number | null>(null);
   const evidence = new Map(critique.evidence.map((e) => [e.id, e.text]));
   const verdict = VERDICT[critique.verdict];
 
+  // The IDs let an expert trace each claim; the evidence list below stays open to everyone.
   const chips = (ids: string[]) =>
-    ids.map((id) => (
+    guided ? null : ids.map((id) => (
       <span
         key={id}
         title={evidence.get(id)}

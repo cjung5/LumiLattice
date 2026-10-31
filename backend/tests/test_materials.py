@@ -1,8 +1,11 @@
 import httpx
 import pytest
+from pymatgen.core import Lattice, Structure
+from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
 from app.tools.materials import MaterialsProjectClient, parse_query
 from app.tools.registry import ToolError, UpstreamError
+from app.tools.structures import conventional_cell
 
 # Fixture values for tests only; they are not real Materials Project data.
 SUMMARY_DOC = {
@@ -100,3 +103,28 @@ def test_get_structure_rejects_bad_id():
 )
 def test_parse_query(query, expected):
     assert parse_query(query) == expected
+
+
+def test_primitive_cells_become_the_textbook_cell(srtio3):
+    # Anatase in Materials Project's primitive cell: a skewed box with 110 degree angles.
+    conventional = Structure.from_spacegroup(
+        "I4_1/amd", Lattice.tetragonal(3.78, 9.51), ["Ti", "O"], [[0, 0, 0], [0, 0, 0.2]]
+    )
+    primitive = conventional.get_primitive_structure()
+    assert max(primitive.lattice.angles) > 100 and len(primitive) == 6
+
+    standard = conventional_cell(primitive)
+
+    assert standard.lattice.angles == pytest.approx((90, 90, 90))
+    assert len(standard) == 12
+    assert standard.composition.reduced_formula == "TiO2"
+    assert standard.density == pytest.approx(primitive.density, rel=1e-3)
+    assert len(conventional_cell(srtio3)) == 5  # already the textbook cell
+
+
+def test_a_structure_without_a_standard_cell_is_kept(srtio3, monkeypatch):
+    def fail(*_args, **_kwargs):
+        raise ValueError("no symmetry")
+
+    monkeypatch.setattr(SpacegroupAnalyzer, "get_conventional_standard_structure", fail)
+    assert conventional_cell(srtio3) is srtio3

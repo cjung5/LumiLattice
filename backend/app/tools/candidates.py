@@ -10,8 +10,13 @@ from app.storage.memory import CandidateStore
 from app.tools.materials import MaterialsProjectClient
 from app.tools.reference_db import ReferenceDB, get_reference_db
 from app.tools.registry import ToolError, UpstreamError
-from app.tools.structures import parse_cif_structure, structure_payload
-from app.tools.substitution import SITE_SELECTION, substitute
+from app.tools.structures import CELL_METHOD, parse_cif_structure, structure_payload
+from app.tools.substitution import (
+    SITE_SELECTION,
+    Arrangement,
+    substitute,
+    substitute_lowest_ewald,
+)
 from app.tools.validation import AnalogLookup, assess
 
 
@@ -40,7 +45,10 @@ def load_host(
         if mp is None:
             raise UpstreamError("Materials Project is not configured (MP_API_KEY missing).")
         host = mp.get_structure(material_id)
-        return host, Provenance(source="Materials Project", reference=material_id), None
+        provenance = Provenance(
+            source="Materials Project", method=CELL_METHOD, reference=material_id
+        )
+        return host, provenance, None
     host = parse_cif_structure(cif or "", filename)
     return host, Provenance(source="CIF upload", reference=filename), None
 
@@ -96,6 +104,7 @@ def create_candidate(
     parent_id: str | None = None,
     mp: MaterialsProjectClient | None = None,
     reference: ReferenceDB | None = None,
+    arrangement: Arrangement = "spread",
 ) -> Candidate:
     reference = reference or get_reference_db()
     parent = store.get(parent_id)[0] if parent_id else None
@@ -105,7 +114,11 @@ def create_candidate(
     else:
         root_formula, lineage = host.composition.reduced_formula, list(subs)
 
-    structure, supercell, replaced = substitute(host, subs)
+    if arrangement == "lowest_ewald":
+        structure, supercell, replaced, site_selection = substitute_lowest_ewald(host, subs)
+    else:
+        structure, supercell, replaced = substitute(host, subs)
+        site_selection = SITE_SELECTION
     focus = sorted(i for sites in replaced.values() for i in sites)
     assessment = assess(
         structure, focus, end_member_formulas(root_formula, lineage), mp_analog_lookup(mp)
@@ -126,7 +139,8 @@ def create_candidate(
                 supercell=supercell,
                 substitutions=subs,
                 substituted_sites=replaced,
-                site_selection=SITE_SELECTION,
+                site_selection=site_selection,
+                arrangement=arrangement,
                 root_formula=root_formula,
                 lineage=lineage,
             ),

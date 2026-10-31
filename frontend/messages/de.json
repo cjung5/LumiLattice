@@ -4,8 +4,8 @@
     "description": "Ein kollaborativer KI-Wissenschaftler für die Entdeckung optoelektronischer Materialien."
   },
   "Home": {
-    "tagline": "Ein kollaborativer KI-Wissenschaftler für die Entdeckung optoelektronischer Materialien",
-    "intro": "Kandidatenmaterialien für AR-Wellenleiter mit Muse Spark erkunden. Jede Zahl stammt aus einer Datenbank oder einer Berechnung, mit Quellenangabe."
+    "headline": "KI-Forschungspartner für neue Materialien für AR-Brillen",
+    "lead": "Teste in Sekunden eine Idee für ein neues Material. Jede Zahl zeigt ihre Herkunft."
   },
   "Language": {
     "label": "Sprache",
@@ -24,7 +24,9 @@
     "openAlexConfigured": "OpenAlex-Schlüssel konfiguriert",
     "openAlexMissing": "Kein OpenAlex-Schlüssel: Literatursuche nutzt ein kleines gemeinsames Tagesbudget.",
     "storePostgres": "Kandidaten werden in Postgres gespeichert",
-    "storeMemory": "Kandidaten werden im Speicher gehalten (gehen bei Neustart verloren). DATABASE_URL setzen, um sie zu behalten."
+    "storeMemory": "Kandidaten werden im Speicher gehalten (gehen bei Neustart verloren). DATABASE_URL setzen, um sie zu behalten.",
+    "ready": "Verbunden: Daten und KI sind bereit. Details anzeigen",
+    "notReady": "Einrichtung nicht abgeschlossen. Einige Funktionen sind nicht verfügbar."
   },
   "Goal": {
     "hint": "Zuerst die Ziele festlegen. Jeder Host und Kandidat wird dagegen bewertet, mit Belegen für jedes Urteil.",
@@ -35,7 +37,13 @@
     "presetAr": "AR-Wellenleiter-Preset",
     "presetToxic": "+ Toxische Elemente",
     "note": "Eine Bandlücke von etwa 3,1 eV legt die Absorptionskante nahe 400 nm, ans blaue Ende des sichtbaren Bereichs.",
-    "title": "1. Forschungsziel"
+    "title": "1. Forschungsziel",
+    "titleGuided": "1. Was soll das Material leisten?",
+    "hintGuided": "AR-Brillen brauchen beides. Die Werte unten sind ein guter Start für AR und können bleiben.",
+    "nGuided": "Licht stark brechen",
+    "gapGuided": "Klar bleiben (Bandlücke, eV)",
+    "sentence": "Du suchst ein Material, das Licht mindestens so stark bricht wie n = {n} und sichtbares Licht über {nm} nm durchlässt.",
+    "avoidToxic": "Toxische Elemente vermeiden ({elements})"
   },
   "Guide": {
     "label": "Workflow-Schritte",
@@ -68,7 +76,20 @@
     "exampleTitle": "Beispielfrage.",
     "exampleStory": "SrTiO3 hat ein hohes n (2.43, gemessen), aber eine Bandlücke nahe der blauen Kante des sichtbaren Bereichs. LaAlO3 hat eine breitere Lücke, aber ein niedrigeres n (2.07). Wenn La 25% von Sr und Al 25% von Ti ersetzt, bleibt n bei 2.2 oder höher, während sich die Lücke vergrößert? In \"{landscape}\" ist das orangefarbene Feld der Bereich des Kandidaten zwischen den beiden Endgliedern. Dann \"{score}\" und \"{spatial}\" öffnen.",
     "exampleError": "Das Beispiel wurde nicht ausgeführt: {error}",
-    "dismiss": "Schließen"
+    "dismiss": "Schließen",
+    "stepGuided": {
+      "goal": "Dein Ziel",
+      "host": "Startkristall",
+      "candidate": "Atome austauschen",
+      "evidence": "Ergebnis lesen"
+    },
+    "hintGuided": {
+      "goal": "Ziel unten behalten oder ändern. Dann einen Startkristall wählen.",
+      "host": "Einen der vier Startkristalle wählen oder selbst suchen.",
+      "candidate": "Wähle, welche Atome in {host} ausgetauscht werden, oder lasse dir von Muse Spark einen Austausch vorschlagen.",
+      "evidence": "Lies, was {id} bedeutet, vergleiche es mit bekannten Materialien und halte dann deine Entscheidung fest."
+    },
+    "exampleStoryGuided": "SrTiO3 bricht Licht stark, absorbiert aber nahe dem blauen Ende. LaAlO3 bleibt klar, bricht Licht aber schwächer. Wenn wir ein Viertel des Sr durch La und ein Viertel des Ti durch Al ersetzen, behalten wir das Beste aus beiden? Das Ergebnis steht unten."
   },
   "Host": {
     "title": "2. Hoststruktur wählen",
@@ -96,7 +117,20 @@
     "hintCod": "Die Crystallography Open Database nach Formel nach gemessenen Kristallstrukturen durchsuchen (CC0). Originalautoren angeben.",
     "placeholderCod": "Formel, z. B. SrTiO3",
     "loadingCod": "Struktur von COD wird geladen…",
-    "codCredit": "Strukturen aus der Crystallography Open Database (CC0). Bitte die Originalautoren angeben."
+    "codCredit": "Strukturen aus der Crystallography Open Database (CC0). Bitte die Originalautoren angeben.",
+    "titleGuided": {
+      "before": "2. Wähle einen",
+      "term": "Startkristall"
+    },
+    "hintGuided": "Diesen Kristall wirst du verändern, um etwas Neues zu erzeugen. Wenn du unsicher bist, starte mit einem davon.",
+    "starter": {
+      "srtio3": "Ein gängiger Kristall, der Licht stark bricht und leicht zu verändern ist.",
+      "anatase": "Das Weißpigment in Farbe und Sonnencreme. Es bricht Licht sehr stark.",
+      "zns": "Ein lang genutztes optisches Material, das für das Auge klar ist.",
+      "linbo3": "Verwendet in Lasern und Telekommunikationsoptik."
+    },
+    "searchInstead": "Oder nach Formel suchen, zum Beispiel ZrO2:",
+    "loadingStarter": "Kristall wird geladen…"
   },
   "Structure": {
     "title": "3. Struktur",
@@ -108,7 +142,16 @@
     "source": "Quelle",
     "warnings": "Parser-Warnungen",
     "baseline": "Host-Prüfung (Basislinie)",
-    "optical": "Belege zum Brechungsindex (nach Formel)"
+    "optical": "Belege zum Brechungsindex (nach Formel)",
+    "titleGuided": "3. Kristall ansehen",
+    "emptyGuided": "Wähle oben einen Startkristall, um seine Atome hier zu sehen.",
+    "howToRead": {
+      "before": "Jede Kugel ist ein Atom. Eine",
+      "term": "Elementarzelle",
+      "after": "ist der dünne Kasten. Der gesamte Kristall ist dieser Kasten, in jede Richtung wiederholt. Farben zeigen die Elemente."
+    },
+    "details": "Kristalldetails",
+    "evidenceDetails": "Technische Belege für diesen Kristall"
   },
   "Candidate": {
     "title": "4. Kandidaten",
@@ -117,6 +160,12 @@
     "to": "Neues Element",
     "toPlaceholder": "z. B. Zr",
     "fraction": "Anteil",
+    "arrangement": "Platzanordnung",
+    "arrangementOption": {
+      "spread": "Weit auseinander (Standard)",
+      "lowest_ewald": "Niedrigste Ewald-Energie"
+    },
+    "arrangementHint": "Vergleicht jede Anordnung der neuen Atome anhand der Punktladungs-(Ewald-)Energie mit formalen Ladungen, in einer Zelle mit mindestens 2 von jedem neuen Atom, sodass die Zelle größer sein kann. Relaxierung kann die Reihenfolge ändern.",
     "ofSites": "der {element}-Lagen",
     "remove": "Entfernen",
     "addRow": "+ Co-Substitution",
@@ -137,7 +186,17 @@
       "record": "JSON-Datensatz"
     },
     "exporting": "Wird vorbereitet…",
-    "exportNote": "Die CIF listet alle Atomlagen (P1) mit Provenienz-Header auf. Der JSON-Datensatz fügt Ziel-Score, 3D-Strukturanalyse, Datenquellen und Einschränkungen hinzu."
+    "exportNote": "Die CIF listet alle Atomlagen (P1) mit Provenienz-Header auf. Der JSON-Datensatz fügt Ziel-Score, 3D-Strukturanalyse, Datenquellen und Einschränkungen hinzu.",
+    "titleGuided": {
+      "before": "4.",
+      "term": "Atome austauschen",
+      "after": "für ein neues Material"
+    },
+    "hintGuided": "Wähle ein Element in {host}, das Ersatzelement und den Anteil für den Austausch. Die App baut den neuen Kristall und prüft ihn.",
+    "generateGuided": "Neues Material erzeugen",
+    "suggest": "Von Muse Spark einen Austausch vorschlagen lassen",
+    "moreTools": "Weitere Tools: Export, Relaxierung, Publikation, Laborergebnisse",
+    "checkDetails": "Details der Strukturprüfungen"
   },
   "Critique": {
     "title": "Muse Spark-Kritik",
@@ -175,7 +234,8 @@
     "sent": "An den Forschungsagenten gesendet (Abschnitt 6)",
     "warnings": "Probleme, die die Prüfungen in dieser Kritik gefunden haben",
     "evidence": "Belege, die das Modell gesehen hat ({count} Einträge)",
-    "older": "Frühere Kritiken ({count})"
+    "older": "Frühere Kritiken ({count})",
+    "hintGuided": "Muse Spark betrachtet Bilder dieses Kristalls und die Zahlen und gibt eine Zweitmeinung. Zahlen ohne Beleg werden markiert."
   },
   "Evidence": {
     "experimental": "Gemessener Wert aus einem Experiment.",
@@ -194,7 +254,11 @@
     "relaxed": "relaxiert",
     "unrelaxed": "Unrelaxiert",
     "title": "5. Belege",
-    "tabSpatial": "3D-Struktur"
+    "tabSpatial": "3D-Struktur",
+    "titleGuided": "5. Mit bekannten Materialien vergleichen",
+    "hintGuided": "Sieh, wo dein Startkristall und dein Kandidat unter bereits bekannten Materialien liegen.",
+    "readLandscape": "Jeder Punkt ist ein bekanntes Material. Oben bedeutet stärkere Lichtbrechung, rechts bedeutet klarer. AR-Brillen brauchen den Bereich oben rechts, den wenige Punkte erreichen. Darum lohnt sich die Suche nach neuen Materialien.",
+    "readScore": "Dies ist dasselbe Ergebnis wie in der Zusammenfassung oben, mit der Quelle jeder Zahl."
   },
   "Score": {
     "summary": "{meets} von {total} Kriterien erfüllt",
@@ -262,7 +326,16 @@
     "noToolCalls": "Keine Werkzeugaufrufe in dieser Antwort. Zahlen darin als unbestätigt betrachten.",
     "error": "Fehler: {message}",
     "reset": "Neue Unterhaltung",
-    "created": "Erstellt:"
+    "created": "Erstellt:",
+    "titleGuided": "Muse Spark fragen",
+    "hintGuided": "Frag alles, auch Grundlegendes. Muse Spark sieht deine Auswahl und schlägt Zahlen mit seinen Tools nach.",
+    "placeholderGuided": "Stelle eine Frage in eigenen Worten",
+    "ask": {
+      "bandGap": "Was ist eine Bandlücke?",
+      "hard": "Warum ist ein klares, stark lichtbrechendes Material schwer zu finden?",
+      "next": "Was sollte ich als Nächstes versuchen?"
+    },
+    "noToolCallsGuided": "Diese Antwort hat die Datentools nicht verwendet. Behandle alle Zahlen darin als ungeprüft."
   },
   "Decision": {
     "title": "Ihre Entscheidung zu {id}",
@@ -276,7 +349,9 @@
     "modifyHint": "Der Agent überarbeitet diesen Kandidaten anhand Ihrer Begründung.",
     "exploreHint": "Der Agent testet bis zu 2 Alternativen anhand Ihrer Begründung.",
     "rejectHint": "Festhalten, dass dieser Kandidat nicht nützlich ist, und warum.",
-    "last": "Letzte Entscheidung: {decision}"
+    "last": "Letzte Entscheidung: {decision}",
+    "placeholderGuided": "Warum? Zum Beispiel: Es bricht Licht nicht stark genug, also ein anderes Element versuchen.",
+    "hintGuided": "Deine Entscheidung wird mit Begründung gespeichert. Ändern und Erkunden bitten Muse Spark ebenfalls um einen neuen Versuch, also sag, was geändert werden soll."
   },
   "Optical": {
     "loading": "Optische Daten werden geladen…",
@@ -428,5 +503,133 @@
     "openAccess": "Open Access",
     "source": "Quelle: {source}",
     "sourceFailed": "{source}: {reason}"
+  },
+  "Level": {
+    "label": "Anzeigeebene",
+    "guided": "Geführt",
+    "expert": "Experte",
+    "guidedHint": "Einfache Worte und die Hauptschritte. Technische Werkzeuge einen Klick entfernt.",
+    "expertHint": "Alle Werkzeuge und Zahlen auf dem Bildschirm."
+  },
+  "Intro": {
+    "problemTitle": "Das Problem",
+    "problemText": "AR-Brillen führen das Bild durch eine dünne, klare Schicht in der Linse. Je stärker diese Schicht Licht bricht, desto breiter kann das Bild sein. Doch stark lichtbrechende Materialien absorbieren oft Blaulicht und wirken gelb. Wenige Materialien können beides.",
+    "doTitle": "Was du hier tust",
+    "doText": "Wähle einen bekannten Kristall und ersetze einige seiner Atome durch ein anderes Element. Das ergibt ein neues Kandidatenmaterial. Du brauchst kein Labor und keine Simulationssoftware.",
+    "getTitle": "Was du erhältst",
+    "getText": "In Sekunden: wie nah der Kandidat deinem Ziel ist, woher jede Zahl kommt und was du als Nächstes versuchen solltest. Muse Spark, die KI, kann das Ergebnis erklären und Änderungen vorschlagen.",
+    "limit": "Ein Kandidat ist eine zu testende Idee, kein bewährtes Material. Dieses Tool hilft dir zu entscheiden, welche Ideen eine Simulation oder eine Laborprobe verdienen.",
+    "example": "Zeig mir ein Beispiel",
+    "start": "Allein starten",
+    "whatIsThis": "Wofür ist dieses Tool?"
+  },
+  "Glossary": {
+    "about": "Was bedeutet {term}?",
+    "n": {
+      "name": "Brechungsindex (n)",
+      "text": "Wie stark ein Material Licht bricht. Fensterglas liegt bei etwa 1.5 und Diamant bei etwa 2.4. Ein höheres n lässt AR-Brillen ein breiteres Bild zeigen."
+    },
+    "band_gap": {
+      "name": "Bandlücke",
+      "text": "Die Energie in Elektronenvolt (eV), die Licht braucht, damit das Material es absorbieren kann. Oberhalb von etwa 3.1 eV passiert alles sichtbare Licht und das Material wirkt klar. Eine kleinere Lücke absorbiert zuerst Blau, daher wirkt das Material gelb oder dunkel."
+    },
+    "host": {
+      "name": "Startkristall (Host)",
+      "text": "Ein bekanntes Material, das du veränderst, um einen Kandidaten zu erzeugen."
+    },
+    "candidate": {
+      "name": "Kandidat",
+      "text": "Eine neue Materialidee, erzeugt durch Atomaustausch in einem Startkristall. Noch hat sie niemand hergestellt oder vermessen."
+    },
+    "swap": {
+      "name": "Atomaustausch (Substitution)",
+      "text": "Einige Atome eines Elements werden durch ein anderes Element auf denselben Positionen im Kristall ersetzt."
+    },
+    "cell": {
+      "name": "Elementarzelle",
+      "text": "Der kleine Atomkasten, der in jede Richtung wiederholt wird, um den gesamten Kristall aufzubauen."
+    },
+    "experimental": {
+      "name": "Experimentell",
+      "text": "Im Labor gemessen. Dies ist hier die stärkste Art von Beleg."
+    },
+    "dft": {
+      "name": "DFT-berechnet",
+      "text": "Per Computersimulation (Dichtefunktionaltheorie) berechnet, nicht gemessen. Bandlücken daraus fallen meist zu niedrig aus."
+    },
+    "heuristic": {
+      "name": "Heuristik",
+      "text": "Ein grober, aus ähnlichen Materialien geschätzter Bereich. Weder Messung noch Vorhersage."
+    },
+    "unknown": {
+      "name": "Unbekannt",
+      "text": "Kein verlässlicher Wert verfügbar."
+    }
+  },
+  "Viewer": {
+    "controls": "Ziehen zum Drehen. Scrollen zum Zoomen."
+  },
+  "Plain": {
+    "nScale": "Brechungsindex-Skala von Glas bis Diamant. Dein Ziel ist mindestens {goal}.",
+    "gapScale": "Sichtbares Licht von Blau bis Rot. Eine Bandlücke von {goal} eV bedeutet, dass Licht über {nm} nm durchtritt.",
+    "goalAtLeast": "Ziel: {value} oder mehr",
+    "goalClearFrom": "Ziel: klar oberhalb von {nm} nm",
+    "glass": "Glas",
+    "sapphire": "Saphir",
+    "diamond": "Diamant",
+    "blue": "Blau",
+    "green": "Grün",
+    "yellow": "Gelb",
+    "red": "Rot",
+    "criterion": {
+      "n": "Bricht Licht",
+      "band_gap": "Bleibt klar",
+      "elements": "Erlaubte Elemente",
+      "structure": "Atome passen zusammen"
+    },
+    "sentence": {
+      "n": {
+        "meets": "Es bricht Licht mindestens so stark, wie dein Ziel verlangt.",
+        "uncertain": "Die Schätzung überspannt dein Ziel, daher bricht es vielleicht genug Licht oder auch nicht.",
+        "fails": "Es bricht Licht schwächer, als dein Ziel verlangt.",
+        "unknown": "Noch ist kein Wert bekannt, daher können wir es nicht sagen."
+      },
+      "band_gap": {
+        "meets": "Es sollte das Licht durchlassen, das dein Ziel verlangt.",
+        "uncertain": "Die Schätzung überspannt dein Ziel, daher absorbiert es vielleicht etwas Blaulicht (gestreifter Teil).",
+        "fails": "Es absorbiert Licht, das laut deinem Ziel durchtreten sollte (dunkler Teil), daher wirkte es getönt.",
+        "unknown": "Noch ist kein Wert bekannt, daher können wir es nicht sagen."
+      },
+      "elements": {
+        "meets": "Es enthält keines der von dir ausgeschlossenen Elemente.",
+        "uncertain": "Die Elemente konnten nicht vollständig geprüft werden.",
+        "fails": "Es enthält ein von dir ausgeschlossenes Element.",
+        "unknown": "Die Elemente konnten nicht geprüft werden."
+      },
+      "structure": {
+        "meets": "Die Schnellprüfungen fanden kein offensichtliches Problem bei der Atomanordnung.",
+        "uncertain": "Die Schnellprüfungen fanden ein mögliches Problem bei der Atomanordnung. Das schließt es nicht aus.",
+        "fails": "Die Schnellprüfungen fanden ein schwerwiegendes Problem bei der Atomanordnung.",
+        "unknown": "Es gibt nicht genug Informationen, um die Atomanordnung zu prüfen."
+      }
+    },
+    "headline": {
+      "meets": "Im Ziel. Einen genaueren Blick wert.",
+      "uncertain": "Es könnte funktionieren, ist aber noch nicht sicher.",
+      "fails": "Noch nicht erreicht."
+    },
+    "subject": "Kandidat {id} ({formula})",
+    "swap": "{from} → {to} {percent}%",
+    "loading": "Ergebnis wird berechnet…",
+    "hostTitle": "Wie {formula} im Vergleich zu deinem Ziel abschneidet",
+    "hostMark": "Der Ring auf der Skala markiert den Startkristall, {formula}.",
+    "caveat": "Dies ist eine zu testende Idee, kein bewährtes Material. Die Atome sitzen noch auf den Positionen des Startkristalls, und Bereiche sind grobe Schätzungen. Eine Simulation oder eine Laborprobe ist der eigentliche Test.",
+    "explain": "Erklär mir das",
+    "improve": "Besseren Austausch vorschlagen",
+    "seeEvidence": "Mit bekannten Materialien vergleichen",
+    "dftGapNote": "Dieser Wert ist berechnet, und berechnete Bandlücken fallen meist zu niedrig aus, daher kann das reale Material klarer sein."
+  },
+  "Workspace": {
+    "sharedAndPapers": "Geteilte Kandidaten und Forschungspapiere"
   }
 }

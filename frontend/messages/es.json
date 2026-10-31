@@ -4,8 +4,8 @@
     "description": "Un científico colaborativo de IA para el descubrimiento de materiales optoelectrónicos."
   },
   "Home": {
-    "tagline": "Un científico colaborativo de IA para el descubrimiento de materiales optoelectrónicos",
-    "intro": "Explora materiales candidatos para guías de onda de RA con Muse Spark. Cada cifra procede de una base de datos o de un cálculo, con su fuente."
+    "headline": "Un socio de investigación con IA para encontrar materiales nuevos para gafas de RA",
+    "lead": "Prueba una idea de material nuevo en segundos. Cada número muestra su origen."
   },
   "Language": {
     "label": "Idioma",
@@ -24,7 +24,9 @@
     "openAlexConfigured": "Clave de OpenAlex configurada",
     "openAlexMissing": "Sin clave de OpenAlex: la búsqueda bibliográfica usa un presupuesto diario compartido reducido.",
     "storePostgres": "Los candidatos se guardan en Postgres",
-    "storeMemory": "Los candidatos se conservan en memoria (se pierden al reiniciar). Configura DATABASE_URL para conservarlos."
+    "storeMemory": "Los candidatos se conservan en memoria (se pierden al reiniciar). Configura DATABASE_URL para conservarlos.",
+    "ready": "Conectado: datos e IA listos. Mostrar detalles",
+    "notReady": "La configuración no está completa. Algunas funciones no funcionarán."
   },
   "Goal": {
     "hint": "Define primero los objetivos. Cada anfitrión y candidato se evalúa según ellos, con la evidencia de cada veredicto.",
@@ -35,7 +37,13 @@
     "presetAr": "Preajuste de guía de onda RA",
     "presetToxic": "+ Elementos tóxicos",
     "note": "Una banda prohibida de unos 3,1 eV sitúa el borde de absorción cerca de 400 nm, el extremo azul del espectro visible.",
-    "title": "1. Objetivo de investigación"
+    "title": "1. Objetivo de investigación",
+    "titleGuided": "1. ¿Qué debe hacer el material?",
+    "hintGuided": "Las gafas de RA necesitan ambas cosas. Los valores siguientes son un buen punto de partida para RA, puedes mantenerlos.",
+    "nGuided": "Desviar fuertemente la luz",
+    "gapGuided": "Permanecer transparente (band gap, eV)",
+    "sentence": "Buscas un material que desvíe la luz al menos tanto como n = {n} y deje pasar luz visible de más de {nm} nm.",
+    "avoidToxic": "Evitar elementos tóxicos ({elements})"
   },
   "Guide": {
     "label": "Pasos del flujo de trabajo",
@@ -68,7 +76,20 @@
     "exampleTitle": "Pregunta de ejemplo.",
     "exampleStory": "SrTiO3 tiene un n alto (2.43, medido) pero una brecha de banda cerca del borde azul del rango visible. LaAlO3 tiene una brecha más amplia pero un n más bajo (2.07). Si La sustituye el 25% de Sr y Al sustituye el 25% de Ti, ¿se mantiene n en 2.2 o más mientras la brecha aumenta? En \"{landscape}\", el cuadro naranja es el intervalo del candidato entre los dos miembros finales. Luego abre \"{score}\" y \"{spatial}\".",
     "exampleError": "El ejemplo no se ejecutó: {error}",
-    "dismiss": "Cerrar"
+    "dismiss": "Cerrar",
+    "stepGuided": {
+      "goal": "Tu objetivo",
+      "host": "Cristal inicial",
+      "candidate": "Sustituir átomos",
+      "evidence": "Leer el resultado"
+    },
+    "hintGuided": {
+      "goal": "Mantén el objetivo siguiente o cámbialo. Luego elige un cristal inicial.",
+      "host": "Elige uno de los cuatro cristales iniciales o busca el tuyo.",
+      "candidate": "Elige qué átomos de {host} sustituir o deja que Muse Spark sugiera una sustitución.",
+      "evidence": "Lee lo que significa {id}, compáralo con materiales conocidos y registra tu decisión."
+    },
+    "exampleStoryGuided": "SrTiO3 desvía mucho la luz, pero empieza a absorber luz cerca del extremo azul. LaAlO3 se mantiene transparente, pero desvía menos la luz. Si sustituimos una cuarta parte del Sr por La y una cuarta parte del Ti por Al, ¿conservamos lo mejor de ambos? El resultado está abajo."
   },
   "Host": {
     "title": "2. Seleccionar estructura anfitriona",
@@ -96,7 +117,20 @@
     "hintCod": "Busca en Crystallography Open Database por fórmula estructuras cristalinas medidas (CC0). Cita a los autores originales.",
     "placeholderCod": "Fórmula, p. ej., SrTiO3",
     "loadingCod": "Cargando estructura desde COD…",
-    "codCredit": "Estructuras de Crystallography Open Database (CC0). Reconoce a los autores originales."
+    "codCredit": "Estructuras de Crystallography Open Database (CC0). Reconoce a los autores originales.",
+    "titleGuided": {
+      "before": "2. Elige un",
+      "term": "cristal inicial"
+    },
+    "hintGuided": "Modificarás este cristal para crear algo nuevo. Si no estás seguro, empieza con cualquiera de estos.",
+    "starter": {
+      "srtio3": "Un cristal común que desvía mucho la luz y es fácil de modificar.",
+      "anatase": "El pigmento blanco de pinturas y protectores solares. Desvía la luz con mucha fuerza.",
+      "zns": "Un material óptico usado desde hace mucho tiempo, transparente a simple vista.",
+      "linbo3": "Usado en láseres y óptica de telecomunicaciones."
+    },
+    "searchInstead": "O busca por fórmula, por ejemplo ZrO2:",
+    "loadingStarter": "Cargando el cristal…"
   },
   "Structure": {
     "title": "3. Estructura",
@@ -108,7 +142,16 @@
     "source": "Fuente",
     "warnings": "Avisos del analizador",
     "baseline": "Verificación del anfitrión (base)",
-    "optical": "Evidencia del índice de refracción (por fórmula)"
+    "optical": "Evidencia del índice de refracción (por fórmula)",
+    "titleGuided": "3. Observa el cristal",
+    "emptyGuided": "Elige un cristal inicial arriba para ver sus átomos aquí.",
+    "howToRead": {
+      "before": "Cada esfera es un átomo. Una",
+      "term": "celda unitaria",
+      "after": "es el recuadro fino. Todo el cristal es este recuadro repetido en todas las direcciones. Los colores muestran los elementos."
+    },
+    "details": "Detalles del cristal",
+    "evidenceDetails": "Evidencia técnica de este cristal"
   },
   "Candidate": {
     "title": "4. Candidatos",
@@ -117,6 +160,12 @@
     "to": "Elemento nuevo",
     "toPlaceholder": "p. ej., Zr",
     "fraction": "Fracción",
+    "arrangement": "Disposición de sitios",
+    "arrangementOption": {
+      "spread": "Separados (predeterminado)",
+      "lowest_ewald": "Menor energía de Ewald"
+    },
+    "arrangementHint": "Compara todas las disposiciones de los átomos nuevos por energía de cargas puntuales (Ewald) con cargas formales, en una celda con al menos 2 de cada átomo nuevo, por lo que la celda puede ser mayor. La relajación puede cambiar el orden.",
     "ofSites": "de los sitios de {element}",
     "remove": "Eliminar",
     "addRow": "+ Cosustitución",
@@ -137,7 +186,17 @@
       "record": "Registro JSON"
     },
     "exporting": "Preparando…",
-    "exportNote": "El CIF enumera todos los sitios (P1) con un encabezado de procedencia. El registro JSON añade la puntuación del objetivo, el análisis de la estructura 3D, las fuentes de datos y las advertencias."
+    "exportNote": "El CIF enumera todos los sitios (P1) con un encabezado de procedencia. El registro JSON añade la puntuación del objetivo, el análisis de la estructura 3D, las fuentes de datos y las advertencias.",
+    "titleGuided": {
+      "before": "4.",
+      "term": "Sustituye átomos",
+      "after": "para crear un material nuevo"
+    },
+    "hintGuided": "Elige un elemento de {host}, el elemento que lo reemplazará y cuánto sustituir. La aplicación construye el nuevo cristal y lo evalúa.",
+    "generateGuided": "Crear el material nuevo",
+    "suggest": "Deja que Muse Spark sugiera una sustitución",
+    "moreTools": "Más herramientas: exportación, relajación, publicación, resultados de laboratorio",
+    "checkDetails": "Detalles de las comprobaciones estructurales"
   },
   "Critique": {
     "title": "Crítica de Muse Spark",
@@ -175,7 +234,8 @@
     "sent": "Enviado al agente de investigación (sección 6)",
     "warnings": "Problemas detectados por las comprobaciones en esta crítica",
     "evidence": "Evidencia que vio el modelo ({count} elementos)",
-    "older": "Críticas anteriores ({count})"
+    "older": "Críticas anteriores ({count})",
+    "hintGuided": "Muse Spark analiza imágenes de este cristal y los números, y da una segunda opinión. Los números que no están en la evidencia se marcan."
   },
   "Evidence": {
     "experimental": "Valor medido de un experimento.",
@@ -194,7 +254,11 @@
     "relaxed": "relajado",
     "unrelaxed": "Sin relajar",
     "title": "5. Evidencia",
-    "tabSpatial": "Estructura 3D"
+    "tabSpatial": "Estructura 3D",
+    "titleGuided": "5. Compara con materiales conocidos",
+    "hintGuided": "Mira dónde se sitúan tu cristal inicial y tu candidato entre materiales ya conocidos.",
+    "readLandscape": "Cada punto es un material conocido. Hacia arriba significa que desvía más la luz, y hacia la derecha que es más transparente. Las gafas de RA necesitan la zona superior derecha, y pocos puntos la alcanzan. Por eso vale la pena buscar materiales nuevos.",
+    "readScore": "Este es el mismo resultado del resumen anterior, con la fuente de cada número."
   },
   "Score": {
     "summary": "{meets} de {total} criterios cumplidos",
@@ -262,7 +326,16 @@
     "noToolCalls": "Sin llamadas a herramientas en esta respuesta. Trata cualquier cifra como no verificada.",
     "error": "Error: {message}",
     "reset": "Nueva conversación",
-    "created": "Creado:"
+    "created": "Creado:",
+    "titleGuided": "Pregunta a Muse Spark",
+    "hintGuided": "Pregunta lo que sea, incluso algo básico. Muse Spark puede ver lo que has elegido y busca números con sus herramientas.",
+    "placeholderGuided": "Haz una pregunta con tus propias palabras",
+    "ask": {
+      "bandGap": "¿Qué es un band gap?",
+      "hard": "¿Por qué es difícil encontrar un material transparente que desvíe mucho la luz?",
+      "next": "¿Qué debería probar ahora?"
+    },
+    "noToolCallsGuided": "Esta respuesta no usó las herramientas de datos. Considera los números como no verificados."
   },
   "Decision": {
     "title": "Tu decisión sobre {id}",
@@ -276,7 +349,9 @@
     "modifyHint": "El agente revisa este candidato a partir de tu motivo.",
     "exploreHint": "El agente prueba hasta 2 alternativas a partir de tu motivo.",
     "rejectHint": "Registra que este candidato no es útil, y por qué.",
-    "last": "Última decisión: {decision}"
+    "last": "Última decisión: {decision}",
+    "placeholderGuided": "¿Por qué? Por ejemplo: no desvía lo suficiente la luz, así que prueba otro elemento.",
+    "hintGuided": "Tu decisión se guarda con tu motivo. Modificar y Explorar también piden a Muse Spark que lo intente de nuevo, así que indica qué quieres cambiar."
   },
   "Optical": {
     "loading": "Cargando datos ópticos…",
@@ -428,5 +503,133 @@
     "openAccess": "Acceso abierto",
     "source": "Fuente: {source}",
     "sourceFailed": "{source}: {reason}"
+  },
+  "Level": {
+    "label": "Nivel de visualización",
+    "guided": "Guiado",
+    "expert": "Experto",
+    "guidedHint": "Palabras sencillas y los pasos principales. Herramientas técnicas a un clic.",
+    "expertHint": "Todas las herramientas y números en pantalla."
+  },
+  "Intro": {
+    "problemTitle": "El problema",
+    "problemText": "Las gafas de RA llevan la imagen a través de una capa fina y transparente en la lente. Cuanto más desvía la luz esa capa, más amplia puede ser la imagen. Pero los materiales que desvían mucho la luz suelen absorber la luz azul, por lo que se ven amarillos. Pocos materiales logran ambas cosas.",
+    "doTitle": "Lo que haces aquí",
+    "doText": "Elige un cristal conocido y sustituye algunos de sus átomos por otro elemento. Así obtienes un nuevo material candidato. No necesitas laboratorio ni software de simulación.",
+    "getTitle": "Lo que obtienes",
+    "getText": "En segundos: qué tan cerca está el candidato de tu objetivo, de dónde viene cada número y qué probar después. Muse Spark, la IA, puede explicar el resultado y sugerir cambios.",
+    "limit": "Un candidato es una idea por probar, no un material probado. Esta herramienta te ayuda a decidir qué ideas merecen una simulación o una muestra de laboratorio.",
+    "example": "Muéstrame un ejemplo",
+    "start": "Empezar por mi cuenta",
+    "whatIsThis": "¿Para qué sirve esta herramienta?"
+  },
+  "Glossary": {
+    "about": "¿Qué significa {term}?",
+    "n": {
+      "name": "Índice de refracción (n)",
+      "text": "Cómo de fuerte desvía un material la luz. El vidrio de ventana es ~1.5 y el diamante ~2.4. Un n mayor permite que las gafas de RA muestren una imagen más amplia."
+    },
+    "band_gap": {
+      "name": "Brecha de banda",
+      "text": "La energía, en electronvoltios (eV), que necesita la luz para que el material pueda absorberla. Por encima de unos 3.1 eV, toda la luz visible pasa y el material se ve transparente. Una brecha menor absorbe primero el azul, por lo que el material se ve amarillo u oscuro."
+    },
+    "host": {
+      "name": "Cristal inicial (host)",
+      "text": "Un material conocido que modificas para crear un candidato."
+    },
+    "candidate": {
+      "name": "Candidato",
+      "text": "Una idea de material nuevo, creada sustituyendo átomos en un cristal inicial. Nadie la ha fabricado ni medido aún."
+    },
+    "swap": {
+      "name": "Sustitución atómica",
+      "text": "Algunos átomos de un elemento se reemplazan por otro elemento, en las mismas posiciones del cristal."
+    },
+    "cell": {
+      "name": "Celda unitaria",
+      "text": "La pequeña caja de átomos que se repite en todas las direcciones para formar todo el cristal."
+    },
+    "experimental": {
+      "name": "Experimental",
+      "text": "Medido en un laboratorio. Es el tipo de evidencia más sólida aquí."
+    },
+    "dft": {
+      "name": "Calculado con DFT",
+      "text": "Calculado por simulación por ordenador (density functional theory), no medido. Los band gaps así obtenidos suelen ser demasiado bajos."
+    },
+    "heuristic": {
+      "name": "Heurístico",
+      "text": "Un rango aproximado estimado a partir de materiales similares. No es ni una medición ni una predicción."
+    },
+    "unknown": {
+      "name": "Desconocido",
+      "text": "No hay ningún valor fiable disponible."
+    }
+  },
+  "Viewer": {
+    "controls": "Arrastra para girar. Desplázate para ampliar."
+  },
+  "Plain": {
+    "nScale": "Escala de índice de refracción de vidrio a diamante. Tu objetivo es al menos {goal}.",
+    "gapScale": "Luz visible de azul a rojo. Un band gap de {goal} eV significa que pasa la luz de más de {nm} nm.",
+    "goalAtLeast": "Objetivo: {value} o más",
+    "goalClearFrom": "Objetivo: transparente por encima de {nm} nm",
+    "glass": "Vidrio",
+    "sapphire": "Zafiro",
+    "diamond": "Diamante",
+    "blue": "Azul",
+    "green": "Verde",
+    "yellow": "Amarillo",
+    "red": "Rojo",
+    "criterion": {
+      "n": "Desvía la luz",
+      "band_gap": "Permanece transparente",
+      "elements": "Elementos permitidos",
+      "structure": "Los átomos encajan"
+    },
+    "sentence": {
+      "n": {
+        "meets": "Desvía la luz al menos tanto como pide tu objetivo.",
+        "uncertain": "La estimación abarca tu objetivo, por lo que podría desviar suficiente luz o no.",
+        "fails": "Desvía la luz con menos fuerza de lo que pide tu objetivo.",
+        "unknown": "Aún no se conoce ningún valor, así que no podemos saberlo."
+      },
+      "band_gap": {
+        "meets": "Debería dejar pasar la luz que pide tu objetivo.",
+        "uncertain": "La estimación abarca tu objetivo, por lo que podría absorber parte de la luz azul (parte rayada).",
+        "fails": "Absorbe luz que según tu objetivo debería pasar (parte oscura), por lo que se vería tintado.",
+        "unknown": "Aún no se conoce ningún valor, así que no podemos saberlo."
+      },
+      "elements": {
+        "meets": "No contiene ninguno de los elementos que excluiste.",
+        "uncertain": "No pudimos comprobar por completo los elementos.",
+        "fails": "Contiene un elemento que excluiste.",
+        "unknown": "No pudimos comprobar los elementos."
+      },
+      "structure": {
+        "meets": "Las comprobaciones rápidas no encontraron ningún problema evidente de encaje de los átomos.",
+        "uncertain": "Las comprobaciones rápidas encontraron un posible problema de encaje de los átomos. Esto no lo descarta.",
+        "fails": "Las comprobaciones rápidas encontraron un problema grave de encaje de los átomos.",
+        "unknown": "No hay suficiente información para comprobar el encaje de los átomos."
+      }
+    },
+    "headline": {
+      "meets": "En el objetivo. Vale la pena examinarlo más de cerca.",
+      "uncertain": "Podría funcionar, pero aún no es seguro.",
+      "fails": "Aún no lo logra."
+    },
+    "subject": "Candidato {id} ({formula})",
+    "swap": "{from} → {to} {percent}%",
+    "loading": "Calculando el resultado…",
+    "hostTitle": "Cómo se compara {formula} con tu objetivo",
+    "hostMark": "El anillo en la escala marca el cristal inicial, {formula}.",
+    "caveat": "Esta es una idea por probar, no un material probado. Los átomos aún están en las posiciones del cristal inicial, y los rangos son estimaciones aproximadas. Una simulación o una muestra de laboratorio es la prueba real.",
+    "explain": "Explícamelo",
+    "improve": "Sugerir una mejor sustitución",
+    "seeEvidence": "Comparar con materiales conocidos",
+    "dftGapNote": "Este valor es calculado, y los band gaps calculados suelen salir demasiado bajos, por lo que el material real podría ser más transparente."
+  },
+  "Workspace": {
+    "sharedAndPapers": "Candidatos compartidos y artículos científicos"
   }
 }

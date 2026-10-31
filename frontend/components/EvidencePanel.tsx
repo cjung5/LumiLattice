@@ -6,6 +6,7 @@ import { DispersionChart } from "@/components/charts/DispersionChart";
 import { LandscapeChart, type MarkedPoint, type RangeBox } from "@/components/charts/LandscapeChart";
 import { SiteMetricsChart } from "@/components/charts/SiteMetricsChart";
 import { ScoreCard } from "@/components/ScoreCard";
+import { useLevel } from "@/components/Level";
 import { SpatialPanel } from "@/components/SpatialPanel";
 import {
   getDispersion,
@@ -32,6 +33,17 @@ type Props = {
 
 let landscapeCache: Promise<Landscape> | null = null;
 
+/** One shared request per page. A failure is not cached, and it gets one retry. */
+function loadLandscape(): Promise<Landscape> {
+  landscapeCache ??= getLandscape()
+    .catch(() => new Promise((wait) => setTimeout(wait, 1000)).then(getLandscape))
+    .catch((err) => {
+      landscapeCache = null;
+      throw err;
+    });
+  return landscapeCache;
+}
+
 /** Debounced async load that ignores stale responses. */
 function useLoad<T>(key: string | null, load: () => Promise<T>, delay = 300): T | null {
   const [value, setValue] = useState<{ key: string; data: T } | null>(null);
@@ -54,11 +66,14 @@ function useLoad<T>(key: string | null, load: () => Promise<T>, delay = 300): T 
 
 export function EvidencePanel({ goal, host, hostFormula, hostAssessment, candidate }: Props) {
   const t = useTranslations("Evidence");
-  const [tab, setTab] = useState<Tab>("landscape");
+  const guided = useLevel().level === "guided";
+  const [selectedTab, setTab] = useState<Tab>("landscape");
+  // Guided mode keeps the two views that need no background; Expert mode has the others.
+  const tab: Tab = guided && (selectedTab === "dispersion" || selectedTab === "sites" || selectedTab === "spatial") ? "landscape" : selectedTab;
   const [relaxedView, setRelaxedView] = useState(false);
   const goalKey = JSON.stringify(goal);
 
-  const landscape = useLoad("landscape", () => (landscapeCache ??= getLandscape()), 0);
+  const landscape = useLoad("landscape", loadLandscape, 0);
   const hostScore = useLoad<GoalScore>(hostFormula ? `${hostFormula}|${goalKey}` : null, () => scoreGoal(goal, { formula: hostFormula! }));
   const candidateScore = useLoad<GoalScore>(
     candidate ? `${candidate.candidate_id}|${goalKey}` : null,
@@ -101,16 +116,20 @@ export function EvidencePanel({ goal, host, hostFormula, hostAssessment, candida
 
   const tabs: { id: Tab; label: string }[] = [
     { id: "landscape", label: t("tabLandscape") },
-    { id: "dispersion", label: t("tabDispersion") },
-    { id: "sites", label: t("tabSites") },
-    { id: "spatial", label: t("tabSpatial") },
+    ...(guided
+      ? []
+      : ([
+          { id: "dispersion", label: t("tabDispersion") },
+          { id: "sites", label: t("tabSites") },
+          { id: "spatial", label: t("tabSpatial") },
+        ] as const)),
     { id: "score", label: t("tabScore") },
   ];
 
   return (
     <section className="rounded-lg border border-line bg-surface p-4">
-      <h2 className="font-semibold">{t("title")}</h2>
-      <p className="mb-3 text-sm text-muted">{t("hint")}</p>
+      <h2 className="font-semibold">{guided ? t("titleGuided") : t("title")}</h2>
+      <p className="mb-3 text-sm text-muted">{guided ? t("hintGuided") : t("hint")}</p>
       <div className="mb-3 flex flex-wrap gap-2" role="tablist">
         {tabs.map((item) => (
           <button
@@ -126,6 +145,7 @@ export function EvidencePanel({ goal, host, hostFormula, hostAssessment, candida
         ))}
       </div>
 
+      {guided && <p className="mb-2 text-sm">{t(tab === "score" ? "readScore" : "readLandscape")}</p>}
       {tab === "score" && (
         <div className="grid gap-3 md:grid-cols-2">
           {hostScore && <ScoreCard score={hostScore} title={t("hostScore", { formula: hostFormula ?? "" })} />}

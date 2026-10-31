@@ -1,7 +1,8 @@
 "use client";
 
 import type { GLViewer } from "3dmol";
-import { useEffect, useImperativeHandle, useRef, type Ref } from "react";
+import { useTranslations } from "next-intl";
+import { useEffect, useImperativeHandle, useRef, useState, type Ref } from "react";
 
 // Jmol colors cover every element; 3Dmol's default scheme paints many cations the same pink.
 const STICK = { radius: 0.12, colorscheme: "Jmol" };
@@ -33,6 +34,39 @@ function label(viewer: GLViewer, indices: number[], species: string[]) {
   }
 }
 
+const BOUNDARY = 1e-3;
+
+/**
+ * Atoms on a cell face, edge, or corner belong to the neighboring cells too. Textbooks draw them
+ * on every side, or a cube looks lopsided. The copies go after the real atoms in the P1 atom
+ * list, so viewer index i is still site i. Display only: nothing is sent to the backend.
+ */
+export function withBoundaryCopies(cif: string): string {
+  const row = /^\s*(\S+)\s+(\S+)\s+(\d+)\s+(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)\s+([\d.]+)\s*$/;
+  const copies: string[] = [];
+  for (const line of cif.split("\n")) {
+    const match = row.exec(line);
+    if (!match) continue;
+    const frac = [match[4], match[5], match[6]].map(Number);
+    const positions = frac.map((f) => {
+      const wrapped = Math.abs(f - 1) < BOUNDARY ? 0 : f;
+      return Math.abs(wrapped) < BOUNDARY ? [0, 1] : [wrapped];
+    });
+    for (const x of positions[0]) {
+      for (const y of positions[1]) {
+        for (const z of positions[2]) {
+          const moved = [x, y, z].some((v, i) => Math.abs(v - frac[i]) > BOUNDARY);
+          if (moved) copies.push(`  ${match[1]}  ${match[2]}c${copies.length}  1  ${x.toFixed(8)}  ${y.toFixed(8)}  ${z.toFixed(8)}  ${match[7]}`);
+        }
+      }
+    }
+  }
+  return `${cif.trimEnd()}\n${copies.join("\n")}\n`;
+}
+
+const hexColor = (color: unknown) =>
+  typeof color === "number" ? `#${color.toString(16).padStart(6, "0")}` : String(color ?? "");
+
 /** Smaller JPEG copy of a rendered frame, so three views stay well under 1 MB. */
 async function shrink(dataUrl: string, maxWidth = 640): Promise<string> {
   const img = new Image();
@@ -53,7 +87,9 @@ async function shrink(dataUrl: string, maxWidth = 640): Promise<string> {
 // 3Dmol.js touches `window`, so it is loaded only in the browser.
 // The CIF is P1, so atom index i in the viewer is site i in the backend.
 export function CrystalViewer({ cif, emphasis = [], highlight = [], species = [], ref }: Props) {
+  const t = useTranslations("Viewer");
   const containerRef = useRef<HTMLDivElement>(null);
+  const [elements, setElements] = useState<[string, string][]>([]);
   const viewerRef = useRef<GLViewer | null>(null);
   const loadedCif = useRef<string | null>(null);
   // Camera straight down the c axis (before the display tilt), for axis-aligned captures.
@@ -75,14 +111,16 @@ export function CrystalViewer({ cif, emphasis = [], highlight = [], species = []
     (async () => {
       const $3Dmol = await import("3dmol");
       if (cancelled || !containerRef.current) return;
+      // Orthographic: parallel edges stay parallel. Perspective makes a cubic cell look warped.
       viewerRef.current ??= $3Dmol.createViewer(containerRef.current, {
         backgroundColor: "white",
+        orthographic: true,
       });
       const viewer = viewerRef.current;
 
       if (loadedCif.current !== cif) {
         viewer.clear();
-        const model = viewer.addModel(cif, "cif");
+        const model = viewer.addModel(withBoundaryCopies(cif), "cif");
         viewer.addUnitCell(model);
         viewer.zoomTo();
         axisView.current = viewer.getView();
@@ -90,6 +128,8 @@ export function CrystalViewer({ cif, emphasis = [], highlight = [], species = []
         viewer.rotate(-20, "x");
         viewer.rotate(25, "y");
         loadedCif.current = cif;
+        const present = [...new Set(viewer.selectedAtoms({}).map((a) => a.elem ?? ""))].filter(Boolean).sort();
+        setElements(present.map((el) => [el, hexColor($3Dmol.elementColors.Jmol[el])]));
       }
       decorate(viewer);
     })();
@@ -130,8 +170,7 @@ export function CrystalViewer({ cif, emphasis = [], highlight = [], species = []
         }
         const legend: Record<string, string> = {};
         for (const element of new Set(species)) {
-          const color = $3Dmol.elementColors.Jmol[element];
-          legend[element] = typeof color === "number" ? `#${color.toString(16).padStart(6, "0")}` : String(color ?? "");
+          legend[element] = hexColor($3Dmol.elementColors.Jmol[element]);
         }
         return { views, legend };
       },
@@ -141,9 +180,17 @@ export function CrystalViewer({ cif, emphasis = [], highlight = [], species = []
   );
 
   return (
-    <div
-      ref={containerRef}
-      className="relative h-80 w-full overflow-hidden rounded-md border border-line"
-    />
+    <div>
+      <div ref={containerRef} className="relative h-80 w-full overflow-hidden rounded-md border border-line" />
+      <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+        {elements.map(([element, color]) => (
+          <span key={element} className="inline-flex items-center gap-1">
+            <span aria-hidden className="h-3 w-3 rounded-full border border-line" style={{ background: color }} />
+            {element}
+          </span>
+        ))}
+        <span className="text-muted">{t("controls")}</span>
+      </div>
+    </div>
   );
 }

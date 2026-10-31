@@ -1,18 +1,22 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useMemo, useRef, useState, type FormEvent } from "react";
+import { useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { AssessmentPanel } from "@/components/AssessmentPanel";
 import { CritiquePanel } from "@/components/CritiquePanel";
 import { CrystalViewer, type ViewerHandle } from "@/components/CrystalViewer";
 import { DecisionBar } from "@/components/DecisionBar";
 import { PropertyValueView } from "@/components/EvidenceTag";
 import { ExperimentPanel } from "@/components/ExperimentPanel";
+import { Advanced, useLevel } from "@/components/Level";
+import { PlainResult } from "@/components/PlainResult";
 import { PublishControl } from "@/components/PublishControl";
 import { RelaxationPanel } from "@/components/RelaxationPanel";
+import { Term } from "@/components/Term";
 import {
   createCandidate,
   downloadExport,
+  type Arrangement,
   type Candidate,
   type DecisionKind,
   type ExportKind,
@@ -30,6 +34,10 @@ const FRACTIONS: { label: string; value: number }[] = [
   { label: "1/8", value: 1 / 8 },
 ];
 
+// Sent to the research agent in English; it replies in the UI language.
+const suggestPrompt = (host: string) =>
+  `Suggest one atom swap for ${host} that moves it toward my goal. Make the candidate, score it, and say why you chose that element.`;
+
 type Props = {
   /** Null when a candidate is opened from a link or the registry without a host. */
   host: HostRef | null;
@@ -42,7 +50,11 @@ type Props = {
   agentBusy: boolean;
   onCandidate: (candidate: Candidate) => void;
   /** Sends a message to the research agent (e.g. a change the critique suggests). */
-  onAskAgent?: (message: string) => void;
+  onAskAgent?: (message: string, shown?: string) => void;
+  onSeeEvidence?: () => void;
+  hostFormula?: string | null;
+  /** Shown above the result (the question the example asks). */
+  notice?: ReactNode;
   onSelect: (candidate: Candidate) => void;
   onDecide: (kind: DecisionKind, reason: string) => Promise<void>;
 };
@@ -57,13 +69,18 @@ export function CandidatePanel({
   agentBusy,
   onCandidate,
   onAskAgent,
+  onSeeEvidence,
+  hostFormula = null,
+  notice,
   onSelect,
   onDecide,
 }: Props) {
   const t = useTranslations("Candidate");
+  const guided = useLevel().level === "guided";
   const [rows, setRows] = useState<Substitution[]>([
     { element_from: hostElements[0] ?? "", element_to: "", fraction: 1 / 2 },
   ]);
+  const [arrangement, setArrangement] = useState<Arrangement>("spread");
   const [selectedCheck, setSelectedCheck] = useState<string | null>(null);
   const [showRelaxed, setShowRelaxed] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -127,6 +144,7 @@ export function CandidatePanel({
           element_from: r.element_from || elementOptions[0] || "",
           element_to: r.element_to.trim(),
         })),
+        arrangement,
       );
       onCandidate(candidate);
       setSelectedCheck(null);
@@ -147,8 +165,14 @@ export function CandidatePanel({
 
   return (
     <section className="rounded-lg border border-line bg-surface p-4">
-      <h2 className="font-semibold">{t("title")}</h2>
-      <p className="mb-3 text-sm text-muted">{host ? t("hint", { host: hostLabel }) : t("noHost")}</p>
+      <h2 className="font-semibold">
+        {guided ? (
+          <>{t("titleGuided.before")} <Term id="swap">{t("titleGuided.term")}</Term> {t("titleGuided.after")}</>
+        ) : (
+          t("title")
+        )}
+      </h2>
+      <p className="mb-3 text-sm text-muted">{host ? (guided ? t("hintGuided", { host: hostLabel }) : t("hint", { host: hostLabel })) : t("noHost")}</p>
 
       <form onSubmit={onSubmit} className="space-y-2">
         {rows.map((row, index) => (
@@ -200,6 +224,23 @@ export function CandidatePanel({
             )}
           </div>
         ))}
+        {!guided && <div className="flex flex-wrap items-center gap-2 text-sm">
+          <label className="flex items-center gap-2">
+            <span>{t("arrangement")}</span>
+            <select
+              className="rounded-md border border-line bg-background px-2 py-1.5"
+              value={arrangement}
+              onChange={(e) => setArrangement(e.target.value as Arrangement)}
+            >
+              {(["spread", "lowest_ewald"] as const).map((a) => (
+                <option key={a} value={a}>
+                  {t(`arrangementOption.${a}`)}
+                </option>
+              ))}
+            </select>
+          </label>
+          {arrangement === "lowest_ewald" && <span className="text-xs text-muted">{t("arrangementHint")}</span>}
+        </div>}
         <div className="flex flex-wrap gap-2">
           {rows.length < 3 && (
             <button
@@ -220,8 +261,18 @@ export function CandidatePanel({
             disabled={!canSubmit || !host}
             className="rounded-md bg-accent px-4 py-1.5 font-medium text-white disabled:opacity-50"
           >
-            {busy ? t("generating") : t("generateFromHost")}
+            {busy ? t("generating") : guided ? t("generateGuided") : t("generateFromHost")}
           </button>
+          {guided && host && onAskAgent && (
+            <button
+              type="button"
+              disabled={agentBusy}
+              onClick={() => onAskAgent(suggestPrompt(hostLabel), t("suggest"))}
+              className="rounded-md border border-accent px-4 py-1.5 font-medium text-accent disabled:opacity-50"
+            >
+              {t("suggest")}
+            </button>
+          )}
           {current && (
             <button
               type="button"
@@ -239,6 +290,12 @@ export function CandidatePanel({
 
       {current && (
         <div className="mt-4 space-y-3">
+          <div id="step-result" className="scroll-mt-4 space-y-3 md:scroll-mt-28">
+            {notice}
+            {guided && (
+              <PlainResult candidate={current} goal={goal} hostFormula={hostFormula} onAskAgent={onAskAgent} onSeeEvidence={onSeeEvidence} />
+            )}
+          </div>
           <h3 className="font-medium">
             {current.candidate_id}: {current.formula}
             <span className="ml-2 text-xs font-normal text-muted">
@@ -251,6 +308,7 @@ export function CandidatePanel({
               {copied ? t("linkCopied") : t("copyLink")}
             </button>
           </h3>
+          <Advanced label={t("moreTools")}>
           <div className="flex flex-wrap items-center gap-2 text-xs">
             <span className="text-muted">{t("export")}</span>
             {(["cif", ...(current.relaxation ? ["cif-relaxed" as const] : []), "record"] as ExportKind[]).map((kind) => (
@@ -274,7 +332,10 @@ export function CandidatePanel({
             onShowRelaxed={setShowRelaxed}
             onChange={onCandidate}
           />
-          <div className="grid gap-4 md:grid-cols-[3fr_2fr]">
+          <PublishControl key={`pub-${current.candidate_id}`} candidate={current} onChange={onCandidate} />
+          <ExperimentPanel key={`exp-${current.candidate_id}`} candidate={current} onChange={onCandidate} />
+          </Advanced>
+          <div className={guided ? "" : "grid gap-4 md:grid-cols-[3fr_2fr]"}>
             <div>
               <CrystalViewer
                 ref={viewer}
@@ -285,13 +346,24 @@ export function CandidatePanel({
               />
               <p className="mt-1 text-xs text-muted">{t("viewerLegend")}</p>
             </div>
-            <AssessmentPanel
-              assessment={assessment ?? current.assessment}
-              selectedCheck={selectedCheck}
-              onSelectCheck={setSelectedCheck}
-            />
+            {!guided && (
+              <AssessmentPanel
+                assessment={assessment ?? current.assessment}
+                selectedCheck={selectedCheck}
+                onSelectCheck={setSelectedCheck}
+              />
+            )}
           </div>
-          {current.optical_estimate && (
+          {guided && (
+            <Advanced label={t("checkDetails")}>
+              <AssessmentPanel
+                assessment={assessment ?? current.assessment}
+                selectedCheck={selectedCheck}
+                onSelectCheck={setSelectedCheck}
+              />
+            </Advanced>
+          )}
+          {!guided && current.optical_estimate && (
             <div className="rounded-md border border-line p-3 text-sm">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-medium">{t("nEstimate")}</span>
@@ -310,7 +382,7 @@ export function CandidatePanel({
               )}
             </div>
           )}
-          <p className="text-xs text-muted">{current.transformation.site_selection}</p>
+          {!guided && <p className="text-xs text-muted">{current.transformation.site_selection}</p>}
           <CritiquePanel
             key={`critique-${current.candidate_id}`}
             candidate={current}
@@ -320,8 +392,6 @@ export function CandidatePanel({
             onChange={onCandidate}
             onAskAgent={onAskAgent}
           />
-          <PublishControl key={`pub-${current.candidate_id}`} candidate={current} onChange={onCandidate} />
-          <ExperimentPanel key={`exp-${current.candidate_id}`} candidate={current} onChange={onCandidate} />
           <DecisionBar
             key={current.candidate_id}
             candidate={current}

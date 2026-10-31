@@ -7,6 +7,7 @@ from openai import APIError
 from pydantic import BaseModel, Field
 
 from app.agents.critique import View, evidence_pack, run_critique
+from app.agents.loop import Audience
 from app.agents.muse import ModelAPIKeyMissing, create_client
 from app.api.deps import OptionalMPDep, SettingsDep, client_id
 from app.api.materials import to_http
@@ -49,6 +50,7 @@ class HostRef(BaseModel):
 class CandidateRequest(BaseModel):
     host: HostRef
     substitutions: list[Substitution] = Field(min_length=1, max_length=4)
+    arrangement: Literal["spread", "lowest_ewald"] = "spread"
 
 
 def not_found(candidate_id: str) -> HTTPException:
@@ -60,7 +62,15 @@ def new_candidate(request: CandidateRequest, mp: OptionalMPDep) -> Candidate:
     store = get_store()
     try:
         host, host_ref, parent_id = load_host(store, mp, **request.host.model_dump())
-        return create_candidate(store, host, host_ref, request.substitutions, parent_id, mp)
+        return create_candidate(
+            store,
+            host,
+            host_ref,
+            request.substitutions,
+            parent_id,
+            mp,
+            arrangement=request.arrangement,
+        )
     except ToolError as exc:
         raise to_http(exc) from exc
 
@@ -301,6 +311,7 @@ class CritiqueRequest(BaseModel):
     geometry: Literal["unrelaxed", "relaxed"] = "unrelaxed"
     views: list[View] = Field(default_factory=list, max_length=3)
     legend: dict[str, str] = Field(default_factory=dict, max_length=30)  # element -> color
+    audience: Audience = "expert"
 
 
 @router.post("/candidates/{candidate_id}/critique")
@@ -344,6 +355,7 @@ def critique_candidate(
             body.legend,
             body.geometry,
             body.locale,
+            body.audience,
         )
     except ToolError as exc:
         raise to_http(exc) from exc

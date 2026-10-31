@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, Request
 from openai import APIError
 from pydantic import BaseModel, Field
 
-from app.agents.loop import AgentStepLimitReached, run_agent
+from app.agents.loop import BEGINNER_NOTE, AgentStepLimitReached, Audience, run_agent
 from app.agents.muse import ModelAPIKeyMissing, create_client
 from app.api.deps import LiteratureDep, OptionalMPDep, SettingsDep, client_id
 from app.models.candidates import DecisionKind
@@ -43,6 +43,7 @@ class AgentContext(BaseModel):
     decision: DecisionKind | None = None
     feedback: str | None = Field(default=None, max_length=2000)
     goal: Goal | None = None
+    audience: Audience = "expert"
 
 
 class AgentRequest(BaseModel):
@@ -83,6 +84,8 @@ def with_context(message: str, context: AgentContext | None) -> str:
         lines.append(
             f"Researcher decision on {context.current_candidate_id}: {context.decision}.{reason}"
         )
+    if context.audience == "beginner":
+        lines.append(BEGINNER_NOTE)
     if not lines:
         return message
     return "[Workspace]\n" + "\n".join(lines) + "\n[/Workspace]\n\n" + message

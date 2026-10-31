@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
+import { useLevel } from "@/components/Level";
 import type { ToolCall } from "@/lib/api";
 
 export type AgentTurn =
@@ -17,8 +18,14 @@ type Props = {
   onOpenCandidate: (candidateId: string) => void;
 };
 
+/** The model marks emphasis with **bold**. Everything else stays plain text. */
+function withBold(text: string) {
+  return text.split(/\*\*(.+?)\*\*/g).map((part, i) => (i % 2 ? <strong key={i}>{part}</strong> : part));
+}
+
 export function AgentPanel({ turns, busy, error, onSend, onReset, onOpenCandidate }: Props) {
   const t = useTranslations("Agent");
+  const guided = useLevel().level === "guided";
   const [message, setMessage] = useState("");
 
   function onSubmit(event: FormEvent) {
@@ -31,14 +38,29 @@ export function AgentPanel({ turns, busy, error, onSend, onReset, onOpenCandidat
   return (
     <section className="rounded-lg border border-line bg-surface p-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="font-semibold">{t("title")}</h2>
+        <h2 className="font-semibold">{guided ? t("titleGuided") : t("title")}</h2>
         {turns.length > 0 && (
           <button type="button" onClick={onReset} disabled={busy} className="text-sm text-muted underline">
             {t("reset")}
           </button>
         )}
       </div>
-      <p className="mb-3 text-sm text-muted">{t("hint")}</p>
+      <p className="mb-3 text-sm text-muted">{guided ? t("hintGuided") : t("hint")}</p>
+      {guided && (
+        <div className="mb-3 flex flex-wrap gap-2">
+          {(["bandGap", "hard", "next"] as const).map((key) => (
+            <button
+              key={key}
+              type="button"
+              disabled={busy}
+              onClick={() => onSend(t(`ask.${key}`))}
+              className="rounded-full border border-line px-3 py-1 text-left text-sm disabled:opacity-50"
+            >
+              {t(`ask.${key}`)}
+            </button>
+          ))}
+        </div>
+      )}
 
       <ol className="space-y-3">
         {turns.map((turn, index) =>
@@ -48,7 +70,7 @@ export function AgentPanel({ turns, busy, error, onSend, onReset, onOpenCandidat
             </li>
           ) : (
             <li key={index} className="space-y-2">
-              <p className="whitespace-pre-wrap text-sm">{turn.text}</p>
+              <p className="whitespace-pre-wrap text-sm">{withBold(turn.text)}</p>
               {turn.candidateIds.length > 0 && (
                 <div className="flex flex-wrap gap-2 text-sm">
                   <span className="text-muted">{t("created")}</span>
@@ -65,7 +87,7 @@ export function AgentPanel({ turns, busy, error, onSend, onReset, onOpenCandidat
                 </div>
               )}
               {turn.toolCalls.length === 0 ? (
-                <p className="text-xs text-warning">{t("noToolCalls")}</p>
+                <p className="text-xs text-warning">{guided ? t("noToolCallsGuided") : t("noToolCalls")}</p>
               ) : (
                 <details className="rounded-md border border-line p-2 text-xs">
                   <summary className="cursor-pointer">{t("toolCalls", { count: turn.toolCalls.length })}</summary>
@@ -92,7 +114,7 @@ export function AgentPanel({ turns, busy, error, onSend, onReset, onOpenCandidat
           className="flex-1 rounded-md border border-line bg-background px-3 py-2"
           value={message}
           onChange={(event) => setMessage(event.target.value)}
-          placeholder={t("placeholder")}
+          placeholder={guided ? t("placeholderGuided") : t("placeholder")}
           disabled={busy}
         />
         <button

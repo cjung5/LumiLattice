@@ -9,6 +9,25 @@ from app.models.materials import Lattice, Site, StructurePayload
 from app.tools.registry import ToolError
 
 MAX_SITES = 500
+CELL_METHOD = "conventional standard cell (spglib, symprec 0.01)"
+
+
+def conventional_cell(structure: Structure) -> Structure:
+    """The same crystal in its textbook cell, or `structure` unchanged if that cannot be made.
+
+    Databases often store the primitive cell, a skewed box (e.g. anatase: 110 degree angles)
+    whose axes are not the crystal axes. It draws as a squashed crystal, and supercells of it
+    are skewed too. The check keeps the conversion from ever changing the material.
+    """
+    try:
+        standard = SpacegroupAnalyzer(structure).get_conventional_standard_structure()
+    except (ValueError, TypeError, AttributeError):  # spglib on disordered or odd input
+        return structure
+    same_material = (
+        standard.composition.reduced_formula == structure.composition.reduced_formula
+        and abs(standard.density - structure.density) <= 1e-3 * structure.density
+    )
+    return standard if same_material else structure
 
 
 def structure_payload(structure: Structure, provenance: Provenance) -> StructurePayload:

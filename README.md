@@ -8,6 +8,21 @@ Built for the Meta Global AI Developer Hackathon (Oct 27 – Nov 4, 2026), track
 
 > Status: early development. This README is updated as features land.
 
+## Who it is for
+
+LumiLattice is for researchers and for people new to the field. The app opens in **Guided** mode; **Expert** mode shows every tool at once. The choice is remembered in the browser.
+
+Guided mode has these parts:
+
+- **Why this exists.** A short statement of the problem (AR glasses need a material that bends light strongly and stays clear), what you do here, what you get, and what the tool cannot do.
+- **Plain step names and starting points.** "Your goal, starting crystal, swap atoms, read the result". Four suggested starting crystals mean that nobody has to know a formula first.
+- **Scales instead of bare numbers.** n is shown against glass, sapphire, and diamond. The band gap is shown on the visible spectrum, with the absorbed part darkened and the uncertain part striped.
+- **A plain result.** Each candidate opens with what it means for your goal, how sure the evidence is, and buttons to have Muse Spark explain it or suggest a better swap. The verdicts are the same deterministic goal score that Expert mode shows.
+- **A glossary.** Select an underlined term or an evidence tag to read a short definition.
+- **Muse Spark in plain language.** In Guided mode, the agent and the critique explain technical terms and stay short. The rules on numbers do not change.
+
+Nothing is removed: export, relaxation, publishing, lab results, and the checks move behind a click. Two evidence views (dispersion and site metrics) and the 3D structure analysis are in Expert mode.
+
 ## How it works
 
 1. The researcher sets optical targets and constraints, and selects a host crystal structure.
@@ -34,7 +49,7 @@ A step bar at the top of the app shows the four steps (goal, host, candidate, ev
 | `composition_info` | pymatgen | Reduced formula, molar mass, charge-balanced oxidation states |
 | `search_materials` | Materials Project | Known structures with DFT band gap, energy above hull, and refractive index, each tagged |
 | `search_literature` | OpenAlex, Crossref, arXiv, Semantic Scholar | Paper metadata merged by DOI or title, with the sources that found each paper |
-| `create_candidate` | LumiLattice | Substitutes elements on a host or on an earlier candidate, then runs the structural checks below |
+| `create_candidate` | LumiLattice | Substitutes elements on a host or on an earlier candidate (new atoms spread apart, or at the lowest Ewald energy), then runs the structural checks below |
 | `get_candidate` | LumiLattice | A candidate's substitutions, checks, n range, measurements, and the researcher's decisions |
 | `get_optical_reference` | refractiveindex.info, JARVIS-DFT | Measured n at 450/550/650 nm with sources; DFT band gaps and n (OptB88vdW, TBmBJ) |
 | `score_against_goal` | LumiLattice | A candidate's verdicts against the researcher's goal, with evidence |
@@ -94,7 +109,14 @@ uv run python -m scripts.build_reference_db
 
 ## Candidates and structural checks
 
-A candidate replaces a fraction of one element's sites in a known host (or in an earlier candidate, which records the parent and builds a version history). Partial fractions use the smallest supercell (1, 2, 3, 4, 6, or 8 cells). The replaced sites are spread as far apart as possible. Atoms are **not relaxed**, so the checks show how well the new elements fit the host geometry.
+A candidate replaces a fraction of one element's sites in a known host (or in an earlier candidate, which records the parent and builds a version history). Partial fractions use the smallest supercell (1, 2, 3, 4, 6, or 8 cells). Atoms are **not relaxed**, so the checks show how well the new elements fit the host geometry.
+
+The researcher (or the agent) chooses where the new atoms go:
+
+- **Spread apart** (default): the replaced sites are as far apart as possible (farthest-point selection), in the smallest supercell.
+- **Lowest Ewald energy:** every arrangement of the new atoms is compared by point-charge (Ewald) energy with formal charges, and the lowest is kept. The search uses the same cell as the ordering rank in the 3D structure view (the smallest repeat with at least 2 of each new atom), so the result ranks first there. Up to 50,000 arrangements are compared exhaustively; above that, a seeded random sample is improved by greedy swaps, and the candidate says the result is not guaranteed to be the lowest. Example: for 25% La and 25% Al in SrTiO3, the spread arrangement ranks 6 of 23 distinct energies (+51 meV/atom); the lowest-Ewald candidate (4×2×1 cell, 40 atoms) ranks 1. Point charges have no screening or relaxation, so CHGNet relaxation can change the order.
+
+When every new atom's nearest same-element neighbor is its own periodic image (the cell is one host cell thick in that direction), the 3D view says so instead of calling it clustering: every arrangement in that cell has the same chains.
 
 | Check | Method | Thresholds (heuristic) |
 |---|---|---|
@@ -113,6 +135,8 @@ Each failed or warned check lists its atom indices. The 3D viewer highlights tho
 - **Materials Project** (DFT): search by formula, elements, or ID.
 - **Crystallography Open Database** (experimental, CC0): search by formula; each entry shows its authors, journal, year, and DOI. Oxidation-state labels in CIFs (e.g. `Sr2+`) are removed on import.
 - **Your own CIF**.
+
+Materials Project stores many crystals as primitive cells: skewed boxes whose axes are not the crystal axes (anatase has angles of 110°). LumiLattice converts them to the conventional standard cell with spglib (`symprec` 0.01), the cell that textbooks draw, so the structure looks right and supercells follow the crystal axes. The conversion is rejected if the formula or the density would change, and the provenance records the method. Uploaded and COD CIFs keep the cell in the file. The viewer uses an orthographic camera, and it draws atoms on a cell face, edge, or corner again on the opposite side. These copies are for display only and do not count as sites.
 
 ## Researcher in the loop
 

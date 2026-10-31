@@ -14,7 +14,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-from app.agents.loop import LANGUAGES
+from app.agents.loop import BEGINNER_NOTE, LANGUAGES, Audience
 from app.models.candidates import Candidate
 from app.models.critique import Critique, CritiquePoint, CritiqueSuggestion, EvidenceItem
 from app.models.evidence import PropertyValue
@@ -172,6 +172,12 @@ def _spatial_items(sa: SpatialAnalysis, prefix: str, label: str) -> list[Evidenc
                 f"; its nearest {d.element} is its own periodic image at {_f(d.shortest, 2)} Å, "
                 "a distance set by the cell size, not by clustering"
             )
+        elif d.shortest is not None and d.periodic_chains:
+            text += (
+                f"; each {d.element} is nearest to its own periodic image at "
+                f"{_f(d.shortest, 2)} Å (chains set by a cell one host cell thick, the same in "
+                "every arrangement of this cell), not to another dopant"
+            )
         elif d.shortest is not None:
             text += (
                 f"; nearest {d.element}-{d.element} distance {_f(d.shortest, 2)} Å "
@@ -328,7 +334,9 @@ def header(
             f"Images: {len(views)} rendered views of the {geometry} cell "
             f"({'; '.join(v.label for v in views)}). Element colors: {colors}. Substituted "
             "atoms are drawn larger and labeled with their site IDs (for example La0). The box "
-            "is the cell. The images show an ordered model, not a measurement."
+            "is the cell. Atoms on a cell face, edge, or corner are drawn again on the opposite "
+            "side, so the images show more atoms than the cell has. The images show an ordered "
+            "model, not a measurement."
         )
     else:
         lines.append("No images: the structure views could not be captured.")
@@ -384,6 +392,7 @@ def run_critique(
     legend: dict[str, str],
     geometry: Literal["unrelaxed", "relaxed"],
     locale: str = "en",
+    audience: Audience = "expert",
 ) -> Critique:
     intro = header(candidate, goal, views, legend, geometry)
     listing = "\n".join(f"{e.id} | {e.text}" for e in evidence)
@@ -399,6 +408,8 @@ def run_critique(
         max_suggestions=MAX_SUGGESTIONS,
         max_questions=MAX_QUESTIONS,
     )
+    if audience == "beginner":
+        system += "\n- " + BEGINNER_NOTE
     messages: list[dict[str, Any]] = [
         {"role": "system", "content": system},
         {"role": "user", "content": content},

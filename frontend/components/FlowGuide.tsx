@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useLevel } from "@/components/Level";
 
 export type StepId = "goal" | "host" | "candidate" | "evidence";
 export const STEPS: StepId[] = ["goal", "host", "candidate", "evidence"];
@@ -19,6 +20,7 @@ type Props = {
 // The four steps of the spec's workflow, with what to do next. Steps stay clickable in any order.
 export function FlowGuide({ done, hostLabel, candidateId, example, onJump, onExample }: Props) {
   const t = useTranslations("Guide");
+  const guided = useLevel().level === "guided";
   const next = STEPS.find((s) => !done[s]) ?? null;
   const running = example.stage !== null && example.stage !== "done";
 
@@ -30,7 +32,7 @@ export function FlowGuide({ done, hostLabel, candidateId, example, onJump, onExa
   } else if (next) {
     message = (
       <span>
-        <span className="font-semibold">{t("next")}</span> {t(`hint.${next}`, { host: hostLabel, id: candidateId ?? "" })}
+        <span className="font-semibold">{t("next")}</span> {t(guided ? `hintGuided.${next}` : `hint.${next}`, { host: hostLabel, id: candidateId ?? "" })}
       </span>
     );
   } else {
@@ -60,22 +62,24 @@ export function FlowGuide({ done, hostLabel, candidateId, example, onJump, onExa
                   >
                     {state === "done" ? "✓" : i + 1}
                   </span>
-                  <span className={state === "todo" ? "text-muted" : undefined}>{t(`step.${step}`)}</span>
+                  <span className={state === "todo" ? "text-muted" : undefined}>{t(guided ? `stepGuided.${step}` : `step.${step}`)}</span>
                   <span className="sr-only">{t(`state.${state}`)}</span>
                 </button>
               </li>
             );
           })}
         </ol>
-        <button
-          type="button"
-          onClick={onExample}
-          disabled={running}
-          className="w-full rounded-md border border-accent px-3 py-1.5 text-sm font-medium disabled:opacity-50 sm:w-auto"
-        >
-          <span aria-hidden>▶ </span>
-          {running ? t("exampleRunning") : t("example")}
-        </button>
+        {!guided && (
+          <button
+            type="button"
+            onClick={onExample}
+            disabled={running}
+            className="w-full rounded-md border border-accent px-3 py-1.5 text-sm font-medium disabled:opacity-50 sm:w-auto"
+          >
+            <span aria-hidden>▶ </span>
+            {running ? t("exampleRunning") : t("example")}
+          </button>
+        )}
       </div>
       <p className="mt-2 text-sm" aria-live="polite">{message}</p>
     </nav>
@@ -86,11 +90,14 @@ export function FlowGuide({ done, hostLabel, candidateId, example, onJump, onExa
 export function ExampleCallout({ onDismiss }: { onDismiss: () => void }) {
   const t = useTranslations("Guide");
   const te = useTranslations("Evidence");
+  const guided = useLevel().level === "guided";
   return (
     <div className="mb-3 flex items-start gap-3 rounded-lg border border-accent bg-surface p-4 text-sm">
       <p className="flex-1">
         <span className="font-semibold">{t("exampleTitle")}</span>{" "}
-        {t("exampleStory", { landscape: te("tabLandscape"), score: te("tabScore"), spatial: te("tabSpatial") })}
+        {guided
+          ? t("exampleStoryGuided")
+          : t("exampleStory", { landscape: te("tabLandscape"), score: te("tabScore"), spatial: te("tabSpatial") })}
       </p>
       <button type="button" onClick={onDismiss} className="text-muted underline">
         {t("dismiss")}

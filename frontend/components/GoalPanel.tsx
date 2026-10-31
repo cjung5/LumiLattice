@@ -2,6 +2,9 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { useLevel } from "@/components/Level";
+import { edgeNm, GapScale, NScale } from "@/components/LightScales";
+import { Term } from "@/components/Term";
 import type { Goal } from "@/lib/api";
 
 const TOXIC = ["Pb", "Cd", "Hg", "Tl", "As"];
@@ -13,6 +16,7 @@ type Props = { goal: Goal; onChange: (goal: Goal) => void };
 // Spec 3.1 / P0 #1: the research goal comes first; every host and candidate is scored against it.
 export function GoalPanel({ goal, onChange }: Props) {
   const t = useTranslations("Goal");
+  const { level } = useLevel();
   const [elementText, setElementText] = useState(goal.forbidden_elements.join(", "));
 
   function setElements(text: string) {
@@ -23,6 +27,63 @@ export function GoalPanel({ goal, onChange }: Props) {
       .filter((e) => /^[A-Za-z]{1,2}$/.test(e))
       .map((e) => e[0].toUpperCase() + e.slice(1).toLowerCase());
     onChange({ ...goal, forbidden_elements: [...new Set(list)] });
+  }
+
+  if (level === "guided") {
+    const avoidToxic = TOXIC.every((e) => goal.forbidden_elements.includes(e));
+    return (
+      <section className="rounded-lg border border-line bg-surface p-4 text-sm">
+        <h2 className="text-base font-semibold">{t("titleGuided")}</h2>
+        <p className="mb-3 text-muted">{t("hintGuided")}</p>
+        <div className="grid gap-6 md:grid-cols-2">
+          <div>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <label htmlFor="goal-n" className="font-medium"><Term id="n">{t("nGuided")}</Term></label>
+              <input
+                id="goal-n"
+                type="number"
+                step="0.05"
+                min={1}
+                max={5}
+                className="w-20 rounded-md border border-line bg-background px-2 py-1"
+                value={goal.target_n}
+                onChange={(e) => onChange({ ...goal, target_n: e.target.valueAsNumber || goal.target_n })}
+              />
+            </div>
+            <NScale goal={goal.target_n} />
+          </div>
+          <div>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <label htmlFor="goal-gap" className="font-medium"><Term id="band_gap">{t("gapGuided")}</Term></label>
+              <input
+                id="goal-gap"
+                type="number"
+                step="0.1"
+                min={0.5}
+                max={15}
+                className="w-20 rounded-md border border-line bg-background px-2 py-1"
+                value={goal.min_band_gap}
+                onChange={(e) => onChange({ ...goal, min_band_gap: e.target.valueAsNumber || goal.min_band_gap })}
+              />
+            </div>
+            <GapScale goal={goal.min_band_gap} />
+          </div>
+        </div>
+        <p className="mt-1">{t("sentence", { n: goal.target_n, nm: edgeNm(goal.min_band_gap) })}</p>
+        <label className="mt-2 flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={avoidToxic}
+            onChange={(e) => {
+              const others = goal.forbidden_elements.filter((el) => !TOXIC.includes(el));
+              setElementText("");
+              onChange({ ...goal, forbidden_elements: e.target.checked ? [...others, ...TOXIC] : others });
+            }}
+          />
+          {t("avoidToxic", { elements: TOXIC.join(", ") })}
+        </label>
+      </section>
+    );
   }
 
   return (

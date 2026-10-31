@@ -277,6 +277,7 @@ export type Candidate = {
     substitutions: Substitution[];
     substituted_sites: Record<string, number[]>;
     site_selection: string;
+    arrangement: Arrangement;
     root_formula: string;
     lineage: Substitution[];
   };
@@ -451,6 +452,7 @@ export function critiqueCandidate(
     geometry: "unrelaxed" | "relaxed";
     views: { label: string; image: string }[];
     legend: Record<string, string>;
+    audience?: "beginner" | "expert";
   },
 ): Promise<Candidate> {
   return postJson<Candidate>(`/api/candidates/${encodeURIComponent(id)}/critique`, body);
@@ -486,8 +488,15 @@ export async function downloadExport(id: string, kind: ExportKind, goal?: Goal):
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-export function createCandidate(host: HostRef, substitutions: Substitution[]): Promise<Candidate> {
-  return postJson<Candidate>("/api/candidates", { host, substitutions });
+/** "spread": new atoms as far apart as possible; "lowest_ewald": lowest point-charge energy. */
+export type Arrangement = "spread" | "lowest_ewald";
+
+export function createCandidate(
+  host: HostRef,
+  substitutions: Substitution[],
+  arrangement: Arrangement = "spread",
+): Promise<Candidate> {
+  return postJson<Candidate>("/api/candidates", { host, substitutions, arrangement });
 }
 
 export function assessHost(host: HostRef): Promise<StructuralAssessment> {
@@ -496,7 +505,10 @@ export function assessHost(host: HostRef): Promise<StructuralAssessment> {
 
 export type DecisionKind = "accept" | "modify" | "reject" | "explore";
 
+export type Audience = "beginner" | "expert";
+
 export type AgentContext = {
+  audience?: Audience;
   host_material_id?: string;
   host_label?: string;
   current_candidate_id?: string;
