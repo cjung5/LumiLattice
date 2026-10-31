@@ -9,6 +9,7 @@ import json
 import math
 import sqlite3
 import statistics
+import threading
 from functools import lru_cache
 from pathlib import Path
 from urllib.parse import quote
@@ -84,11 +85,16 @@ class ReferenceDB:
     def __init__(self, path: Path):
         self.path = path
         self.available = path.exists()
-        self._db = (
-            sqlite3.connect(f"file:{path}?mode=ro", uri=True, check_same_thread=False)
-            if self.available
-            else None
-        )
+        self._local = threading.local()
+
+    @property
+    def _db(self) -> sqlite3.Connection | None:
+        """This thread's connection. API requests run in parallel threads, which must not share one."""
+        if not self.available:
+            return None
+        if not hasattr(self._local, "db"):
+            self._local.db = sqlite3.connect(f"file:{self.path}?mode=ro", uri=True)
+        return self._local.db
 
     def meta(self) -> dict[str, str]:
         """Build metadata: dataset versions, licenses, and SHA-256 of the downloaded files."""

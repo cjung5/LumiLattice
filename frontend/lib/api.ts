@@ -374,7 +374,7 @@ async function errorFrom(response: Response): Promise<Error> {
   );
 }
 
-/** A read that fails at the network level gets one retry; a duplicate request can fail this way. */
+/** A read that fails at the network level gets one retry, for example while the dev server reloads. */
 async function send(path: string, init?: RequestInit): Promise<Response> {
   try {
     return await fetch(`${API_BASE_URL}${path}`, init);

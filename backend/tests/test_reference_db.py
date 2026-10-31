@@ -1,4 +1,5 @@
 import sqlite3
+from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 
@@ -285,3 +286,14 @@ def test_bundled_database_srtio3():
     assert any(c.mp_id == "mp-5229" for c in ref.computed)
     assert ref.best_gap.status == "Experimental"
     assert 3.0 <= ref.best_gap.value <= 3.5  # reports span 3.0-4.1 eV
+
+
+def test_parallel_requests_do_not_share_a_connection(tiny_db):
+    # API requests run in a thread pool; a shared SQLite connection fails with InterfaceError.
+    def lookups(_):
+        for _ in range(200):
+            tiny_db.best_gap("CD")
+            tiny_db.measured("CD")
+
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        list(pool.map(lookups, range(16)))
