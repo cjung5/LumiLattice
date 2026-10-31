@@ -154,9 +154,11 @@ export function LandscapeChart({ data, goal, points, box }: Props) {
           {/* Moss relation */}
           <path d={mossPath} fill="none" stroke="var(--chart-muted)" strokeWidth="1.5" />
           {/* DFT cloud (context) */}
-          {computed.map(([g, n], i) => (
-            <circle key={i} cx={x(g)} cy={y(n)} r="1.8" fill="var(--series-dft)" fillOpacity="0.28" />
-          ))}
+          <g fill="var(--series-dft)" style={{ fillOpacity: "var(--dft-cloud)" }}>
+            {computed.map(([g, n], i) => (
+              <circle key={i} cx={x(g)} cy={y(n)} r="1.8" />
+            ))}
+          </g>
           {/* measured materials */}
           {measured.map((p) =>
             p.gap_measured ? (

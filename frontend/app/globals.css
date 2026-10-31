@@ -50,6 +50,7 @@
   --series-exp: #1baf7a;
   --series-dft: #2a78d6;
   --series-heur: #eb6834;
+  --dft-cloud: 0.28;
   --chart-surface: #fefef4;
   --chart-grid: #e8eed2;
   --chart-axis: #bfd1a3;
@@ -103,9 +104,11 @@
   --tag-dft: #a5ccf5;
   --tag-heur: #f7b48e;
   --tag-unknown: #b4c4b8;
-  --series-exp: #199e70;
-  --series-dft: #3987e5;
-  --series-heur: #d95926;
+  /* Brighter than a neutral dark palette: the surface here is green, and aqua sinks into it. */
+  --series-exp: #3dd6ae;
+  --series-dft: #6cb0f5;
+  --series-heur: #f28548;
+  --dft-cloud: 0.62;
   --chart-surface: #0c251b;
   --chart-grid: #1d3f30;
   --chart-axis: #356350;
