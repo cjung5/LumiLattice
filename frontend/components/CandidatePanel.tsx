@@ -10,8 +10,10 @@ import { PropertyValueView } from "@/components/EvidenceTag";
 import { ExperimentPanel } from "@/components/ExperimentPanel";
 import { Advanced, useLevel } from "@/components/Level";
 import { PlainResult } from "@/components/PlainResult";
+import { NoveltyPanel } from "@/components/NoveltyPanel";
 import { PublishControl } from "@/components/PublishControl";
 import { RelaxationPanel } from "@/components/RelaxationPanel";
+import { Leaderboard, ScorePanel } from "@/components/ScorePanel";
 import { Term } from "@/components/Term";
 import {
   createCandidate,
@@ -296,6 +298,9 @@ export function CandidatePanel({
               <PlainResult candidate={current} goal={goal} hostFormula={hostFormula} onAskAgent={onAskAgent} onSeeEvidence={onSeeEvidence} />
             )}
           </div>
+          <ScorePanel candidate={current} goal={goal} onAskAgent={onAskAgent} />
+          <NoveltyPanel key={`novelty-${current.candidate_id}`} candidate={current} />
+          {history.length > 1 && <Leaderboard candidates={history} current={current.candidate_id} goal={goal} onSelect={onSelect} />}
           <h3 className="font-medium">
             {current.candidate_id}: {current.formula}
             <span className="ml-2 text-xs font-normal text-muted">

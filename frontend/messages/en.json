@@ -523,7 +523,7 @@
     "doTitle": "What you do here",
     "doText": "Pick a known crystal and swap some of its atoms for another element. That gives you a new candidate material. You need no lab and no simulation software.",
     "getTitle": "What you get",
-    "getText": "In seconds: how close the candidate is to your goal, where each number comes from, and what to try next. Muse Spark, the AI, can explain the result and suggest changes.",
+    "getText": "In seconds: a score against your goal and against known materials, how new the idea looks, where each number comes from, and what to try next. Muse Spark, the AI, can explain the result and suggest changes.",
     "limit": "A candidate is an idea to test, not a proven material. This tool helps you decide which ideas deserve a simulation or a lab sample.",
     "example": "Show me an example",
     "start": "Start on my own",
@@ -637,5 +637,110 @@
   },
   "Workspace": {
     "sharedAndPapers": "Shared candidates and research papers"
+  },
+  "Scorecard": {
+    "title": "Score",
+    "outOf": "out of 100",
+    "loading": "Working out the score…",
+    "disqualified": "Contains an element you ruled out: {elements}. It goes to the bottom of the ranking.",
+    "notProbability": "This score ranks ideas. It is not the chance that the material can be made or will work. A wide range means the evidence is weak.",
+    "evidenceShare": "What the score rests on:",
+    "evidence": {
+      "Experimental": "measured",
+      "DFT-computed": "computed",
+      "Heuristic": "estimated",
+      "Unknown": "unknown",
+      "Model": "worked out from the model"
+    },
+    "metricsTitle": "What makes up the score",
+    "mostToGain": "most to gain",
+    "points": "{score} of 100 · counts for {weight}%",
+    "metric": {
+      "n": {
+        "name": "Bends light",
+        "why": "A higher refractive index lets AR glasses show a wider picture. Reaching your goal earns 70 points.",
+        "gain": "Elements with large, easily distorted electron clouds usually raise n, for example Ti, Nb, or Ta on the metal site. They often narrow the band gap, so check that too."
+      },
+      "band_gap": {
+        "name": "Stays clear",
+        "why": "A wide band gap keeps the material clear, so the picture keeps its colors. Reaching your goal earns 70 points.",
+        "gain": "Elements such as Al, Zr, and La usually widen the band gap. They often lower n, so check that too."
+      },
+      "trade_off": {
+        "name": "Beats the trade-off",
+        "why": "Usually, when n goes up, the band gap goes down (the Moss relation). A value above 1 beats this trend, and that is what makes a material stand out.",
+        "gain": "This is the hardest metric to move. Compare starting crystals on the chart below, and look for one that is already above the line."
+      },
+      "isotropy": {
+        "name": "Same in all directions",
+        "why": "In a cubic crystal, light behaves the same in all directions. In other crystals, light can split, which can blur the picture. The real disordered crystal can keep the symmetry of its starting crystal, so the range runs from the ordered model to the starting crystal.",
+        "gain": "Start from a cubic crystal, or try a smaller swap. A smaller swap is more likely to keep the starting crystal's symmetry."
+      },
+      "fit": {
+        "name": "Atoms fit together",
+        "why": "The quick checks ask if the charges balance, the sizes match, and no atoms overlap. A failed check makes the material less likely to form.",
+        "gain": "Use a new atom with a similar size and the same charge as the atom it replaces. Open the structure check details to see which check raised a concern."
+      },
+      "supply": {
+        "name": "Easy to source",
+        "why": "Elements produced in only a few countries can be costly or hard to get. Lower production concentration earns more points.",
+        "gain": "Replace the element with the highest supply risk with one that is produced more widely."
+      }
+    },
+    "gainTitle": "Where to find the most points: {metric}",
+    "raise": "Ask Muse Spark to raise “{metric}”",
+    "benchmarkTitle": "Compared with known materials",
+    "beats": "On the optical metrics alone, this candidate scores higher than {range} of {size} materials with a measured refractive index.",
+    "start": "(start)",
+    "howScored": "How the score is calculated",
+    "boardTitle": "Your candidates, ranked",
+    "boardHint": "Try another swap and see if it climbs. Ranked by the middle of each score range.",
+    "boardCandidate": "Candidate",
+    "boardScore": "Score",
+    "boardRange": "Range"
+  },
+  "NoveltyCheck": {
+    "title": "How new is it?",
+    "hint": "This is separate from the score, because a new material is not automatically a good one.",
+    "checking": "Checking databases and papers. This can take up to a minute…",
+    "next": "Next step:",
+    "incomplete": "At least one source could not be reached, so this result can change.",
+    "retry": "Check again",
+    "nearestTitle": "Closest known compositions",
+    "atomsDiffer": "{percent}% of atoms differ",
+    "level": {
+      "known": {
+        "name": "Already known",
+        "meaning": "This exact composition has already been observed. It is not new, but it is a useful reference to compare with.",
+        "next": "Try a partial swap or a different element to move away from it."
+      },
+      "computed": {
+        "name": "Computed only",
+        "meaning": "A database has calculated this exact composition, but we found no record that anyone has made it.",
+        "next": "Look for papers on it. If there are none, it could be worth a simulation or a lab sample."
+      },
+      "related": {
+        "name": "Related work exists",
+        "meaning": "We found no exact match, but researchers have studied this family of materials. Your idea may already be covered in the papers below.",
+        "next": "Read these papers first. Check if they report the same composition, written another way."
+      },
+      "unreported": {
+        "name": "Nothing found",
+        "meaning": "We found no match in the sources we checked. That makes it worth a closer look. It does not make it a discovery.",
+        "next": "Search patents and papers by hand, then confirm it with a simulation and a lab sample."
+      }
+    },
+    "check": {
+      "mp_exact": "Exact formula in Materials Project",
+      "cod_exact": "Exact formula in COD (measured structures)",
+      "reference": "Exact formula in the reference data",
+      "mp_system": "Same elements in Materials Project",
+      "papers": "Papers that name this system"
+    },
+    "status": {
+      "found": "found",
+      "not_found": "not found",
+      "unavailable": "could not check"
+    }
   }
 }

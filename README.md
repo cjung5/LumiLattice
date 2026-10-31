@@ -8,6 +8,29 @@ Built for the Meta Global AI Developer Hackathon (Oct 27 – Nov 4, 2026), track
 
 > Status: early development. This README is updated as features land.
 
+## Scoring and novelty
+
+Each candidate gets two separate answers, because a new material is not automatically a good one. Neither claims that the material can be made or will work.
+
+**Score (0 to 100, always a range).** The range is the worst and the best end of the evidence, so weak evidence shows as a wide range. A metric with no data counts as 0 to 100.
+
+| Metric | Weight | What it uses |
+|---|---|---|
+| Bends light | 30 | n against the goal; reaching the goal earns 70 points |
+| Stays clear | 30 | Band gap against the goal; reaching the goal earns 70 points |
+| Beats the trade-off | 10 | n⁴ × gap / 95 eV (Moss relation), from real n and gap pairs; above 1 beats the usual trend |
+| Same in all directions | 10 | Optical class, from the ordered model (worst case) to the host's symmetry (best case) |
+| Atoms fit together | 15 | The structural checks; a failed check caps this at 30 points |
+| Easy to source | 5 | Herfindahl-Hirschman index of element production |
+
+The weights and point scales are design choices, not measured values, and they are shown in the app. The panel also says how much of the score rests on measured, computed, estimated, or model-derived values, and which metric has the most points still open.
+
+**Benchmark.** The 125 materials with a measured n at 550 nm are scored on the three optical metrics, so a candidate can be read as "higher than 86 to 119 of 125". This set favors materials already used in optics, and it holds some doubtful reports (BP is listed at 4.2 eV), so the app compares candidates with well-known optical materials rather than with a top list. The benchmark ranks evidence; it has not been checked against measured solid solutions.
+
+**Novelty (four levels).** *Already known* (an observed exact match in Materials Project, COD, or measured reference data), *Computed only*, *Related work exists* (the same elements in Materials Project, or papers that name the system in the title), or *Nothing found*. The panel lists each check with links and the closest known compositions by the share of atoms that differ. An ordered model's formula rarely matches a paper's notation, so the paper check looks for the end members and for the host with each new element. "Nothing found" covers these sources only: it does not check patents, unpublished work, or other notations, and the app never calls a candidate a discovery.
+
+A session leaderboard ranks the candidates, so each new attempt shows whether the idea improved. The agent can read both answers (`get_scorecard`, `check_novelty`), and the JSON export includes the score.
+
 ## Who it is for
 
 LumiLattice is for researchers and for people new to the field. The app opens in **Guided** mode; **Expert** mode shows every tool at once. The choice is remembered in the browser.
@@ -94,14 +117,14 @@ Every n value carries one tag, shown with its own color, icon, and text:
 |---|---|
 | `Experimental` | refractiveindex.info, measured n at 550 nm (bulk or crystal pages; thin films are listed but not used for the best value). For band gaps: literature values from Zhuo et al. (2018) |
 | `DFT-computed` | JARVIS-DFT n = √ε from DFT linear optics (TBmBJ preferred, then OptB88vdW), or Materials Project n. This is a long-wavelength value, not n(550 nm) |
-| `Heuristic` | A candidate's **range** spanned by its end members, e.g. SrTiO3 → LaAlO3 for Sr→La + Ti→Al. Never a single number, and not a prediction |
+| `Heuristic` | A candidate's **range** spanned by its end members, e.g. SrTiO3 → LaAlO3 for Sr→La + Ti→Al. Never a single number, and not a prediction. A candidate whose exact formula has a measured or TBmBJ value uses that value instead |
 | `Unknown` | No data |
 
 Band gaps follow the same order: a measured value first, then a JARVIS-DFT value (TBmBJ, then OptB88vdW). Measured gaps are the median of the reports for a formula in the Zhuo et al. compilation (3,895 reports; the 2,458 entries with a gap of 0 are labels for metals and are not used). The compilation does not record the method for each report, so a value can be an optical, direct, or indirect gap, and reports for one formula can disagree (SrTiO3: 3.0 to 4.1 eV). The app shows the median and the spread. Many materials have no measured gap (LaAlO3 and Al2O3 among them) and keep a `DFT-computed` value, so a candidate's range can mix measured and computed gaps.
 
 The reference data is matched by formula, so the polymorph can differ from the selected structure; the app says so next to each value.
 
-The bundled `backend/data/reference.sqlite` (10 MB) holds a subset of JARVIS-DFT 3D (2025-09-24, 93,902 entries) the refractiveindex.info database (release 2026-05-24, 868 measured pages with n in the visible range; "Models and simulations" pages are excluded), and the measured band gaps. To rebuild it:
+The bundled `backend/data/reference.sqlite` (14 MB) holds a subset of JARVIS-DFT 3D (2025-09-24, 93,902 entries) the refractiveindex.info database (release 2026-05-24, 868 measured pages with n in the visible range; "Models and simulations" pages are excluded), and the measured band gaps. To rebuild it:
 
 ```bash
 cd backend
@@ -269,6 +292,8 @@ In use:
 - **refractiveindex.info database** — release 2026-05-24, [CC0](https://creativecommons.org/publicdomain/zero/1.0/). M. N. Polyanskiy, *Sci. Data* 11, 94 (2024). Each measured value links to its page and original reference.
 
 - **Experimental band gaps** — [Expt Gap Data](https://doi.org/10.6084/m9.figshare.7289687.v1), MIT license on the Figshare record. Y. Zhuo, A. Mansouri Tehrani, J. Brgoch, "Predicting the Band Gaps of Inorganic Solids by Machine Learning", *J. Phys. Chem. Lett.* 9, 1668 (2018).
+
+- **Element production concentration (HHI)** — M. W. Gaultois et al., *Chem. Mater.* 25, 2911 (2013), as tabulated in pymatgen.
 
 - **Crystallography Open Database** — experimental structures, [CC0](https://creativecommons.org/publicdomain/zero/1.0/). S. Gražulis et al., *J. Appl. Cryst.* 42, 726 (2009). Credit the original authors shown with each entry.
 - **Crossref** — scholarly metadata (public REST API).

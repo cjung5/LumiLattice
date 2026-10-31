@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 from app.agents.critique import View, evidence_pack, run_critique
 from app.agents.loop import Audience
 from app.agents.muse import ModelAPIKeyMissing, create_client
-from app.api.deps import OptionalMPDep, SettingsDep, client_id
+from app.api.deps import CodDep, LiteratureDep, OptionalMPDep, SettingsDep, client_id
 from app.api.materials import to_http
 from app.models.candidates import (
     Candidate,
@@ -27,10 +27,12 @@ from app.storage.memory import add_decision, get_store
 from app.tools.candidates import assess_host, create_candidate, load_host
 from app.tools.export import CandidateRecord, SpatialRecord, ancestry, build_record, cif_text
 from app.tools.goals import Goal, GoalScore, score_candidate, score_formula
+from app.tools.novelty import Novelty, check_novelty
 from app.tools.reference_db import get_reference_db
 from app.tools.registry import ToolError, UpstreamError
 from app.tools.relaxation import displacement_summary, relax, relaxation_available
-from app.tools.spatial import SpatialAnalysis, analyze
+from app.tools.scorecard import Scorecard, build_scorecard
+from app.tools.spatial import SpatialAnalysis, analyze, before_substitution
 from app.tools.structures import parse_cif_structure, structure_payload
 from app.tools.usage import AGENT_CAP, AGENT_RATE
 from app.tools.validation import RELAXED_NOTE, assess
@@ -229,11 +231,7 @@ def candidate_spatial(candidate_id: str, relaxed: bool = False) -> SpatialAnalys
     if key in _spatial_cache:
         return _spatial_cache[key]
     replaced = candidate.transformation.substituted_sites
-    origin = {s.element_to: s.element_from for s in candidate.transformation.substitutions}
-    parent = structure.copy()  # the same supercell before this step's substitutions
-    for element, sites in replaced.items():
-        for i in sites:
-            parent.replace(i, origin[element])
+    parent = before_substitution(structure, candidate.transformation)
     focus = sorted(i for sites in replaced.values() for i in sites)
     if relaxed:
         if candidate.relaxation is None:
@@ -248,6 +246,38 @@ def candidate_spatial(candidate_id: str, relaxed: bool = False) -> SpatialAnalys
     if len(_spatial_cache) > 256:
         _spatial_cache.clear()
     _spatial_cache[key] = result
+    return result
+
+
+@router.post("/candidates/{candidate_id}/scorecard")
+def candidate_scorecard(candidate_id: str, goal: Goal) -> Scorecard:
+    """A 0-100 ranking score (a range) from the goal, the evidence, and known materials."""
+    stored = get_store().get(candidate_id)
+    if stored is None:
+        raise not_found(candidate_id)
+    candidate, structure = stored
+    parent = before_substitution(structure, candidate.transformation)
+    return build_scorecard(candidate, structure, parent, goal, get_reference_db())
+
+
+_novelty_cache: dict[str, Novelty] = {}
+
+
+@router.get("/candidates/{candidate_id}/novelty")
+def candidate_novelty(
+    candidate_id: str, mp: OptionalMPDep, cod: CodDep, literature: LiteratureDep
+) -> Novelty:
+    """Exact matches and related work for this composition. Complete answers are kept in memory."""
+    stored = get_store().get(candidate_id)
+    if stored is None:
+        raise not_found(candidate_id)
+    if candidate_id in _novelty_cache:
+        return _novelty_cache[candidate_id]
+    result = check_novelty(stored[0], mp, cod, literature, get_reference_db())
+    if result.complete:
+        if len(_novelty_cache) > 256:
+            _novelty_cache.clear()
+        _novelty_cache[candidate_id] = result
     return result
 
 
@@ -286,7 +316,7 @@ def export_record(
     if stored is None:
         raise not_found(candidate_id)
     candidate = stored[0]
-    goal, goal_score = None, None
+    goal, goal_score, scorecard = None, None, None
     if target_n is not None and min_band_gap is not None:
         goal = Goal(
             target_n=target_n,
@@ -295,6 +325,7 @@ def export_record(
         )
         try:
             goal_score = score_candidate(candidate, goal)
+            scorecard = candidate_scorecard(candidate_id, goal)
         except ToolError as exc:
             raise to_http(exc) from exc
     spatial = SpatialRecord(
@@ -302,7 +333,9 @@ def export_record(
         relaxed=candidate_spatial(candidate_id, relaxed=True) if candidate.relaxation else None,
     )
     response.headers["Content-Disposition"] = f'attachment; filename="{candidate_id}-record.json"'
-    return build_record(store, candidate, get_reference_db().meta(), goal, goal_score, spatial)
+    return build_record(
+        store, candidate, get_reference_db().meta(), goal, goal_score, spatial, scorecard
+    )
 
 
 class CritiqueRequest(BaseModel):

@@ -67,3 +67,20 @@ def test_structure_endpoint_marks_cod_provenance(srtio3):
     assert body["formula"] == "SrTiO3"
     assert body["provenance"]["source"] == "Crystallography Open Database"
     assert body["provenance"]["reference"] == "COD 1512124"
+
+
+def test_a_dropped_connection_is_retried(monkeypatch):
+    monkeypatch.setattr("app.tools.cod.RETRY_SECONDS", 0)
+    calls = []
+
+    def handler(request):
+        calls.append(request)
+        if len(calls) == 1:
+            raise httpx.ConnectError("connection reset")
+        return httpx.Response(200, json=[])
+
+    client = CodClient(
+        httpx.MockTransport(handler), cache=ResponseCache(), cap=DailyCap("t", limit=9)
+    )
+    assert client.search("SrTiO3") == []
+    assert len(calls) == 2

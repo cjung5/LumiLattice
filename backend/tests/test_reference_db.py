@@ -120,6 +120,21 @@ def test_estimate_range_is_heuristic(tiny_db):
     assert [m.n.status for m in estimate.end_members] == ["Experimental", "DFT-computed"]
 
 
+def test_exact_formula_data_replaces_the_range(tiny_db):
+    estimate = tiny_db.estimate(["AB", "CD"], exact="AB")
+
+    assert estimate.estimate.status == "Experimental" and estimate.estimate.value is not None
+    assert estimate.band_gap.value == 3.4
+    assert tiny_db.estimate(["AB", "CD"], exact="EF").estimate.status == "Heuristic"
+
+
+def test_a_low_quality_exact_value_does_not_replace_the_range(tiny_db):
+    estimate = tiny_db.estimate(["AB", "CD"], exact="CD")  # CD has OptB88vdW values only
+
+    assert estimate.band_gap.status == "Heuristic"
+    assert estimate.estimate.status == "Heuristic"
+
+
 def test_estimate_needs_two_values(tiny_db):
     assert tiny_db.estimate(["AB", "EF"]).estimate.status == "Unknown"
 

@@ -164,6 +164,20 @@ class ReferenceDB:
             note=MATCH_NOTE if self.available else "Reference database is not built.",
         )
 
+    def nearest_known(self, formula: str, count: int = 3) -> list[tuple[str, float]]:
+        """Closest known compositions, as the share of atoms that differ (0 = the same)."""
+        if self._db is None:
+            return []
+        target = Composition(formula).fractional_composition.as_dict()
+        scored = []
+        for known, text in self._db.execute("SELECT formula, fractions FROM known_compositions"):
+            fractions = json.loads(text)
+            if target.keys().isdisjoint(fractions):
+                continue
+            distance = sum(abs(target.get(e, 0) - fractions.get(e, 0)) for e in target | fractions)
+            scored.append((round(distance / 2, 3), known))
+        return [(known, distance) for distance, known in sorted(scored)[:count]]
+
     def measured_gaps(self, formula: str) -> list[float]:
         if self._db is None:
             return []
@@ -211,8 +225,13 @@ class ReferenceDB:
                 )
         return PropertyValue(name="band_gap", units="eV", status="Unknown", conditions=MATCH_NOTE)
 
-    def estimate(self, end_members: list[str]) -> OpticalEstimate:
-        """Ranges spanned by the end members' best n and band gap (each needs two values)."""
+    def estimate(self, end_members: list[str], exact: str | None = None) -> OpticalEstimate:
+        """Ranges spanned by the end members' best n and band gap (each needs two values).
+
+        Good data for the exact formula is better evidence than a range: replacing all the Sr in
+        SrTiO3 with Ba gives BaTiO3, not something between it and SrTiO3. OptB88vdW values do not
+        qualify: its gaps are too low to replace a range from measured end members.
+        """
         members = [
             EndMemberIndex(formula=f, n=self.best_n(f), band_gap=self.best_gap(f))
             for f in dict.fromkeys(end_members)
@@ -226,21 +245,12 @@ class ReferenceDB:
         gap_values = [
             m.band_gap.value for m in members if m.band_gap and m.band_gap.value is not None
         ]
+        note = f"{note}, and it can mix measured and DFT values."
+        n = self.best_n(exact) if exact else None
+        gap = self.best_gap(exact) if exact else None
         return OpticalEstimate(
-            estimate=_range(
-                "refractive_index",
-                n_values,
-                None,
-                f"{note}, and it can mix measured and DFT values.",
-                names,
-            ),
-            band_gap=_range(
-                "band_gap",
-                gap_values,
-                "eV",
-                f"{note}, and it can mix measured and DFT values.",
-                names,
-            ),
+            estimate=n if _good(n) else _range("refractive_index", n_values, None, note, names),
+            band_gap=gap if _good(gap) else _range("band_gap", gap_values, "eV", note, names),
             end_members=members,
         )
 
@@ -339,6 +349,12 @@ def _range(
         conditions=conditions,
         provenance=Provenance(source="LumiLattice", method="end-member range"),
     )
+
+
+def _good(pv: PropertyValue | None) -> bool:
+    if pv is None or pv.status == "Unknown":
+        return False
+    return pv.status == "Experimental" or pv.provenance.method == "TBmBJ"
 
 
 def _round(value: float | None, digits: int = 3) -> float | None:

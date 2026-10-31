@@ -5,6 +5,7 @@ each structure, so every entry carries its authors, journal, year, and DOI.
 """
 
 import re
+import time
 from typing import Any
 
 import httpx
@@ -17,6 +18,7 @@ from app.tools.registry import ToolError, UpstreamError
 from app.tools.usage import COD_CACHE, COD_CAP, DailyCap, ResponseCache
 
 COD_URL = "https://www.crystallography.net/cod"
+RETRY_SECONDS = 1.0
 COD_ID = re.compile(r"^\d{7}$")
 MAX_CIF_BYTES = 2_000_000
 
@@ -83,7 +85,11 @@ class CodClient:
     def _get(self, path: str, params: dict[str, str] | None = None) -> httpx.Response:
         self._cap.take()
         try:
-            response = self._http.get(path, params=params)
+            try:
+                response = self._http.get(path, params=params)
+            except httpx.TransportError:  # the COD server drops connections now and then
+                time.sleep(RETRY_SECONDS)
+                response = self._http.get(path, params=params)
         except httpx.HTTPError as exc:
             raise UpstreamError(f"COD request failed: {exc}") from exc
         if response.status_code >= 400:

@@ -25,6 +25,8 @@ def test_registry_exposes_agent_tools():
         "create_candidate",
         "get_candidate",
         "score_against_goal",
+        "get_scorecard",
+        "check_novelty",
         "get_optical_reference",
         "search_materials",
         "search_literature",

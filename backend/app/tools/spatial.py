@@ -18,6 +18,7 @@ from pymatgen.core import Structure
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from scipy.spatial import ConvexHull
 
+from app.models.candidates import Transformation
 from app.tools.ewald import Arrangements
 from app.tools.ionic import IonicModel, anion_shell, ionic_model
 
@@ -99,6 +100,16 @@ class SpatialAnalysis(BaseModel):
     ordering: OrderingRank | None = None
     findings: list[str]
     notes: list[str]
+
+
+def before_substitution(structure: Structure, transformation: Transformation) -> Structure:
+    """The same supercell before this step's substitutions."""
+    origin = {s.element_to: s.element_from for s in transformation.substitutions}
+    parent = structure.copy()
+    for element, sites in transformation.substituted_sites.items():
+        for i in sites:
+            parent.replace(i, origin[element])
+    return parent
 
 
 def symmetry_of(structure: Structure) -> SymmetryInfo:

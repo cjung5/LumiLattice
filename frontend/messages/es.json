@@ -523,7 +523,7 @@
     "doTitle": "Lo que haces aquí",
     "doText": "Elige un cristal conocido y sustituye algunos de sus átomos por otro elemento. Así obtienes un nuevo material candidato. No necesitas laboratorio ni software de simulación.",
     "getTitle": "Lo que obtienes",
-    "getText": "En segundos: qué tan cerca está el candidato de tu objetivo, de dónde viene cada número y qué probar después. Muse Spark, la IA, puede explicar el resultado y sugerir cambios.",
+    "getText": "En segundos: una puntuación frente a tu objetivo y frente a materiales conocidos, qué tan nueva parece la idea, de dónde viene cada número y qué probar después. Muse Spark, la IA, puede explicar el resultado y sugerir cambios.",
     "limit": "Un candidato es una idea por probar, no un material probado. Esta herramienta te ayuda a decidir qué ideas merecen una simulación o una muestra de laboratorio.",
     "example": "Muéstrame un ejemplo",
     "start": "Empezar por mi cuenta",
@@ -637,5 +637,110 @@
   },
   "Workspace": {
     "sharedAndPapers": "Candidatos compartidos y artículos científicos"
+  },
+  "Scorecard": {
+    "title": "Puntuación",
+    "outOf": "de 100",
+    "loading": "Calculando la puntuación…",
+    "disqualified": "Contiene un elemento que excluiste: {elements}. Va al final de la clasificación.",
+    "notProbability": "Esta puntuación ordena ideas. No es la probabilidad de que el material pueda fabricarse ni de que funcione. Un intervalo amplio significa que la evidencia es débil.",
+    "evidenceShare": "En qué se basa la puntuación:",
+    "evidence": {
+      "Experimental": "medido",
+      "DFT-computed": "calculado",
+      "Heuristic": "estimado",
+      "Unknown": "desconocido",
+      "Model": "obtenido del modelo"
+    },
+    "metricsTitle": "Qué compone la puntuación",
+    "mostToGain": "más por ganar",
+    "points": "{score} de 100 · vale {weight}%",
+    "metric": {
+      "n": {
+        "name": "Desvía la luz",
+        "why": "Un índice de refracción más alto permite que las gafas de RA muestren una imagen más amplia. Alcanzar tu objetivo otorga 70 puntos.",
+        "gain": "Los elementos con nubes electrónicas grandes y fácilmente deformables suelen aumentar n, por ejemplo Ti, Nb o Ta en el sitio metálico. Suelen reducir la banda prohibida, así que compruébalo también."
+      },
+      "band_gap": {
+        "name": "Se mantiene transparente",
+        "why": "Una banda prohibida amplia mantiene el material transparente, para que la imagen conserve sus colores. Alcanzar tu objetivo otorga 70 puntos.",
+        "gain": "Elementos como Al, Zr y La suelen ampliar la banda prohibida. Suelen reducir n, así que compruébalo también."
+      },
+      "trade_off": {
+        "name": "Supera el compromiso",
+        "why": "Normalmente, cuando n aumenta, la banda prohibida disminuye (la relación de Moss). Un valor superior a 1 supera esta tendencia, y eso es lo que hace destacar a un material.",
+        "gain": "Esta es la métrica más difícil de mejorar. Compara los cristales iniciales en el gráfico siguiente y busca uno que ya esté por encima de la línea."
+      },
+      "isotropy": {
+        "name": "Igual en todas las direcciones",
+        "why": "En un cristal cúbico, la luz se comporta igual en todas las direcciones. En otros cristales, la luz puede dividirse, lo que puede difuminar la imagen. El cristal desordenado real puede conservar la simetría de su cristal inicial, por lo que el intervalo va del modelo ordenado al cristal inicial.",
+        "gain": "Parte de un cristal cúbico o prueba un intercambio menor. Un intercambio menor tiene más probabilidades de conservar la simetría del cristal inicial."
+      },
+      "fit": {
+        "name": "Los átomos encajan",
+        "why": "Las comprobaciones rápidas verifican si las cargas se equilibran, los tamaños coinciden y ningún átomo se superpone. Una comprobación fallida hace menos probable que el material se forme.",
+        "gain": "Usa un átomo nuevo con un tamaño similar y la misma carga que el átomo al que reemplaza. Abre los detalles de la comprobación estructural para ver qué comprobación indicó un problema."
+      },
+      "supply": {
+        "name": "Fácil de obtener",
+        "why": "Los elementos producidos en solo unos pocos países pueden ser costosos o difíciles de conseguir. Una menor concentración de la producción otorga más puntos.",
+        "gain": "Reemplaza el elemento con mayor riesgo de suministro por uno de producción más extendida."
+      }
+    },
+    "gainTitle": "Dónde encontrar más puntos: {metric}",
+    "raise": "Pide a Muse Spark que mejore “{metric}”",
+    "benchmarkTitle": "Comparación con materiales conocidos",
+    "beats": "Solo en las métricas ópticas, este candidato supera a {range} de {size} materiales con índice de refracción medido.",
+    "start": "(inicio)",
+    "howScored": "Cómo se calcula la puntuación",
+    "boardTitle": "Tus candidatos, ordenados",
+    "boardHint": "Prueba otro intercambio y mira si sube. Ordenados por el punto medio de cada intervalo de puntuación.",
+    "boardCandidate": "Candidato",
+    "boardScore": "Puntuación",
+    "boardRange": "Intervalo"
+  },
+  "NoveltyCheck": {
+    "title": "¿Qué tan nuevo es?",
+    "hint": "Esto es independiente de la puntuación, porque un material nuevo no es automáticamente bueno.",
+    "checking": "Consultando bases de datos y artículos. Esto puede tardar hasta un minuto…",
+    "next": "Siguiente paso:",
+    "incomplete": "No se pudo acceder al menos a una fuente, por lo que este resultado puede cambiar.",
+    "retry": "Volver a comprobar",
+    "nearestTitle": "Composiciones conocidas más cercanas",
+    "atomsDiffer": "{percent} % de átomos difieren",
+    "level": {
+      "known": {
+        "name": "Ya conocido",
+        "meaning": "Esta composición exacta ya se ha observado. No es nueva, pero es una referencia útil para comparar.",
+        "next": "Prueba un intercambio parcial o un elemento diferente para alejarte de ella."
+      },
+      "computed": {
+        "name": "Solo calculado",
+        "meaning": "Una base de datos ha calculado esta composición exacta, pero no encontramos constancia de que alguien la haya fabricado.",
+        "next": "Busca artículos sobre ella. Si no hay ninguno, podría valer una simulación o una muestra de laboratorio."
+      },
+      "related": {
+        "name": "Existe trabajo relacionado",
+        "meaning": "No encontramos una coincidencia exacta, pero los investigadores han estudiado esta familia de materiales. Tu idea podría ya estar cubierta en los artículos siguientes.",
+        "next": "Lee primero estos artículos. Comprueba si informan la misma composición, escrita de otra forma."
+      },
+      "unreported": {
+        "name": "Sin resultados",
+        "meaning": "No encontramos ninguna coincidencia en las fuentes consultadas. Eso hace que valga la pena examinarla más de cerca. No la convierte en un descubrimiento.",
+        "next": "Busca patentes y artículos manualmente, y luego confírmala con una simulación y una muestra de laboratorio."
+      }
+    },
+    "check": {
+      "mp_exact": "Fórmula exacta en Materials Project",
+      "cod_exact": "Fórmula exacta en COD (estructuras medidas)",
+      "reference": "Fórmula exacta en los datos de referencia",
+      "mp_system": "Mismos elementos en Materials Project",
+      "papers": "Artículos que mencionan este sistema"
+    },
+    "status": {
+      "found": "encontrado",
+      "not_found": "no encontrado",
+      "unavailable": "no se pudo comprobar"
+    }
   }
 }

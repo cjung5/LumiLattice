@@ -47,6 +47,7 @@ CREATE TABLE ri_pages (
 CREATE INDEX ri_formula ON ri_pages(formula);
 CREATE TABLE expt_gaps (formula TEXT NOT NULL, gap REAL NOT NULL);
 CREATE INDEX expt_gaps_formula ON expt_gaps(formula);
+CREATE TABLE known_compositions (formula TEXT PRIMARY KEY, fractions TEXT NOT NULL);
 """
 
 
@@ -182,6 +183,31 @@ def build_measured_gaps(db: sqlite3.Connection) -> int:
     return len(rows)
 
 
+def build_known_compositions(db: sqlite3.Connection) -> int:
+    """Every formula in the datasets, including entries labeled as metals, for composition distance."""
+    formulas = {
+        r[0] for r in db.execute("SELECT formula FROM jarvis UNION SELECT formula FROM ri_pages")
+    }
+    with GAP_CSV.open(encoding="utf-8-sig", newline="") as f:
+        formulas |= {reduced(row["composition"]) for row in csv.DictReader(f)}
+    formulas.discard(None)
+    rows = [
+        (
+            formula,
+            json.dumps(
+                {
+                    e: round(v, 5)
+                    for e, v in Composition(formula).fractional_composition.as_dict().items()
+                },
+                separators=(",", ":"),
+            ),
+        )
+        for formula in formulas
+    ]
+    db.executemany("INSERT INTO known_compositions VALUES (?, ?)", rows)
+    return len(rows)
+
+
 def main() -> int:
     for item in DATASETS:
         if not item["path"].exists():
@@ -195,6 +221,7 @@ def main() -> int:
     n_jarvis = build_jarvis(db)
     n_pages = build_refractiveindex(db)
     n_gaps = build_measured_gaps(db)
+    n_known = build_known_compositions(db)
     meta = {
         "built_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "jarvis": DATASETS[0]["about"],
@@ -212,7 +239,7 @@ def main() -> int:
     size = OUT.stat().st_size / 1e6
     print(
         f"{OUT.relative_to(REPO_ROOT)}: {n_jarvis} JARVIS rows, {n_pages} refractiveindex pages, "
-        f"{n_gaps} measured gaps, {size:.1f} MB"
+        f"{n_gaps} measured gaps, {n_known} known compositions, {size:.1f} MB"
     )
     return 0
 

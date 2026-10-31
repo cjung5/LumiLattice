@@ -123,7 +123,9 @@ def create_candidate(
     assessment = assess(
         structure, focus, end_member_formulas(root_formula, lineage), mp_analog_lookup(mp)
     )
-    optical = reference.estimate(solid_solution_ends(root_formula, lineage))
+    optical = reference.estimate(
+        solid_solution_ends(root_formula, lineage), exact=structure.composition.reduced_formula
+    )
 
     def build(candidate_id: str) -> tuple[Candidate, Structure]:
         payload = structure_payload(

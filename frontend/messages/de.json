@@ -523,7 +523,7 @@
     "doTitle": "Was du hier tust",
     "doText": "Wähle einen bekannten Kristall und ersetze einige seiner Atome durch ein anderes Element. Das ergibt ein neues Kandidatenmaterial. Du brauchst kein Labor und keine Simulationssoftware.",
     "getTitle": "Was du erhältst",
-    "getText": "In Sekunden: wie nah der Kandidat deinem Ziel ist, woher jede Zahl kommt und was du als Nächstes versuchen solltest. Muse Spark, die KI, kann das Ergebnis erklären und Änderungen vorschlagen.",
+    "getText": "In Sekunden: eine Bewertung im Vergleich zu Ihrem Ziel und zu bekannten Materialien, wie neu die Idee wirkt, woher jede Zahl stammt und was Sie als Nächstes versuchen sollten. Muse Spark, die KI, kann das Ergebnis erklären und Änderungen vorschlagen.",
     "limit": "Ein Kandidat ist eine zu testende Idee, kein bewährtes Material. Dieses Tool hilft dir zu entscheiden, welche Ideen eine Simulation oder eine Laborprobe verdienen.",
     "example": "Zeig mir ein Beispiel",
     "start": "Allein starten",
@@ -637,5 +637,110 @@
   },
   "Workspace": {
     "sharedAndPapers": "Geteilte Kandidaten und Forschungspapiere"
+  },
+  "Scorecard": {
+    "title": "Bewertung",
+    "outOf": "von 100",
+    "loading": "Score wird berechnet…",
+    "disqualified": "Enthält ein von Ihnen ausgeschlossenes Element: {elements}. Es rutscht ans Ende der Rangliste.",
+    "notProbability": "Dieser Score ordnet Ideen. Er ist nicht die Wahrscheinlichkeit, dass das Material herstellbar ist oder funktioniert. Eine große Spanne bedeutet schwache Evidenz.",
+    "evidenceShare": "Worauf der Score beruht:",
+    "evidence": {
+      "Experimental": "gemessen",
+      "DFT-computed": "berechnet",
+      "Heuristic": "abgeschätzt",
+      "Unknown": "unbekannt",
+      "Model": "aus dem Modell abgeleitet"
+    },
+    "metricsTitle": "Woraus sich der Score zusammensetzt",
+    "mostToGain": "größtes Potenzial",
+    "points": "{score} von 100 · zählt {weight}%",
+    "metric": {
+      "n": {
+        "name": "Lichtbrechung",
+        "why": "Ein höherer Brechungsindex ermöglicht AR-Brillen ein breiteres Bild. Das Erreichen Ihres Ziels bringt 70 Punkte.",
+        "gain": "Elemente mit großen, leicht polarisierbaren Elektronenwolken erhöhen meist n, zum Beispiel Ti, Nb oder Ta auf der Metallposition. Sie verengen oft die Bandlücke, prüfen Sie daher auch diese."
+      },
+      "band_gap": {
+        "name": "Bleibt transparent",
+        "why": "Eine große Bandlücke hält das Material transparent, sodass das Bild farbtreu bleibt. Das Erreichen Ihres Ziels bringt 70 Punkte.",
+        "gain": "Elemente wie Al, Zr und La verbreitern meist die Bandlücke. Sie senken oft n, prüfen Sie daher auch dieses."
+      },
+      "trade_off": {
+        "name": "Schlägt den Zielkonflikt",
+        "why": "Normalerweise sinkt die Bandlücke, wenn n steigt (Moss-Beziehung). Ein Wert über 1 schlägt diesen Trend, und das zeichnet ein Material aus.",
+        "gain": "Dies ist die am schwersten zu verbessernde Kennzahl. Vergleichen Sie Ausgangskristalle im Diagramm unten und suchen Sie einen, der bereits über der Linie liegt."
+      },
+      "isotropy": {
+        "name": "In alle Richtungen gleich",
+        "why": "In einem kubischen Kristall verhält sich Licht in alle Richtungen gleich. In anderen Kristallen kann sich Licht aufspalten, was das Bild unscharf machen kann. Der reale ungeordnete Kristall kann die Symmetrie seines Ausgangskristalls behalten, daher reicht die Spanne vom geordneten Modell bis zum Ausgangskristall.",
+        "gain": "Starten Sie mit einem kubischen Kristall oder versuchen Sie einen kleineren Austausch. Ein kleinerer Austausch erhält mit höherer Wahrscheinlichkeit die Symmetrie des Ausgangskristalls."
+      },
+      "fit": {
+        "name": "Atome passen zusammen",
+        "why": "Die Schnellprüfungen fragen, ob die Ladungen ausgeglichen sind, die Größen passen und keine Atome überlappen. Eine fehlgeschlagene Prüfung macht die Bildung des Materials weniger wahrscheinlich.",
+        "gain": "Verwenden Sie ein neues Atom mit ähnlicher Größe und gleicher Ladung wie das ersetzte Atom. Öffnen Sie die Details zur Strukturprüfung, um zu sehen, welche Prüfung ein Problem gemeldet hat."
+      },
+      "supply": {
+        "name": "Leicht beschaffbar",
+        "why": "Elemente, die nur in wenigen Ländern produziert werden, können teuer oder schwer erhältlich sein. Eine geringere Produktionskonzentration bringt mehr Punkte.",
+        "gain": "Ersetzen Sie das Element mit dem höchsten Versorgungsrisiko durch eines, das breiter produziert wird."
+      }
+    },
+    "gainTitle": "Wo es die meisten Punkte gibt: {metric}",
+    "raise": "Muse Spark bitten, „{metric}“ zu verbessern",
+    "benchmarkTitle": "Im Vergleich mit bekannten Materialien",
+    "beats": "Allein bei den optischen Kennzahlen schneidet dieser Kandidat besser ab als {range} von {size} Materialien mit gemessenem Brechungsindex.",
+    "start": "(Start)",
+    "howScored": "Wie der Score berechnet wird",
+    "boardTitle": "Ihre Kandidaten, sortiert",
+    "boardHint": "Versuchen Sie einen weiteren Austausch und sehen Sie, ob er aufsteigt. Sortiert nach der Mitte jeder Scorespanne.",
+    "boardCandidate": "Kandidat",
+    "boardScore": "Score",
+    "boardRange": "Spanne"
+  },
+  "NoveltyCheck": {
+    "title": "Wie neu ist es?",
+    "hint": "Dies ist getrennt vom Score, denn ein neues Material ist nicht automatisch ein gutes.",
+    "checking": "Datenbanken und Publikationen werden geprüft. Dies kann bis zu einer Minute dauern…",
+    "next": "Nächster Schritt:",
+    "incomplete": "Mindestens eine Quelle war nicht erreichbar, daher kann sich dieses Ergebnis ändern.",
+    "retry": "Erneut prüfen",
+    "nearestTitle": "Nächste bekannte Zusammensetzungen",
+    "atomsDiffer": "{percent} % der Atome unterscheiden sich",
+    "level": {
+      "known": {
+        "name": "Bereits bekannt",
+        "meaning": "Diese exakte Zusammensetzung wurde bereits beobachtet. Sie ist nicht neu, aber ein nützlicher Referenzwert zum Vergleich.",
+        "next": "Versuchen Sie einen teilweisen Austausch oder ein anderes Element, um davon wegzukommen."
+      },
+      "computed": {
+        "name": "Nur berechnet",
+        "meaning": "Eine Datenbank hat diese exakte Zusammensetzung berechnet, aber wir haben keinen Beleg gefunden, dass sie jemand hergestellt hat.",
+        "next": "Suchen Sie nach Publikationen dazu. Falls es keine gibt, könnte eine Simulation oder Laborprobe lohnen."
+      },
+      "related": {
+        "name": "Verwandte Arbeiten vorhanden",
+        "meaning": "Wir haben keine exakte Übereinstimmung gefunden, aber Forscher haben diese Materialfamilie untersucht. Ihre Idee ist möglicherweise bereits in den untenstehenden Publikationen abgedeckt.",
+        "next": "Lesen Sie zuerst diese Publikationen. Prüfen Sie, ob sie dieselbe Zusammensetzung in anderer Schreibweise berichten."
+      },
+      "unreported": {
+        "name": "Nichts gefunden",
+        "meaning": "Wir haben in den geprüften Quellen keine Übereinstimmung gefunden. Das macht sie einer genaueren Prüfung wert. Das macht sie nicht zu einer Entdeckung.",
+        "next": "Suchen Sie manuell nach Patenten und Publikationen und bestätigen Sie sie dann mit einer Simulation und einer Laborprobe."
+      }
+    },
+    "check": {
+      "mp_exact": "Exakte Formel in Materials Project",
+      "cod_exact": "Exakte Formel in COD (gemessene Strukturen)",
+      "reference": "Exakte Formel in den Referenzdaten",
+      "mp_system": "Gleiche Elemente in Materials Project",
+      "papers": "Publikationen, die dieses System nennen"
+    },
+    "status": {
+      "found": "gefunden",
+      "not_found": "nicht gefunden",
+      "unavailable": "konnte nicht geprüft werden"
+    }
   }
 }

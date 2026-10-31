@@ -416,6 +416,66 @@ export function scoreGoal(goal: Goal, subject: { candidate_id?: string; formula?
   return postJson<GoalScore>("/api/score", { goal, ...subject });
 }
 
+export type MetricId = "n" | "band_gap" | "trade_off" | "isotropy" | "fit" | "supply";
+
+export type ScoreMetric = {
+  id: MetricId;
+  weight: number;
+  low: number;
+  high: number;
+  value: string | null;
+  evidence: EvidenceStatus | "Model";
+  detail: string;
+};
+
+export type BenchmarkEntry = { formula: string; score: number; n: number; band_gap: number };
+
+export type Scorecard = {
+  subject: string;
+  low: number;
+  high: number;
+  optical_low: number;
+  optical_high: number;
+  metrics: ScoreMetric[];
+  evidence_mix: Partial<Record<EvidenceStatus | "Model", number>>;
+  biggest_gain: MetricId;
+  disqualified: string[];
+  benchmark: {
+    size: number;
+    beats_low: number;
+    beats_high: number;
+    host: BenchmarkEntry | null;
+    landmarks: BenchmarkEntry[];
+    note: string;
+  };
+  method: string;
+};
+
+export type NoveltyLevel = "known" | "computed" | "related" | "unreported";
+
+export type Novelty = {
+  subject: string;
+  formula: string;
+  level: NoveltyLevel;
+  complete: boolean;
+  checks: {
+    id: "mp_exact" | "cod_exact" | "reference" | "mp_system" | "papers";
+    status: "found" | "not_found" | "unavailable";
+    detail: string;
+    items: { label: string; url?: string | null }[];
+  }[];
+  nearest: { formula: string; atoms_differ: number }[];
+  caveat: string;
+};
+
+export function getScorecard(id: string, goal: Goal): Promise<Scorecard> {
+  return postJson<Scorecard>(`/api/candidates/${encodeURIComponent(id)}/scorecard`, goal);
+}
+
+export function getNovelty(id: string): Promise<Novelty> {
+  return request<Novelty>(`/api/candidates/${encodeURIComponent(id)}/novelty`);
+}
+
 export function getOpticalReference(formula: string): Promise<OpticalReference> {
   return request<OpticalReference>(`/api/reference/${encodeURIComponent(formula)}`);
 }

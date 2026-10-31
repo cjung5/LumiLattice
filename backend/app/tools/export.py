@@ -16,6 +16,7 @@ from app.models.candidates import Candidate, Substitution
 from app.models.evidence import Provenance
 from app.storage.memory import CandidateStore
 from app.tools.goals import Goal, GoalScore
+from app.tools.scorecard import Scorecard
 from app.tools.spatial import SpatialAnalysis
 
 RECORD_FORMAT = "lumilattice.candidate-record/1"
@@ -41,6 +42,7 @@ CAVEATS = [
         "a measured structure, and one ordered cell is only one model of a disordered solid solution."
     ),
     "Heuristic values are ranges between end members, not predictions.",
+    "The scorecard ranks ideas. It is not a probability that the material can be made or will work.",
     (
         "Measured band gaps come from a literature compilation, matched by formula, with no "
         "record of the method or the polymorph."
@@ -83,6 +85,7 @@ class CandidateRecord(BaseModel):
     ancestry: list[Ancestor]
     goal: Goal | None = None
     goal_score: GoalScore | None = None
+    scorecard: Scorecard | None = None
     spatial: SpatialRecord
     data_sources: list[DataSource]
     evidence_tags: dict[str, str]
@@ -238,6 +241,7 @@ def build_record(
     goal: Goal | None,
     goal_score: GoalScore | None,
     spatial: SpatialRecord,
+    scorecard: Scorecard | None = None,
 ) -> CandidateRecord:
     chain = ancestry(store, candidate)
     return CandidateRecord(
@@ -247,6 +251,7 @@ def build_record(
         ancestry=chain,
         goal=goal,
         goal_score=goal_score,
+        scorecard=scorecard,
         spatial=spatial,
         data_sources=data_sources(candidate, root_host(candidate, chain), reference_meta),
         evidence_tags=EVIDENCE_TAGS,

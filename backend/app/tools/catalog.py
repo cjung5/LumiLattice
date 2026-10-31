@@ -7,12 +7,16 @@ from pydantic import BaseModel, Field
 from app.models.candidates import Candidate, Substitution
 from app.storage.memory import CandidateStore, get_store
 from app.tools.candidates import create_candidate, load_host
+from app.tools.cod import CodClient
 from app.tools.composition import COMPOSITION_TOOL
 from app.tools.goals import Goal, score_candidate
 from app.tools.literature_sources import LiteratureSearch
 from app.tools.materials import MaterialsProjectClient
+from app.tools.novelty import check_novelty
 from app.tools.reference_db import get_reference_db
 from app.tools.registry import Tool, ToolError, ToolRegistry
+from app.tools.scorecard import build_scorecard
+from app.tools.spatial import before_substitution
 
 
 class SearchMaterialsArgs(BaseModel):
@@ -167,6 +171,30 @@ def build_registry(
             raise ToolError(f"No candidate {args.candidate_id}.")
         return score_candidate(stored[0], goal).model_dump(exclude_none=True)
 
+    def get_scorecard(args: GetCandidateArgs) -> dict[str, Any]:
+        if goal is None:
+            raise ToolError("The researcher has not set a goal.")
+        stored = store.get(args.candidate_id)
+        if stored is None:
+            raise ToolError(f"No candidate {args.candidate_id}.")
+        candidate, structure = stored
+        parent = before_substitution(structure, candidate.transformation)
+        return build_scorecard(candidate, structure, parent, goal, get_reference_db()).model_dump(
+            exclude_none=True
+        )
+
+    def check_candidate_novelty(args: GetCandidateArgs) -> dict[str, Any]:
+        stored = store.get(args.candidate_id)
+        if stored is None:
+            raise ToolError(f"No candidate {args.candidate_id}.")
+        cod = CodClient()
+        try:
+            return check_novelty(stored[0], mp, cod, literature, get_reference_db()).model_dump(
+                exclude_none=True
+            )
+        finally:
+            cod.close()
+
     def get_candidate(args: GetCandidateArgs) -> dict[str, Any]:
         stored = store.get(args.candidate_id)
         if stored is None:
@@ -205,6 +233,27 @@ def build_registry(
                 ),
                 args_model=GetCandidateArgs,
                 handler=score_against_goal,
+            ),
+            Tool(
+                name="get_scorecard",
+                description=(
+                    "A candidate's 0-100 score as a low-high range, with points per metric (n, "
+                    "band gap, n-gap trade-off, optical isotropy, atom fit, element supply), the "
+                    "metric with the most points still open, and its rank among known materials. "
+                    "The score ranks ideas. Never present it as a probability of success."
+                ),
+                args_model=GetCandidateArgs,
+                handler=get_scorecard,
+            ),
+            Tool(
+                name="check_novelty",
+                description=(
+                    "How new a candidate's composition looks: exact matches in Materials Project, "
+                    "COD, and reference data, related work, and the nearest known compositions. "
+                    "Not found does not mean new. Never call a candidate a discovery."
+                ),
+                args_model=GetCandidateArgs,
+                handler=check_candidate_novelty,
             ),
             Tool(
                 name="get_optical_reference",

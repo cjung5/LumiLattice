@@ -74,11 +74,12 @@ class MaterialsProjectClient:
         *,
         formula: str | None = None,
         elements: list[str] | None = None,
+        chemsys: str | None = None,
         material_ids: list[str] | None = None,
         band_gap_min: float | None = None,
         limit: int = 10,
     ) -> list[MaterialRecord]:
-        if not (formula or elements or material_ids):
+        if not (formula or elements or chemsys or material_ids):
             raise ToolError("Give a formula, elements, or material IDs to search.")
         params: dict[str, Any] = {
             "_fields": SUMMARY_FIELDS,
@@ -90,6 +91,8 @@ class MaterialsProjectClient:
             params["formula"] = formula
         if elements:
             params["elements"] = ",".join(elements)
+        if chemsys:
+            params["chemsys"] = chemsys
         if material_ids:
             params["material_ids"] = ",".join(material_ids)
         if band_gap_min is not None:
