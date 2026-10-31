@@ -139,9 +139,10 @@ It is **a model picture, not a computed electron density**, and the app says so.
 Direction shows in three ways: colors by the axis of the stretch (a, b, c), ripples along it (they only show the direction; electrons do not move like this), and a line of text that names the most stretched sites, because colors alone do not work for everyone. Ripples and turning respect the "reduce motion" setting.
 
 
-### Visitor globe
+### Researcher globe
 
-The bottom of the page shows a globe with visitor counts by country and the total. A browser is counted once. The frontend server reads the country from the hosting service's header (`x-vercel-ip-country` on Vercel) and sends only the two-letter code to `POST /api/visits`; no IP address, browser detail, or time is stored. Set the same `VISIT_SECRET` on both servers in production, so that only the frontend server can add to the counts, and set `DATABASE_URL`, or the counts reset when the server restarts. A visit with no country header, as in local development, counts as "location unknown". The count is of browsers, not people: a person with two browsers counts twice, and blocked storage means no count. Map data: Natural Earth via `world-atlas` (public domain, ISC); very small countries are in the list but not on the map.
+The bottom of the page shows a globe with counts by country and the total, labeled as researchers, to show where this research is active. The number counts browsers that opened the tool, once each: it does not check that a person is a researcher, and a person with two browsers counts twice. The frontend server reads the country from the hosting service's header (`x-vercel-ip-country` on Vercel) and sends only the two-letter code to `POST /api/visits`; no IP address, browser detail, or time is stored, and the section says so. Set the same `VISIT_SECRET` on both servers in production, so that only the frontend server can add to the counts, and set `DATABASE_URL`, or the counts reset when the server restarts. A visit with no country header, as in local development, counts as "location unknown". Map data: Natural Earth via `world-atlas` (public domain, ISC); very small countries are in the list but not on the map.
+
 ### 3D structure analysis
 
 The structural checks (see "Candidates and structural checks") look at one site at a time. The 3D structure view looks at the arrangement in space, before substitution, after it, and after CHGNet relaxation (if run):

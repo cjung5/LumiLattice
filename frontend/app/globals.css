@@ -251,6 +251,7 @@ body::after {
   p:not(.absolute),
   figure li {
     max-width: 75ch;
+    text-wrap: pretty; /* no single word alone on the last line */
   }
 
   button:not(:disabled),

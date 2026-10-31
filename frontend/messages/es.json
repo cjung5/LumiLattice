@@ -971,22 +971,23 @@
     "toLight": "Cambiar a modo claro"
   },
   "Visitors": {
-    "title": "Origen de los visitantes",
-    "hint": "Cada navegador cuenta una vez. Solo se guarda su país, no su dirección IP.",
-    "total": "visitantes en total",
+    "title": "Dónde está activa esta investigación",
+    "hint": "Cada navegador que abre esta herramienta cuenta una vez.",
+    "notice": "No se guardan la ubicación exacta, la dirección IP ni ningún dato identificativo. Solo se guarda un recuento por país, para ver dónde está activa esta investigación.",
+    "total": "en total",
     "countries": "países",
     "unknown": "Ubicación desconocida",
-    "empty": "Aún no hay visitas registradas.",
-    "unavailable": "Los recuentos de visitantes no están disponibles en este momento.",
+    "empty": "Aún no se ha contado ningún investigador.",
+    "unavailable": "Los recuentos de investigadores no están disponibles en este momento.",
     "colCountry": "País",
-    "colVisitors": "Visitantes",
+    "colVisitors": "Investigadores",
     "few": "Menos",
     "many": "Más",
-    "drag": "Arrastra para girar. Los países muy pequeños están en la lista, pero no en el mapa.",
-    "globeLabel": "Globo de visitantes por país: {total} visitantes de {countries} países. La lista muestra los mismos números.",
-    "visitors": "{count} visitantes",
-    "noVisitors": "Aún sin visitantes",
-    "turnTo": "Gira el globo hacia {country}",
-    "memoryNote": "Este servidor guarda los recuentos en memoria, por lo que se restablecen al reiniciarse."
+    "drag": "Arrastrar para girar. Los países muy pequeños están en la lista, pero no en el mapa.",
+    "globeLabel": "Globo de investigadores por país: {total} investigadores en {countries} países. La lista tiene los mismos números.",
+    "visitors": "Investigadores: {count}",
+    "noVisitors": "Aún no hay investigadores",
+    "turnTo": "Girar el globo hasta {country}",
+    "memoryNote": "Este servidor conserva los recuentos en memoria, por lo que se restablecen cuando se reinicia."
   }
 }

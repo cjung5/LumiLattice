@@ -411,8 +411,11 @@ export function VisitorGlobe() {
             <span aria-hidden className="h-2 w-24 rounded-full" style={{ background: "linear-gradient(90deg, var(--globe-few), var(--globe-many))" }} />
             <span>{t("many")}</span>
           </div>
-          <p className="mx-auto mt-1 max-w-sm text-center text-xs text-muted">{t("drag")}</p>
+          <p className="mx-auto mt-1 max-w-sm text-balance text-center text-xs text-muted">{t("drag")}</p>
         </div>
+      </div>
+      <div className="mt-5 border-t border-line pt-4">
+        <p className="text-xs text-muted">{t("notice")}</p>
       </div>
     </section>
   );

@@ -971,22 +971,23 @@
     "toLight": "Zum Tagmodus wechseln"
   },
   "Visitors": {
-    "title": "Herkunft der Besucher",
-    "hint": "Jeder Browser wird einmal gezählt. Nur das Land wird gespeichert, nicht die IP-Adresse.",
-    "total": "Besucher insgesamt",
+    "title": "Wo diese Forschung aktiv ist",
+    "hint": "Jeder Browser, der dieses Tool öffnet, zählt einmal.",
+    "notice": "Wir speichern weder Ihren genauen Standort, Ihre IP-Adresse noch etwas, das Sie identifiziert. Wir speichern nur eine Anzahl pro Land, um zu sehen, wo diese Forschung aktiv ist.",
+    "total": "insgesamt",
     "countries": "Länder",
     "unknown": "Standort unbekannt",
-    "empty": "Noch keine Besuche gezählt.",
-    "unavailable": "Die Besucherzahlen sind derzeit nicht verfügbar.",
+    "empty": "Noch keine Forschenden gezählt.",
+    "unavailable": "Die Forscherzahlen sind derzeit nicht verfügbar.",
     "colCountry": "Land",
-    "colVisitors": "Besucher",
+    "colVisitors": "Forschende",
     "few": "Weniger",
     "many": "Mehr",
     "drag": "Zum Drehen ziehen. Sehr kleine Länder sind in der Liste, aber nicht auf der Karte.",
-    "globeLabel": "Globus der Besucher nach Land: {total} Besucher aus {countries} Ländern. Die Liste enthält dieselben Zahlen.",
-    "visitors": "{count} Besucher",
-    "noVisitors": "Noch keine Besucher",
+    "globeLabel": "Globus der Forschenden nach Land: {total} Forschende in {countries} Ländern. Die Liste enthält dieselben Zahlen.",
+    "visitors": "Forschende: {count}",
+    "noVisitors": "Noch keine Forschenden",
     "turnTo": "Globus zu {country} drehen",
-    "memoryNote": "Dieser Server hält die Zählungen im Speicher, sie werden beim Neustart zurückgesetzt."
+    "memoryNote": "Dieser Server hält die Zählungen im Speicher, daher werden sie beim Neustart zurückgesetzt."
   }
 }

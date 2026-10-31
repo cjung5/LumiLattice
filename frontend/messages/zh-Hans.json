@@ -971,22 +971,23 @@
     "toLight": "切换到日间模式"
   },
   "Visitors": {
-    "title": "访客来源",
-    "hint": "每个浏览器仅计数一次。仅保留其国家/地区，不保留 IP 地址。",
-    "total": "访客总数",
-    "countries": "国家/地区",
+    "title": "本研究活跃地区",
+    "hint": "每个打开此工具的浏览器仅计数一次。",
+    "notice": "我们不会保留您的确切位置、IP 地址或任何可识别您身份的信息。我们仅保留每个国家/地区的计数，以了解本研究在哪些地区活跃。",
+    "total": "总计",
+    "countries": "个国家",
     "unknown": "位置未知",
-    "empty": "暂无访问统计。",
-    "unavailable": "目前无法获取访客统计。",
-    "colCountry": "国家/地区",
-    "colVisitors": "访客数",
+    "empty": "尚未统计到研究人员。",
+    "unavailable": "目前无法获取研究人员计数。",
+    "colCountry": "国家",
+    "colVisitors": "研究人员",
     "few": "较少",
     "many": "较多",
-    "drag": "拖动旋转。很小的国家/地区仅在列表中，不在地图上显示。",
-    "globeLabel": "按国家/地区显示访客的地球仪：来自 {countries} 个国家/地区的 {total} 位访客。列表中数字相同。",
-    "visitors": "{count} 位访客",
-    "noVisitors": "暂无访客",
-    "turnTo": "将地球仪转到 {country}",
-    "memoryNote": "本服务器将计数保存在内存中，重启后会重置。"
+    "drag": "拖动旋转。面积很小的国家仅在列表中显示，不在地图上显示。",
+    "globeLabel": "按国家/地区划分的研究人员分布球：{total} 名研究人员分布在 {countries} 个国家/地区。列表中的数字相同。",
+    "visitors": "研究人员：{count}",
+    "noVisitors": "暂无研究人员",
+    "turnTo": "将地球仪转向{country}",
+    "memoryNote": "此服务器将计数保存在内存中，重启后会重置。"
   }
 }
