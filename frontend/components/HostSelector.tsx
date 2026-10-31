@@ -83,9 +83,6 @@ export function HostSelector({ selectedId, onSelectMaterial, onUploadedStructure
     });
   }
 
-  const tabClass = (active: boolean) =>
-    `segment text-sm ${active ? "bg-accent text-on-accent" : ""}`;
-
   return (
     <section className="card">
       <h2 className="text-lg font-semibold tracking-tight">{guided ? <>{t("titleGuided.before")} <Term id="host">{t("titleGuided.term")}</Term></> : t("title")}</h2>
@@ -112,10 +109,10 @@ export function HostSelector({ selectedId, onSelectMaterial, onUploadedStructure
       ) : (
         <>
           <div className="segmented mb-3 mt-2" role="tablist">
-            <button type="button" role="tab" aria-selected={source === "mp"} className={tabClass(source === "mp")} onClick={() => setSource("mp")}>
+            <button type="button" role="tab" aria-selected={source === "mp"} className="segment text-sm" onClick={() => setSource("mp")}>
               {t("sourceMp")}
             </button>
-            <button type="button" role="tab" aria-selected={source === "cod"} className={tabClass(source === "cod")} onClick={() => setSource("cod")}>
+            <button type="button" role="tab" aria-selected={source === "cod"} className="segment text-sm" onClick={() => setSource("cod")}>
               {t("sourceCod")}
             </button>
           </div>

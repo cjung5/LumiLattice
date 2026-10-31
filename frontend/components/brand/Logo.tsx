@@ -8,9 +8,9 @@ export function Logo({ size = 28 }: { size?: number }) {
     <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden className="shrink-0">
       <defs>
         <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" style={{ stopColor: "var(--prism-1)" }} />
-          <stop offset="0.55" style={{ stopColor: "var(--prism-2)" }} />
-          <stop offset="1" style={{ stopColor: "var(--prism-3)" }} />
+          <stop offset="0" style={{ stopColor: "var(--leaf-1)" }} />
+          <stop offset="0.55" style={{ stopColor: "var(--leaf-2)" }} />
+          <stop offset="1" style={{ stopColor: "var(--leaf-3)" }} />
         </linearGradient>
       </defs>
       <g fill="none" stroke={`url(#${id})`} strokeWidth="1.6" strokeLinejoin="round">

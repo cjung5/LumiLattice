@@ -128,7 +128,7 @@ export function PlainResult({ candidate, goal, hostFormula, onAskAgent, onSeeEvi
     .join(", ");
 
   return (
-    <div className="space-y-3 rounded-xl border border-accent bg-surface p-5 text-sm shadow-[0_0_32px_-14px_var(--accent)]">
+    <div className="lit space-y-3 rounded-xl border border-accent bg-surface p-5 text-sm shadow-[var(--result-glow)]">
       <div>
         <p className="text-xs text-muted">
           {t("subject", { id, formula: candidate.formula })}

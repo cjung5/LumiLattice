@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { LatticeArt } from "@/components/brand/LatticeArt";
+import { LatticeLight } from "@/components/brand/LatticeLight";
 import { useLevel } from "@/components/Level";
 
 type Props = {
@@ -21,8 +21,8 @@ export function Intro({ folded, exampleRunning, onExample, onStart }: Props) {
   const { level } = useLevel();
 
   const hero = (
-    <section className="relative overflow-hidden py-4 md:py-8">
-      <LatticeArt className="pointer-events-none absolute -right-10 top-1/2 hidden w-[26rem] -translate-y-1/2 md:block lg:right-0" />
+    <section className="relative py-2 md:py-8">
+      <LatticeLight className="pointer-events-none mb-2 block h-44 w-full md:absolute md:-right-6 md:top-[54%] md:mb-0 md:h-[26rem] md:w-[30rem] md:-translate-y-1/2 lg:right-0" />
       <div className="relative max-w-2xl">
         <p className="text-3xl font-semibold leading-tight tracking-tight sm:text-4xl md:text-[2.75rem]">
           <span className="prism-text">{th("headline")}</span>

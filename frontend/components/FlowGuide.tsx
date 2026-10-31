@@ -86,7 +86,7 @@ export function ExampleCallout({ onDismiss }: { onDismiss: () => void }) {
   const te = useTranslations("Evidence");
   const guided = useLevel().level === "guided";
   return (
-    <div className="mb-4 flex items-start gap-3 rounded-lg border border-accent bg-accent-soft p-4 text-sm">
+    <div className="lit mb-4 flex items-start gap-3 rounded-lg border border-accent bg-accent-soft p-4 text-sm">
       <p className="flex-1">
         <span className="font-semibold">{t("exampleTitle")}</span>{" "}
         {guided

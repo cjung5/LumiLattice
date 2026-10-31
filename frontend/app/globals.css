@@ -1,53 +1,61 @@
 @import "tailwindcss";
 
-/* LumiLattice: a lit lattice in the colors of a cabbage, from the deep green outer leaf through
-   green and yellow-green to the pale yellow heart. Night is the same plant in the dark, lit from
-   inside. Text pairs here are checked at >= 4.5:1 on every surface below. */
+/* LumiLattice: light moving through a cabbage leaf. Deep cool leaf green, leaf green, yellow-green,
+   and a pale yellow heart. The colors stay away from pure black with a single lime; night is a
+   leaf in the dark, day is the same leaf in sun. Text pairs are checked at >= 4.5:1 on every surface. */
 :root {
   color-scheme: light;
-  --background: #f8faef;
-  --foreground: #14240f;
-  --surface: #fffffc;
-  --surface-2: #eff4df;
-  --line: #dde6cb;
-  --line-strong: #c3d1ac;
-  --muted: #4c5c46;
-  --accent: #1f6b2e;
+  --background: #fbfbea;
+  --foreground: #0e2a1c;
+  --surface: #fffffb;
+  --surface-2: #f1f5dc;
+  --line: #dfe8c4;
+  --line-strong: #bfd1a3;
+  --muted: #44604f;
+  --accent: #146b3a;
   --on-accent: #ffffff;
-  --accent-text: #1b622a;
-  --accent-soft: #e7f2d3;
-  --danger: #b8222a;
-  --warning: #7f5a00;
-  /* The leaf: brand only. The spectrum on the band gap scale carries data, so it stays separate.
-     Text and art may run to yellow-green; buttons stop earlier, so white text stays readable. */
-  --prism-1: #0f4a25;
-  --prism-2: #2c8a3a;
-  --prism-3: #6c9a1e;
-  --cta-1: #0f4a25;
-  --cta-2: #1f6b2e;
-  --cta-3: #3a7d2e;
-  --lattice-dot: rgb(31 107 46 / 0.17);
-  --glow-top: rgb(108 154 30 / 0.14);
-  --glow-side: rgb(226 217 92 / 0.2);
-  --card-shadow: 0 1px 2px rgb(20 36 15 / 0.04), 0 8px 24px -12px rgb(20 36 15 / 0.12);
-  --button-glow: 0 1px 2px rgb(20 36 15 / 0.18), 0 6px 16px -6px rgb(31 107 46 / 0.55);
-  --glass: rgb(255 255 252 / 0.84);
+  --accent-text: #125f34;
+  --accent-soft: #e6f4d2;
+  --danger: #b3262b;
+  --warning: #7a5800;
+  /* The leaf: brand only. The spectrum on the band gap scale carries data, so it stays separate. */
+  --leaf-1: #0c4f2e;
+  --leaf-2: #1f8048;
+  --leaf-3: #5e9e2c;
+  --cta-1: #0c4f2e;
+  --cta-2: #146b3a;
+  --cta-3: #2f8542;
+  /* Light: sun on a leaf, warm where it lands. Stops in the page follow a point light's fall-off. */
+  --light-1: rgb(255 226 110 / 0.34);
+  --light-2: rgb(240 225 120 / 0.17);
+  --light-3: rgb(200 220 130 / 0.07);
+  --lattice-dot: rgb(20 107 58 / 0.3);
+  /* The pointer's light. Strength at the center is capped so all text stays at >= 4.5:1 under it. */
+  --spot: 255 194 51;
+  --spot-card: 0.38;
+  --spot-page: 0.35;
+  --spot-edge: 186 120 0;
+  --spot-dot: rgb(150 92 0 / 0.55);
+  --card-shadow: 0 1px 2px rgb(14 42 28 / 0.04), 0 10px 26px -14px rgb(14 42 28 / 0.14);
+  --button-glow: 0 1px 2px rgb(14 42 28 / 0.18), 0 8px 18px -8px rgb(20 107 58 / 0.55);
+  --result-glow: 0 10px 30px -18px rgb(20 107 58 / 0.5);
+  --glass: rgb(255 255 251 / 0.84);
   --on-unknown-mark: #ffffff;
   /* Evidence tag text (spec 3.4): same hue family as the chart marks */
-  --tag-exp: #0a7450;
-  --tag-dft: #1b58a5;
-  --tag-heur: #ad4316;
-  --tag-unknown: #5f6a5b;
+  --tag-exp: #0a7056;
+  --tag-dft: #1f5aa3;
+  --tag-heur: #a84818;
+  --tag-unknown: #5a6c5e;
   /* Chart marks: validated 3-slot categorical palette (aqua, blue, orange), all-pairs */
   --series-exp: #1baf7a;
   --series-dft: #2a78d6;
   --series-heur: #eb6834;
-  --chart-surface: #fcfdf6;
-  --chart-grid: #e4ead8;
-  --chart-axis: #c3d1ac;
-  --chart-ink: #14240f;
-  --chart-ink-2: #4a5745;
-  --chart-muted: #667261;
+  --chart-surface: #fefef4;
+  --chart-grid: #e8eed2;
+  --chart-axis: #bfd1a3;
+  --chart-ink: #0e2a1c;
+  --chart-ink-2: #3f5748;
+  --chart-muted: #5f7565;
   /* Diverging pair (blue <-> red, gray midpoint) and status (always with icon + label) */
   --div-neg: #2a78d6;
   --div-pos: #e34948;
@@ -58,45 +66,52 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --background: #070f0a;
-  --foreground: #f1f7e9;
-  --surface: #0e1a12;
-  --surface-2: #17281c;
-  --line: #24382a;
-  --line-strong: #3a5240;
-  --muted: #aec2ac;
-  --accent: #a9e05e;
-  --on-accent: #11260a;
-  --accent-text: #beea80;
-  --accent-soft: #1b3320;
-  --danger: #ff8f85;
-  --warning: #f4df7a;
-  --prism-1: #57c26a;
-  --prism-2: #a9e05e;
-  --prism-3: #f1f2a8;
-  --cta-1: #57c26a;
-  --cta-2: #a9e05e;
-  --cta-3: #f1f2a8;
-  --lattice-dot: rgb(190 234 128 / 0.13);
-  --glow-top: rgb(87 194 106 / 0.14);
-  --glow-side: rgb(241 242 168 / 0.08);
-  --card-shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 12px 32px -16px rgb(0 0 0 / 0.8);
-  --button-glow: 0 0 0 1px rgb(190 234 128 / 0.2), 0 6px 22px -6px rgb(169 224 94 / 0.5);
-  --glass: rgb(14 26 18 / 0.84);
+  --background: #0a2018;
+  --foreground: #f4f8ea;
+  --surface: #0f2c21;
+  --surface-2: #16392b;
+  --line: #224a39;
+  --line-strong: #356350;
+  --muted: #b4cdbc;
+  --accent: #a8e6a1;
+  --on-accent: #0a2a18;
+  --accent-text: #b5eca9;
+  --accent-soft: #1a4433;
+  --danger: #ffa198;
+  --warning: #f6e08a;
+  --leaf-1: #8fe3a8;
+  --leaf-2: #c9f0a0;
+  --leaf-3: #fbf3b4;
+  --cta-1: #7edb9b;
+  --cta-2: #b9ec9a;
+  --cta-3: #f7f2b0;
+  --light-1: rgb(251 243 180 / 0.2);
+  --light-2: rgb(190 235 150 / 0.09);
+  --light-3: rgb(110 215 150 / 0.035);
+  --lattice-dot: rgb(201 240 160 / 0.32);
+  --spot: 251 243 180;
+  --spot-card: 0.15;
+  --spot-page: 0.2;
+  --spot-edge: 255 250 205;
+  --spot-dot: rgb(251 243 180 / 0.6);
+  --card-shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 14px 34px -18px rgb(0 0 0 / 0.7);
+  --button-glow: 0 0 0 1px rgb(251 243 180 / 0.18), 0 2px 10px -2px rgb(251 243 180 / 0.45), 0 10px 34px -6px rgb(143 227 168 / 0.45);
+  --result-glow: 0 0 44px -22px rgb(201 240 160 / 0.8);
+  --glass: rgb(15 44 33 / 0.84);
   --on-unknown-mark: #0b0f1d;
-  --tag-exp: #6fddaa;
-  --tag-dft: #93c2f2;
-  --tag-heur: #f5a97f;
-  --tag-unknown: #aeb8ac;
+  --tag-exp: #7ce6c0;
+  --tag-dft: #a5ccf5;
+  --tag-heur: #f7b48e;
+  --tag-unknown: #b4c4b8;
   --series-exp: #199e70;
   --series-dft: #3987e5;
   --series-heur: #d95926;
-  --chart-surface: #0b150e;
-  --chart-grid: #1f3025;
-  --chart-axis: #3a5240;
-  --chart-ink: #f1f7e9;
-  --chart-ink-2: #cbd6c6;
-  --chart-muted: #909e8f;
+  --chart-surface: #0c251b;
+  --chart-grid: #1d3f30;
+  --chart-axis: #356350;
+  --chart-ink: #f4f8ea;
+  --chart-ink-2: #cfe0d2;
+  --chart-muted: #93ad9b;
   --div-neg: #3987e5;
   --div-pos: #e66767;
 }
@@ -165,19 +180,43 @@ body {
   word-break: keep-all;
 }
 
-/* The lattice behind the page: dots on a grid, lit from the top, gone before the reading area. */
-body::before {
+/* Light from the lattice falling on the page: bright near the source, a long dim tail. The grid
+   of dots shows only where this light reaches, as a real surface would. */
+body {
+  --light-x: 50%;
+  --light-y: 11rem;
+}
+
+@media (min-width: 768px) {
+  body {
+    --light-x: 78%;
+    --light-y: 15rem;
+  }
+}
+
+body::before,
+body::after {
   content: "";
-  position: fixed;
+  position: absolute;
   inset: 0 0 auto;
-  height: 42rem;
+  height: 46rem;
   z-index: -1;
   pointer-events: none;
-  background:
-    radial-gradient(38rem 22rem at 18% -4%, var(--glow-top), transparent 70%),
-    radial-gradient(34rem 20rem at 86% 2%, var(--glow-side), transparent 70%),
-    radial-gradient(var(--lattice-dot) 1.1px, transparent 1.6px) 0 0 / 26px 26px;
-  mask-image: linear-gradient(to bottom, black 30%, transparent);
+}
+
+body::before {
+  background: radial-gradient(
+    46rem 34rem at var(--light-x) var(--light-y),
+    var(--light-1),
+    var(--light-2) 22%,
+    var(--light-3) 50%,
+    transparent 78%
+  );
+}
+
+body::after {
+  background: radial-gradient(var(--lattice-dot) 1.1px, transparent 1.6px) 0 0 / 26px 26px;
+  mask-image: radial-gradient(40rem 28rem at var(--light-x) var(--light-y), black, rgb(0 0 0 / 0.35) 38%, transparent 76%);
 }
 
 @layer base {
@@ -345,7 +384,7 @@ body::before {
   }
 
   .btn-primary:not(:disabled):hover {
-    filter: brightness(1.08);
+    filter: brightness(1.06);
   }
 
   .btn-secondary {
@@ -415,33 +454,98 @@ body::before {
     font-weight: 500;
   }
 
-  .prism-text {
-    background-image: linear-gradient(100deg, var(--prism-1), var(--prism-2) 50%, var(--prism-3));
-    background-clip: text;
-    color: transparent;
-  }
-
   .glass {
     border: 1px solid var(--line);
     background: var(--glass);
     backdrop-filter: blur(14px) saturate(1.4);
   }
 
-  .lattice-node {
-    animation: lattice-pulse 4.8s ease-in-out infinite;
-    transform-box: fill-box;
-    transform-origin: center;
-  }
-}
-
-@keyframes lattice-pulse {
-  0%,
-  100% {
-    opacity: 0.55;
+  .prism-text {
+    background-image: linear-gradient(100deg, var(--leaf-1), var(--leaf-2) 50%, var(--leaf-3));
+    background-clip: text;
+    color: transparent;
   }
 
-  50% {
-    opacity: 1;
+  /* Surfaces catch the light as it passes. Bright and small, with a steep fall-off: the edge is
+     brightest, the face less, and the wash stays under the text. */
+  .card,
+  .subcard,
+  .lit {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .card::before,
+  .subcard::before,
+  .lit::before,
+  .card::after,
+  .subcard::after,
+  .lit::after {
+    content: "";
+    position: absolute;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .card::before,
+  .subcard::before,
+  .lit::before {
+    z-index: -1;
+    inset: 0;
+    background: radial-gradient(
+        13rem circle at var(--lx, -999px) var(--ly, -999px),
+        rgb(var(--spot) / var(--spot-card)),
+        rgb(var(--spot) / calc(var(--spot-card) * 0.55)) 12%,
+        rgb(var(--spot) / calc(var(--spot-card) * 0.22)) 32%,
+        rgb(var(--spot) / calc(var(--spot-card) * 0.06)) 60%,
+        transparent
+      )
+      fixed;
+  }
+
+  .card::after,
+  .subcard::after,
+  .lit::after {
+    inset: -1px;
+    padding: 1.5px;
+    background: radial-gradient(
+        10rem circle at var(--lx, -999px) var(--ly, -999px),
+        rgb(var(--spot-edge)),
+        rgb(var(--spot-edge) / 0.55) 30%,
+        rgb(var(--spot-edge) / 0.12) 65%,
+        transparent
+      )
+      fixed;
+    mask:
+      linear-gradient(black 0 0) content-box,
+      linear-gradient(black 0 0);
+    mask-composite: exclude;
+  }
+
+  /* The same light on the page itself, with the dots it reaches. */
+  .pointer-light {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: var(--lit, 0);
+    transition: opacity 250ms ease;
+    background: radial-gradient(
+      15rem circle at var(--lx, -999px) var(--ly, -999px),
+      rgb(var(--spot) / var(--spot-page)),
+      rgb(var(--spot) / calc(var(--spot-page) * 0.55)) 12%,
+      rgb(var(--spot) / calc(var(--spot-page) * 0.22)) 32%,
+      rgb(var(--spot) / calc(var(--spot-page) * 0.06)) 60%,
+      transparent
+    );
+  }
+
+  .pointer-light::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(var(--spot-dot) 1.1px, transparent 1.6px) 0 0 / 26px 26px;
+    mask-image: radial-gradient(12rem circle at var(--lx, -999px) var(--ly, -999px), black, rgb(0 0 0 / 0.3) 40%, transparent 80%);
   }
 }
 

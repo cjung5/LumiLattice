@@ -136,7 +136,7 @@ export function ScorePanel({ candidate, goal, onAskAgent }: Props) {
         </ul>
       </div>
 
-      <div className="rounded-lg border border-accent bg-accent-soft p-4">
+      <div className="lit rounded-lg border border-accent bg-accent-soft p-4">
         <h4 className="font-medium">{t("gainTitle", { metric: t(`metric.${card.biggest_gain}.name`) })}</h4>
         <p className="mt-1">{t(`metric.${card.biggest_gain}.gain`)}</p>
         {onAskAgent && (

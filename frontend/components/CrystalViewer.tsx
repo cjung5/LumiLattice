@@ -13,7 +13,7 @@ const HIGHLIGHT_STYLE = { sphere: { scale: 0.48, color: "#e11d8f" }, stick: STIC
 const LABEL = { fontSize: 13, backgroundOpacity: 0.7, inFront: true };
 // The crystal sits on a dark stage in both themes, so the atoms read as lit. The pictures for the
 // critique stay on white: that is the view its prompt and earlier checks were made with.
-const STAGE = "#0a140d";
+const STAGE = "#0a1f17";
 
 export type CapturedViews = { views: { label: string; image: string }[]; legend: Record<string, string> };
 export type ViewerHandle = { capture: () => Promise<CapturedViews> };
