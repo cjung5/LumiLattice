@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useBackendText } from "@/lib/backendText";
 import { useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { AssessmentPanel } from "@/components/AssessmentPanel";
 import { CritiquePanel } from "@/components/CritiquePanel";
@@ -78,6 +79,7 @@ export function CandidatePanel({
   onDecide,
 }: Props) {
   const t = useTranslations("Candidate");
+  const tb = useBackendText();
   const guided = useLevel().level === "guided";
   const [rows, setRows] = useState<Substitution[]>([
     { element_from: hostElements[0] ?? "", element_to: "", fraction: 1 / 2 },
@@ -288,7 +290,7 @@ export function CandidatePanel({
         </div>
       </form>
 
-      {error && <p className="mt-3 text-sm text-danger">{error}</p>}
+      {error && <p className="mt-3 text-sm text-danger">{tb(error)}</p>}
 
       {current && (
         <div className="mt-4 space-y-3">
@@ -399,11 +401,11 @@ export function CandidatePanel({
                 </p>
               )}
               {current.optical_estimate.estimate.conditions && (
-                <p className="mt-1 text-xs text-muted">{current.optical_estimate.estimate.conditions}</p>
+                <p className="mt-1 text-xs text-muted">{tb(current.optical_estimate.estimate.conditions)}</p>
               )}
             </div>
           )}
-          {!guided && <p className="text-xs text-muted">{current.transformation.site_selection}</p>}
+          {!guided && <p className="text-xs text-muted">{tb(current.transformation.site_selection)}</p>}
           <CritiquePanel
             key={`critique-${current.candidate_id}`}
             candidate={current}
@@ -449,7 +451,7 @@ export function CandidatePanel({
                     {c.transformation.substitutions
                       .map((s) => `${s.element_from}→${s.element_to} ${+(s.fraction * 100).toFixed(1)}%`)
                       .join(", ")}{" "}
-                    · {c.assessment.status}
+                    · {tb(c.assessment.status)}
                   </span>
                   {last && (
                     <span className="ml-1 rounded border border-line px-1 text-xs">{last.decision}</span>

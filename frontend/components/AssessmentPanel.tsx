@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useBackendText } from "@/lib/backendText";
 import type { AssessmentStatus, CheckStatus, StructuralAssessment } from "@/lib/api";
 
 const STATUS_STYLE: Record<AssessmentStatus, string> = {
@@ -25,13 +26,14 @@ type Props = {
 
 export function AssessmentPanel({ assessment, selectedCheck, onSelectCheck }: Props) {
   const t = useTranslations("Assessment");
+  const tb = useBackendText();
   const checks = assessment.checks.filter((c) => c.status !== "not_applicable");
 
   return (
     <div className="space-y-2 text-sm">
       <div className="flex flex-wrap items-center gap-2">
         <span className={`rounded border px-2 py-0.5 font-medium ${STATUS_STYLE[assessment.status]}`}>
-          {assessment.status}
+          {tb(assessment.status)}
         </span>
         {onSelectCheck && <span className="text-xs text-muted">{t("clickHint")}</span>}
       </div>
@@ -46,7 +48,7 @@ export function AssessmentPanel({ assessment, selectedCheck, onSelectCheck }: Pr
                 type="button"
                 disabled={!clickable}
                 onClick={() => onSelectCheck?.(selected ? null : check.id)}
-                title={check.method ?? undefined}
+                title={check.method ? tb(check.method) : undefined}
                 className={`flex w-full gap-2 rounded px-2 py-1 text-left ${
                   clickable ? "hover:bg-background" : "cursor-default"
                 } ${selected ? "bg-background ring-1 ring-accent" : ""}`}
@@ -55,8 +57,8 @@ export function AssessmentPanel({ assessment, selectedCheck, onSelectCheck }: Pr
                   {icon.icon}
                 </span>
                 <span>
-                  <span className="font-medium">{check.name}</span>
-                  <span className="text-muted"> — {check.message}</span>
+                  <span className="font-medium">{tb(check.name)}</span>
+                  <span className="text-muted"> — {tb(check.message)}</span>
                   {clickable && (
                     <span className="ml-1 text-xs text-accent">
                       {t("atoms", { count: check.atom_indices.length })}
@@ -69,8 +71,8 @@ export function AssessmentPanel({ assessment, selectedCheck, onSelectCheck }: Pr
         })}
       </ul>
       {assessment.notes.map((note) => (
-        <p key={note} className="text-xs text-muted">
-          {note}
+        <p key={tb(note)} className="text-xs text-muted">
+          {tb(note)}
         </p>
       ))}
     </div>

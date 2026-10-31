@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useBackendText } from "@/lib/backendText";
 import { useEffect, useState } from "react";
 import { EvidenceTag } from "@/components/EvidenceTag";
 import { useLevel } from "@/components/Level";
@@ -50,6 +51,7 @@ type Props = {
 
 export function ScorePanel({ candidate, goal, onAskAgent }: Props) {
   const t = useTranslations("Scorecard");
+  const tb = useBackendText();
   const guided = useLevel().level === "guided";
   const id = candidate.candidate_id;
   const key = `${id}|${JSON.stringify(goal)}`;
@@ -125,10 +127,10 @@ export function ScorePanel({ candidate, goal, onAskAgent }: Props) {
                 <RangeBar low={m.low} high={m.high} mark={m.id === card.biggest_gain} />
               </div>
               <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
-                {m.value && <span className="tabular-nums">{m.value}</span>}
+                {m.value && <span className="tabular-nums">{tb(m.value)}</span>}
                 {m.evidence === "Model" ? <span className="text-muted">{t("evidence.Model")}</span> : <EvidenceTag status={m.evidence} />}
               </p>
-              <p className="mt-0.5 text-xs text-muted">{guided ? t(`metric.${m.id}.why`) : m.detail}</p>
+              <p className="mt-0.5 text-xs text-muted">{guided ? t(`metric.${m.id}.why`) : tb(m.detail)}</p>
             </li>
           ))}
         </ul>
@@ -165,12 +167,12 @@ export function ScorePanel({ candidate, goal, onAskAgent }: Props) {
             </li>
           ))}
         </ul>
-        <p className="mt-2 text-xs text-muted">{bench.note}</p>
+        <p className="mt-2 text-xs text-muted">{tb(bench.note)}</p>
       </div>
 
       <details className="text-xs">
         <summary className="cursor-pointer text-muted">{t("howScored")}</summary>
-        <p className="mt-1">{card.method}</p>
+        <p className="mt-1">{tb(card.method)}</p>
       </details>
       {card.validation && (
         <details className="text-xs">

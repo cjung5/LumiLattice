@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useBackendText } from "@/lib/backendText";
 import { useEffect, useState } from "react";
 import { EvidenceTag, PropertyValueView } from "@/components/EvidenceTag";
 import { getOpticalReference, type OpticalReference } from "@/lib/api";
@@ -10,6 +11,7 @@ const fmt = (v: number | null) => (v == null ? "—" : v.toFixed(3));
 // The parent gives this panel a `key` per formula, so it loads once per host formula.
 export function OpticalPanel({ formula }: { formula: string }) {
   const t = useTranslations("Optical");
+  const tb = useBackendText();
   const [data, setData] = useState<OpticalReference | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,13 +34,13 @@ export function OpticalPanel({ formula }: { formula: string }) {
         <span className="font-medium">{t("bestN", { formula: data.formula })}</span>
         <PropertyValueView pv={data.best_n} />
       </div>
-      {data.best_n.conditions && <p className="text-xs text-muted">{data.best_n.conditions}</p>}
+      {data.best_n.conditions && <p className="text-xs text-muted">{tb(data.best_n.conditions)}</p>}
 
       <div className="flex flex-wrap items-center gap-2">
         <span className="font-medium">{t("bestGap", { formula: data.formula })}</span>
         <PropertyValueView pv={data.best_gap} />
       </div>
-      {data.best_gap.conditions && <p className="text-xs text-muted">{data.best_gap.conditions}</p>}
+      {data.best_gap.conditions && <p className="text-xs text-muted">{tb(data.best_gap.conditions)}</p>}
       {data.measured_gaps.length > 1 && (
         <p className="text-xs tabular-nums">{t("gapReports", { values: data.measured_gaps.join(", ") })}</p>
       )}
@@ -70,7 +72,7 @@ export function OpticalPanel({ formula }: { formula: string }) {
                       {m.doi && <div className="font-mono text-muted">doi:{m.doi}</div>}
                     </td>
                     <td className="py-1 pr-2">
-                      {m.category || "—"}
+                      {m.category ? tb(m.category) : "—"}
                       {m.direction && ` (${m.direction})`}
                     </td>
                     <td className="py-1 pr-2">{fmt(m.n_450)}</td>
@@ -128,7 +130,7 @@ export function OpticalPanel({ formula }: { formula: string }) {
         </details>
       )}
 
-      <p className="text-xs text-muted">{data.note}</p>
+      <p className="text-xs text-muted">{tb(data.note)}</p>
     </div>
   );
 }

@@ -374,8 +374,19 @@ async function errorFrom(response: Response): Promise<Error> {
   );
 }
 
+/** A read that fails at the network level gets one retry; a duplicate request can fail this way. */
+async function send(path: string, init?: RequestInit): Promise<Response> {
+  try {
+    return await fetch(`${API_BASE_URL}${path}`, init);
+  } catch (err) {
+    if (init?.method && init.method !== "GET") throw err;
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return fetch(`${API_BASE_URL}${path}`, init);
+  }
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, init);
+  const response = await send(path, init);
   if (!response.ok) throw await errorFrom(response);
   return response.json() as Promise<T>;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useBackendText } from "@/lib/backendText";
 import { useEffect, useState } from "react";
 import { formatValue } from "@/components/EvidenceTag";
 import { listCandidates, type Candidate } from "@/lib/api";
@@ -17,6 +18,7 @@ type Props = {
 // P1 stage 2: every candidate in one table, with filters and a side-by-side comparison.
 export function RegistryPanel({ version, onOpen }: Props) {
   const t = useTranslations("Registry");
+  const tb = useBackendText();
   const [items, setItems] = useState<Candidate[]>([]);
   const [filter, setFilter] = useState<"all" | "plausible" | "published" | "decided">("all");
   const [selected, setSelected] = useState<string[]>([]);
@@ -102,7 +104,7 @@ export function RegistryPanel({ version, onOpen }: Props) {
                   </td>
                   <td className="py-1 pr-2">{c.formula}</td>
                   <td className="py-1 pr-2 text-muted">{c.parent_id ?? c.transformation.host.reference}</td>
-                  <td className="py-1 pr-2">{c.assessment.status}</td>
+                  <td className="py-1 pr-2">{tb(c.assessment.status)}</td>
                   <td className="py-1 pr-2 tabular-nums">
                     {c.optical_estimate ? formatValue(c.optical_estimate.estimate) : "—"}
                   </td>
@@ -143,7 +145,7 @@ export function RegistryPanel({ version, onOpen }: Props) {
                 <td className="py-1 pr-2 text-muted">{t("status")}</td>
                 {compared.map((c) => (
                   <td key={c.candidate_id} className="py-1 pr-2">
-                    {c.assessment.status}
+                    {tb(c.assessment.status)}
                   </td>
                 ))}
               </tr>
@@ -155,7 +157,7 @@ export function RegistryPanel({ version, onOpen }: Props) {
                   {compared.map((c) => {
                     const check = c.assessment.checks.find((k) => k.id === id);
                     return (
-                      <td key={c.candidate_id} className="py-1 pr-2" title={check?.message}>
+                      <td key={c.candidate_id} className="py-1 pr-2" title={check?.message ? tb(check.message) : undefined}>
                         {check ? CHECK_ICON[check.status] : "—"}
                       </td>
                     );

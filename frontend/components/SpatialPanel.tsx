@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useBackendText } from "@/lib/backendText";
 import { useEffect, useState } from "react";
 import { ChartFrame, scale, svgPoint, ticks, Tooltip } from "@/components/charts/ChartFrame";
 import {
@@ -78,6 +79,7 @@ function useSpatial(candidate: Candidate | null, host: HostRef | null) {
 
 export function SpatialPanel({ candidate, host, hostFormula }: Props) {
   const t = useTranslations("Spatial");
+  const tb = useBackendText();
   const data = useSpatial(candidate, host);
   const main = data.after ?? data.before;
   if (!main) return <p className="text-sm text-muted">{t("loading")}</p>;
@@ -107,7 +109,7 @@ export function SpatialPanel({ candidate, host, hostFormula }: Props) {
   const states = (["before", "after", "relaxed"] as State[]).filter((s) => rows.some((r) => r.values[s]) || linkRows.some((r) => r.state === s));
   const legend = states.map((s) => ({ label: t(`state.${s}`), kind: "dot" as const, color: s === "before" ? "var(--chart-muted)" : MARK[s].fill }));
   // Relaxed findings compare the relaxed geometry with the unrelaxed candidate.
-  const findings = [...(data.after?.findings ?? data.before?.findings ?? []), ...(data.relaxed?.findings ?? []).map((f) => `${t("state.relaxed")}: ${f}`)];
+  const findings = [...(data.after?.findings ?? data.before?.findings ?? []).map(tb), ...(data.relaxed?.findings ?? []).map((f) => `${t("state.relaxed")}: ${tb(f)}`)];
 
   return (
     <div className="space-y-3">
@@ -155,7 +157,7 @@ export function SpatialPanel({ candidate, host, hostFormula }: Props) {
       )}
       <ul className="list-disc pl-5 text-xs text-muted">
         {main.notes.map((n) => (
-          <li key={n}>{n}</li>
+          <li key={n}>{tb(n)}</li>
         ))}
       </ul>
     </div>
@@ -168,6 +170,7 @@ const M = { l: 64, r: 16, t: 10, b: 30 };
 
 function DistortionChart({ rows, states, legend }: { rows: { site: string; values: Partial<Record<State, Polyhedron>> }[]; states: State[]; legend: { label: string; kind: "dot"; color: string }[] }) {
   const t = useTranslations("Spatial");
+  const tb = useBackendText();
   const H = M.t + M.b + Math.max(rows.length, 1) * ROW;
   const max = Math.max(0.02, ...rows.flatMap((r) => Object.values(r.values).map((p) => p!.distortion_index))) * 1.15;
   const x = scale([0, max], [M.l, W - M.r]);
@@ -192,7 +195,7 @@ function DistortionChart({ rows, states, legend }: { rows: { site: string; value
               <tr key={`${r.site}${s}`} className="border-t border-line">
                 <td className="py-0.5 pr-2">{r.site}</td>
                 <td className="py-0.5 pr-2">{t(`state.${s}`)}</td>
-                <td className="py-0.5 pr-2">{p.element}, CN {p.coordination}, {p.shape}{p.shape_score != null ? ` (${p.shape_score})` : ""}</td>
+                <td className="py-0.5 pr-2">{p.element}, CN {p.coordination}, {tb(p.shape)}{p.shape_score != null ? ` (${p.shape_score})` : ""}</td>
                 <td className="py-0.5 pr-2">{p.distortion_index}</td>
                 <td className="py-0.5 pr-2">{p.quadratic_elongation ?? "—"}</td>
                 <td className="py-0.5 pr-2">{p.bond_angle_variance ?? "—"}</td>
@@ -293,6 +296,7 @@ const BINS = 32;
 
 function OrderingChart({ ordering, label }: { ordering: NonNullable<SpatialAnalysis["ordering"]>; label: string }) {
   const t = useTranslations("Spatial");
+  const tb = useBackendText();
   const [hover, setHover] = useState<{ bin: number; px: number; py: number; width: number } | null>(null);
   const W2 = 640;
   const H = 170;
@@ -346,7 +350,7 @@ function OrderingChart({ ordering, label }: { ordering: NonNullable<SpatialAnaly
         { label: t("otherOrderings"), kind: "box", color: "var(--chart-muted)" },
         { label: t("thisOrdering", { id: label }), kind: "box", color: "var(--accent)" },
       ]}
-      notes={[ordering.method, ...(ordering.truncated ? [t("sampled")] : [])]}
+      notes={[tb(ordering.method), ...(ordering.truncated ? [t("sampled")] : [])]}
       table={table}
     >
       {ordering.distinct === 1 ? (

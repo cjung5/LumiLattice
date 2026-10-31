@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useBackendText } from "@/lib/backendText";
 import { useMemo, useState } from "react";
 import { ChartFrame, scale, svgPoint, ticks, Tooltip } from "@/components/charts/ChartFrame";
 import type { EvidenceStatus, Goal, Landscape } from "@/lib/api";
@@ -43,6 +44,7 @@ type Hover = { px: number; py: number; label: string; n: number; gap: number; so
 
 export function LandscapeChart({ data, goal, points, box }: Props) {
   const t = useTranslations("Charts");
+  const tb = useBackendText();
   const x = scale(X, [M.l, W - M.r]);
   const y = scale(Y, [H - M.b, M.t]);
   const [hover, setHover] = useState<Hover | null>(null);
@@ -123,7 +125,7 @@ export function LandscapeChart({ data, goal, points, box }: Props) {
         { label: t("legendGoal"), kind: "wash", color: "var(--chart-ink)" },
         { label: t("legendMoss"), kind: "line", color: "var(--chart-muted)" },
       ]}
-      notes={[...data.notes, ...(hidden ? [t("hiddenPoints", { count: hidden })] : [])]}
+      notes={[...data.notes.map(tb), ...(hidden ? [t("hiddenPoints", { count: hidden })] : [])]}
       table={table}
     >
       <div className="relative">

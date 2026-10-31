@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useBackendText } from "@/lib/backendText";
 import { useState } from "react";
 import { relaxCandidate, type Candidate } from "@/lib/api";
 
@@ -16,6 +17,7 @@ type Props = {
 // CHGNet runs only in a local install (it needs PyTorch); the live demo explains this.
 export function RelaxationPanel({ candidate, showRelaxed, onShowRelaxed, onChange }: Props) {
   const t = useTranslations("Relax");
+  const tb = useBackendText();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const r = candidate.relaxation;
@@ -94,7 +96,7 @@ export function RelaxationPanel({ candidate, showRelaxed, onShowRelaxed, onChang
               {r.energy_per_atom} eV/atom <span className="text-muted">— {t("energyNote")}</span>
             </dd>
           </div>
-          <div className="col-span-2 text-muted sm:col-span-4">{r.method}</div>
+          <div className="col-span-2 text-muted sm:col-span-4">{tb(r.method)}</div>
         </dl>
       )}
     </div>

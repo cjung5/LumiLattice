@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useBackendText } from "@/lib/backendText";
 import { EvidenceTag } from "@/components/EvidenceTag";
 import type { GoalScore, Verdict } from "@/lib/api";
 
@@ -14,6 +15,7 @@ export const VERDICT: Record<Verdict, { icon: string; color: string }> = {
 
 export function ScoreCard({ score, title }: { score: GoalScore; title: string }) {
   const t = useTranslations("Score");
+  const tb = useBackendText();
   return (
     <div className="rounded-md border border-line p-3 text-sm">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -31,7 +33,7 @@ export function ScoreCard({ score, title }: { score: GoalScore; title: string })
             </span>
             <span className="text-xs">
               <span className="font-medium">{t(`criterion.${c.id}`)}</span>
-              <span className="text-muted"> — {c.detail}</span>
+              <span className="text-muted"> — {tb(c.detail)}</span>
               {c.evidence && c.evidence.status !== "Unknown" && (
                 <span className="ml-1 align-middle"><EvidenceTag status={c.evidence.status} /></span>
               )}

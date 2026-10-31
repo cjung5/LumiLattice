@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useBackendText } from "@/lib/backendText";
 import { useCallback, useEffect, useState } from "react";
 import { getNovelty, type Candidate, type Novelty, type NoveltyLevel } from "@/lib/api";
 
@@ -9,6 +10,7 @@ const CHECK_ICON = { found: "✓", not_found: "–", unavailable: "!" } as const
 
 export function NoveltyPanel({ candidate }: { candidate: Candidate }) {
   const t = useTranslations("NoveltyCheck");
+  const tb = useBackendText();
   const [result, setResult] = useState<Novelty | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(true);
@@ -106,7 +108,7 @@ export function NoveltyPanel({ candidate }: { candidate: Candidate }) {
               </li>
             ))}
           </ul>
-          <p className="text-xs text-muted">{result.caveat}</p>
+          <p className="text-xs text-muted">{tb(result.caveat)}</p>
         </>
       )}
     </section>

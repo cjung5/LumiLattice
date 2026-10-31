@@ -301,6 +301,8 @@ uv run python -m scripts.translate_ui          # new strings, all four; or e.g.:
 uv run python -m scripts.translate_ui --all    # translate every string again
 ```
 
+The backend writes its sentences in English, because Muse Spark and the exports read them too. The frontend translates them with one template per sentence (`Backend` in `frontend/messages/*.json`, `frontend/lib/backendText.ts`), and `backend/tests/test_backend_text.py` fails if the backend shows a sentence with no template. These stay in English: paper titles, source names, the evidence tags (`Experimental`, `DFT-computed`, `Heuristic`, `Unknown`), the evidence list given to Muse Spark, the exported files, and rarer server errors such as a failed upstream request.
+
 ## Deploy
 
 The backend runs on Render (Docker, free plan) and the frontend on Vercel.

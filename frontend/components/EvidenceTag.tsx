@@ -1,4 +1,5 @@
 import { Term, type TermId } from "@/components/Term";
+import { useBackendText } from "@/lib/backendText";
 import type { EvidenceStatus, PropertyValue } from "@/lib/api";
 
 // Color is never the only signal: each tag also has its own icon, text, and border style.
@@ -32,8 +33,10 @@ export function formatValue(pv: PropertyValue): string {
 }
 
 export function PropertyValueView({ pv }: { pv: PropertyValue }) {
+  const tb = useBackendText();
   const tooltip = [pv.conditions, pv.provenance?.source, pv.provenance?.method]
-    .filter(Boolean)
+    .filter((part): part is string => !!part)
+    .map(tb)
     .join(" · ");
   return (
     <span className="inline-flex items-center gap-1.5" title={tooltip}>
