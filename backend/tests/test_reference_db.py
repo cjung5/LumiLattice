@@ -115,7 +115,7 @@ def test_estimate_range_is_heuristic(tiny_db):
     estimate = tiny_db.estimate(["AB", "CD"])
 
     assert estimate.estimate.status == "Heuristic"
-    assert estimate.estimate.value_range == (2.1, 3.0)
+    assert estimate.estimate.value_range == (1.9, 3.2)  # 2.1-3.0 and the tested 0.2 margin
     assert estimate.estimate.value is None  # a range only, never a single number
     assert [m.n.status for m in estimate.end_members] == ["Experimental", "DFT-computed"]
 
@@ -159,7 +159,7 @@ def test_estimate_range_can_mix_measured_and_dft_gaps(tiny_db):
     gap = tiny_db.estimate(["AB", "CD"]).band_gap
 
     assert gap.status == "Heuristic"
-    assert gap.value_range == (1.0, 3.4)
+    assert gap.value_range == (0.8, 3.6)  # 1.0-3.4 and the tested 0.2 eV margin
     assert "mix measured and DFT" in gap.conditions
 
 

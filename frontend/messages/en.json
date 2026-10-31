@@ -697,7 +697,15 @@
     "boardHint": "Try another swap and see if it climbs. Ranked by the middle of each score range.",
     "boardCandidate": "Candidate",
     "boardScore": "Score",
-    "boardRange": "Range"
+    "boardRange": "Range",
+    "tested": {
+      "title": "How well has this been tested?",
+      "gap": "Band gap: for {inside}% of {cases} measured solid solutions, the real value is inside the range. Most of them are semiconductors, not oxides.",
+      "wide": "Clear materials only: {inside}% of {cases} are inside the range, but the ranking is weak (rank correlation {rank}), so do not trust small score differences.",
+      "n": "Refractive index: {inside}% of {cases} computed oxide mixes are inside the range. We found no measured mixes to test.",
+      "fit": "Atoms fit together: {kept} of {swaps} real compounds keep their points, and {caught} of {implausible} impossible swaps are caught, on swaps kept apart from the design of this rule.",
+      "notTested": "Not tested: no measured oxide solid solutions, and no test that a high score predicts a material someone has made and used."
+    }
   },
   "NoveltyCheck": {
     "title": "How new is it?",

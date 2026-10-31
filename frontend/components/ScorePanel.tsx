@@ -172,6 +172,18 @@ export function ScorePanel({ candidate, goal, onAskAgent }: Props) {
         <summary className="cursor-pointer text-muted">{t("howScored")}</summary>
         <p className="mt-1">{card.method}</p>
       </details>
+      {card.validation && (
+        <details className="text-xs">
+          <summary className="cursor-pointer text-muted">{t("tested.title")}</summary>
+          <ul className="mt-1 list-disc space-y-1 pl-4">
+            <li>{t("tested.gap", { inside: card.validation.gap_inside, cases: card.validation.gap_cases })}</li>
+            <li>{t("tested.wide", { inside: card.validation.gap_inside_wide, cases: card.validation.gap_wide_cases, rank: card.validation.gap_wide_rank })}</li>
+            <li>{t("tested.n", { inside: card.validation.n_inside, cases: card.validation.n_cases })}</li>
+            <li>{t("tested.fit", { kept: card.validation.swaps_kept, swaps: card.validation.swaps, caught: card.validation.implausible_caught, implausible: card.validation.implausible })}</li>
+          </ul>
+          <p className="mt-1 font-medium">{t("tested.notTested")}</p>
+        </details>
+      )}
     </section>
   );
 }

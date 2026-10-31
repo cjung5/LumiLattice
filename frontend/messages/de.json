@@ -697,7 +697,15 @@
     "boardHint": "Versuchen Sie einen weiteren Austausch und sehen Sie, ob er aufsteigt. Sortiert nach der Mitte jeder Scorespanne.",
     "boardCandidate": "Kandidat",
     "boardScore": "Score",
-    "boardRange": "Spanne"
+    "boardRange": "Spanne",
+    "tested": {
+      "title": "Wie gut wurde das getestet?",
+      "gap": "Bandlücke: Bei {inside} % von {cases} gemessenen Mischkristallen liegt der reale Wert im Bereich. Die meisten sind Halbleiter, keine Oxide.",
+      "wide": "Nur transparente Materialien: {inside} % von {cases} liegen im Bereich, aber das Ranking ist schwach (Rangkorrelation {rank}), daher kleinen Score-Unterschieden nicht vertrauen.",
+      "n": "Brechungsindex: {inside} % von {cases} berechneten Oxidmischungen liegen im Bereich. Keine gemessenen Mischungen zum Testen gefunden.",
+      "fit": "Atome passen zusammen: {kept} von {swaps} realen Verbindungen behalten ihre Punkte, und {caught} von {implausible} unmöglichen Vertauschungen werden erkannt, bei vom Regelentwurf getrennten Vertauschungen.",
+      "notTested": "Nicht getestet: keine gemessenen Oxid-Mischkristalle und kein Test, ob ein hoher Score ein hergestelltes und genutztes Material vorhersagt."
+    }
   },
   "NoveltyCheck": {
     "title": "Wie neu ist es?",

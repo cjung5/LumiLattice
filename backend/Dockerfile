@@ -13,8 +13,9 @@ COPY pyproject.toml uv.lock .python-version ./
 RUN uv sync --frozen --no-dev
 
 COPY app ./app
-# Reference data (9 MB SQLite, read-only): JARVIS-DFT and refractiveindex.info subset.
+# Reference data (14 MB SQLite, read-only): JARVIS-DFT, refractiveindex.info, measured gaps.
 COPY data/reference.sqlite ./data/reference.sqlite
+COPY data/validation.json ./data/validation.json
 
 # Render sets PORT (default 10000).
 CMD ["sh", "-c", "exec .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips='*'"]

@@ -697,7 +697,15 @@
     "boardHint": "Prueba otro intercambio y mira si sube. Ordenados por el punto medio de cada intervalo de puntuación.",
     "boardCandidate": "Candidato",
     "boardScore": "Puntuación",
-    "boardRange": "Intervalo"
+    "boardRange": "Intervalo",
+    "tested": {
+      "title": "¿Qué tan bien se ha probado?",
+      "gap": "Brecha de banda: para el {inside}% de {cases} soluciones sólidas medidas, el valor real está dentro del rango. La mayoría son semiconductores, no óxidos.",
+      "wide": "Solo materiales transparentes: el {inside}% de {cases} está dentro del rango, pero la clasificación es débil (correlación de rangos {rank}), no confiar en pequeñas diferencias de puntuación.",
+      "n": "Índice de refracción: el {inside}% de {cases} mezclas de óxidos calculadas está dentro del rango. No se encontraron mezclas medidas para probar.",
+      "fit": "Encaje atómico: {kept} de {swaps} compuestos reales conservan sus puntos, y {caught} de {implausible} intercambios imposibles son detectados, en intercambios separados del diseño de esta regla.",
+      "notTested": "No probado: sin soluciones sólidas de óxidos medidas, y sin prueba de que una puntuación alta prediga un material fabricado y utilizado."
+    }
   },
   "NoveltyCheck": {
     "title": "¿Qué tan nuevo es?",

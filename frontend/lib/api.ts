@@ -449,6 +449,23 @@ export type Scorecard = {
     note: string;
   };
   method: string;
+  validation: {
+    gap_cases: number;
+    gap_inside: number;
+    gap_inside_wide: number;
+    gap_wide_cases: number;
+    gap_rank: number;
+    gap_wide_rank: number;
+    n_cases: number;
+    n_inside: number;
+    real_crystals: number;
+    real_crystals_charge_pass: number;
+    real_crystals_bvs_fail: number;
+    swaps: number;
+    swaps_kept: number;
+    implausible: number;
+    implausible_caught: number;
+  } | null;
 };
 
 export type NoveltyLevel = "known" | "computed" | "related" | "unreported";

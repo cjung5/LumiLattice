@@ -20,16 +20,44 @@ Each candidate gets two separate answers, because a new material is not automati
 | Stays clear | 30 | Band gap against the goal; reaching the goal earns 70 points |
 | Beats the trade-off | 10 | n⁴ × gap / 95 eV (Moss relation), from real n and gap pairs; above 1 beats the usual trend |
 | Same in all directions | 10 | Optical class, from the ordered model (worst case) to the host's symmetry (best case) |
-| Atoms fit together | 15 | The structural checks; a failed check caps this at 30 points |
+| Atoms fit together | 15 | The structural checks; a failed charge check caps this at 30 points |
 | Easy to source | 5 | Herfindahl-Hirschman index of element production |
 
-The weights and point scales are design choices, not measured values, and they are shown in the app. The panel also says how much of the score rests on measured, computed, estimated, or model-derived values, and which metric has the most points still open.
+n and the band gap count for 60 together, as a geometric mean: AR glasses need both, so one cannot make up for the other. The weights and point scales are design choices, not measured values, and they are shown in the app. The panel also says how much of the score rests on measured, computed, estimated, or model-derived values, and which metric has the most points still open.
 
-**Benchmark.** The 125 materials with a measured n at 550 nm are scored on the three optical metrics, so a candidate can be read as "higher than 86 to 119 of 125". This set favors materials already used in optics, and it holds some doubtful reports (BP is listed at 4.2 eV), so the app compares candidates with well-known optical materials rather than with a top list. The benchmark ranks evidence; it has not been checked against measured solid solutions.
+**Benchmark.** The 125 materials with a measured n at 550 nm are scored on the three optical metrics, so a candidate can be read as "higher than 86 to 119 of 125". This set favors materials already used in optics, and it holds some doubtful reports (BP is listed at 4.2 eV), so the app compares candidates with well-known optical materials rather than with a top list. The benchmark compares values; a high rank does not show that a material can be made.
 
 **Novelty (four levels).** *Already known* (an observed exact match in Materials Project, COD, or measured reference data), *Computed only*, *Related work exists* (the same elements in Materials Project, or papers that name the system in the title), or *Nothing found*. The panel lists each check with links and the closest known compositions by the share of atoms that differ. An ordered model's formula rarely matches a paper's notation, so the paper check looks for the end members and for the host with each new element. "Nothing found" covers these sources only: it does not check patents, unpublished work, or other notations, and the app never calls a candidate a discovery.
 
 A session leaderboard ranks the candidates, so each new attempt shows whether the idea improved. The agent can read both answers (`get_scorecard`, `check_novelty`), and the JSON export includes the score.
+
+### How the score was tested
+
+`scripts/validate_score.py` runs these tests and writes `backend/data/validation.json`. The tests changed the score: they exposed three faults, described below.
+
+| Test | Data | Result |
+|---|---|---|
+| Band-gap range | 219 measured solid solutions (fractional compositions in Zhuo et al.) | End-member range alone: 63% inside. With the 0.2 eV margin: 94%. Margin chosen on half the cases; 91% inside on the other half |
+| The same, gap ≥ 2 eV | 39 cases | With the margin: 90% inside. Rank correlation of the midpoint: 0.406 (all cases: 0.878) |
+| n range | 192 computed wide-gap oxide mixes (JARVIS TBmBJ) | Range alone: 70% inside. With the 0.2 margin: 91% |
+| Gap range on oxides | 192 computed wide-gap oxide mixes | With the margin: 74% inside; mean midpoint error 0.879 eV. Polymorphs can differ, so this is a pessimistic test |
+| Optical score, controls | 8 waveguide materials, 7 opaque, 6 low-n | Lowest waveguide material 68.0, highest opaque 61.2, highest low-n 38.0. A sanity check only, because n and the gap build the score |
+| Structural checks, no swap | 40 real crystals at their own geometry | 29 raise no alarm. Charge passes on 100%. Distances fail on 4 crystals with short covalent bonds (CO2, TeO2, LiIO3, Ba(BO2)2). The tolerance factor warns on 1 of 3 perovskite-like crystals (BaTiO3, t = 1.062) |
+| Atom fit, held-out swaps | 21 real compounds, 8 impossible swaps | 21 of 21 keep their points; 6 of 8 caught; AUC 0.905 |
+
+**Faults found and fixed:**
+
+- **One property could make up for the other.** Opaque Fe2O3 scored 70, against 71 for Si3N4. n and the band gap now combine as a geometric mean, because AR glasses need both.
+- **Ranges were too narrow.** The real gap was below the lower end far more often than above the upper end (71 against 11 cases). Ranges now carry the tested margins.
+- **Atom fit could not tell real from impossible.** Without relaxation, the bond-valence check fails on 40% of swaps to real compounds, because the atoms stay in the host's positions. Any failed check capped the score, so KCl and CsF2 both got 30 points. Only a failed charge check caps it now: charge passes on every real compound tested. The checks themselves did not change, so "Structural Concerns" still appears often on 100% swaps.
+
+**What this does not show:**
+
+- There are no measured oxide solid solutions in the data, and most measured cases are III-V and chalcogenide semiconductors. For n, no measured mixes were found.
+- Among clear materials the ranking is weak (rank correlation 0.406, 39 cases), so small score differences mean little.
+- The margins and the charge rule came from this data, so only the held-out numbers are fair tests of them. The held-out sets are small.
+- Impossible swaps can pass the charge check through unusual oxidation states: LaO and LaF2 with La(+2) score 80 in the held-out set, and CsN with N(-1) and CsS with S(-1) score 80 in the tuning set.
+- The score has not been tested against whether a material was made or used, beyond the small control list.
 
 ## Who it is for
 
@@ -117,7 +145,7 @@ Every n value carries one tag, shown with its own color, icon, and text:
 |---|---|
 | `Experimental` | refractiveindex.info, measured n at 550 nm (bulk or crystal pages; thin films are listed but not used for the best value). For band gaps: literature values from Zhuo et al. (2018) |
 | `DFT-computed` | JARVIS-DFT n = √ε from DFT linear optics (TBmBJ preferred, then OptB88vdW), or Materials Project n. This is a long-wavelength value, not n(550 nm) |
-| `Heuristic` | A candidate's **range** spanned by its end members, e.g. SrTiO3 → LaAlO3 for Sr→La + Ti→Al. Never a single number, and not a prediction. A candidate whose exact formula has a measured or TBmBJ value uses that value instead |
+| `Heuristic` | A candidate's **range** spanned by its end members, e.g. SrTiO3 → LaAlO3 for Sr→La + Ti→Al. Never a single number, and not a prediction. Each end is widened by a tested margin (n: 0.2, band gap: 0.2 eV; see "How the score was tested"). A candidate whose exact formula has a measured or TBmBJ value uses that value instead |
 | `Unknown` | No data |
 
 Band gaps follow the same order: a measured value first, then a JARVIS-DFT value (TBmBJ, then OptB88vdW). Measured gaps are the median of the reports for a formula in the Zhuo et al. compilation (3,895 reports; the 2,458 entries with a gap of 0 are labels for metals and are not used). The compilation does not record the method for each report, so a value can be an optical, direct, or indirect gap, and reports for one formula can disagree (SrTiO3: 3.0 to 4.1 eV). The app shows the median and the spread. Many materials have no measured gap (LaAlO3 and Al2O3 among them) and keep a `DFT-computed` value, so a candidate's range can mix measured and computed gaps.
@@ -291,6 +319,7 @@ In use:
 - **JARVIS-DFT** — 3D dataset version 2025-09-24, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), [doi:10.6084/m9.figshare.6815699](https://doi.org/10.6084/m9.figshare.6815699). K. Choudhary et al., *npj Comput. Mater.* 6, 173 (2020); optics: K. Choudhary et al., *Sci. Data* 5, 180082 (2018).
 - **refractiveindex.info database** — release 2026-05-24, [CC0](https://creativecommons.org/publicdomain/zero/1.0/). M. N. Polyanskiy, *Sci. Data* 11, 94 (2024). Each measured value links to its page and original reference.
 
+- **AR waveguide materials (test controls)** — Huawei patent [US11899241](https://patents.google.com/patent/US11899241) and [Coherent (2024)](https://www.coherent.com/news/blog/ar-displays-high-index-material.html).
 - **Experimental band gaps** — [Expt Gap Data](https://doi.org/10.6084/m9.figshare.7289687.v1), MIT license on the Figshare record. Y. Zhuo, A. Mansouri Tehrani, J. Brgoch, "Predicting the Band Gaps of Inorganic Solids by Machine Learning", *J. Phys. Chem. Lett.* 9, 1668 (2018).
 
 - **Element production concentration (HHI)** — M. W. Gaultois et al., *Chem. Mater.* 25, 2911 (2013), as tabulated in pymatgen.

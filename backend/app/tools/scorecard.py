@@ -9,6 +9,8 @@ only, because they have no candidate structure to check.
 """
 
 import itertools
+import json
+import math
 from functools import lru_cache
 from typing import Literal
 
@@ -16,7 +18,8 @@ from pydantic import BaseModel
 from pymatgen.analysis.hhi import HHIModel
 from pymatgen.core import Composition, Structure
 
-from app.models.candidates import Candidate
+from app.config import BACKEND_DIR
+from app.models.candidates import Candidate, StructuralAssessment
 from app.models.evidence import EvidenceStatus, PropertyValue
 from app.tools.goals import Goal
 from app.tools.reference_db import MOSS_CONSTANT_EV, ReferenceDB
@@ -38,7 +41,9 @@ LANDMARKS = ("TiO2", "ZrO2", "ZnS", "SrTiO3", "LiNbO3", "BaTiO3", "Ta2O5", "Nb2O
 MetricEvidence = EvidenceStatus | Literal["Model"]
 ISOTROPY_POINTS = {"isotropic": 100.0, "uniaxial": 60.0, "biaxial": 30.0}
 CHECK_POINTS = {"pass": 100.0, "warn": 50.0, "fail": 0.0}
-FAILED_CHECK_CAP = 30.0
+# Only charge caps the metric: real compounds pass it and impossible swaps fail it. The geometry
+# checks fail for many real compounds, because the atoms stay in the host's positions.
+CHARGE_FAIL_CAP = 30.0
 EVIDENCE_ORDER: tuple[EvidenceStatus, ...] = (
     "Unknown",
     "Heuristic",
@@ -46,11 +51,14 @@ EVIDENCE_ORDER: tuple[EvidenceStatus, ...] = (
     "Experimental",
 )
 METHOD = (
-    "Weights: n 30, band gap 30, n-gap trade-off 10, optical isotropy 10, atom fit 15, element "
-    "supply 5. The goal value earns 70 points on the n and band gap metrics. A range is the worst "
-    "and best end of the evidence, and a metric with no data counts as 0 to 100. This score ranks "
-    "ideas; it is not a probability that the material can be made or will work."
+    "Weights: n and band gap 60 together, n-gap trade-off 10, optical isotropy 10, atom fit 15, "
+    "element supply 5. n and the band gap are combined as a geometric mean, because AR glasses "
+    "need both and one cannot make up for the other. The goal value earns 70 points on each. A "
+    "range is the worst and best end of the evidence, and a metric with no data counts as 0 to "
+    "100. This score ranks ideas; it is not a probability that the material can be made or will "
+    "work."
 )
+VALIDATION_FILE = BACKEND_DIR / "data" / "validation.json"
 
 
 class Metric(BaseModel):
@@ -81,6 +89,26 @@ class Benchmark(BaseModel):
     note: str
 
 
+class Validation(BaseModel):
+    """How the score's parts did in scripts/validate_score.py; percentages."""
+
+    gap_cases: int
+    gap_inside: int
+    gap_inside_wide: int
+    gap_wide_cases: int
+    gap_rank: float
+    gap_wide_rank: float
+    n_cases: int
+    n_inside: int
+    real_crystals: int
+    real_crystals_charge_pass: int
+    real_crystals_bvs_fail: int
+    swaps: int
+    swaps_kept: int
+    implausible: int
+    implausible_caught: int
+
+
 class Scorecard(BaseModel):
     subject: str
     goal: Goal
@@ -94,6 +122,7 @@ class Scorecard(BaseModel):
     disqualified: list[str]  # forbidden elements in the candidate
     benchmark: Benchmark
     method: str
+    validation: Validation | None = None
 
 
 def ramp(x: float, anchors: list[tuple[float, float]]) -> float:
@@ -242,11 +271,18 @@ def _isotropy_metric(structure: Structure, parent: Structure) -> Metric:
     )
 
 
-def _fit_metric(candidate: Candidate) -> Metric:
-    points = [
-        CHECK_POINTS[c.status] for c in candidate.assessment.checks if c.status in CHECK_POINTS
-    ]
+def fit_score(assessment: StructuralAssessment) -> float | None:
+    points = [CHECK_POINTS[c.status] for c in assessment.checks if c.status in CHECK_POINTS]
     if not points:
+        return None
+    score = sum(points) / len(points)
+    charge_failed = any(c.id == "charge" and c.status == "fail" for c in assessment.checks)
+    return min(score, CHARGE_FAIL_CAP) if charge_failed else score
+
+
+def _fit_metric(candidate: Candidate) -> Metric:
+    score = fit_score(candidate.assessment)
+    if score is None:
         return Metric(
             id="fit",
             weight=WEIGHTS["fit"],
@@ -256,18 +292,16 @@ def _fit_metric(candidate: Candidate) -> Metric:
             evidence="Unknown",
             detail="No structural check could run.",
         )
-    score = sum(points) / len(points)
-    if 0.0 in points:
-        score = min(score, FAILED_CHECK_CAP)
-    passed = points.count(100.0)
+    statuses = [c.status for c in candidate.assessment.checks if c.status in CHECK_POINTS]
+    passed = statuses.count("pass")
     return Metric(
         id="fit",
         weight=WEIGHTS["fit"],
         low=score,
         high=score,
-        value=f"{passed}/{len(points)}",
+        value=f"{passed}/{len(statuses)}",
         evidence="Model",
-        detail=f"{passed} of {len(points)} structural checks passed ({candidate.assessment.status}).",
+        detail=f"{passed} of {len(statuses)} structural checks passed ({candidate.assessment.status}).",
     )
 
 
@@ -305,7 +339,13 @@ def _supply_metric(formula: str) -> Metric:
 
 
 def _weighted(scores: dict[MetricId, float], ids: tuple[MetricId, ...]) -> float:
-    return sum(WEIGHTS[i] * scores[i] for i in ids) / sum(WEIGHTS[i] for i in ids)
+    """n and the gap combine as a geometric mean: an opaque material gets 0 on that part, however
+    strongly it bends light."""
+    rest = [i for i in ids if i not in ("n", "band_gap")]
+    core = WEIGHTS["n"] + WEIGHTS["band_gap"]
+    both = math.sqrt(scores["n"] * scores["band_gap"])
+    total = core * both + sum(WEIGHTS[i] * scores[i] for i in rest)
+    return total / (core + sum(WEIGHTS[i] for i in rest))
 
 
 def optical_score(n: float, gap: float, goal: Goal) -> float:
@@ -360,6 +400,36 @@ def _benchmark(
     )
 
 
+@lru_cache(maxsize=1)
+def load_validation() -> Validation | None:
+    """Numbers from the committed report; the panel works without them."""
+    try:
+        report = json.loads(VALIDATION_FILE.read_text())
+        wide = report["measured_gap_ranges"]["gap_at_least_2_ev"]
+        gaps = report["measured_gap_ranges"]["all"]
+        n = report["computed_ranges"]["n_oxides_wide"]
+        crystals, fit = report["real_crystals"], report["atom_fit_holdout"]
+        return Validation(
+            gap_cases=gaps["cases"],
+            gap_inside=round(100 * gaps["inside"]["0.2"]),
+            gap_inside_wide=round(100 * wide["inside"]["0.2"]),
+            gap_wide_cases=wide["cases"],
+            gap_rank=gaps["rank_correlation_midpoint"],
+            gap_wide_rank=wide["rank_correlation_midpoint"],
+            n_cases=n["cases"],
+            n_inside=round(100 * n["inside"]["0.2"]),
+            real_crystals=crystals["crystals"],
+            real_crystals_charge_pass=round(100 * crystals["pass_rate"]["charge"]),
+            real_crystals_bvs_fail=round(100 * crystals["fail_rate"]["bond_valence"]),
+            swaps=fit["swaps"],
+            swaps_kept=fit["kept_above_cap"],
+            implausible=fit["implausible_total"],
+            implausible_caught=fit["implausible_capped"],
+        )
+    except (OSError, KeyError, TypeError, ValueError):
+        return None
+
+
 def build_scorecard(
     candidate: Candidate, structure: Structure, parent: Structure, goal: Goal, db: ReferenceDB
 ) -> Scorecard:
@@ -408,4 +478,5 @@ def build_scorecard(
         disqualified=banned,
         benchmark=_benchmark(candidate, goal, db, optical_low, optical_high),
         method=METHOD,
+        validation=load_validation(),
     )

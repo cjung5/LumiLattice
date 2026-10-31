@@ -33,6 +33,15 @@ from app.tools.registry import ToolError
 # Measured pages that describe the bulk material (thin films and nanoparticles differ).
 BULK_CATEGORIES = {"bulk", "crystal", ""}
 MATCH_NOTE = "Matched by formula; the polymorph may differ from the selected structure."
+# Added to both ends of a Heuristic range. scripts/validate_score.py chose the gap margin on half
+# of the measured solid solutions (0.2 eV: 91% of the other half fall inside). n has no measured
+# solid solutions to test: 0.2 puts 91% of computed wide-gap oxide mixes inside.
+GAP_MARGIN_EV = 0.2
+N_MARGIN = 0.2
+N_NOTE = f"Widened by {N_MARGIN} on each side, from tests on computed mixes."
+GAP_NOTE_RANGE = (
+    f"Widened by {GAP_MARGIN_EV} eV on each side, from tests on measured solid solutions."
+)
 GAP_NOTE = "Reported in the literature; the compilation does not record the measurement method."
 CURVE_NM = list(range(380, 781, 10))
 LANDSCAPE_SAMPLE = 2500
@@ -249,8 +258,16 @@ class ReferenceDB:
         n = self.best_n(exact) if exact else None
         gap = self.best_gap(exact) if exact else None
         return OpticalEstimate(
-            estimate=n if _good(n) else _range("refractive_index", n_values, None, note, names),
-            band_gap=gap if _good(gap) else _range("band_gap", gap_values, "eV", note, names),
+            estimate=n
+            if _good(n)
+            else _range(
+                "refractive_index", n_values, None, f"{note} {N_NOTE}", names, N_MARGIN, 1.0
+            ),
+            band_gap=gap
+            if _good(gap)
+            else _range(
+                "band_gap", gap_values, "eV", f"{note} {GAP_NOTE_RANGE}", names, GAP_MARGIN_EV, 0.0
+            ),
             end_members=members,
         )
 
@@ -332,7 +349,13 @@ class ReferenceDB:
 
 
 def _range(
-    name: str, values: list[float], units: str | None, conditions: str, names: str
+    name: str,
+    values: list[float],
+    units: str | None,
+    conditions: str,
+    names: str,
+    margin: float,
+    floor: float,
 ) -> PropertyValue:
     if len(values) < 2:
         return PropertyValue(
@@ -343,7 +366,10 @@ def _range(
         )
     return PropertyValue(
         name=name,
-        value_range=(min(values), max(values)),
+        value_range=(
+            round(max(min(values) - margin, floor), 3),
+            round(max(values) + margin, 3),
+        ),
         units=units,
         status="Heuristic",
         conditions=conditions,

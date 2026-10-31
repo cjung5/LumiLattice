@@ -1,3 +1,5 @@
+import math
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -10,8 +12,10 @@ from app.tools.candidates import create_candidate
 from app.tools.goals import Goal
 from app.tools.reference_db import get_reference_db
 from app.tools.scorecard import (
+    CHARGE_FAIL_CAP,
     WEIGHTS,
     build_scorecard,
+    fit_score,
     gap_points,
     moss_points,
     moss_ratio,
@@ -79,10 +83,10 @@ def test_a_wider_range_gives_a_wider_score(stored):
     n = next(m for m in result.metrics if m.id == "n")
     assert result.low < result.high
     assert n.evidence == "Heuristic" and n.low < n.high
-    assert result.low == pytest.approx(sum(m.weight * m.low for m in result.metrics) / 100, abs=0.1)
-    assert result.high == pytest.approx(
-        sum(m.weight * m.high for m in result.metrics) / 100, abs=0.1
-    )
+    scores = {m.id: m.low for m in result.metrics}
+    core = 60 * math.sqrt(scores["n"] * scores["band_gap"])
+    rest = sum(m.weight * m.low for m in result.metrics if m.id not in ("n", "band_gap"))
+    assert result.low == pytest.approx((core + rest) / 100, abs=0.1)
 
 
 def test_unknown_evidence_counts_as_0_to_100(stored):
@@ -119,14 +123,26 @@ def test_trade_off_uses_real_end_member_pairs(stored):
     assert metric.value == f"{low:.3g}–{high:.3g}"
 
 
-def test_a_failed_check_caps_the_fit_metric(stored):
-    candidate, structure = stored
-    checks = [c.model_copy(update={"status": "pass"}) for c in candidate.assessment.checks]
-    checks[0] = checks[0].model_copy(update={"status": "fail"})
-    assessment = candidate.assessment.model_copy(update={"checks": checks})
-    failed = candidate.model_copy(update={"assessment": assessment})
+def _with_failed(candidate, check_id):
+    checks = [
+        c.model_copy(update={"status": "fail" if c.id == check_id else "pass"})
+        for c in candidate.assessment.checks
+    ]
+    return candidate.assessment.model_copy(update={"checks": checks})
 
-    assert next(m for m in card(failed, structure).metrics if m.id == "fit").high <= 30
+
+def test_only_a_failed_charge_check_caps_the_fit_metric(stored):
+    candidate, _ = stored
+    assert fit_score(_with_failed(candidate, "charge")) <= CHARGE_FAIL_CAP
+    # Real compounds fail this one when the atoms stay in the host's positions.
+    assert fit_score(_with_failed(candidate, "bond_valence")) > CHARGE_FAIL_CAP
+
+
+def test_an_opaque_material_scores_below_a_clear_one_it_out_bends():
+    # Fe2O3-like (n 3.1, gap 2.2 eV) against Si3N4-like (n 2.0, gap 5.1 eV).
+    assert optical_score(3.1, 2.2, GOAL) < optical_score(2.0, 5.1, GOAL)
+    # No band gap to speak of: only the trade-off points are left.
+    assert optical_score(4.0, 0.5, GOAL) <= 10 * 100 / 70
 
 
 def test_forbidden_elements_are_flagged(stored):

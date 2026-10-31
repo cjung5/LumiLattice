@@ -1,0 +1,840 @@
+{
+  "applied_margins": {
+    "gap_ev": 0.2,
+    "n": 0.2
+  },
+  "measured_gap_ranges": {
+    "all": {
+      "cases": 219,
+      "inside": {
+        "0": 0.626,
+        "0.1": 0.808,
+        "0.2": 0.936,
+        "0.3": 0.977,
+        "0.5": 0.995
+      },
+      "below_range": 71,
+      "above_range": 11,
+      "error_of_midpoint": 0.334,
+      "error_of_linear_mix": 0.239,
+      "rank_correlation_midpoint": 0.878,
+      "rank_correlation_linear": 0.872
+    },
+    "gap_at_least_2_ev": {
+      "cases": 39,
+      "inside": {
+        "0": 0.744,
+        "0.1": 0.821,
+        "0.2": 0.897,
+        "0.3": 0.949,
+        "0.5": 0.974
+      },
+      "below_range": 6,
+      "above_range": 4,
+      "error_of_midpoint": 0.384,
+      "error_of_linear_mix": 0.27,
+      "rank_correlation_midpoint": 0.406,
+      "rank_correlation_linear": 0.472
+    },
+    "oxides": null,
+    "margin_holdout": {
+      "chosen_margin_ev": 0.2,
+      "tune_cases": 109,
+      "test_cases": 110,
+      "inside_on_tune": 0.963,
+      "inside_on_test": 0.909
+    },
+    "note": "Solid solutions with fractional compositions in the Zhuo et al. compilation, with measured values for every end member. Most are III-V and chalcogenide semiconductors."
+  },
+  "computed_ranges": {
+    "gap_all": {
+      "cases": 892,
+      "inside": {
+        "0": 0.64,
+        "0.1": 0.702,
+        "0.2": 0.75,
+        "0.3": 0.789,
+        "0.5": 0.85
+      },
+      "below_range": 190,
+      "above_range": 131,
+      "error_of_midpoint": 0.859,
+      "error_of_linear_mix": 0.868,
+      "rank_correlation_midpoint": 0.786,
+      "rank_correlation_linear": 0.782
+    },
+    "n_all": {
+      "cases": 892,
+      "inside": {
+        "0": 0.595,
+        "0.1": 0.763,
+        "0.2": 0.809,
+        "0.3": 0.836,
+        "0.5": 0.859
+      },
+      "below_range": 144,
+      "above_range": 217,
+      "error_of_midpoint": 1.191,
+      "error_of_linear_mix": 1.159,
+      "rank_correlation_midpoint": 0.827,
+      "rank_correlation_linear": 0.838
+    },
+    "gap_oxides_wide": {
+      "cases": 192,
+      "inside": {
+        "0": 0.635,
+        "0.1": 0.698,
+        "0.2": 0.74,
+        "0.3": 0.776,
+        "0.5": 0.839
+      },
+      "below_range": 27,
+      "above_range": 43,
+      "error_of_midpoint": 0.879,
+      "error_of_linear_mix": 0.883,
+      "rank_correlation_midpoint": 0.73,
+      "rank_correlation_linear": 0.733
+    },
+    "n_oxides_wide": {
+      "cases": 192,
+      "inside": {
+        "0": 0.703,
+        "0.1": 0.875,
+        "0.2": 0.911,
+        "0.3": 0.938,
+        "0.5": 0.958
+      },
+      "below_range": 29,
+      "above_range": 28,
+      "error_of_midpoint": 0.387,
+      "error_of_linear_mix": 0.369,
+      "rank_correlation_midpoint": 0.798,
+      "rank_correlation_linear": 0.813
+    },
+    "note": "Ordered JARVIS compounds between two compounds with one element swapped at the same charge, all TBmBJ. n = sqrt(eps) is a long-wavelength value. Median over polymorphs, so the phases can differ."
+  },
+  "optical_score_controls": {
+    "lowest_waveguide": 68.0,
+    "highest_opaque": 61.2,
+    "highest_low_n": 38.0,
+    "waveguide": {
+      "TiO2": 89.0,
+      "Si3N4": 68.0,
+      "LiNbO3": 78.6,
+      "SiC": 76.4,
+      "Nb2O5": 75.3,
+      "Ta2O5": 76.0,
+      "ZrO2": 93.1,
+      "HfO2": 69.7
+    },
+    "opaque": {
+      "GaAs": 11.3,
+      "InP": 6.8,
+      "PbS": 0.0,
+      "Fe2O3": 61.2,
+      "GaSb": 11.7,
+      "InAs": 9.9,
+      "CdTe": 6.0
+    },
+    "low_n": {
+      "MgF2": 21.9,
+      "CaF2": 27.8,
+      "LiF": 23.1,
+      "SiO2": 38.0,
+      "BaF2": 31.7,
+      "NaF": 12.2
+    },
+    "beats_opaque": 1.0,
+    "beats_low_n": 1.0,
+    "note": "A sanity check, not proof: n and the band gap also build the score."
+  },
+  "real_crystals": {
+    "crystals": 40,
+    "no_alarm": 29,
+    "pass_rate": {
+      "charge": 1.0,
+      "distances": 0.9,
+      "bond_fit": 0.95,
+      "coordination": 0.9,
+      "bond_valence": 0.85,
+      "tolerance_factor": 0.667
+    },
+    "warn_rate": {
+      "charge": 0.0,
+      "distances": 0.0,
+      "bond_fit": 0.025,
+      "coordination": 0.1,
+      "bond_valence": 0.15,
+      "tolerance_factor": 0.333
+    },
+    "fail_rate": {
+      "charge": 0.0,
+      "distances": 0.1,
+      "bond_fit": 0.025,
+      "coordination": 0.0,
+      "bond_valence": 0.0,
+      "tolerance_factor": 0.0
+    },
+    "with_alarm": [
+      "CO2",
+      "BaTiO3",
+      "AlPO4",
+      "KTaO3",
+      "TeO2",
+      "LiIO3",
+      "WS2",
+      "KNbO3",
+      "Bi(BO2)3",
+      "PdSe2",
+      "Ba(BO2)2"
+    ],
+    "note": "Real crystals at their own geometry, so every warning and failure here is a false alarm."
+  },
+  "atom_fit_tuning": {
+    "swaps": 62,
+    "not_observed_left_out": 1,
+    "kept_above_cap": 60,
+    "implausible_total": 10,
+    "implausible_capped": 8,
+    "mean_fit_real": 80.0,
+    "mean_fit_implausible": 35.7,
+    "auc_real_vs_implausible": 0.908,
+    "real_compound_checks": {
+      "pass_rate": {
+        "charge": 1.0,
+        "distances": 0.937,
+        "bond_fit": 0.571,
+        "coordination": 0.857,
+        "bond_valence": 0.222,
+        "tolerance_factor": 0.625
+      },
+      "warn_rate": {
+        "charge": 0.0,
+        "distances": 0.0,
+        "bond_fit": 0.27,
+        "coordination": 0.143,
+        "bond_valence": 0.381,
+        "tolerance_factor": 0.25
+      },
+      "fail_rate": {
+        "charge": 0.0,
+        "distances": 0.063,
+        "bond_fit": 0.159,
+        "coordination": 0.0,
+        "bond_valence": 0.397,
+        "tolerance_factor": 0.125
+      }
+    },
+    "implausible_checks": {
+      "pass_rate": {
+        "charge": 0.2,
+        "distances": 0.6,
+        "bond_fit": 0.4,
+        "coordination": 1.0,
+        "bond_valence": 0.2,
+        "tolerance_factor": 0.25
+      },
+      "warn_rate": {
+        "charge": 0.0,
+        "distances": 0.0,
+        "bond_fit": 0.1,
+        "coordination": 0.0,
+        "bond_valence": 0.0,
+        "tolerance_factor": 0.25
+      },
+      "fail_rate": {
+        "charge": 0.8,
+        "distances": 0.4,
+        "bond_fit": 0.5,
+        "coordination": 0.0,
+        "bond_valence": 0.8,
+        "tolerance_factor": 0.5
+      }
+    },
+    "implausible": [
+      {
+        "swap": "Sr->Cs in mp-5229",
+        "formula": "CsTiO3",
+        "fit": 30.0
+      },
+      {
+        "swap": "Ti->Na in mp-5229",
+        "formula": "NaSrO3",
+        "fit": 30.0
+      },
+      {
+        "swap": "Ti->Cs in mp-5229",
+        "formula": "CsSrO3",
+        "fit": 16.7
+      },
+      {
+        "swap": "O->Cl in mp-5229",
+        "formula": "SrTiCl3",
+        "fit": 30.0
+      },
+      {
+        "swap": "Mg->K in mp-1265",
+        "formula": "K2O2",
+        "fit": 20.0
+      },
+      {
+        "swap": "Al->Cs in mp-1143",
+        "formula": "Cs2O3",
+        "fit": 20.0
+      },
+      {
+        "swap": "Na->La in mp-22862",
+        "formula": "LaCl",
+        "fit": 30.0
+      },
+      {
+        "swap": "Ca->Cs in mp-2741",
+        "formula": "CsF2",
+        "fit": 20.0
+      },
+      {
+        "swap": "Ga->Cs in mp-804",
+        "formula": "CsN",
+        "fit": 80.0
+      },
+      {
+        "swap": "Zn->Cs in mp-10695",
+        "formula": "CsS",
+        "fit": 80.0
+      }
+    ],
+    "cases": [
+      {
+        "formula": "CaTiO3",
+        "fit": 91.7,
+        "observed": true
+      },
+      {
+        "formula": "BaTiO3",
+        "fit": 83.3,
+        "observed": true
+      },
+      {
+        "formula": "TiPbO3",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "MgTiO3",
+        "fit": 58.3,
+        "observed": true
+      },
+      {
+        "formula": "TiCdO3",
+        "fit": 91.7,
+        "observed": true
+      },
+      {
+        "formula": "TiMnO3",
+        "fit": 58.3,
+        "observed": true
+      },
+      {
+        "formula": "TiZnO3",
+        "fit": 58.3,
+        "observed": true
+      },
+      {
+        "formula": "TiBeO3",
+        "fit": 41.7,
+        "observed": false
+      },
+      {
+        "formula": "SrZrO3",
+        "fit": 91.7,
+        "observed": true
+      },
+      {
+        "formula": "SrHfO3",
+        "fit": 91.7,
+        "observed": true
+      },
+      {
+        "formula": "SrSnO3",
+        "fit": 91.7,
+        "observed": true
+      },
+      {
+        "formula": "SrGeO3",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "SrSiO3",
+        "fit": 75.0,
+        "observed": true
+      },
+      {
+        "formula": "SrCeO3",
+        "fit": 75.0,
+        "observed": true
+      },
+      {
+        "formula": "SrMnO3",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "SrPbO3",
+        "fit": 75.0,
+        "observed": true
+      },
+      {
+        "formula": "ZrO2",
+        "fit": 90.0,
+        "observed": true
+      },
+      {
+        "formula": "HfO2",
+        "fit": 90.0,
+        "observed": true
+      },
+      {
+        "formula": "SnO2",
+        "fit": 90.0,
+        "observed": true
+      },
+      {
+        "formula": "GeO2",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "SiO2",
+        "fit": 90.0,
+        "observed": true
+      },
+      {
+        "formula": "CeO2",
+        "fit": 70.0,
+        "observed": true
+      },
+      {
+        "formula": "CdS",
+        "fit": 80.0,
+        "observed": true
+      },
+      {
+        "formula": "HgS",
+        "fit": 60.0,
+        "observed": true
+      },
+      {
+        "formula": "BeS",
+        "fit": 80.0,
+        "observed": true
+      },
+      {
+        "formula": "MgS",
+        "fit": 90.0,
+        "observed": true
+      },
+      {
+        "formula": "MnS",
+        "fit": 90.0,
+        "observed": true
+      },
+      {
+        "formula": "CaS",
+        "fit": 50.0,
+        "observed": true
+      },
+      {
+        "formula": "SrS",
+        "fit": 30.0,
+        "observed": true
+      },
+      {
+        "formula": "BaS",
+        "fit": 30.0,
+        "observed": true
+      },
+      {
+        "formula": "LiCl",
+        "fit": 90.0,
+        "observed": true
+      },
+      {
+        "formula": "KCl",
+        "fit": 70.0,
+        "observed": true
+      },
+      {
+        "formula": "RbCl",
+        "fit": 70.0,
+        "observed": true
+      },
+      {
+        "formula": "CsCl",
+        "fit": 60.0,
+        "observed": true
+      },
+      {
+        "formula": "AgCl",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "CuCl",
+        "fit": 80.0,
+        "observed": true
+      },
+      {
+        "formula": "CaO",
+        "fit": 70.0,
+        "observed": true
+      },
+      {
+        "formula": "SrO",
+        "fit": 60.0,
+        "observed": true
+      },
+      {
+        "formula": "BaO",
+        "fit": 40.0,
+        "observed": true
+      },
+      {
+        "formula": "MnO",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "NiO",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "CoO",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "CdO",
+        "fit": 80.0,
+        "observed": true
+      },
+      {
+        "formula": "ZnO",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "Ga2O3",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "In2O3",
+        "fit": 70.0,
+        "observed": true
+      },
+      {
+        "formula": "Cr2O3",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "Fe2O3",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "Sc2O3",
+        "fit": 80.0,
+        "observed": true
+      },
+      {
+        "formula": "Y2O3",
+        "fit": 70.0,
+        "observed": true
+      },
+      {
+        "formula": "La2O3",
+        "fit": 40.0,
+        "observed": true
+      },
+      {
+        "formula": "V2O3",
+        "fit": 90.0,
+        "observed": true
+      },
+      {
+        "formula": "SrF2",
+        "fit": 90.0,
+        "observed": true
+      },
+      {
+        "formula": "BaF2",
+        "fit": 70.0,
+        "observed": true
+      },
+      {
+        "formula": "CdF2",
+        "fit": 90.0,
+        "observed": true
+      },
+      {
+        "formula": "PbF2",
+        "fit": 90.0,
+        "observed": true
+      },
+      {
+        "formula": "MgF2",
+        "fit": 90.0,
+        "observed": true
+      },
+      {
+        "formula": "HgF2",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "AlN",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "InN",
+        "fit": 90.0,
+        "observed": true
+      },
+      {
+        "formula": "BN",
+        "fit": 70.0,
+        "observed": true
+      },
+      {
+        "formula": "ScN",
+        "fit": 70.0,
+        "observed": true
+      },
+      {
+        "formula": "YN",
+        "fit": 50.0,
+        "observed": true
+      }
+    ]
+  },
+  "atom_fit_holdout": {
+    "swaps": 21,
+    "not_observed_left_out": 1,
+    "kept_above_cap": 21,
+    "implausible_total": 8,
+    "implausible_capped": 6,
+    "mean_fit_real": 81.4,
+    "mean_fit_implausible": 35.8,
+    "auc_real_vs_implausible": 0.905,
+    "real_compound_checks": {
+      "pass_rate": {
+        "charge": 1.0,
+        "distances": 0.864,
+        "bond_fit": 0.591,
+        "coordination": 0.955,
+        "bond_valence": 0.364,
+        "tolerance_factor": 1.0
+      },
+      "warn_rate": {
+        "charge": 0.0,
+        "distances": 0.0,
+        "bond_fit": 0.227,
+        "coordination": 0.045,
+        "bond_valence": 0.318,
+        "tolerance_factor": 0.0
+      },
+      "fail_rate": {
+        "charge": 0.0,
+        "distances": 0.136,
+        "bond_fit": 0.182,
+        "coordination": 0.0,
+        "bond_valence": 0.318,
+        "tolerance_factor": 0.0
+      }
+    },
+    "implausible_checks": {
+      "pass_rate": {
+        "charge": 0.25,
+        "distances": 0.5,
+        "bond_fit": 0.25,
+        "coordination": 0.875,
+        "bond_valence": 0.0,
+        "tolerance_factor": 0.0
+      },
+      "warn_rate": {
+        "charge": 0.0,
+        "distances": 0.0,
+        "bond_fit": 0.25,
+        "coordination": 0.125,
+        "bond_valence": 0.0,
+        "tolerance_factor": 0.0
+      },
+      "fail_rate": {
+        "charge": 0.75,
+        "distances": 0.5,
+        "bond_fit": 0.5,
+        "coordination": 0.0,
+        "bond_valence": 1.0,
+        "tolerance_factor": 1.0
+      }
+    },
+    "implausible": [
+      {
+        "swap": "Zn->Cs in mp-2133",
+        "formula": "Cs2O2",
+        "fit": 10.0
+      },
+      {
+        "swap": "Zn->La in mp-2133",
+        "formula": "LaO",
+        "fit": 80.0
+      },
+      {
+        "swap": "Li->Ba in mp-1138",
+        "formula": "BaF",
+        "fit": 20.0
+      },
+      {
+        "swap": "Li->La in mp-1138",
+        "formula": "LaF",
+        "fit": 30.0
+      },
+      {
+        "swap": "Ba->Cs in mp-2998",
+        "formula": "CsTiO3",
+        "fit": 30.0
+      },
+      {
+        "swap": "Ti->K in mp-2998",
+        "formula": "KBaO3",
+        "fit": 16.7
+      },
+      {
+        "swap": "Mg->Rb in mp-1249",
+        "formula": "RbF2",
+        "fit": 20.0
+      },
+      {
+        "swap": "Mg->La in mp-1249",
+        "formula": "LaF2",
+        "fit": 80.0
+      }
+    ],
+    "cases": [
+      {
+        "formula": "CdO",
+        "fit": 80.0,
+        "observed": true
+      },
+      {
+        "formula": "MgO",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "BeO",
+        "fit": 70.0,
+        "observed": true
+      },
+      {
+        "formula": "HgO",
+        "fit": 80.0,
+        "observed": true
+      },
+      {
+        "formula": "CaO",
+        "fit": 50.0,
+        "observed": true
+      },
+      {
+        "formula": "MnO",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "NaF",
+        "fit": 70.0,
+        "observed": true
+      },
+      {
+        "formula": "KF",
+        "fit": 40.0,
+        "observed": true
+      },
+      {
+        "formula": "RbF",
+        "fit": 40.0,
+        "observed": true
+      },
+      {
+        "formula": "CsF",
+        "fit": 40.0,
+        "observed": true
+      },
+      {
+        "formula": "BaZrO3",
+        "fit": 91.7,
+        "observed": true
+      },
+      {
+        "formula": "BaHfO3",
+        "fit": 91.7,
+        "observed": false
+      },
+      {
+        "formula": "BaSnO3",
+        "fit": 91.7,
+        "observed": true
+      },
+      {
+        "formula": "BaCeO3",
+        "fit": 75.0,
+        "observed": true
+      },
+      {
+        "formula": "SrTiO3",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "CaTiO3",
+        "fit": 91.7,
+        "observed": true
+      },
+      {
+        "formula": "TiPbO3",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "ZnF2",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "MnF2",
+        "fit": 90.0,
+        "observed": true
+      },
+      {
+        "formula": "FeF2",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "CoF2",
+        "fit": 100.0,
+        "observed": true
+      },
+      {
+        "formula": "NiF2",
+        "fit": 100.0,
+        "observed": true
+      }
+    ]
+  }
+}

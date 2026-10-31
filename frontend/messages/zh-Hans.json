@@ -697,7 +697,15 @@
     "boardHint": "尝试其他替换，看排名是否上升。按各评分范围的中值排序。",
     "boardCandidate": "候选者",
     "boardScore": "评分",
-    "boardRange": "范围"
+    "boardRange": "范围",
+    "tested": {
+      "title": "测试充分程度如何？",
+      "gap": "带隙：{cases}个实测固溶体中，{inside}%的真实值在区间内。其中多数为半导体，而非氧化物。",
+      "wide": "仅透明材料：{cases}个中{inside}%在区间内，但排序较弱（秩相关{rank}），请勿轻信微小评分差异。",
+      "n": "折射率：{cases}个计算氧化物混合物中{inside}%在区间内。未找到可测试的实测混合物。",
+      "fit": "原子相容性：{swaps}个真实化合物中有{kept}个保留得分，{implausible}个不可能交换中有{caught}个被检出，测试集与该规则设计相互独立。",
+      "notTested": "未测试：无实测氧化物固溶体，也未验证高分能否预测已合成应用的材料。"
+    }
   },
   "NoveltyCheck": {
     "title": "新颖度如何？",
