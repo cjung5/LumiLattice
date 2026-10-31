@@ -42,22 +42,19 @@ export function LevelSwitch() {
   const t = useTranslations("Level");
   const { level, setLevel } = useLevel();
   return (
-    <div className="flex flex-wrap items-center gap-2 text-sm">
-      <div role="radiogroup" aria-label={t("label")} className="inline-flex rounded-md border border-line p-0.5">
-        {(["guided", "expert"] as const).map((option) => (
-          <button
-            key={option}
-            type="button"
-            role="radio"
-            aria-checked={level === option}
-            onClick={() => setLevel(option)}
-            className={`rounded px-3 py-1 ${level === option ? "bg-accent text-white" : ""}`}
-          >
-            {t(option)}
-          </button>
-        ))}
-      </div>
-      <span className="text-xs text-muted">{t(`${level}Hint`)}</span>
+    <div role="radiogroup" aria-label={t("label")} title={t(`${level}Hint`)} className="segmented text-sm">
+      {(["guided", "expert"] as const).map((option) => (
+        <button
+          key={option}
+          type="button"
+          role="radio"
+          aria-checked={level === option}
+          onClick={() => setLevel(option)}
+          className="segment"
+        >
+          {t(option)}
+        </button>
+      ))}
     </div>
   );
 }
@@ -67,8 +64,8 @@ export function Advanced({ label, children }: { label: string; children: ReactNo
   const { level } = useLevel();
   if (level === "expert") return <>{children}</>;
   return (
-    <details className="rounded-md border border-line p-3 text-sm">
-      <summary className="cursor-pointer font-medium">{label}</summary>
+    <details className="subcard text-sm">
+      <summary className="font-medium">{label}</summary>
       <div className="mt-3 space-y-3">{children}</div>
     </details>
   );

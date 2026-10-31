@@ -29,7 +29,7 @@ export function NoveltyPanel({ candidate }: { candidate: Candidate }) {
   }, [run]);
 
   return (
-    <section className="space-y-3 rounded-md border border-line p-4 text-sm" aria-label={t("title")}>
+    <section className="subcard space-y-3 text-sm" aria-label={t("title")}>
       <div>
         <h3 className="font-semibold">{t("title")}</h3>
         <p className="mt-1 text-xs text-muted">{t("hint")}</p>
@@ -45,7 +45,7 @@ export function NoveltyPanel({ candidate }: { candidate: Candidate }) {
                 <li
                   key={level}
                   aria-current={active ? "step" : undefined}
-                  className={`rounded border px-2 py-1 text-xs ${active ? "border-accent font-semibold" : "border-line text-muted"}`}
+                  className={`rounded-full border px-3 py-1 text-xs ${active ? "border-accent bg-accent-soft font-semibold text-accent-text" : "border-line text-muted"}`}
                 >
                   {active && <span aria-hidden>● </span>}
                   {t(`level.${level}.name`)}
@@ -59,7 +59,7 @@ export function NoveltyPanel({ candidate }: { candidate: Candidate }) {
           </p>
 
           {!result.complete && (
-            <p className="rounded border border-warning p-2 text-xs">
+            <p className="rounded-lg border border-warning p-3 text-xs">
               <span aria-hidden>! </span>
               {t("incomplete")}{" "}
               <button type="button" onClick={() => void run()} className="text-accent-text underline">

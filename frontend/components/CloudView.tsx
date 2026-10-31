@@ -377,6 +377,8 @@ export function CloudView({ cif, colors, emphasis = [] }: Props) {
   const settings = useRef({ byDirection, flow, spin, thickness });
   settings.current = { byDirection, flow, spin, thickness };
   const reduceMotion = useRef(false);
+  const graphics = useRef<WebGL2RenderingContext | null>(null);
+  const emphasisKey = emphasis.join();
 
   useEffect(() => {
     let active = true;
@@ -401,6 +403,7 @@ export function CloudView({ cif, colors, emphasis = [] }: Props) {
       setError(t("noWebgl"));
       return;
     }
+    graphics.current = gl;
 
     const lattice = data.lattice as Mat3;
     const toCartesian = transpose(lattice);
@@ -422,8 +425,16 @@ export function CloudView({ cif, colors, emphasis = [] }: Props) {
     let frameScale = 1;
     let frameTime = 16;
 
-    const volume = program(gl, VOLUME_VERTEX, VOLUME_FRAGMENT);
-    const lines = program(gl, LINE_VERTEX, LINE_FRAGMENT);
+    // A browser can drop the graphics context at any time. That must cost this picture, not the page.
+    let volume: WebGLProgram;
+    let lines: WebGLProgram;
+    try {
+      volume = program(gl, VOLUME_VERTEX, VOLUME_FRAGMENT);
+      lines = program(gl, LINE_VERTEX, LINE_FRAGMENT);
+    } catch {
+      setError(t("noWebgl"));
+      return;
+    }
     const quad = gl.createVertexArray();
     gl.bindVertexArray(quad);
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
@@ -595,6 +606,11 @@ export function CloudView({ cif, colors, emphasis = [] }: Props) {
       zoom = Math.max(0.35, Math.min(2.5, zoom * Math.exp(e.deltaY * 0.001)));
       dirty = true;
     };
+    const onLost = () => {
+      cancelAnimationFrame(frame);
+      setError(t("noWebgl"));
+    };
+    element.addEventListener("webglcontextlost", onLost);
     element.addEventListener("pointerdown", onDown);
     element.addEventListener("pointermove", onMove);
     element.addEventListener("pointerup", onUp);
@@ -615,10 +631,22 @@ export function CloudView({ cif, colors, emphasis = [] }: Props) {
       element.removeEventListener("pointerup", onUp);
       element.removeEventListener("pointercancel", onUp);
       element.removeEventListener("wheel", onWheel);
-      gl.getExtension("WEBGL_lose_context")?.loseContext();
+      element.removeEventListener("webglcontextlost", onLost);
+      gl.deleteProgram(volume);
+      gl.deleteProgram(lines);
     };
+    // The site list by value: a new array with the same sites must not restart the picture.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, colors, emphasis]);
+  }, [data, colors, emphasisKey]);
+
+  // Only when the canvas goes away: this canvas cannot draw again after its context is released.
+  useEffect(
+    () => () => {
+      graphics.current?.getExtension("WEBGL_lose_context")?.loseContext();
+      graphics.current = null;
+    },
+    [],
+  );
 
   // The sites that stretch most, in words: the colors alone do not work for everyone.
   const stretched = useMemo(() => {
@@ -639,7 +667,7 @@ export function CloudView({ cif, colors, emphasis = [] }: Props) {
 
   return (
     <div>
-      <div className="relative h-80 w-full overflow-hidden rounded-md border border-line" style={{ background: "radial-gradient(circle at 50% 40%, #1a2030, #07090f 75%)" }}>
+      <div className="relative h-96 w-full overflow-hidden rounded-lg border border-line" style={{ background: "radial-gradient(circle at 50% 40%, #182a1c, #0a140d 75%)" }}>
         <canvas ref={canvas} className="absolute inset-0 h-full w-full cursor-grab touch-none active:cursor-grabbing" aria-label={t("cloudLabel")} role="img" />
         {!data && !error && <p className="absolute inset-0 flex items-center justify-center text-sm text-white/70">{t("cloudLoading")}</p>}
         {error && <p className="absolute inset-0 flex items-center justify-center p-4 text-center text-sm text-white">{error}</p>}
@@ -654,7 +682,7 @@ export function CloudView({ cif, colors, emphasis = [] }: Props) {
       </div>
 
       <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
-        <div role="radiogroup" aria-label={t("colorLabel")} className="inline-flex rounded-md border border-line p-0.5">
+        <div role="radiogroup" aria-label={t("colorLabel")} className="segmented">
           {([false, true] as const).map((option) => (
             <button
               key={String(option)}
@@ -666,7 +694,7 @@ export function CloudView({ cif, colors, emphasis = [] }: Props) {
                 if (option && !reduceMotion.current) setFlow(true);
                 if (!option) setFlow(false);
               }}
-              className={`rounded px-2 py-1 ${byDirection === option ? "bg-accent text-white" : ""}`}
+              className="segment"
             >
               {t(option ? "colorDirection" : "colorElement")}
             </button>

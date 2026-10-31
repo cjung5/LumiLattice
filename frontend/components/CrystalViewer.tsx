@@ -11,6 +11,9 @@ const BASE_STYLE = { sphere: { scale: 0.3, colorscheme: "Jmol" }, stick: STICK }
 const EMPHASIS_STYLE = { sphere: { scale: 0.42, colorscheme: "Jmol" }, stick: STICK };
 const HIGHLIGHT_STYLE = { sphere: { scale: 0.48, color: "#e11d8f" }, stick: STICK };
 const LABEL = { fontSize: 13, backgroundOpacity: 0.7, inFront: true };
+// The crystal sits on a dark stage in both themes, so the atoms read as lit. The pictures for the
+// critique stay on white: that is the view its prompt and earlier checks were made with.
+const STAGE = "#0a140d";
 
 export type CapturedViews = { views: { label: string; image: string }[]; legend: Record<string, string> };
 export type ViewerHandle = { capture: () => Promise<CapturedViews> };
@@ -119,7 +122,7 @@ export function CrystalViewer({ cif, emphasis = [], highlight = [], species = []
       if (cancelled || !containerRef.current) return;
       // Orthographic: parallel edges stay parallel. Perspective makes a cubic cell look warped.
       viewerRef.current ??= $3Dmol.createViewer(containerRef.current, {
-        backgroundColor: "white",
+        backgroundColor: STAGE,
         orthographic: true,
       });
       const viewer = viewerRef.current;
@@ -163,6 +166,7 @@ export function CrystalViewer({ cif, emphasis = [], highlight = [], species = []
           ["down the b axis", () => viewer.rotate(90, "x")],
         ];
         const views: CapturedViews["views"] = [];
+        viewer.setBackgroundColor("white", 1);
         try {
           for (const [name, turn] of shots) {
             viewer.setView(axisView.current);
@@ -171,6 +175,7 @@ export function CrystalViewer({ cif, emphasis = [], highlight = [], species = []
             views.push({ label: name, image: await shrink(viewer.pngURI()) });
           }
         } finally {
+          viewer.setBackgroundColor(STAGE, 1);
           viewer.setView(saved);
           decorate(viewer);
         }
@@ -187,7 +192,7 @@ export function CrystalViewer({ cif, emphasis = [], highlight = [], species = []
 
   return (
     <div>
-      <div role="radiogroup" aria-label={t("viewLabel")} className="mb-1 inline-flex rounded-md border border-line p-0.5 text-xs">
+      <div role="radiogroup" aria-label={t("viewLabel")} className="segmented mb-2 text-xs">
         {(["atoms", "cloud"] as const).map((option) => (
           <button
             key={option}
@@ -198,7 +203,7 @@ export function CrystalViewer({ cif, emphasis = [], highlight = [], species = []
               setView(option);
               onViewChange?.(option);
             }}
-            className={`rounded px-2 py-1 ${view === option ? "bg-accent text-white" : ""}`}
+            className="segment"
           >
             {t(option === "atoms" ? "viewAtoms" : "viewCloud")}
           </button>
@@ -206,7 +211,7 @@ export function CrystalViewer({ cif, emphasis = [], highlight = [], species = []
       </div>
       {/* Stays mounted under the cloud: the critique captures its views from this canvas. */}
       <div className={view === "cloud" ? "pointer-events-none fixed -left-[9999px] top-0 h-80 w-[600px]" : ""}>
-        <div ref={containerRef} className="relative h-80 w-full overflow-hidden rounded-md border border-line" />
+        <div ref={containerRef} className="relative h-96 w-full overflow-hidden rounded-lg border border-line" />
       </div>
       {view === "cloud" && <CloudView cif={cif} colors={colors} emphasis={emphasis} />}
       <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">

@@ -957,5 +957,9 @@
       "average": "평균",
       "coordinate": "배위"
     }
+  },
+  "Theme": {
+    "toDark": "밤 모드로 바꾸기",
+    "toLight": "낮 모드로 바꾸기"
   }
 }

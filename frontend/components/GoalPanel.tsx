@@ -32,8 +32,8 @@ export function GoalPanel({ goal, onChange }: Props) {
   if (level === "guided") {
     const avoidToxic = TOXIC.every((e) => goal.forbidden_elements.includes(e));
     return (
-      <section className="rounded-lg border border-line bg-surface p-4 text-sm">
-        <h2 className="text-base font-semibold">{t("titleGuided")}</h2>
+      <section className="card text-sm">
+        <h2 className="text-lg font-semibold tracking-tight">{t("titleGuided")}</h2>
         <p className="mb-3 text-muted">{t("hintGuided")}</p>
         <div className="grid gap-6 md:grid-cols-2">
           <div>
@@ -45,7 +45,7 @@ export function GoalPanel({ goal, onChange }: Props) {
                 step="0.05"
                 min={1}
                 max={5}
-                className="w-20 rounded-md border border-line bg-background px-2 py-1"
+                className="w-20 field"
                 value={goal.target_n}
                 onChange={(e) => onChange({ ...goal, target_n: e.target.valueAsNumber || goal.target_n })}
               />
@@ -61,7 +61,7 @@ export function GoalPanel({ goal, onChange }: Props) {
                 step="0.1"
                 min={0.5}
                 max={15}
-                className="w-20 rounded-md border border-line bg-background px-2 py-1"
+                className="w-20 field"
                 value={goal.min_band_gap}
                 onChange={(e) => onChange({ ...goal, min_band_gap: e.target.valueAsNumber || goal.min_band_gap })}
               />
@@ -87,8 +87,8 @@ export function GoalPanel({ goal, onChange }: Props) {
   }
 
   return (
-    <section className="rounded-lg border border-line bg-surface p-4">
-      <h2 className="font-semibold">{t("title")}</h2>
+    <section className="card">
+      <h2 className="text-lg font-semibold tracking-tight">{t("title")}</h2>
       <p className="mb-3 text-sm text-muted">{t("hint")}</p>
       <div className="flex flex-wrap items-end gap-4 text-sm">
         <label className="flex flex-col gap-1">
@@ -98,7 +98,7 @@ export function GoalPanel({ goal, onChange }: Props) {
             step="0.05"
             min={1}
             max={5}
-            className="w-24 rounded-md border border-line bg-background px-2 py-1.5"
+            className="w-24 field"
             value={goal.target_n}
             onChange={(e) => onChange({ ...goal, target_n: e.target.valueAsNumber || goal.target_n })}
           />
@@ -110,7 +110,7 @@ export function GoalPanel({ goal, onChange }: Props) {
             step="0.1"
             min={0}
             max={15}
-            className="w-24 rounded-md border border-line bg-background px-2 py-1.5"
+            className="w-24 field"
             value={goal.min_band_gap}
             onChange={(e) => onChange({ ...goal, min_band_gap: e.target.valueAsNumber || goal.min_band_gap })}
           />
@@ -118,7 +118,7 @@ export function GoalPanel({ goal, onChange }: Props) {
         <label className="flex min-w-48 flex-1 flex-col gap-1">
           <span>{t("forbidden")}</span>
           <input
-            className="rounded-md border border-line bg-background px-2 py-1.5"
+            className="field"
             placeholder={t("forbiddenPlaceholder")}
             value={elementText}
             onChange={(e) => setElements(e.target.value)}
@@ -127,7 +127,7 @@ export function GoalPanel({ goal, onChange }: Props) {
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            className="rounded-md border border-line px-3 py-1.5 text-xs"
+            className="btn btn-ghost btn-sm"
             onClick={() => {
               setElementText(goal.forbidden_elements.join(", "));
               onChange({ ...goal, ...AR_GOAL });
@@ -137,7 +137,7 @@ export function GoalPanel({ goal, onChange }: Props) {
           </button>
           <button
             type="button"
-            className="rounded-md border border-line px-3 py-1.5 text-xs"
+            className="btn btn-ghost btn-sm"
             onClick={() => setElements([...new Set([...goal.forbidden_elements, ...TOXIC])].join(", "))}
           >
             {t("presetToxic")}

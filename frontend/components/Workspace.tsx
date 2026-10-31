@@ -9,7 +9,7 @@ import { ExampleCallout, FlowGuide, type ExampleState, type StepId } from "@/com
 import { AR_GOAL, GoalPanel } from "@/components/GoalPanel";
 import { HostSelector } from "@/components/HostSelector";
 import { Intro } from "@/components/Intro";
-import { Advanced, LevelProvider, useLevel } from "@/components/Level";
+import { Advanced, useLevel } from "@/components/Level";
 import { LiteraturePanel } from "@/components/LiteraturePanel";
 import { RegistryPanel } from "@/components/RegistryPanel";
 import { StructurePanel } from "@/components/StructurePanel";
@@ -53,14 +53,6 @@ const sameSubstitutions = (a: Substitution[], b: Substitution[]) =>
   a.every((s, i) => s.element_from === b[i].element_from && s.element_to === b[i].element_to && Math.abs(s.fraction - b[i].fraction) < 1e-6);
 
 export function Workspace() {
-  return (
-    <LevelProvider>
-      <WorkspaceBody />
-    </LevelProvider>
-  );
-}
-
-function WorkspaceBody() {
   const locale = useLocale();
   const t = useTranslations("Decision");
   const tw = useTranslations("Workspace");
@@ -174,11 +166,12 @@ function WorkspaceBody() {
     if (!scrollTarget) return;
     const section = document.getElementById(`step-${scrollTarget}`);
     if (!section) return;
-    section.scrollIntoView({ behavior: "smooth", block: "start" });
+    const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+    section.scrollIntoView({ behavior, block: "start" });
     setScrollTarget(null);
     // Panels above may still grow while their data loads; align once more after they settle.
     window.clearTimeout(alignTimer.current);
-    alignTimer.current = window.setTimeout(() => section.scrollIntoView({ behavior: "smooth", block: "start" }), 900);
+    alignTimer.current = window.setTimeout(() => section.scrollIntoView({ behavior, block: "start" }), 900);
   }, [scrollTarget, structure, current, loading]);
 
   function jump(step: StepId) {

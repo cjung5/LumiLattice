@@ -47,7 +47,7 @@ export function OpticalPanel({ formula }: { formula: string }) {
 
       {data.measured.length > 0 && (
         <details open>
-          <summary className="cursor-pointer font-medium">
+          <summary className="font-medium">
             {t("measured", { count: data.measured.length })} <EvidenceTag status="Experimental" />
           </summary>
           <div className="mt-1 overflow-x-auto">
@@ -89,7 +89,7 @@ export function OpticalPanel({ formula }: { formula: string }) {
 
       {data.computed.length > 0 && (
         <details>
-          <summary className="cursor-pointer font-medium">
+          <summary className="font-medium">
             {t("computed", { count: data.computed.length })} <EvidenceTag status="DFT-computed" />
           </summary>
           <p className="mt-1 text-xs text-muted">{t("computedNote")}</p>

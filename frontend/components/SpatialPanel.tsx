@@ -43,7 +43,7 @@ function SymmetryChip({ info, label }: { info: SymmetryInfo | null; label: strin
   const t = useTranslations("Spatial");
   if (!info) return null;
   return (
-    <div className="rounded-md border border-line px-3 py-2 text-xs">
+    <div className="rounded-lg border border-line px-3 py-2 text-xs">
       <div className="text-muted">{label}</div>
       <div className="text-sm font-semibold">{info.spacegroup ?? "—"}</div>
       <div>

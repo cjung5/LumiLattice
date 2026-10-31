@@ -10,14 +10,14 @@ export const VERDICT: Record<Verdict, { icon: string; color: string; ink: string
   meets: { icon: "✓", color: "var(--status-good)", ink: "#0b0b0f" },
   uncertain: { icon: "?", color: "var(--status-warning)", ink: "#0b0b0f" },
   fails: { icon: "✗", color: "var(--status-critical)", ink: "#ffffff" },
-  unknown: { icon: "–", color: "var(--chart-muted)", ink: "#0b0b0f" },
+  unknown: { icon: "–", color: "var(--chart-muted)", ink: "var(--on-unknown-mark)" },
 };
 
 export function ScoreCard({ score, title }: { score: GoalScore; title: string }) {
   const t = useTranslations("Score");
   const tb = useBackendText();
   return (
-    <div className="rounded-md border border-line p-3 text-sm">
+    <div className="subcard text-sm">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <span className="font-medium">{title}</span>
         <span className="text-xs text-muted">{t("summary", { meets: score.meets, total: score.total })}</span>

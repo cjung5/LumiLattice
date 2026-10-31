@@ -56,7 +56,7 @@ export function Term({ id, children, bare = false }: { id: TermId; children: Rea
         ref={popover}
         popover="auto"
         style={{ position: "fixed", inset: "auto", margin: 0, ...place }}
-        className="rounded-md border border-line bg-surface p-3 text-left text-sm font-normal text-foreground shadow-lg"
+        className="rounded-lg border border-line-strong bg-surface p-3.5 text-left text-sm font-normal text-foreground shadow-lg"
       >
         <span className="block font-semibold">{t(`${id}.name`)}</span>
         <span className="mt-1 block">{t(`${id}.text`)}</span>

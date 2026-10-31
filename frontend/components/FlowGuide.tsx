@@ -32,7 +32,7 @@ export function FlowGuide({ done, hostLabel, candidateId, example, onJump, onExa
   } else if (next) {
     message = (
       <span>
-        <span className="font-semibold">{t("next")}</span> {t(guided ? `hintGuided.${next}` : `hint.${next}`, { host: hostLabel, id: candidateId ?? "" })}
+        <span className="font-medium text-foreground">{t("next")}</span> {t(guided ? `hintGuided.${next}` : `hint.${next}`, { host: hostLabel, id: candidateId ?? "" })}
       </span>
     );
   } else {
@@ -40,29 +40,29 @@ export function FlowGuide({ done, hostLabel, candidateId, example, onJump, onExa
   }
 
   return (
-    <nav aria-label={t("label")} className="z-20 rounded-lg border border-line bg-surface p-3 shadow-sm md:sticky md:top-0">
+    <nav aria-label={t("label")} className="glass z-20 rounded-lg px-3 py-2.5 shadow-sm md:sticky md:top-0">
       <div className="flex flex-wrap items-center gap-2">
-        <ol className="flex flex-1 flex-wrap items-center gap-1.5 text-sm">
+        <ol className="flex flex-1 flex-wrap items-center gap-1 text-sm">
           {STEPS.map((step, i) => {
             const state = done[step] ? "done" : step === next ? "current" : "todo";
             return (
-              <li key={step} className="flex items-center gap-1.5">
-                {i > 0 && <span aria-hidden className="hidden text-muted sm:inline">→</span>}
+              <li key={step} className="flex items-center gap-1">
+                {i > 0 && <span aria-hidden className={`hidden h-px w-5 sm:block ${state === "todo" ? "bg-line-strong" : "bg-accent"}`} />}
                 <button
                   type="button"
                   onClick={() => onJump(step)}
                   aria-current={state === "current" ? "step" : undefined}
-                  className={`flex items-center gap-1.5 rounded-full py-1 pl-1 pr-3 ${state === "current" ? "bg-accent text-white" : "border border-line"}`}
+                  className={`flex items-center gap-1.5 rounded-full py-1 pl-1 pr-3 ${state === "current" ? "bg-accent text-on-accent" : "hover:bg-surface-2"}`}
                 >
                   <span
                     aria-hidden
-                    className={`flex h-5 w-5 items-center justify-center rounded-full text-xs font-semibold ${
-                      state === "current" ? "bg-black/25" : state === "done" ? "bg-accent/15" : "border border-line text-muted"
+                    className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ${
+                      state === "current" ? "bg-on-accent text-accent" : state === "done" ? "bg-accent-soft text-accent-text" : "border border-line-strong text-muted"
                     }`}
                   >
                     {state === "done" ? "✓" : i + 1}
                   </span>
-                  <span className={state === "todo" ? "text-muted" : undefined}>{t(guided ? `stepGuided.${step}` : `step.${step}`)}</span>
+                  <span className={state === "todo" ? "text-muted" : state === "current" ? "font-medium" : undefined}>{t(guided ? `stepGuided.${step}` : `step.${step}`)}</span>
                   <span className="sr-only">{t(`state.${state}`)}</span>
                 </button>
               </li>
@@ -70,18 +70,12 @@ export function FlowGuide({ done, hostLabel, candidateId, example, onJump, onExa
           })}
         </ol>
         {!guided && (
-          <button
-            type="button"
-            onClick={onExample}
-            disabled={running}
-            className="w-full rounded-md border border-accent px-3 py-1.5 text-sm font-medium disabled:opacity-50 sm:w-auto"
-          >
-            <span aria-hidden>▶ </span>
+          <button type="button" onClick={onExample} disabled={running} className="btn btn-outline btn-sm w-full sm:w-auto">
             {running ? t("exampleRunning") : t("example")}
           </button>
         )}
       </div>
-      <p className="mt-2 text-sm" aria-live="polite">{message}</p>
+      <p className="mt-1.5 px-1 text-sm text-muted" aria-live="polite">{message}</p>
     </nav>
   );
 }
@@ -92,14 +86,14 @@ export function ExampleCallout({ onDismiss }: { onDismiss: () => void }) {
   const te = useTranslations("Evidence");
   const guided = useLevel().level === "guided";
   return (
-    <div className="mb-3 flex items-start gap-3 rounded-lg border border-accent bg-surface p-4 text-sm">
+    <div className="mb-4 flex items-start gap-3 rounded-lg border border-accent bg-accent-soft p-4 text-sm">
       <p className="flex-1">
         <span className="font-semibold">{t("exampleTitle")}</span>{" "}
         {guided
           ? t("exampleStoryGuided")
           : t("exampleStory", { landscape: te("tabLandscape"), score: te("tabScore"), spatial: te("tabSpatial") })}
       </p>
-      <button type="button" onClick={onDismiss} className="text-muted underline">
+      <button type="button" onClick={onDismiss} className="btn btn-ghost btn-sm">
         {t("dismiss")}
       </button>
     </div>

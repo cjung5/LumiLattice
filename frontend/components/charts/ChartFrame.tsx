@@ -43,16 +43,16 @@ export function ChartFrame({ title, subtitle, legend = [], notes = [], table, ch
   const t = useTranslations("Charts");
   const [showTable, setShowTable] = useState(false);
   return (
-    <figure className="rounded-md border border-line bg-chart-surface p-3">
+    <figure className="rounded-lg border border-line bg-chart-surface p-4">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <figcaption>
-          <div className="text-sm font-medium" style={{ color: "var(--chart-ink)" }}>{title}</div>
+          <div className="font-medium" style={{ color: "var(--chart-ink)" }}>{title}</div>
           {subtitle && <div className="text-xs" style={{ color: "var(--chart-ink-2)" }}>{subtitle}</div>}
         </figcaption>
         <button
           type="button"
           onClick={() => setShowTable((v) => !v)}
-          className="rounded border border-line px-2 py-0.5 text-xs"
+          className="btn btn-ghost btn-sm shrink-0"
           aria-pressed={showTable}
         >
           {showTable ? t("showChart") : t("showTable")}
@@ -70,7 +70,7 @@ export function ChartFrame({ title, subtitle, legend = [], notes = [], table, ch
       )}
       <div className="mt-2">{showTable ? <div className="max-h-80 overflow-auto">{table}</div> : children}</div>
       {notes.length > 0 && (
-        <ul className="mt-2 list-disc pl-4 text-xs" style={{ color: "var(--chart-ink-2)" }}>
+        <ul className="mt-3 list-disc pl-4 text-xs" style={{ color: "var(--chart-ink-2)" }}>
           {notes.map((n) => (
             <li key={n}>{n}</li>
           ))}
@@ -86,7 +86,7 @@ export function Tooltip({ x, y, width, children }: { x: number; y: number; width
   const right = x > width * 0.6 ? width - x + 12 : undefined;
   return (
     <div
-      className="pointer-events-none absolute z-10 rounded-md border border-line px-2 py-1 text-xs shadow-sm"
+      className="pointer-events-none absolute z-10 rounded-md border border-line-strong px-2.5 py-1.5 text-xs shadow-lg"
       style={{ top: y + 12, left, right, background: "var(--chart-surface)", color: "var(--chart-ink)" }}
     >
       {children}

@@ -58,12 +58,12 @@ export function CritiquePanel({ candidate, goal, geometry, capture, onChange, on
   }
 
   return (
-    <div className="rounded-md border border-line p-3 text-sm">
+    <div className="subcard text-sm">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
           <h4 className="font-medium">
             {t("title")}
-            <span className="ml-2 rounded border border-line px-1.5 py-0.5 text-xs font-normal text-muted">{t("aiTag")}</span>
+            <span className="ml-2 rounded-full border border-line px-2 py-0.5 text-xs font-normal text-muted">{t("aiTag")}</span>
           </h4>
           <p className="mt-1 text-xs text-muted">{guided ? t("hintGuided") : t("hint")}</p>
         </div>
@@ -71,7 +71,7 @@ export function CritiquePanel({ candidate, goal, geometry, capture, onChange, on
           type="button"
           onClick={() => void run()}
           disabled={busy}
-          className="rounded-md bg-accent px-3 py-1.5 font-medium text-white disabled:opacity-50"
+          className="btn btn-primary btn-sm"
         >
           {busy ? t("running") : latest ? t("rerun") : t("run")}
         </button>
@@ -81,7 +81,7 @@ export function CritiquePanel({ candidate, goal, geometry, capture, onChange, on
       {latest && <CritiqueView critique={latest} candidateId={candidate.candidate_id} onAskAgent={onAskAgent} />}
       {older.length > 0 && (
         <details className="mt-3">
-          <summary className="cursor-pointer text-xs text-muted">{t("older", { count: older.length })}</summary>
+          <summary className="text-xs text-muted">{t("older", { count: older.length })}</summary>
           <div className="mt-2 space-y-4">
             {older.map((c) => (
               <CritiqueView key={c.created_at} critique={c} candidateId={candidate.candidate_id} />
@@ -163,7 +163,7 @@ function CritiqueView({
           <h5 className="text-xs font-medium text-muted">{t("suggestions")}</h5>
           <ol className="mt-1 space-y-2">
             {critique.suggestions.map((s, i) => (
-              <li key={i} className="rounded border border-line p-2">
+              <li key={i} className="rounded-lg border border-line p-3">
                 <div className="font-medium">{s.change}</div>
                 <div className="text-xs">
                   {s.rationale}
@@ -200,7 +200,7 @@ function CritiqueView({
       )}
 
       {critique.warnings.length > 0 && (
-        <div className="rounded border border-warning p-2 text-xs">
+        <div className="rounded-lg border border-warning p-3 text-xs">
           <div className="font-medium text-warning">{t("warnings")}</div>
           <ul className="mt-1 list-disc pl-5">
             {critique.warnings.map((w, i) => (
@@ -211,7 +211,7 @@ function CritiqueView({
       )}
 
       <details>
-        <summary className="cursor-pointer text-xs text-muted">{t("evidence", { count: critique.evidence.length })}</summary>
+        <summary className="text-xs text-muted">{t("evidence", { count: critique.evidence.length })}</summary>
         <ul className="mt-1 space-y-0.5 text-xs">
           {critique.evidence.map((e) => (
             <li key={e.id}>

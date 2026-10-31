@@ -957,5 +957,9 @@
       "average": "Mittelwert",
       "coordinate": "Koordinate"
     }
+  },
+  "Theme": {
+    "toDark": "Zum Nachtmodus wechseln",
+    "toLight": "Zum Tagmodus wechseln"
   }
 }

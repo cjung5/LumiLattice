@@ -2,31 +2,36 @@ import { useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { use } from "react";
 import { BackendStatus } from "@/components/BackendStatus";
+import { Logo } from "@/components/brand/Logo";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { LevelProvider, LevelSwitch } from "@/components/Level";
+import { ThemeSwitch } from "@/components/ThemeSwitch";
 import { Workspace } from "@/components/Workspace";
 import { MACHINE_TRANSLATED } from "@/i18n/routing";
 
 export default function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = use(params);
   setRequestLocale(locale);
-  const t = useTranslations("Home");
   const tl = useTranslations("Language");
 
   return (
-    <main className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-8">
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">LumiLattice</h1>
-          <p className="text-lg">{t("headline")}</p>
-          <p className="mt-2 text-muted">{t("lead")}</p>
-          {MACHINE_TRANSLATED.has(locale) && (
-            <p className="mt-1 text-xs text-warning">{tl("machineTranslated")}</p>
-          )}
-        </div>
-        <LanguageSwitcher />
-      </header>
-      <BackendStatus />
-      <Workspace />
-    </main>
+    <LevelProvider>
+      <main className="mx-auto flex max-w-6xl flex-col gap-5 px-4 pb-16 pt-4 sm:px-6">
+        <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+          <div className="flex items-center gap-2.5">
+            <Logo />
+            <h1 className="text-xl font-semibold tracking-tight">LumiLattice</h1>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <LevelSwitch />
+            <BackendStatus />
+            <ThemeSwitch />
+            <LanguageSwitcher />
+          </div>
+        </header>
+        {MACHINE_TRANSLATED.has(locale) && <p className="text-xs text-warning">{tl("machineTranslated")}</p>}
+        <Workspace />
+      </main>
+    </LevelProvider>
   );
 }

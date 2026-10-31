@@ -957,5 +957,9 @@
       "average": "promedio",
       "coordinate": "coordenada"
     }
+  },
+  "Theme": {
+    "toDark": "Cambiar a modo oscuro",
+    "toLight": "Cambiar a modo claro"
   }
 }

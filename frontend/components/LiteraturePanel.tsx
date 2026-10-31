@@ -29,12 +29,12 @@ export function LiteraturePanel({ formula }: { formula: string | null }) {
   const failed = Object.entries(result?.source_status ?? {}).filter(([, status]) => status !== "ok");
 
   return (
-    <section className="rounded-lg border border-line bg-surface p-4">
-      <h2 className="font-semibold">{t("title")}</h2>
+    <section className="card">
+      <h2 className="text-lg font-semibold tracking-tight">{t("title")}</h2>
       <p className="mb-3 text-sm text-muted">{t("hint")}</p>
       <form onSubmit={onSearch} className="flex flex-col gap-2 sm:flex-row">
         <input
-          className="flex-1 rounded-md border border-line bg-background px-3 py-2"
+          className="field flex-1"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder={t("placeholder")}
@@ -42,7 +42,7 @@ export function LiteraturePanel({ formula }: { formula: string | null }) {
         <button
           type="submit"
           disabled={loading || query.trim().length < 2}
-          className="rounded-md bg-accent px-4 py-2 font-medium text-white disabled:opacity-50"
+          className="btn btn-primary"
         >
           {loading ? t("searching") : t("search")}
         </button>
@@ -85,7 +85,7 @@ export function LiteraturePanel({ formula }: { formula: string | null }) {
                   </a>
                 )}
                 {(paper.sources.length ? paper.sources : [paper.provenance.source]).map((source) => (
-                  <span key={source} className="rounded border border-line px-1">
+                  <span key={source} className="rounded-full border border-line px-2">
                     {source}
                   </span>
                 ))}

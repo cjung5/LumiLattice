@@ -61,7 +61,7 @@ export function PublishControl({ candidate, onChange }: Props) {
       </div>
 
       {open && !published && (
-        <div className="rounded-md border border-line bg-background p-3">
+        <div className="subcard">
           <p className="text-xs text-muted">{t("demoNote")}</p>
           <fieldset className="mt-2 flex flex-wrap items-center gap-3 text-xs">
             <legend className="sr-only">{t("credit")}</legend>
@@ -75,7 +75,7 @@ export function PublishControl({ candidate, onChange }: Props) {
             </label>
             {creditDisplay === "name" && (
               <input
-                className="rounded border border-line bg-surface px-2 py-1"
+                className="field"
                 value={name}
                 maxLength={200}
                 placeholder={t("namePlaceholder")}
@@ -91,7 +91,7 @@ export function PublishControl({ candidate, onChange }: Props) {
             <button
               type="button"
               disabled={busy || !consent || (creditDisplay === "name" && !name.trim())}
-              className="rounded-md bg-accent px-3 py-1 text-xs font-medium text-white disabled:opacity-50"
+              className="btn btn-primary btn-sm"
               onClick={() =>
                 void apply({ visibility: "published", credit_display: creditDisplay, display_name: name, consent })
               }

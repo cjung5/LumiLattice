@@ -18,7 +18,7 @@ export function EvidenceTag({ status }: { status: EvidenceStatus }) {
   const style = TAG_STYLE[status];
   return (
     <Term id={style.term} bare>
-      <span className={`inline-flex items-center gap-1 whitespace-nowrap rounded border px-1.5 text-xs ${style.className}`}>
+      <span className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 text-xs ${style.className}`}>
         <span aria-hidden>{style.icon}</span>
         {status}
       </span>

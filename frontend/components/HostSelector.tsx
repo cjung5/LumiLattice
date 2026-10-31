@@ -84,11 +84,11 @@ export function HostSelector({ selectedId, onSelectMaterial, onUploadedStructure
   }
 
   const tabClass = (active: boolean) =>
-    `rounded-md px-3 py-1 text-sm ${active ? "bg-accent text-white" : "border border-line"}`;
+    `segment text-sm ${active ? "bg-accent text-on-accent" : ""}`;
 
   return (
-    <section className="rounded-lg border border-line bg-surface p-4">
-      <h2 className="font-semibold">{guided ? <>{t("titleGuided.before")} <Term id="host">{t("titleGuided.term")}</Term></> : t("title")}</h2>
+    <section className="card">
+      <h2 className="text-lg font-semibold tracking-tight">{guided ? <>{t("titleGuided.before")} <Term id="host">{t("titleGuided.term")}</Term></> : t("title")}</h2>
       {guided ? (
         <>
           <p className="mb-3 mt-1 text-sm text-muted">{t("hintGuided")}</p>
@@ -100,7 +100,7 @@ export function HostSelector({ selectedId, onSelectMaterial, onUploadedStructure
                 disabled={busy !== null}
                 onClick={() => selectStarter(s.id)}
                 aria-pressed={selectedId === s.id}
-                className={`rounded-md border p-3 text-left text-sm disabled:opacity-60 ${selectedId === s.id ? "border-accent" : "border-line"}`}
+                className={`rounded-lg border p-4 text-left text-sm transition-colors hover:border-accent disabled:opacity-60 ${selectedId === s.id ? "border-accent bg-accent-soft" : "border-line bg-surface"}`}
               >
                 <span className="font-medium">{s.formula}</span>
                 <span className="mt-0.5 block text-muted">{t(`starter.${s.key}`)}</span>
@@ -111,7 +111,7 @@ export function HostSelector({ selectedId, onSelectMaterial, onUploadedStructure
         </>
       ) : (
         <>
-          <div className="mb-2 mt-2 flex flex-wrap gap-2" role="tablist">
+          <div className="segmented mb-3 mt-2" role="tablist">
             <button type="button" role="tab" aria-selected={source === "mp"} className={tabClass(source === "mp")} onClick={() => setSource("mp")}>
               {t("sourceMp")}
             </button>
@@ -125,7 +125,7 @@ export function HostSelector({ selectedId, onSelectMaterial, onUploadedStructure
 
       <form onSubmit={onSearch} className="flex flex-col gap-2 sm:flex-row">
         <input
-          className="flex-1 rounded-md border border-line bg-background px-3 py-2"
+          className="field flex-1"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder={source === "mp" ? t("placeholder") : t("placeholderCod")}
@@ -133,12 +133,12 @@ export function HostSelector({ selectedId, onSelectMaterial, onUploadedStructure
         <button
           type="submit"
           disabled={busy !== null || !query.trim()}
-          className="rounded-md bg-accent px-4 py-2 font-medium text-white disabled:opacity-50"
+          className="btn btn-primary"
         >
           {busy === "search" ? t("searching") : t("search")}
         </button>
         {!guided && (
-          <label className="cursor-pointer rounded-md border border-line px-4 py-2 text-center font-medium">
+          <label className="btn btn-secondary">
             {busy === "upload" ? t("uploading") : t("upload")}
             <input type="file" accept=".cif" className="sr-only" onChange={onUpload} disabled={busy !== null} />
           </label>
@@ -169,7 +169,7 @@ export function HostSelector({ selectedId, onSelectMaterial, onUploadedStructure
                 <tr
                   key={record.material_id}
                   onClick={() => onSelectMaterial(record)}
-                  className={`cursor-pointer border-t border-line hover:bg-background ${
+                  className={`border-t border-line hover:bg-background ${
                     record.material_id === selectedId ? "bg-background font-medium" : ""
                   }`}
                 >
@@ -211,7 +211,7 @@ export function HostSelector({ selectedId, onSelectMaterial, onUploadedStructure
                 <tr
                   key={entry.cod_id}
                   onClick={() => selectCod(entry)}
-                  className={`cursor-pointer border-t border-line hover:bg-background ${
+                  className={`border-t border-line hover:bg-background ${
                     entry.cod_id === selectedCod ? "bg-background font-medium" : ""
                   }`}
                 >

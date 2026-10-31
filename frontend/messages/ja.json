@@ -957,5 +957,9 @@
       "average": "平均",
       "coordinate": "配位"
     }
+  },
+  "Theme": {
+    "toDark": "ナイトモードに切り替え",
+    "toLight": "デイモードに切り替え"
   }
 }

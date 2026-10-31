@@ -25,7 +25,7 @@ export function StructurePanel({ structure, record, assessment, loading, error, 
   const [view, setView] = useState<"atoms" | "cloud">("atoms");
 
   return (
-    <section className="rounded-lg border border-line bg-surface p-4">
+    <section className="card">
       <h2 className="mb-3 font-semibold">
         {guided ? t("titleGuided") : t("title")}
         {structure && `: ${structure.formula}`}

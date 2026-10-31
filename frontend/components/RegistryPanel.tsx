@@ -53,16 +53,16 @@ export function RegistryPanel({ version, onOpen }: Props) {
   }
 
   return (
-    <section className="rounded-lg border border-line bg-surface p-4">
-      <h2 className="font-semibold">{t("title")}</h2>
+    <section className="card">
+      <h2 className="text-lg font-semibold tracking-tight">{t("title")}</h2>
       <p className="mb-2 text-sm text-muted">{t("hint", { max: MAX_COMPARE })}</p>
-      <div className="mb-2 flex flex-wrap gap-2 text-xs">
+      <div className="segmented mb-3 text-xs">
         {(["all", "plausible", "published", "decided"] as const).map((f) => (
           <button
             key={f}
             type="button"
             onClick={() => setFilter(f)}
-            className={`rounded px-2 py-0.5 ${filter === f ? "bg-accent text-white" : "border border-line"}`}
+            className="segment" aria-pressed={filter === f}
           >
             {t(`filter.${f}`)}
           </button>

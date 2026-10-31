@@ -1,30 +1,53 @@
 @import "tailwindcss";
 
+/* LumiLattice: a lit lattice in the colors of a cabbage, from the deep green outer leaf through
+   green and yellow-green to the pale yellow heart. Night is the same plant in the dark, lit from
+   inside. Text pairs here are checked at >= 4.5:1 on every surface below. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --surface: #f7f7f8;
-  --line: #e2e2e6;
-  --muted: #5f6070;
-  --accent: #4f46e5;
-  --accent-text: #4f46e5;
-  --danger: #c0262d;
-  --warning: #a15c00;
-  /* Evidence tag text (spec 3.4), >= 4.5:1 on the surfaces: same hue family as the chart marks */
-  --tag-exp: #0b7a52;
-  --tag-dft: #1c5cab;
-  --tag-heur: #b4471a;
-  --tag-unknown: #6b6b78;
+  color-scheme: light;
+  --background: #f8faef;
+  --foreground: #14240f;
+  --surface: #fffffc;
+  --surface-2: #eff4df;
+  --line: #dde6cb;
+  --line-strong: #c3d1ac;
+  --muted: #4c5c46;
+  --accent: #1f6b2e;
+  --on-accent: #ffffff;
+  --accent-text: #1b622a;
+  --accent-soft: #e7f2d3;
+  --danger: #b8222a;
+  --warning: #7f5a00;
+  /* The leaf: brand only. The spectrum on the band gap scale carries data, so it stays separate.
+     Text and art may run to yellow-green; buttons stop earlier, so white text stays readable. */
+  --prism-1: #0f4a25;
+  --prism-2: #2c8a3a;
+  --prism-3: #6c9a1e;
+  --cta-1: #0f4a25;
+  --cta-2: #1f6b2e;
+  --cta-3: #3a7d2e;
+  --lattice-dot: rgb(31 107 46 / 0.17);
+  --glow-top: rgb(108 154 30 / 0.14);
+  --glow-side: rgb(226 217 92 / 0.2);
+  --card-shadow: 0 1px 2px rgb(20 36 15 / 0.04), 0 8px 24px -12px rgb(20 36 15 / 0.12);
+  --button-glow: 0 1px 2px rgb(20 36 15 / 0.18), 0 6px 16px -6px rgb(31 107 46 / 0.55);
+  --glass: rgb(255 255 252 / 0.84);
+  --on-unknown-mark: #ffffff;
+  /* Evidence tag text (spec 3.4): same hue family as the chart marks */
+  --tag-exp: #0a7450;
+  --tag-dft: #1b58a5;
+  --tag-heur: #ad4316;
+  --tag-unknown: #5f6a5b;
   /* Chart marks: validated 3-slot categorical palette (aqua, blue, orange), all-pairs */
   --series-exp: #1baf7a;
   --series-dft: #2a78d6;
   --series-heur: #eb6834;
-  --chart-surface: #fcfcfb;
-  --chart-grid: #e1e0d9;
-  --chart-axis: #c3c2b7;
-  --chart-ink: #0b0b0b;
-  --chart-ink-2: #52514e;
-  --chart-muted: #898781;
+  --chart-surface: #fcfdf6;
+  --chart-grid: #e4ead8;
+  --chart-axis: #c3d1ac;
+  --chart-ink: #14240f;
+  --chart-ink-2: #4a5745;
+  --chart-muted: #667261;
   /* Diverging pair (blue <-> red, gray midpoint) and status (always with icon + label) */
   --div-neg: #2a78d6;
   --div-pos: #e34948;
@@ -33,44 +56,63 @@
   --status-critical: #d03b3b;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0b0b0f;
-    --foreground: #ededed;
-    --surface: #15151c;
-    --line: #2a2a35;
-    --muted: #a0a0b0;
-    /* One color cannot pass both ways in dark mode: white text on the fill, and text on the dark surface. */
-    --accent: #6159ee;
-    --accent-text: #9a96f7;
-    --danger: #ff6b6b;
-    --warning: #f0b45a;
-    --tag-exp: #4fd1a2;
-    --tag-dft: #86b6ef;
-    --tag-heur: #f29a6e;
-    --tag-unknown: #9a9aaa;
-    --series-exp: #199e70;
-    --series-dft: #3987e5;
-    --series-heur: #d95926;
-    --chart-surface: #1a1a19;
-    --chart-grid: #2c2c2a;
-    --chart-axis: #383835;
-    --chart-ink: #f0efec;
-    --chart-ink-2: #c3c2b7;
-    --chart-muted: #898781;
-    --div-neg: #3987e5;
-    --div-pos: #e66767;
-  }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #070f0a;
+  --foreground: #f1f7e9;
+  --surface: #0e1a12;
+  --surface-2: #17281c;
+  --line: #24382a;
+  --line-strong: #3a5240;
+  --muted: #aec2ac;
+  --accent: #a9e05e;
+  --on-accent: #11260a;
+  --accent-text: #beea80;
+  --accent-soft: #1b3320;
+  --danger: #ff8f85;
+  --warning: #f4df7a;
+  --prism-1: #57c26a;
+  --prism-2: #a9e05e;
+  --prism-3: #f1f2a8;
+  --cta-1: #57c26a;
+  --cta-2: #a9e05e;
+  --cta-3: #f1f2a8;
+  --lattice-dot: rgb(190 234 128 / 0.13);
+  --glow-top: rgb(87 194 106 / 0.14);
+  --glow-side: rgb(241 242 168 / 0.08);
+  --card-shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 12px 32px -16px rgb(0 0 0 / 0.8);
+  --button-glow: 0 0 0 1px rgb(190 234 128 / 0.2), 0 6px 22px -6px rgb(169 224 94 / 0.5);
+  --glass: rgb(14 26 18 / 0.84);
+  --on-unknown-mark: #0b0f1d;
+  --tag-exp: #6fddaa;
+  --tag-dft: #93c2f2;
+  --tag-heur: #f5a97f;
+  --tag-unknown: #aeb8ac;
+  --series-exp: #199e70;
+  --series-dft: #3987e5;
+  --series-heur: #d95926;
+  --chart-surface: #0b150e;
+  --chart-grid: #1f3025;
+  --chart-axis: #3a5240;
+  --chart-ink: #f1f7e9;
+  --chart-ink-2: #cbd6c6;
+  --chart-muted: #909e8f;
+  --div-neg: #3987e5;
+  --div-pos: #e66767;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
   --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
   --color-accent-text: var(--accent-text);
+  --color-accent-soft: var(--accent-soft);
   --color-danger: var(--danger);
   --color-warning: var(--warning);
   --color-tag-exp: var(--tag-exp);
@@ -91,6 +133,10 @@
   --text-xs--line-height: 1.45;
   --text-sm: 0.9375rem;
   --text-sm--line-height: 1.5;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.25rem;
 }
 
 @media (max-width: 639px) {
@@ -110,6 +156,300 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-geist-sans), "Apple SD Gothic Neo", "Noto Sans KR", "Hiragino Sans", "PingFang SC", system-ui, sans-serif;
   overflow-wrap: break-word;
+}
+
+/* Korean breaks between words; by default a line can end in the middle of one. */
+:lang(ko) {
+  word-break: keep-all;
+}
+
+/* The lattice behind the page: dots on a grid, lit from the top, gone before the reading area. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: 42rem;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(38rem 22rem at 18% -4%, var(--glow-top), transparent 70%),
+    radial-gradient(34rem 20rem at 86% 2%, var(--glow-side), transparent 70%),
+    radial-gradient(var(--lattice-dot) 1.1px, transparent 1.6px) 0 0 / 26px 26px;
+  mask-image: linear-gradient(to bottom, black 30%, transparent);
+}
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    letter-spacing: -0.012em;
+  }
+
+  /* A readable measure; a wide screen must not make a sentence run across it. */
+  p:not(.absolute),
+  figure li {
+    max-width: 75ch;
+  }
+
+  button:not(:disabled),
+  summary,
+  select,
+  [role="radio"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  button,
+  a,
+  summary,
+  input,
+  select,
+  textarea {
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      color 150ms ease,
+      box-shadow 150ms ease;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent-text);
+    outline-offset: 2px;
+  }
+
+  a {
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  a:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  input,
+  select,
+  textarea {
+    accent-color: var(--accent);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--muted);
+  }
+
+  /* Fold-out rows: a chevron that turns, and a row tall enough to hit. */
+  summary {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 1.75rem;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary:not(.no-chevron)::before {
+    content: "";
+    flex: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-inline: 0.15rem 0.2rem;
+    border-right: 1.5px solid var(--muted);
+    border-bottom: 1.5px solid var(--muted);
+    transform: rotate(-45deg);
+    transition: transform 150ms ease;
+  }
+
+  details[open] > summary:not(.no-chevron)::before {
+    transform: rotate(45deg);
+  }
+
+  summary:hover {
+    color: var(--accent-text);
+  }
+
+  /* Data tables: quiet heads, hairline rows, a hint of the row under the pointer. */
+  th {
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  thead tr {
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  tbody tr:hover {
+    background: color-mix(in oklab, var(--accent) 6%, transparent);
+  }
+
+  code {
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+    padding: 0.05rem 0.35rem;
+    font-size: 1em;
+  }
+}
+
+@layer components {
+  .card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    background: var(--surface);
+    box-shadow: var(--card-shadow);
+    padding: 1.25rem;
+  }
+
+  .subcard {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: color-mix(in oklab, var(--surface-2) 45%, var(--surface));
+    padding: 0.875rem 1rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    min-height: 2.5rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    padding: 0.45rem 1rem;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    line-height: 1.25;
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+  }
+
+  .btn-sm {
+    min-height: 2.125rem;
+    padding: 0.3rem 0.75rem;
+    font-size: var(--text-xs);
+  }
+
+  .btn-primary {
+    background-image: linear-gradient(100deg, var(--cta-1), var(--cta-2) 55%, var(--cta-3));
+    box-shadow: var(--button-glow);
+    color: var(--on-accent);
+  }
+
+  .btn-primary:not(:disabled):hover {
+    filter: brightness(1.08);
+  }
+
+  .btn-secondary {
+    border-color: var(--line-strong);
+    background: var(--surface);
+  }
+
+  .btn-secondary:not(:disabled):hover,
+  .btn-ghost:not(:disabled):hover {
+    background: var(--surface-2);
+  }
+
+  .btn-outline {
+    border-color: var(--accent);
+    color: var(--accent-text);
+  }
+
+  .btn-outline:not(:disabled):hover {
+    background: var(--accent-soft);
+  }
+
+  .btn-ghost {
+    border-color: var(--line);
+  }
+
+  .field {
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-md);
+    background: var(--background);
+    padding: 0.4rem 0.625rem;
+  }
+
+  .field:hover:not(:disabled) {
+    border-color: var(--muted);
+  }
+
+  .field:focus-visible {
+    outline-offset: 0;
+    border-color: var(--accent);
+  }
+
+  /* A choice of two or more: the track holds the options, the chosen one is lit. */
+  .segmented {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.125rem;
+    border-radius: var(--radius-md);
+    background: var(--surface-2);
+    padding: 0.1875rem;
+  }
+
+  .segment {
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    color: var(--muted);
+  }
+
+  .segment:hover {
+    color: var(--foreground);
+  }
+
+  .segment[aria-checked="true"],
+  .segment[aria-pressed="true"],
+  .segment[aria-selected="true"] {
+    background: var(--accent);
+    color: var(--on-accent);
+    font-weight: 500;
+  }
+
+  .prism-text {
+    background-image: linear-gradient(100deg, var(--prism-1), var(--prism-2) 50%, var(--prism-3));
+    background-clip: text;
+    color: transparent;
+  }
+
+  .glass {
+    border: 1px solid var(--line);
+    background: var(--glass);
+    backdrop-filter: blur(14px) saturate(1.4);
+  }
+
+  .lattice-node {
+    animation: lattice-pulse 4.8s ease-in-out infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+}
+
+@keyframes lattice-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }

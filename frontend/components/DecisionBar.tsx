@@ -31,13 +31,13 @@ export function DecisionBar({ candidate, busy, onDecide }: Props) {
   }
 
   return (
-    <div className="rounded-md border border-line bg-background p-3">
+    <div className="subcard">
       <label className="text-sm font-medium" htmlFor={`reason-${candidate.candidate_id}`}>
         {t("title", { id: candidate.candidate_id })}
       </label>
       <textarea
         id={`reason-${candidate.candidate_id}`}
-        className="mt-1 w-full rounded-md border border-line bg-surface px-2 py-1.5 text-sm"
+        className="field mt-1 w-full text-sm"
         rows={2}
         maxLength={2000}
         placeholder={guided ? t("placeholderGuided") : t("placeholder")}
@@ -52,7 +52,7 @@ export function DecisionBar({ candidate, busy, onDecide }: Props) {
             disabled={busy || ((b.kind === "modify" || b.kind === "explore") && !reason.trim())}
             onClick={() => void decide(b.kind)}
             title={t(`${b.kind}Hint`)}
-            className={`rounded-md border px-3 py-1 text-sm font-medium disabled:opacity-40 ${b.className}`}
+            className={`btn btn-sm ${b.className}`}
           >
             {b.icon} {t(b.kind)}
           </button>

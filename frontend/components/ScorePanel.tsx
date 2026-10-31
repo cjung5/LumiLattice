@@ -80,11 +80,11 @@ export function ScorePanel({ candidate, goal, onAskAgent }: Props) {
   const host = bench.host?.formula;
 
   return (
-    <section className="space-y-4 rounded-md border border-line p-4 text-sm" aria-label={t("title")}>
+    <section className="subcard space-y-4 text-sm" aria-label={t("title")}>
       <div>
         <h3 className="font-semibold">{t("title")}</h3>
         <div className="mt-1 flex flex-wrap items-baseline gap-x-2">
-          <span className="text-3xl font-bold tabular-nums">{fmt(card.low, card.high)}</span>
+          <span className="prism-text text-5xl font-semibold tracking-tight tabular-nums">{fmt(card.low, card.high)}</span>
           <span className="text-muted">{t("outOf")}</span>
         </div>
         <div className="mt-2 max-w-md">
@@ -116,7 +116,7 @@ export function ScorePanel({ candidate, goal, onAskAgent }: Props) {
                 <span className="font-medium">
                   {t(`metric.${m.id}.name`)}
                   {m.id === card.biggest_gain && (
-                    <span className="ml-2 rounded border border-accent px-1 text-xs font-normal text-accent-text">{t("mostToGain")}</span>
+                    <span className="ml-2 rounded-full border border-accent px-2 text-xs font-normal text-accent-text">{t("mostToGain")}</span>
                   )}
                 </span>
                 <span className="text-xs tabular-nums">
@@ -136,14 +136,14 @@ export function ScorePanel({ candidate, goal, onAskAgent }: Props) {
         </ul>
       </div>
 
-      <div className="rounded border border-accent p-3">
+      <div className="rounded-lg border border-accent bg-accent-soft p-4">
         <h4 className="font-medium">{t("gainTitle", { metric: t(`metric.${card.biggest_gain}.name`) })}</h4>
         <p className="mt-1">{t(`metric.${card.biggest_gain}.gain`)}</p>
         {onAskAgent && (
           <button
             type="button"
             onClick={() => onAskAgent(raisePrompt(id, card.biggest_gain), t("raise", { metric: t(`metric.${card.biggest_gain}.name`) }))}
-            className="mt-2 rounded-md border border-accent px-3 py-1 font-medium text-accent-text"
+            className="btn btn-outline btn-sm mt-2"
           >
             {t("raise", { metric: t(`metric.${card.biggest_gain}.name`) })}
           </button>
@@ -171,12 +171,12 @@ export function ScorePanel({ candidate, goal, onAskAgent }: Props) {
       </div>
 
       <details className="text-xs">
-        <summary className="cursor-pointer text-muted">{t("howScored")}</summary>
+        <summary className="text-muted">{t("howScored")}</summary>
         <p className="mt-1">{tb(card.method)}</p>
       </details>
       {card.validation && (
         <details className="text-xs">
-          <summary className="cursor-pointer text-muted">{t("tested.title")}</summary>
+          <summary className="text-muted">{t("tested.title")}</summary>
           <ul className="mt-1 list-disc space-y-1 pl-4">
             <li>{t("tested.oxides", { inside: card.validation.oxide_inside, cases: card.validation.oxide_cases, systems: card.validation.oxide_systems })}</li>
             <li>{t("tested.oxidesOther", { inside: card.validation.oxide_other_inside, cases: card.validation.oxide_other_cases, rank: card.validation.oxide_other_rank })}</li>
@@ -223,7 +223,7 @@ export function Leaderboard({ candidates, current, goal, onSelect }: BoardProps)
   const ranked = [...candidates].sort((a, b) => middle(b.candidate_id) - middle(a.candidate_id));
 
   return (
-    <section className="rounded-md border border-line p-4 text-sm" aria-label={t("boardTitle")}>
+    <section className="subcard text-sm" aria-label={t("boardTitle")}>
       <h3 className="font-semibold">{t("boardTitle")}</h3>
       <p className="mt-1 text-xs text-muted">{t("boardHint")}</p>
       <div className="mt-2 overflow-x-auto">

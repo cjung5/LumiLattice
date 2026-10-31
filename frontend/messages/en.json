@@ -957,5 +957,9 @@
       "average": "average",
       "coordinate": "coordinate"
     }
+  },
+  "Theme": {
+    "toDark": "Switch to night mode",
+    "toLight": "Switch to day mode"
   }
 }

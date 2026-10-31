@@ -92,7 +92,7 @@ export function HostScore({ goal, formula }: { goal: Goal; formula: string }) {
   const score = useScore(goal, { formula });
   if (!score) return null;
   return (
-    <div className="rounded-md border border-line p-3 text-sm">
+    <div className="subcard text-sm">
       <h3 className="mb-2 font-medium">{t("hostTitle", { formula })}</h3>
       <PlainScore score={score} />
     </div>
@@ -128,7 +128,7 @@ export function PlainResult({ candidate, goal, hostFormula, onAskAgent, onSeeEvi
     .join(", ");
 
   return (
-    <div className="space-y-3 rounded-md border border-accent p-4 text-sm">
+    <div className="space-y-3 rounded-xl border border-accent bg-surface p-5 text-sm shadow-[0_0_32px_-14px_var(--accent)]">
       <div>
         <p className="text-xs text-muted">
           {t("subject", { id, formula: candidate.formula })}
@@ -146,16 +146,16 @@ export function PlainResult({ candidate, goal, hostFormula, onAskAgent, onSeeEvi
       <div className="flex flex-wrap gap-2">
         {onAskAgent && (
           <>
-            <button type="button" onClick={() => onAskAgent(explainPrompt(id), t("explain"))} className="rounded-md bg-accent px-3 py-1.5 font-medium text-white">
+            <button type="button" onClick={() => onAskAgent(explainPrompt(id), t("explain"))} className="btn btn-primary btn-sm">
               {t("explain")}
             </button>
-            <button type="button" onClick={() => onAskAgent(improvePrompt(id), t("improve"))} className="rounded-md border border-accent px-3 py-1.5 font-medium text-accent-text">
+            <button type="button" onClick={() => onAskAgent(improvePrompt(id), t("improve"))} className="btn btn-outline btn-sm">
               {t("improve")}
             </button>
           </>
         )}
         {onSeeEvidence && (
-          <button type="button" onClick={onSeeEvidence} className="rounded-md border border-line px-3 py-1.5">
+          <button type="button" onClick={onSeeEvidence} className="btn btn-ghost btn-sm">
             {t("seeEvidence")}
           </button>
         )}

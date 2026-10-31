@@ -11,21 +11,17 @@ export function LanguageSwitcher() {
   const pathname = usePathname();
 
   return (
-    <label className="flex items-center gap-2 text-sm">
-      <span className="text-muted">{t("label")}</span>
-      <select
-        className="rounded-md border border-line bg-surface px-2 py-1"
-        value={locale}
-        onChange={(event) =>
-          router.replace(pathname, { locale: event.target.value as Locale })
-        }
-      >
-        {routing.locales.map((code) => (
-          <option key={code} value={code}>
-            {LOCALE_NAMES[code]}
-          </option>
-        ))}
-      </select>
-    </label>
+    <select
+      aria-label={t("label")}
+      className="field min-h-[2.125rem] !py-1 text-sm"
+      value={locale}
+      onChange={(event) => router.replace(pathname, { locale: event.target.value as Locale })}
+    >
+      {routing.locales.map((code) => (
+        <option key={code} value={code}>
+          {LOCALE_NAMES[code]}
+        </option>
+      ))}
+    </select>
   );
 }

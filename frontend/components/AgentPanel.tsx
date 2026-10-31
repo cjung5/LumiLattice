@@ -36,9 +36,9 @@ export function AgentPanel({ turns, busy, error, onSend, onReset, onOpenCandidat
   }
 
   return (
-    <section className="rounded-lg border border-line bg-surface p-4">
+    <section className="card">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="font-semibold">{guided ? t("titleGuided") : t("title")}</h2>
+        <h2 className="text-lg font-semibold tracking-tight">{guided ? t("titleGuided") : t("title")}</h2>
         {turns.length > 0 && (
           <button type="button" onClick={onReset} disabled={busy} className="text-sm text-muted underline">
             {t("reset")}
@@ -54,7 +54,7 @@ export function AgentPanel({ turns, busy, error, onSend, onReset, onOpenCandidat
               type="button"
               disabled={busy}
               onClick={() => onSend(t(`ask.${key}`))}
-              className="rounded-full border border-line px-3 py-1 text-left text-sm disabled:opacity-50"
+              className="rounded-full border border-line-strong px-3 py-1.5 text-left text-sm hover:border-accent hover:text-accent-text disabled:opacity-50"
             >
               {t(`ask.${key}`)}
             </button>
@@ -89,11 +89,11 @@ export function AgentPanel({ turns, busy, error, onSend, onReset, onOpenCandidat
               {turn.toolCalls.length === 0 ? (
                 <p className="text-xs text-warning">{guided ? t("noToolCallsGuided") : t("noToolCalls")}</p>
               ) : (
-                <details className="rounded-md border border-line p-2 text-xs">
+                <details className="subcard text-xs">
                   <summary className="cursor-pointer">{t("toolCalls", { count: turn.toolCalls.length })}</summary>
                   {turn.toolCalls.map((call, i) => (
                     <details key={i} className="mt-1 rounded border border-line p-1">
-                      <summary className="cursor-pointer font-mono">
+                      <summary className="font-mono">
                         {call.name}({call.arguments})
                       </summary>
                       <pre className="mt-1 overflow-x-auto">{JSON.stringify(call.output, null, 2)}</pre>
@@ -111,7 +111,7 @@ export function AgentPanel({ turns, busy, error, onSend, onReset, onOpenCandidat
 
       <form onSubmit={onSubmit} className="mt-3 flex flex-col gap-2 sm:flex-row">
         <input
-          className="flex-1 rounded-md border border-line bg-background px-3 py-2"
+          className="field flex-1"
           value={message}
           onChange={(event) => setMessage(event.target.value)}
           placeholder={guided ? t("placeholderGuided") : t("placeholder")}
@@ -120,7 +120,7 @@ export function AgentPanel({ turns, busy, error, onSend, onReset, onOpenCandidat
         <button
           type="submit"
           disabled={busy || !message.trim()}
-          className="rounded-md bg-accent px-4 py-2 font-medium text-white disabled:opacity-50"
+          className="btn btn-primary"
         >
           {busy ? t("running") : t("run")}
         </button>

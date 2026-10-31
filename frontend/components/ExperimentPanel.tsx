@@ -57,7 +57,7 @@ export function ExperimentPanel({ candidate, onChange }: Props) {
   }
 
   return (
-    <div className="rounded-md border border-line p-3 text-sm">
+    <div className="subcard text-sm">
       <div className="flex flex-wrap items-center gap-2">
         <span className="font-medium">{t("title")}</span>
         <span className="text-xs text-muted">
@@ -88,7 +88,7 @@ export function ExperimentPanel({ candidate, onChange }: Props) {
         <label className="flex flex-col">
           {t("property")}
           <select
-            className="rounded border border-line bg-background px-2 py-1"
+            className="field"
             value={form.property}
             onChange={(e) => setForm({ ...form, property: e.target.value as ExperimentInput["property"] })}
           >
@@ -103,7 +103,7 @@ export function ExperimentPanel({ candidate, onChange }: Props) {
             step="any"
             min={0}
             required
-            className="w-20 rounded border border-line bg-background px-2 py-1"
+            className="w-20 field"
             value={Number.isNaN(form.value) ? "" : form.value}
             onChange={(e) => setForm({ ...form, value: e.target.valueAsNumber })}
           />
@@ -115,7 +115,7 @@ export function ExperimentPanel({ candidate, onChange }: Props) {
               type="number"
               min={1}
               required
-              className="w-20 rounded border border-line bg-background px-2 py-1"
+              className="w-20 field"
               value={form.wavelength_nm ?? ""}
               onChange={(e) => setForm({ ...form, wavelength_nm: e.target.valueAsNumber })}
             />
@@ -124,7 +124,7 @@ export function ExperimentPanel({ candidate, onChange }: Props) {
         <label className="flex flex-col">
           {t("sample")}
           <select
-            className="rounded border border-line bg-background px-2 py-1"
+            className="field"
             value={form.sample}
             onChange={(e) => setForm({ ...form, sample: e.target.value as ExperimentInput["sample"] })}
           >
@@ -137,7 +137,7 @@ export function ExperimentPanel({ candidate, onChange }: Props) {
         <label className="flex flex-col">
           {t("method")}
           <input
-            className="w-32 rounded border border-line bg-background px-2 py-1"
+            className="w-32 field"
             placeholder={t("methodPlaceholder")}
             value={form.method}
             maxLength={200}
@@ -147,7 +147,7 @@ export function ExperimentPanel({ candidate, onChange }: Props) {
         <label className="flex flex-col">
           {t("reference")}
           <input
-            className="w-36 rounded border border-line bg-background px-2 py-1"
+            className="w-36 field"
             placeholder="DOI / URL"
             value={form.reference ?? ""}
             maxLength={300}
@@ -157,7 +157,7 @@ export function ExperimentPanel({ candidate, onChange }: Props) {
         <button
           type="submit"
           disabled={busy || Number.isNaN(form.value)}
-          className="rounded-md bg-accent px-3 py-1 font-medium text-white disabled:opacity-50"
+          className="btn btn-primary btn-sm"
         >
           {t("add")}
         </button>

@@ -36,7 +36,7 @@ export function RelaxationPanel({ candidate, showRelaxed, onShowRelaxed, onChang
   }
 
   return (
-    <div className="rounded-md border border-line p-3 text-sm">
+    <div className="subcard text-sm">
       <div className="flex flex-wrap items-center gap-2">
         <span className="font-medium">{t("title")}</span>
         {!r && (
@@ -44,24 +44,24 @@ export function RelaxationPanel({ candidate, showRelaxed, onShowRelaxed, onChang
             type="button"
             disabled={busy}
             onClick={() => void run()}
-            className="rounded-md border border-accent px-3 py-1 text-xs font-medium text-accent-text disabled:opacity-50"
+            className="btn btn-outline btn-sm"
           >
             {busy ? t("running") : t("run")}
           </button>
         )}
         {r && (
-          <div className="flex gap-1 text-xs" role="group">
+          <div className="segmented text-xs" role="group">
             <button
               type="button"
               onClick={() => onShowRelaxed(false)}
-              className={`rounded px-2 py-0.5 ${!showRelaxed ? "bg-accent text-white" : "border border-line"}`}
+              className="segment" aria-pressed={!showRelaxed}
             >
               {t("unrelaxed")}
             </button>
             <button
               type="button"
               onClick={() => onShowRelaxed(true)}
-              className={`rounded px-2 py-0.5 ${showRelaxed ? "bg-accent text-white" : "border border-line"}`}
+              className="segment" aria-pressed={showRelaxed}
             >
               {t("relaxed")}
             </button>

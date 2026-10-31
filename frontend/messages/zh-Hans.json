@@ -957,5 +957,9 @@
       "average": "平均",
       "coordinate": "配位"
     }
+  },
+  "Theme": {
+    "toDark": "切换到夜间模式",
+    "toLight": "切换到日间模式"
   }
 }

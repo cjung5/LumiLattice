@@ -169,8 +169,8 @@ export function CandidatePanel({
     !busy && rows.every((r) => (r.element_from || elementOptions[0]) && r.element_to.trim());
 
   return (
-    <section className="rounded-lg border border-line bg-surface p-4">
-      <h2 className="font-semibold">
+    <section className="card">
+      <h2 className="text-lg font-semibold tracking-tight">
         {guided ? (
           <>{t("titleGuided.before")} <Term id="swap">{t("titleGuided.term")}</Term> {t("titleGuided.after")}</>
         ) : (
@@ -184,7 +184,7 @@ export function CandidatePanel({
           <div key={index} className="flex flex-wrap items-center gap-2 text-sm">
             <select
               aria-label={t("from")}
-              className="rounded-md border border-line bg-background px-2 py-1.5"
+              className="field"
               value={row.element_from || elementOptions[0] || ""}
               onChange={(e) => updateRow(index, { element_from: e.target.value })}
             >
@@ -197,7 +197,7 @@ export function CandidatePanel({
             <span aria-hidden>→</span>
             <input
               aria-label={t("to")}
-              className="w-20 rounded-md border border-line bg-background px-2 py-1.5"
+              className="w-20 field"
               placeholder={t("toPlaceholder")}
               value={row.element_to}
               maxLength={3}
@@ -205,7 +205,7 @@ export function CandidatePanel({
             />
             <select
               aria-label={t("fraction")}
-              className="rounded-md border border-line bg-background px-2 py-1.5"
+              className="field"
               value={row.fraction}
               onChange={(e) => updateRow(index, { fraction: Number(e.target.value) })}
             >
@@ -233,7 +233,7 @@ export function CandidatePanel({
           <label className="flex items-center gap-2">
             <span>{t("arrangement")}</span>
             <select
-              className="rounded-md border border-line bg-background px-2 py-1.5"
+              className="field"
               value={arrangement}
               onChange={(e) => setArrangement(e.target.value as Arrangement)}
             >
@@ -250,7 +250,7 @@ export function CandidatePanel({
           {rows.length < 3 && (
             <button
               type="button"
-              className="rounded-md border border-line px-3 py-1.5 text-sm"
+              className="btn btn-ghost btn-sm"
               onClick={() =>
                 setRows((old) => [
                   ...old,
@@ -264,7 +264,7 @@ export function CandidatePanel({
           <button
             type="submit"
             disabled={!canSubmit || !host}
-            className="rounded-md bg-accent px-4 py-1.5 font-medium text-white disabled:opacity-50"
+            className="btn btn-primary"
           >
             {busy ? t("generating") : guided ? t("generateGuided") : t("generateFromHost")}
           </button>
@@ -273,7 +273,7 @@ export function CandidatePanel({
               type="button"
               disabled={agentBusy}
               onClick={() => onAskAgent(suggestPrompt(hostLabel), t("suggest"))}
-              className="rounded-md border border-accent px-4 py-1.5 font-medium text-accent-text disabled:opacity-50"
+              className="btn btn-outline"
             >
               {t("suggest")}
             </button>
@@ -283,7 +283,7 @@ export function CandidatePanel({
               type="button"
               disabled={!canSubmit}
               onClick={() => void generate({ candidate_id: current.candidate_id })}
-              className="rounded-md border border-accent px-4 py-1.5 font-medium text-accent-text disabled:opacity-50"
+              className="btn btn-outline"
             >
               {t("reviseCurrent", { id: current.candidate_id })}
             </button>
@@ -325,7 +325,7 @@ export function CandidatePanel({
                 type="button"
                 disabled={exporting !== null}
                 onClick={() => void exportFile(kind)}
-                className="rounded-md border border-line px-2 py-1 disabled:opacity-50"
+                className="btn btn-ghost btn-sm"
               >
                 {exporting === kind ? t("exporting") : t(`exportKind.${kind}`)}
               </button>
@@ -374,7 +374,7 @@ export function CandidatePanel({
             </Advanced>
           )}
           {!guided && current.optical_estimate && (
-            <div className="rounded-md border border-line p-3 text-sm">
+            <div className="subcard text-sm">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-medium">{t("nEstimate")}</span>
                 <PropertyValueView pv={current.optical_estimate.estimate} />
@@ -457,7 +457,7 @@ export function CandidatePanel({
                     · {tb(c.assessment.status)}
                   </span>
                   {last && (
-                    <span className="ml-1 rounded border border-line px-1 text-xs">{last.decision}</span>
+                    <span className="ml-1 rounded-full border border-line px-2 text-xs">{last.decision}</span>
                   )}
                 </li>
               );

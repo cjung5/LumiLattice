@@ -132,10 +132,10 @@ export function EvidencePanel({ goal, host, hostFormula, hostAssessment, candida
   ];
 
   return (
-    <section className="rounded-lg border border-line bg-surface p-4">
-      <h2 className="font-semibold">{guided ? t("titleGuided") : t("title")}</h2>
+    <section className="card">
+      <h2 className="text-lg font-semibold tracking-tight">{guided ? t("titleGuided") : t("title")}</h2>
       <p className="mb-3 text-sm text-muted">{guided ? t("hintGuided") : t("hint")}</p>
-      <div className="mb-3 flex flex-wrap gap-2" role="tablist">
+      <div className="segmented mb-4" role="tablist">
         {tabs.map((item) => (
           <button
             key={item.id}
@@ -143,7 +143,7 @@ export function EvidencePanel({ goal, host, hostFormula, hostAssessment, candida
             role="tab"
             aria-selected={tab === item.id}
             onClick={() => setTab(item.id)}
-            className={`rounded-md px-3 py-1 text-sm ${tab === item.id ? "bg-accent text-white" : "border border-line"}`}
+            className="segment text-sm"
           >
             {item.label}
           </button>
@@ -174,9 +174,9 @@ export function EvidencePanel({ goal, host, hostFormula, hostAssessment, candida
       {tab === "sites" && (
         <div className="space-y-2">
           {relaxation && (
-            <div className="flex gap-1 text-xs">
-              <button type="button" onClick={() => setRelaxedView(false)} className={`rounded px-2 py-0.5 ${!relaxedView ? "bg-accent text-white" : "border border-line"}`}>{t("unrelaxed")}</button>
-              <button type="button" onClick={() => setRelaxedView(true)} className={`rounded px-2 py-0.5 ${relaxedView ? "bg-accent text-white" : "border border-line"}`}>{t("relaxed")}</button>
+            <div className="segmented text-xs">
+              <button type="button" onClick={() => setRelaxedView(false)} className="segment" aria-pressed={!relaxedView}>{t("unrelaxed")}</button>
+              <button type="button" onClick={() => setRelaxedView(true)} className="segment" aria-pressed={relaxedView}>{t("relaxed")}</button>
             </div>
           )}
           {siteAssessment && siteAssessment.site_metrics?.length ? (
