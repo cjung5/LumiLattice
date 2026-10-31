@@ -4,6 +4,7 @@ import pytest
 from pymatgen.core import Composition
 
 from app.tools import scorecard
+from app.tools.reference_db import GAP_MARGIN_EV, N_MARGIN
 from scripts.validate_score import (
     area_under_curve,
     end_members,
@@ -61,8 +62,20 @@ def test_validation_report_is_optional(tmp_path, monkeypatch):
     monkeypatch.setattr(scorecard, "VALIDATION_FILE", tmp_path / "missing.json")
     scorecard.load_validation.cache_clear()
     assert scorecard.load_validation() is None
-    (tmp_path / "bad.json").write_text(json.dumps({"measured_gap_ranges": {}}))
+    (tmp_path / "bad.json").write_text(json.dumps({"measured_gap_ranges": {"all": {}}}))
     monkeypatch.setattr(scorecard, "VALIDATION_FILE", tmp_path / "bad.json")
     scorecard.load_validation.cache_clear()
     assert scorecard.load_validation() is None
     scorecard.load_validation.cache_clear()
+
+
+def test_committed_report_loads_with_the_applied_margins():
+    report = json.loads(scorecard.VALIDATION_FILE.read_text())
+    scorecard.load_validation.cache_clear()
+    loaded = scorecard.load_validation()
+
+    assert loaded is not None
+    other = report["oxides"]["gap_reviewed_clear_without_mgzno"]
+    assert loaded.oxide_other_rank == other["rank_correlation_midpoint"]
+    assert loaded.oxide_other_cases == other["cases"]
+    assert report["applied_margins"] == {"gap_ev": GAP_MARGIN_EV, "n": N_MARGIN}

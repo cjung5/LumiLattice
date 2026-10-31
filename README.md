@@ -37,25 +37,32 @@ A session leaderboard ranks the candidates, so each new attempt shows whether th
 
 | Test | Data | Result |
 |---|---|---|
-| Band-gap range | 219 measured solid solutions (fractional compositions in Zhuo et al.) | End-member range alone: 63% inside. With the 0.2 eV margin: 94%. Margin chosen on half the cases; 91% inside on the other half |
-| The same, gap ≥ 2 eV | 39 cases | With the margin: 90% inside. Rank correlation of the midpoint: 0.406 (all cases: 0.878) |
-| n range | 192 computed wide-gap oxide mixes (JARVIS TBmBJ) | Range alone: 70% inside. With the 0.2 margin: 91% |
-| Gap range on oxides | 192 computed wide-gap oxide mixes | With the margin: 74% inside; mean midpoint error 0.879 eV. Polymorphs can differ, so this is a pessimistic test |
-| Optical score, controls | 8 waveguide materials, 7 opaque, 6 low-n | Lowest waveguide material 68.0, highest opaque 61.2, highest low-n 38.0. A sanity check only, because n and the gap build the score |
-| Structural checks, no swap | 40 real crystals at their own geometry | 29 raise no alarm. Charge passes on 100%. Distances fail on 4 crystals with short covalent bonds (CO2, TeO2, LiIO3, Ba(BO2)2). The tolerance factor warns on 1 of 3 perovskite-like crystals (BaTiO3, t = 1.062) |
+| Band-gap range, oxides | 43 hand-checked measured solid solutions, gap ≥ 2.5 eV, 25 chemical systems | End-member range alone: 70% inside. With the 0.3 eV margin: 86% (also 86% at 0.5 eV). Rank correlation of the midpoint: 0.652 |
+| The same, without MgO–ZnO | 25 cases (18 cases were one system) | With the margin: 76% inside. Rank correlation: 0.364 |
+| Band-gap range, oxides, unreviewed | 103 text-mined solid solutions | With the margin: 63% inside. Lower, likely because of extraction errors and the low-gap oxides included |
+| Band-gap range, mostly semiconductors | 219 measured solid solutions (fractional compositions in Zhuo et al.) | Range alone: 63% inside. With the margin: 98% |
+| n range, oxides | 12 text-mined measured mixes (6 systems), not reviewed | With the 0.2 margin: 58% inside. Several are thin films, which can have lower n than bulk. BaSrTiO3 reports are 2.02 to 2.16, against about 2.43 for the bulk end members, so the range misses them |
+| n range, computed | 192 computed wide-gap oxide mixes (JARVIS TBmBJ) | With the 0.2 margin: 91% inside |
+| Text-mined gaps against TBmBJ | 243 formulas with a compiled measured gap | Reports that agree (middle half within 1 eV): mean error 0.171 eV, against 0.626 eV for TBmBJ. Reports that disagree: 0.865 against 1.195 eV (28 oxides: 0.789 against 1.229 eV), and single values can be far off (SiO2 5.7 eV), so the app does not use them |
+| Optical score, controls | 8 waveguide materials, 7 opaque, 6 low-n | Highest opaque 61.2 (Fe2O3), highest low-n 38.0. Lowest waveguide material 57.4 (SiC), which fails this control: its text-mined 2.4 eV is mainly cubic 3C-SiC, while AR waveguides use hexagonal SiC. Without SiC, the lowest is 68.0. A sanity check only, because n and the gap build the score |
+| Structural checks, no swap | 40 real crystals at their own geometry | 26 raise no alarm. Charge passes on 100%. Distances fail on 4 crystals with short covalent bonds (CO2, TeO2, LiIO3, Ba(BO2)2). The tolerance factor warns on 1 of 3 perovskite-like crystals (BaTiO3, t = 1.062) |
 | Atom fit, held-out swaps | 21 real compounds, 8 impossible swaps | 21 of 21 keep their points; 6 of 8 caught; AUC 0.905 |
+
+The oxide cases come from two text-mined databases, so their source sentences were read: 35 of 53 clear-oxide compositions were correct, 11 were corrected, and 7 were left out, mostly for wrong attribution (`backend/data/oxide_gap_review.json` lists each one with its DOI). Up to two sentences were read per composition.
 
 **Faults found and fixed:**
 
 - **One property could make up for the other.** Opaque Fe2O3 scored 70, against 71 for Si3N4. n and the band gap now combine as a geometric mean, because AR glasses need both.
-- **Ranges were too narrow.** The real gap was below the lower end far more often than above the upper end (71 against 11 cases). Ranges now carry the tested margins.
-- **Atom fit could not tell real from impossible.** Without relaxation, the bond-valence check fails on 40% of swaps to real compounds, because the atoms stay in the host's positions. Any failed check capped the score, so KCl and CsF2 both got 30 points. Only a failed charge check caps it now: charge passes on every real compound tested. The checks themselves did not change, so "Structural Concerns" still appears often on 100% swaps.
+- **Ranges were too narrow.** Ranges now carry a margin: 0.3 eV for gaps, where coverage on hand-checked oxides stops rising, and 0.2 for n.
+- **Atom fit could not tell real from impossible.** Without relaxation, the bond-valence check fails on 40% of swaps to real compounds, because the atoms stay in the host's positions. Any failed check capped the score, so KCl and CsF2 both got 30 points. Only a failed charge check caps it now. The checks themselves did not change, so "Structural Concerns" still appears often on 100% swaps.
 
 **What this does not show:**
 
-- There are no measured oxide solid solutions in the data, and most measured cases are III-V and chalcogenide semiconductors. For n, no measured mixes were found.
-- Among clear materials the ranking is weak (rank correlation 0.406, 39 cases), so small score differences mean little.
-- The margins and the charge rule came from this data, so only the held-out numbers are fair tests of them. The held-out sets are small.
+- About 1 in 7 clear-oxide cases falls outside the range even with the margin, and 24% do when MgO–ZnO is left out. Measured gaps also depend on how the sample was made: the set has films and nanoparticles.
+- For n, there are only 12 measured oxide mixes, none reviewed, and several are thin films. The app's measured n values are for bulk crystals, so a real film can have a lower n than the range says.
+- Ranking is weak: rank correlation 0.652 on clear oxides, and 0.364 without MgO–ZnO. Small score differences mean little.
+- The margins, the spread limit, and the charge rule came from this data, so only the held-out atom-fit numbers are fair tests. The oxide margin has no separate test set.
+- Values are matched by formula, so the crystal form can differ (SiC, above; TiO2 has one value for rutile and anatase).
 - Impossible swaps can pass the charge check through unusual oxidation states: LaO and LaF2 with La(+2) score 80 in the held-out set, and CsN with N(-1) and CsS with S(-1) score 80 in the tuning set.
 - The score has not been tested against whether a material was made or used, beyond the small control list.
 
@@ -143,12 +150,12 @@ Every n value carries one tag, shown with its own color, icon, and text:
 
 | Tag | Where it comes from |
 |---|---|
-| `Experimental` | refractiveindex.info, measured n at 550 nm (bulk or crystal pages; thin films are listed but not used for the best value). For band gaps: literature values from Zhuo et al. (2018) |
+| `Experimental` | refractiveindex.info, measured n at 550 nm (bulk or crystal pages; thin films are listed but not used for the best value). For band gaps: literature values from Zhuo et al. (2018), then text-mined values from Dong & Cole (2022) |
 | `DFT-computed` | JARVIS-DFT n = √ε from DFT linear optics (TBmBJ preferred, then OptB88vdW), or Materials Project n. This is a long-wavelength value, not n(550 nm) |
-| `Heuristic` | A candidate's **range** spanned by its end members, e.g. SrTiO3 → LaAlO3 for Sr→La + Ti→Al. Never a single number, and not a prediction. Each end is widened by a tested margin (n: 0.2, band gap: 0.2 eV; see "How the score was tested"). A candidate whose exact formula has a measured or TBmBJ value uses that value instead |
+| `Heuristic` | A candidate's **range** spanned by its end members, e.g. SrTiO3 → LaAlO3 for Sr→La + Ti→Al. Never a single number, and not a prediction. Each end is widened by a tested margin (n: 0.2, band gap: 0.3 eV; see "How the score was tested"). A candidate whose exact formula has a measured or TBmBJ value uses that value instead |
 | `Unknown` | No data |
 
-Band gaps follow the same order: a measured value first, then a JARVIS-DFT value (TBmBJ, then OptB88vdW). Measured gaps are the median of the reports for a formula in the Zhuo et al. compilation (3,895 reports; the 2,458 entries with a gap of 0 are labels for metals and are not used). The compilation does not record the method for each report, so a value can be an optical, direct, or indirect gap, and reports for one formula can disagree (SrTiO3: 3.0 to 4.1 eV). The app shows the median and the spread. Many materials have no measured gap (LaAlO3 and Al2O3 among them) and keep a `DFT-computed` value, so a candidate's range can mix measured and computed gaps.
+Band gaps follow the same order: measured values first, then a JARVIS-DFT value (TBmBJ, then OptB88vdW). A formula with a text-mined median (at least 5 reports whose middle half spans 1 eV or less; Dong & Cole, 1,156 formulas before that limit) uses it when the Zhuo et al. compilation has no value; text mining makes errors, so the value's note says so. Compiled gaps are the median of the reports for a formula in the Zhuo et al. compilation (3,895 reports; the 2,458 entries with a gap of 0 are labels for metals and are not used). The compilation does not record the method for each report, so a value can be an optical, direct, or indirect gap, and reports for one formula can disagree (SrTiO3: 3.0 to 4.1 eV). The app shows the median and the spread. Some materials have reports that disagree too widely to use (LaAlO3, Al2O3, SiO2) and keep a `DFT-computed` value, so a candidate's range can mix measured and computed gaps.
 
 The reference data is matched by formula, so the polymorph can differ from the selected structure; the app says so next to each value.
 
@@ -322,6 +329,8 @@ In use:
 - **AR waveguide materials (test controls)** — Huawei patent [US11899241](https://patents.google.com/patent/US11899241) and [Coherent (2024)](https://www.coherent.com/news/blog/ar-displays-high-index-material.html).
 - **Experimental band gaps** — [Expt Gap Data](https://doi.org/10.6084/m9.figshare.7289687.v1), MIT license on the Figshare record. Y. Zhuo, A. Mansouri Tehrani, J. Brgoch, "Predicting the Band Gaps of Inorganic Solids by Machine Learning", *J. Phys. Chem. Lett.* 9, 1668 (2018).
 
+- **Text-mined band gaps** — [Dong & Cole](https://doi.org/10.1038/s41597-022-01294-6), *Sci. Data* 9, 193 (2022), [data](https://doi.org/10.6084/m9.figshare.14079863.v1), MIT license on the Figshare record. Used in the app and in the score tests.
+- **Text-mined refractive indices** — [Zhao & Cole](https://doi.org/10.1038/s41597-022-01295-5), *Sci. Data* 9, 192 (2022), [data](https://doi.org/10.6084/m9.figshare.12781142.v2), CC BY 4.0. Used in the score tests only.
 - **Element production concentration (HHI)** — M. W. Gaultois et al., *Chem. Mater.* 25, 2911 (2013), as tabulated in pymatgen.
 
 - **Crystallography Open Database** — experimental structures, [CC0](https://creativecommons.org/publicdomain/zero/1.0/). S. Gražulis et al., *J. Appl. Cryst.* 42, 726 (2009). Credit the original authors shown with each entry.

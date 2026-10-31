@@ -1,0 +1,376 @@
+{
+ "about": "Hand review of text-mined band gaps for oxide solid solutions (Dong & Cole 2022). Up to two source sentences were read per composition.",
+ "cases": [
+  {
+   "formula": "Al1.3In0.7O3",
+   "value_ev": 5.0,
+   "verdict": "ok",
+   "doi": "10.1007/s10853-016-0337-2",
+   "note": ""
+  },
+  {
+   "formula": "Ba0.5Sr0.5Mo1O4",
+   "value_ev": null,
+   "verdict": "excluded",
+   "doi": "10.1007/s10832-016-0028-z",
+   "note": "The extracted value belongs to SrMoO4."
+  },
+  {
+   "formula": "Ba0.5Sr0.5Ti1O3",
+   "value_ev": 3.96,
+   "verdict": "ok",
+   "doi": "10.1016/S0040-6090(01)01713-8",
+   "note": "Film; the paper attributes the high value to an amorphous phase."
+  },
+  {
+   "formula": "Ba0.8Ti1Fe0.2O3",
+   "value_ev": 3.69,
+   "verdict": "corrected",
+   "doi": "10.1016/j.tsf.2010.05.023",
+   "note": "The gap depends on film layers (3.42 to 3.95 eV); the middle value is used."
+  },
+  {
+   "formula": "Ba1Hf0.5Ti0.5O3",
+   "value_ev": 3.25,
+   "verdict": "ok",
+   "doi": "10.1016/j.tsf.2011.10.195",
+   "note": "Reported as 3.2 to 3.3 eV."
+  },
+  {
+   "formula": "Ba1Mo0.5W0.5O4",
+   "value_ev": null,
+   "verdict": "excluded",
+   "doi": "10.1016/j.matpr.2015.06.006",
+   "note": "The extracted value belongs to another composition in the list."
+  },
+  {
+   "formula": "Ba1Zr0.25Ti0.75O3",
+   "value_ev": 3.78,
+   "verdict": "ok",
+   "doi": "10.1016/j.tsf.2011.04.007",
+   "note": ""
+  },
+  {
+   "formula": "Bi1Br0.125Cl0.875O1",
+   "value_ev": 2.94,
+   "verdict": "ok",
+   "doi": "10.1016/j.cej.2014.02.020",
+   "note": ""
+  },
+  {
+   "formula": "Bi1Cl0.25O1F0.75",
+   "value_ev": 3.26,
+   "verdict": "ok",
+   "doi": "10.1039/c1cp23516h",
+   "note": ""
+  },
+  {
+   "formula": "Ca0.1Zn0.9O1",
+   "value_ev": null,
+   "verdict": "excluded",
+   "doi": "10.1016/j.jece.2018.11.018",
+   "note": "The sentence gives one range for seven compositions."
+  },
+  {
+   "formula": "Ca0.35La0.39Pr0.26Mn1O3",
+   "value_ev": 3.46,
+   "verdict": "ok",
+   "doi": "10.1039/c4dt03452j",
+   "note": "3.42 to 3.52 eV with sintering temperature."
+  },
+  {
+   "formula": "Ce0.9Pr0.1O2",
+   "value_ev": null,
+   "verdict": "excluded",
+   "doi": "10.1039/c0cp02920c",
+   "note": "The sentence does not state this value as the gap."
+  },
+  {
+   "formula": "Cu0.1Ni0.9O1",
+   "value_ev": 3.7,
+   "verdict": "corrected",
+   "doi": "10.1016/j.tsf.2010.12.009",
+   "note": "The other extracted value (5.0 eV) is a work function."
+  },
+  {
+   "formula": "Ga0.85Fe0.15Cu1O2",
+   "value_ev": 1.5,
+   "verdict": "corrected",
+   "doi": "10.1007/s42452-019-1387-2",
+   "note": "The extracted 2.55 eV belongs to CuGaO2."
+  },
+  {
+   "formula": "Gd0.25Y0.75V1O4",
+   "value_ev": 3.57,
+   "verdict": "ok",
+   "doi": "10.1039/c5ra18982a",
+   "note": ""
+  },
+  {
+   "formula": "K0.5Na0.5Nb1O3",
+   "value_ev": 3.27,
+   "verdict": "ok",
+   "doi": "10.1039/c9tc01356c",
+   "note": "Median of 8 reports; two sentences read."
+  },
+  {
+   "formula": "La1Fe0.2Co0.8O3",
+   "value_ev": 3.3,
+   "verdict": "ok",
+   "doi": "10.1007/s11164-019-04071-0",
+   "note": ""
+  },
+  {
+   "formula": "La1Ti0.5Mn0.5O3",
+   "value_ev": 2.94,
+   "verdict": "ok",
+   "doi": "10.1007/s11144-019-01629-2",
+   "note": "The paper says the perovskite structure did not form."
+  },
+  {
+   "formula": "Li0.1Fe2.1Co0.8O4",
+   "value_ev": 2.65,
+   "verdict": "ok",
+   "doi": "10.1007/s10854-017-8322-3",
+   "note": ""
+  },
+  {
+   "formula": "Mg0.1Zn0.9O1",
+   "value_ev": 3.55,
+   "verdict": "corrected",
+   "doi": "10.1038/ncomms7754",
+   "note": "The other extracted values describe a multilayer."
+  },
+  {
+   "formula": "Mg0.13Zn0.87O1",
+   "value_ev": 3.56,
+   "verdict": "ok",
+   "doi": "10.1016/j.tsf.2015.11.012",
+   "note": ""
+  },
+  {
+   "formula": "Mg0.17Zn0.83O1",
+   "value_ev": 3.57,
+   "verdict": "ok",
+   "doi": "10.1007/s00339-019-2676-8",
+   "note": ""
+  },
+  {
+   "formula": "Mg0.2Ni0.8O1",
+   "value_ev": 3.9,
+   "verdict": "ok",
+   "doi": "10.1007/s00339-014-8666-y",
+   "note": ""
+  },
+  {
+   "formula": "Mg0.2Zn0.8O1",
+   "value_ev": 3.87,
+   "verdict": "corrected",
+   "doi": "10.1007/s00339-014-8666-y",
+   "note": "The other extracted value is the energy of a laser."
+  },
+  {
+   "formula": "Mg0.22Zn0.78O1",
+   "value_ev": 3.65,
+   "verdict": "ok",
+   "doi": "10.1134/S1063783418120077",
+   "note": ""
+  },
+  {
+   "formula": "Mg0.24Zn0.76O1",
+   "value_ev": 3.87,
+   "verdict": "ok",
+   "doi": "10.1007/s10854-009-9930-3",
+   "note": ""
+  },
+  {
+   "formula": "Mg0.25Zn0.75O1",
+   "value_ev": 3.73,
+   "verdict": "corrected",
+   "doi": "10.1039/c0jm04233a",
+   "note": "3.83 and 3.627 eV; the extracted 3.251 eV belongs to ZnO."
+  },
+  {
+   "formula": "Mg0.26Zn0.74O1",
+   "value_ev": 3.94,
+   "verdict": "ok",
+   "doi": "10.1016/j.optmat.2018.08.017",
+   "note": ""
+  },
+  {
+   "formula": "Mg0.3Zn0.7O1",
+   "value_ev": 3.7,
+   "verdict": "ok",
+   "doi": "10.1039/c9ra06131b",
+   "note": ""
+  },
+  {
+   "formula": "Mg0.4Zn0.6O1",
+   "value_ev": 4.2,
+   "verdict": "ok",
+   "doi": "10.1016/j.tsf.2018.04.014",
+   "note": "4.1 and 4.3 eV in two papers."
+  },
+  {
+   "formula": "Mg0.44Zn0.56O1",
+   "value_ev": 4.25,
+   "verdict": "ok",
+   "doi": "10.1016/j.jcrysgro.2009.07.030",
+   "note": ""
+  },
+  {
+   "formula": "Mg0.45Zn0.55O1",
+   "value_ev": 4.4,
+   "verdict": "ok",
+   "doi": "10.1038/s41598-017-02791-0",
+   "note": ""
+  },
+  {
+   "formula": "Mg0.5Zn0.5Fe2O4",
+   "value_ev": 1.95,
+   "verdict": "corrected",
+   "doi": "10.1039/c5ra06443k",
+   "note": "1.9 and 2.0 eV; the extracted 3.2 eV belongs to TiO2."
+  },
+  {
+   "formula": "Mg0.5Zn0.5O1",
+   "value_ev": 5.17,
+   "verdict": "corrected",
+   "doi": "10.1016/j.tsf.2007.07.110",
+   "note": "The extracted 5.27 eV is another item in a \"respectively\" list."
+  },
+  {
+   "formula": "Mg0.51Zn0.49O1",
+   "value_ev": 4.43,
+   "verdict": "ok",
+   "doi": "10.1038/srep15516",
+   "note": ""
+  },
+  {
+   "formula": "Mg0.55Zn0.45O1",
+   "value_ev": 4.55,
+   "verdict": "ok",
+   "doi": "10.1016/j.jcrysgro.2009.07.030",
+   "note": ""
+  },
+  {
+   "formula": "Mg0.6Zn0.4O1",
+   "value_ev": 5.0,
+   "verdict": "ok",
+   "doi": "10.1007/s00339-019-3069-8",
+   "note": ""
+  },
+  {
+   "formula": "Mg0.83Zn0.17O1",
+   "value_ev": 6.45,
+   "verdict": "ok",
+   "doi": "10.1016/j.optmat.2004.11.035",
+   "note": ""
+  },
+  {
+   "formula": "Mg0.9Zn0.1O1",
+   "value_ev": 4.6,
+   "verdict": "ok",
+   "doi": "10.1007/s11665-009-9490-y",
+   "note": ""
+  },
+  {
+   "formula": "Na1In0.9Fe0.1O2",
+   "value_ev": 2.8,
+   "verdict": "ok",
+   "doi": "10.1039/c4ta00906a",
+   "note": ""
+  },
+  {
+   "formula": "Na2Ta1.5Nb0.5O6",
+   "value_ev": 4.27,
+   "verdict": "ok",
+   "doi": "10.1039/c8nj01768a",
+   "note": ""
+  },
+  {
+   "formula": "Sn0.875Pb0.125O2",
+   "value_ev": null,
+   "verdict": "excluded",
+   "doi": "10.1039/c5tc04089b",
+   "note": "The sentence reads as a calculation (fundamental gap and effective masses)."
+  },
+  {
+   "formula": "Sr1Hf0.67Ti0.33O3",
+   "value_ev": 3.58,
+   "verdict": "ok",
+   "doi": "10.1007/s00339-011-6257-8",
+   "note": ""
+  },
+  {
+   "formula": "Ti0.7W0.3O2",
+   "value_ev": null,
+   "verdict": "excluded",
+   "doi": "10.1039/c9na00478e",
+   "note": "The sentence gives wavelengths, and the value is not clearly for this composition."
+  },
+  {
+   "formula": "Ti0.85Sn0.15O2",
+   "value_ev": 3.08,
+   "verdict": "ok",
+   "doi": "10.1007/s10854-017-8257-8",
+   "note": ""
+  },
+  {
+   "formula": "Y0.5V1Bi0.5O4",
+   "value_ev": 2.9,
+   "verdict": "ok",
+   "doi": "10.1039/c5ta00257e",
+   "note": ""
+  },
+  {
+   "formula": "Zn0.9Cd0.1O1",
+   "value_ev": 2.8,
+   "verdict": "corrected",
+   "doi": "10.1016/j.tsf.2011.10.181",
+   "note": "2.374 to 3.11 eV in three papers; the extracted 3.22 eV belongs to ZnO."
+  },
+  {
+   "formula": "Zn0.9Co0.1O1",
+   "value_ev": 3.738,
+   "verdict": "corrected",
+   "doi": "10.1016/j.matpr.2015.11.032",
+   "note": "The extracted value is another item in a \"respectively\" list."
+  },
+  {
+   "formula": "Zn0.9Fe0.1O1",
+   "value_ev": 2.88,
+   "verdict": "corrected",
+   "doi": "10.1007/s00339-018-1718-y",
+   "note": "The extracted value is another item in a \"respectively\" list."
+  },
+  {
+   "formula": "Zn1S0.17O0.83",
+   "value_ev": 3.17,
+   "verdict": "ok",
+   "doi": "10.1016/j.jcrysgro.2014.05.017",
+   "note": ""
+  },
+  {
+   "formula": "Zn1S0.4O0.6",
+   "value_ev": 2.6,
+   "verdict": "ok",
+   "doi": "10.1039/c5cp01607j",
+   "note": ""
+  },
+  {
+   "formula": "Zn1S0.875O0.125",
+   "value_ev": null,
+   "verdict": "excluded",
+   "doi": "10.1007/s10853-006-0415-y",
+   "note": "The sentence describes a calculated structure."
+  },
+  {
+   "formula": "Zr0.2Ti0.8O2",
+   "value_ev": 3.28,
+   "verdict": "ok",
+   "doi": "10.1007/s00339-019-3272-7",
+   "note": ""
+  }
+ ]
+}

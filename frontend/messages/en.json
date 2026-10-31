@@ -700,11 +700,12 @@
     "boardRange": "Range",
     "tested": {
       "title": "How well has this been tested?",
-      "gap": "Band gap: for {inside}% of {cases} measured solid solutions, the real value is inside the range. Most of them are semiconductors, not oxides.",
-      "wide": "Clear materials only: {inside}% of {cases} are inside the range, but the ranking is weak (rank correlation {rank}), so do not trust small score differences.",
-      "n": "Refractive index: {inside}% of {cases} computed oxide mixes are inside the range. We found no measured mixes to test.",
+      "oxides": "Clear oxides: for {inside}% of {cases} measured solid solutions ({systems} chemical systems), the real band gap is inside the range. These values were checked by hand.",
+      "oxidesOther": "Many of those are one system, MgO–ZnO. Without it, {inside}% of {cases} are inside, and the ranking is weak (rank correlation {rank}). Do not trust small score differences.",
+      "semiconductors": "Semiconductors: {inside}% of {cases} are inside the band-gap range.",
+      "index": "Refractive index: only {cases} measured oxide mixes could be tested, and {inside}% are inside the range. Several are thin films, which can have a lower n than bulk crystals.",
       "fit": "Atoms fit together: {kept} of {swaps} real compounds keep their points, and {caught} of {implausible} impossible swaps are caught, on swaps kept apart from the design of this rule.",
-      "notTested": "Not tested: no measured oxide solid solutions, and no test that a high score predicts a material someone has made and used."
+      "limits": "Not tested: whether a high score predicts a material someone can make and use. Values are matched by formula, so the crystal form can differ."
     }
   },
   "NoveltyCheck": {

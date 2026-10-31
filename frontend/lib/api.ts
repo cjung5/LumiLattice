@@ -452,15 +452,14 @@ export type Scorecard = {
   validation: {
     gap_cases: number;
     gap_inside: number;
-    gap_inside_wide: number;
-    gap_wide_cases: number;
-    gap_rank: number;
-    gap_wide_rank: number;
+    oxide_cases: number;
+    oxide_inside: number;
+    oxide_systems: number;
+    oxide_other_cases: number;
+    oxide_other_inside: number;
+    oxide_other_rank: number;
     n_cases: number;
     n_inside: number;
-    real_crystals: number;
-    real_crystals_charge_pass: number;
-    real_crystals_bvs_fail: number;
     swaps: number;
     swaps_kept: number;
     implausible: number;

@@ -34,6 +34,18 @@ DATASETS = [
         "sha256": "b204d8d792451cd55d2efa1163f266e6be430dedb96ce35e6ceec54af55ea3bd",
         "about": "Experimental band gaps, Zhuo et al. 2018 (MIT), doi:10.6084/m9.figshare.7289687.v1",
     },
+    {
+        "path": RAW_DIR / "cole" / "dong_cole_bandgap_database_v2.zip",
+        "url": "https://ndownloader.figshare.com/files/31781996",
+        "sha256": "47c58e1e818b8935b40511672a7bb69af7c360452211ec657d86b97e7e94a639",
+        "about": "Text-mined band gaps, Dong & Cole 2022 (MIT), doi:10.6084/m9.figshare.14079863.v1",
+    },
+    {
+        "path": RAW_DIR / "cole" / "zhao_cole_refractive_index.csv",
+        "url": "https://ndownloader.figshare.com/files/33982973",
+        "sha256": "d8e440eb76379dc921cef0246e01c8f7f102cd4a46a8950cbddb330d8c6d4c49",
+        "about": "Text-mined n, Zhao & Cole 2022 (CC BY 4.0), doi:10.6084/m9.figshare.12781142.v2",
+    },
 ]
 
 

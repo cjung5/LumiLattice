@@ -202,6 +202,7 @@ def data_sources(
             ("jarvis", "JARVIS-DFT", "CC BY 4.0"),
             ("refractiveindex", "refractiveindex.info", "CC0"),
             ("expt_gap", "Zhuo et al. 2018, J. Phys. Chem. Lett. 9, 1668", "MIT"),
+            ("mined_gap", "Dong & Cole 2022, Sci. Data 9, 193", "MIT"),
         )
         for key, name, license_ in datasets:
             if key in reference_meta:

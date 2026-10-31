@@ -1,27 +1,34 @@
 """Test the score's parts against data, and write data/validation.json.
 
-Five tests:
+Six tests:
 1. Band-gap ranges against measured solid solutions (Zhuo et al. compositions with fractions).
 2. Band-gap and n ranges against computed mixes (JARVIS TBmBJ), the only large test for n.
 3. The optical score on known materials: waveguide materials against opaque and low-n controls.
 4. The structural checks on real, unmodified crystals: every alarm here is a false alarm.
 5. The atom-fit metric on swaps to real compounds and on implausible swaps. The charge-only cap
    was chosen on the first set, so the held-out set is the fair test.
+6. Band-gap and n ranges on oxide solid solutions from text-mined databases, with the end-member
+   values the app really uses. data/oxide_gap_review.json holds the hand-checked subset.
 
 Tests 4 and 5 use about 200 Materials Project requests. Run from backend/:
     uv run python -m scripts.validate_score
 """
 
+import ast
 import csv
+import io
 import itertools
 import json
 import math
 import random
+import re
 import statistics
 import sys
+import zipfile
 from collections import defaultdict
 from functools import cache
 from pathlib import Path
+from types import SimpleNamespace
 
 from pymatgen.core import Composition
 
@@ -32,10 +39,16 @@ from app.storage.memory import MemoryStore
 from app.tools.candidates import create_candidate
 from app.tools.goals import Goal
 from app.tools.materials import MaterialsProjectClient
-from app.tools.reference_db import GAP_MARGIN_EV, N_MARGIN, get_reference_db
+from app.tools.reference_db import (
+    GAP_MARGIN_EV,
+    MAX_MINED_SPREAD_EV,
+    N_MARGIN,
+    get_reference_db,
+)
 from app.tools.registry import ToolError
 from app.tools.scorecard import CHARGE_FAIL_CAP, CHECK_POINTS, fit_score, optical_score
 from app.tools.validation import assess
+from scripts.build_reference_db import MINED_CSV_NAME, mined_reports
 from scripts.download_data import DATASETS
 
 OUT = BACKEND_DIR / "data" / "validation.json"
@@ -96,6 +109,26 @@ HELD_OUT_IMPLAUSIBLE = (
     ("mp-1249", "Mg", "La"),
 )
 REAL_CRYSTALS = 40
+
+
+MIN_SHARE = 0.1  # below this, a dopant more than a solid solution
+REVIEW_FILE = BACKEND_DIR / "data" / "oxide_gap_review.json"
+MINED_ZIP, INDEX_CSV = DATASETS[3]["path"], DATASETS[4]["path"]
+
+
+def _spaced(formula: str) -> str:
+    return " ".join(re.findall(r"[A-Z][a-z]?[\d.]*", formula))
+
+
+def _visible(wavelength: str) -> bool:
+    """True when no wavelength is stated, or the stated one is in the visible range."""
+    match = re.match(r"\s*([\d.]+)\s*(nm|μm|µm|um)", wavelength or "")
+    if not wavelength.strip():
+        return True
+    if not match:
+        return False
+    nm = float(match.group(1)) * (1 if match.group(2) == "nm" else 1000)
+    return 400 <= nm <= 700
 
 
 def rank_correlation(a: list[float], b: list[float]) -> float | None:
@@ -321,6 +354,182 @@ def computed_summary(cases: list[dict], key: str, ends: str) -> dict | None:
     return range_summary(rows)
 
 
+def _charge_balanced(formula: str) -> bool:
+    return bool(_oxidation_guess(formula))
+
+
+def _oxide_case(comp: Composition, value, best, label: str = "") -> dict | None:
+    """Ends are the charge-balanced corners, and each must have a value in the app's own data."""
+    groups = site_groups(comp)
+    if not groups:
+        return None
+    ends = [(e, share) for e, share in end_members(comp, groups) if _charge_balanced(e)]
+    if len(ends) < 2 or min(share for _, share in ends) < MIN_SHARE:
+        return None
+    values = [best(e).value for e, _ in ends]
+    if any(v is None for v in values):
+        return None
+    total = sum(share for _, share in ends)
+    return {
+        "formula": label or comp.formula.replace(" ", ""),
+        "measured": value,
+        "low": min(values),
+        "high": max(values),
+        "linear": sum(v * s for v, (_, s) in zip(values, ends, strict=True)) / total,
+        "system": "–".join(sorted(e for e, _ in ends)),
+    }
+
+
+def by_system(cases: list[dict], margin: float) -> dict:
+    """Each chemical system gets one vote, so MgO-ZnO cannot outvote everything else."""
+    groups: dict[str, list[dict]] = defaultdict(list)
+    for case in cases:
+        groups[case["system"]].append(case)
+    shares = [
+        sum(c["low"] - margin <= c["measured"] <= c["high"] + margin for c in rows) / len(rows)
+        for rows in groups.values()
+    ]
+    largest = max(groups, key=lambda k: len(groups[k]))
+    return {
+        "systems": len(groups),
+        "mean_share_inside": round(statistics.fmean(shares), 3),
+        "largest_system": largest,
+        "largest_system_cases": len(groups[largest]),
+    }
+
+
+def mined_against_computed() -> dict:
+    """Compiled measured gaps (Zhuo et al.) as the reference for text-mined medians and TBmBJ."""
+    db = get_reference_db()
+    rows = []
+    for formula, median, q1, q3, _ in db._db.execute(
+        "SELECT formula, median, q1, q3, reports FROM mined_gaps"
+    ):
+        compiled = db.measured_gaps(formula)
+        computed = [c.band_gap_mbj for c in db.computed(formula) if c.band_gap_mbj is not None]
+        if compiled and computed:
+            reference = statistics.median(compiled)
+            rows.append(
+                {
+                    "spread": q3 - q1,
+                    "mined": abs(median - reference),
+                    "tbmbj": abs(statistics.median(computed) - reference),
+                    "oxide": "O" in {el.symbol for el in Composition(formula).elements},
+                }
+            )
+
+    def summary(selected: list[dict]) -> dict:
+        return {
+            "formulas": len(selected),
+            "mean_error_mined": round(statistics.fmean(r["mined"] for r in selected), 3),
+            "mean_error_tbmbj": round(statistics.fmean(r["tbmbj"] for r in selected), 3),
+        }
+
+    tight = [r for r in rows if r["spread"] <= MAX_MINED_SPREAD_EV]
+    wide = [r for r in rows if r["spread"] > MAX_MINED_SPREAD_EV]
+    return {
+        "spread_within_limit": summary(tight),
+        "spread_within_limit_oxides": summary([r for r in tight if r["oxide"]]),
+        "spread_over_limit": summary(wide),
+        "spread_over_limit_oxides": summary([r for r in wide if r["oxide"]]),
+        "note": (
+            "The limit was chosen on this comparison. Some reports can appear in both sources, so "
+            "the text-mined error can be too low."
+        ),
+    }
+
+
+def oxide_tests() -> dict:
+    db = get_reference_db()
+    with zipfile.ZipFile(MINED_ZIP) as z, z.open(MINED_CSV_NAME) as f:
+        reports: dict[str, list[float]] = defaultdict(list)
+        for comp, gap, _ in mined_reports(io.TextIOWrapper(f, encoding="utf-8", errors="replace")):
+            fractional = any(abs(a - round(a)) > 1e-6 for a in comp.values())
+            if fractional and "O" in {el.symbol for el in comp.elements}:
+                reports[comp.formula].append(gap)
+    mined = [
+        case
+        for formula, gaps in reports.items()
+        if (case := _oxide_case(Composition(formula), statistics.median(gaps), db.best_gap))
+    ]
+
+    review = json.loads(REVIEW_FILE.read_text())["cases"]
+    reviewed = [
+        case
+        for row in review
+        if row["value_ev"] is not None
+        and (
+            case := _oxide_case(
+                Composition(_spaced(row["formula"])), row["value_ev"], db.best_gap, row["formula"]
+            )
+        )
+    ]
+    clear = [c for c in reviewed if c["measured"] >= 2.5]
+    no_mgzn = [c for c in clear if c["system"] != "MgO–ZnO"]
+
+    index_reports: dict[str, list[float]] = defaultdict(list)
+    whole_index: dict[str, list[float]] = defaultdict(list)
+    with INDEX_CSV.open(encoding="utf-8", errors="replace", newline="") as f:
+        csv.field_size_limit(10**8)
+        for row in csv.DictReader(f):
+            name = row["normalised_name"]
+            if row["property_type"] != "Refractive Index" or not name.startswith("["):
+                continue
+            if not _visible(row["measurement_wavelength"]):
+                continue
+            try:
+                comp = Composition(
+                    {element: float(amount) for element, amount in ast.literal_eval(name)}
+                )
+                value = float(row["extracted_value"])
+            except (ValueError, SyntaxError, TypeError, KeyError, IndexError):
+                continue
+            if (
+                not comp.valid
+                or not 1 < value < 5
+                or "O" not in {el.symbol for el in comp.elements}
+            ):
+                continue
+            if any(abs(a - round(a)) > 1e-6 for a in comp.values()):
+                index_reports[comp.formula].append(value)
+            else:
+                whole_index[comp.reduced_formula].append(value)
+
+    def index_of(formula: str) -> SimpleNamespace:
+        """Measured n when the app has it. Computed n is left out: for metals it is far too high."""
+        best = db.best_n(formula)
+        if best.status == "Experimental":
+            return SimpleNamespace(value=best.value)
+        reports = whole_index.get(formula, [])
+        return SimpleNamespace(value=statistics.median(reports) if len(reports) >= 3 else None)
+
+    index_cases = [
+        case
+        for formula, values in index_reports.items()
+        if (case := _oxide_case(Composition(formula), statistics.median(values), index_of))
+    ]
+    return {
+        "gap_mined_unreviewed": range_summary(mined),
+        "gap_reviewed": range_summary(reviewed),
+        "gap_reviewed_clear": range_summary(clear),
+        "gap_reviewed_clear_by_system": by_system(clear, GAP_MARGIN_EV),
+        "gap_reviewed_clear_without_mgzno": range_summary(no_mgzn),
+        "review_counts": {
+            verdict: sum(r["verdict"] == verdict for r in review)
+            for verdict in ("ok", "corrected", "excluded")
+        },
+        "n_mined_unreviewed": range_summary(index_cases),
+        "n_by_system": by_system(index_cases, N_MARGIN) if index_cases else None,
+        "note": (
+            "Gap end members use the app's own values. Minority share at least 10%. The gap review "
+            "read up to two source sentences per composition and chose compositions with a "
+            "text-mined gap of at least 2.5 eV. n was not reviewed (most rows have no source "
+            "sentence): end members use measured n, or a median of at least 3 text-mined values, "
+            "and several of the n cases are films, which can have lower n than bulk crystals."
+        ),
+    }
+
+
 def control_scores(goal: Goal) -> dict:
     db = get_reference_db()
 
@@ -341,6 +550,7 @@ def control_scores(goal: Goal) -> dict:
         "opaque": opaque,
         "low_n": low_n,
         "beats_opaque": area_under_curve(list(waveguide.values()), list(opaque.values())),
+        "lowest_waveguide_note": "SiC: the text-mined 2.4 eV is mainly cubic 3C-SiC; AR waveguides use hexagonal SiC.",
         "beats_low_n": area_under_curve(list(waveguide.values()), list(low_n.values())),
         "note": "A sanity check, not proof: n and the band gap also build the score.",
     }
@@ -492,6 +702,8 @@ def main(path: Path = OUT) -> int:
             ),
         },
         "optical_score_controls": control_scores(Goal()),
+        "oxides": oxide_tests(),
+        "mined_gaps_against_computed": mined_against_computed(),
     }
     if settings.mp_api_key is None:
         print("MP_API_KEY is not set: skipping the atom-fit test.", file=sys.stderr)

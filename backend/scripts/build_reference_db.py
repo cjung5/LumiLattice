@@ -5,8 +5,10 @@ This script keeps only the fields the app shows. Run from backend/ after downloa
     uv run python -m scripts.build_reference_db
 """
 
+import ast
 import csv
 import html
+import io
 import json
 import math
 import re
@@ -14,7 +16,8 @@ import sqlite3
 import statistics
 import sys
 import zipfile
-from collections.abc import Iterable
+from collections import defaultdict
+from collections.abc import Iterable, Iterator
 from datetime import UTC, datetime
 
 import yaml
@@ -25,7 +28,14 @@ from app.tools.dispersion import evaluate, wavelength_range
 from scripts.download_data import DATASETS, REPO_ROOT, sha256
 
 OUT = BACKEND_DIR / "data" / "reference.sqlite"
-JARVIS_ZIP, RII_ZIP, GAP_CSV = (d["path"] for d in DATASETS)
+JARVIS_ZIP, RII_ZIP, GAP_CSV, MINED_ZIP, _MINED_N_CSV = (d["path"] for d in DATASETS)
+MINED_CSV_NAME = "Bandpgap_database_v2/Bandgap.csv"
+# Sentences about calculations are left out; the app tags this table as Experimental.
+THEORY = re.compile(
+    r"calculat|DFT|first[- ]principles|theoretical|ab initio|GGA|LDA|HSE|PBE|simulat|predict|comput",
+    re.IGNORECASE,
+)
+MIN_MINED_REPORTS = 5  # one report can be an extraction error; the median of several rarely is
 WAVELENGTHS = {"n_450": 0.45, "n_550": 0.55, "n_650": 0.65}
 # n(λ) curve for charts: 380-780 nm every 10 nm (None outside the measured range).
 CURVE_NM = list(range(380, 781, 10))
@@ -47,6 +57,10 @@ CREATE TABLE ri_pages (
 CREATE INDEX ri_formula ON ri_pages(formula);
 CREATE TABLE expt_gaps (formula TEXT NOT NULL, gap REAL NOT NULL);
 CREATE INDEX expt_gaps_formula ON expt_gaps(formula);
+CREATE TABLE mined_gaps (
+    formula TEXT PRIMARY KEY, median REAL NOT NULL, q1 REAL NOT NULL, q3 REAL NOT NULL,
+    reports INTEGER NOT NULL
+);
 CREATE TABLE known_compositions (formula TEXT PRIMARY KEY, fractions TEXT NOT NULL);
 """
 
@@ -183,6 +197,42 @@ def build_measured_gaps(db: sqlite3.Connection) -> int:
     return len(rows)
 
 
+def mined_reports(lines: Iterable[str]) -> Iterator[tuple[Composition, float, dict[str, str]]]:
+    """Each (composition, gap, row) in the Dong & Cole database that is not about a calculation."""
+    for row in csv.DictReader(lines):
+        if not row["Composition"] or THEORY.search(row["Text"]):
+            continue
+        try:
+            comp = Composition(ast.literal_eval(row["Composition"]))
+            values = ast.literal_eval(row["Value"])
+            gap = float(values[0])
+        except (ValueError, SyntaxError, TypeError, IndexError, KeyError):
+            continue
+        if comp.valid and comp.num_atoms > 0 and 0.05 < gap < 12:
+            yield comp, gap, row
+
+
+def mined_gap_rows(lines: Iterable[str]) -> list[tuple[str, float, float, float, int]]:
+    """(formula, median, first and third quartile, reports) for whole-number compositions."""
+    reports: dict[str, list[float]] = defaultdict(list)
+    for comp, gap, _ in mined_reports(lines):
+        if all(abs(a - round(a)) < 1e-6 for a in comp.values()):
+            reports[comp.reduced_formula].append(gap)
+    rows = []
+    for formula, gaps in reports.items():
+        if len(gaps) >= MIN_MINED_REPORTS:
+            q1, _, q3 = statistics.quantiles(gaps, n=4)
+            rows.append((formula, statistics.median(gaps), round(q1, 3), round(q3, 3), len(gaps)))
+    return rows
+
+
+def build_mined_gaps(db: sqlite3.Connection) -> int:
+    with zipfile.ZipFile(MINED_ZIP) as z, z.open(MINED_CSV_NAME) as f:
+        rows = mined_gap_rows(io.TextIOWrapper(f, encoding="utf-8", errors="replace"))
+    db.executemany("INSERT INTO mined_gaps VALUES (?, ?, ?, ?, ?)", rows)
+    return len(rows)
+
+
 def build_known_compositions(db: sqlite3.Connection) -> int:
     """Every formula in the datasets, including entries labeled as metals, for composition distance."""
     formulas = {
@@ -221,6 +271,7 @@ def main() -> int:
     n_jarvis = build_jarvis(db)
     n_pages = build_refractiveindex(db)
     n_gaps = build_measured_gaps(db)
+    n_mined = build_mined_gaps(db)
     n_known = build_known_compositions(db)
     meta = {
         "built_at": datetime.now(UTC).isoformat(timespec="seconds"),
@@ -230,6 +281,8 @@ def main() -> int:
         "refractiveindex_sha256": sha256(RII_ZIP),
         "expt_gap": DATASETS[2]["about"],
         "expt_gap_sha256": sha256(GAP_CSV),
+        "mined_gap": DATASETS[3]["about"],
+        "mined_gap_sha256": sha256(MINED_ZIP),
     }
     db.executemany("INSERT INTO meta VALUES (?, ?)", meta.items())
     db.commit()
@@ -239,7 +292,7 @@ def main() -> int:
     size = OUT.stat().st_size / 1e6
     print(
         f"{OUT.relative_to(REPO_ROOT)}: {n_jarvis} JARVIS rows, {n_pages} refractiveindex pages, "
-        f"{n_gaps} measured gaps, {n_known} known compositions, {size:.1f} MB"
+        f"{n_gaps} measured gaps, {n_mined} text-mined gaps, {n_known} known compositions, {size:.1f} MB"
     )
     return 0
 

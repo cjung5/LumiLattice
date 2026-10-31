@@ -1,6 +1,6 @@
 {
   "applied_margins": {
-    "gap_ev": 0.2,
+    "gap_ev": 0.3,
     "n": 0.2
   },
   "measured_gap_ranges": {
@@ -114,14 +114,14 @@
     "note": "Ordered JARVIS compounds between two compounds with one element swapped at the same charge, all TBmBJ. n = sqrt(eps) is a long-wavelength value. Median over polymorphs, so the phases can differ."
   },
   "optical_score_controls": {
-    "lowest_waveguide": 68.0,
+    "lowest_waveguide": 57.4,
     "highest_opaque": 61.2,
     "highest_low_n": 38.0,
     "waveguide": {
       "TiO2": 89.0,
       "Si3N4": 68.0,
       "LiNbO3": 78.6,
-      "SiC": 76.4,
+      "SiC": 57.4,
       "Nb2O5": 75.3,
       "Ta2O5": 76.0,
       "ZrO2": 93.1,
@@ -144,48 +144,175 @@
       "BaF2": 31.7,
       "NaF": 12.2
     },
-    "beats_opaque": 1.0,
+    "beats_opaque": 0.982,
+    "lowest_waveguide_note": "SiC: the text-mined 2.4 eV is mainly cubic 3C-SiC; AR waveguides use hexagonal SiC.",
     "beats_low_n": 1.0,
     "note": "A sanity check, not proof: n and the band gap also build the score."
   },
+  "oxides": {
+    "gap_mined_unreviewed": {
+      "cases": 103,
+      "inside": {
+        "0": 0.476,
+        "0.1": 0.544,
+        "0.2": 0.573,
+        "0.3": 0.631,
+        "0.5": 0.68
+      },
+      "below_range": 22,
+      "above_range": 32,
+      "error_of_midpoint": 1.124,
+      "error_of_linear_mix": 0.954,
+      "rank_correlation_midpoint": 0.661,
+      "rank_correlation_linear": 0.694
+    },
+    "gap_reviewed": {
+      "cases": 45,
+      "inside": {
+        "0": 0.689,
+        "0.1": 0.756,
+        "0.2": 0.778,
+        "0.3": 0.867,
+        "0.5": 0.867
+      },
+      "below_range": 6,
+      "above_range": 8,
+      "error_of_midpoint": 1.067,
+      "error_of_linear_mix": 0.81,
+      "rank_correlation_midpoint": 0.69,
+      "rank_correlation_linear": 0.766
+    },
+    "gap_reviewed_clear": {
+      "cases": 43,
+      "inside": {
+        "0": 0.698,
+        "0.1": 0.744,
+        "0.2": 0.767,
+        "0.3": 0.86,
+        "0.5": 0.86
+      },
+      "below_range": 6,
+      "above_range": 7,
+      "error_of_midpoint": 1.099,
+      "error_of_linear_mix": 0.841,
+      "rank_correlation_midpoint": 0.652,
+      "rank_correlation_linear": 0.744
+    },
+    "gap_reviewed_clear_by_system": {
+      "systems": 25,
+      "mean_share_inside": 0.78,
+      "largest_system": "MgO–ZnO",
+      "largest_system_cases": 18
+    },
+    "gap_reviewed_clear_without_mgzno": {
+      "cases": 25,
+      "inside": {
+        "0": 0.48,
+        "0.1": 0.56,
+        "0.2": 0.6,
+        "0.3": 0.76,
+        "0.5": 0.76
+      },
+      "below_range": 6,
+      "above_range": 7,
+      "error_of_midpoint": 0.856,
+      "error_of_linear_mix": 0.817,
+      "rank_correlation_midpoint": 0.364,
+      "rank_correlation_linear": 0.262
+    },
+    "review_counts": {
+      "ok": 35,
+      "corrected": 11,
+      "excluded": 7
+    },
+    "n_mined_unreviewed": {
+      "cases": 12,
+      "inside": {
+        "0": 0.167,
+        "0.1": 0.333,
+        "0.2": 0.583,
+        "0.3": 0.75,
+        "0.5": 0.917
+      },
+      "below_range": 6,
+      "above_range": 4,
+      "error_of_midpoint": 0.358,
+      "error_of_linear_mix": 0.3,
+      "rank_correlation_midpoint": 0.384,
+      "rank_correlation_linear": 0.4
+    },
+    "n_by_system": {
+      "systems": 6,
+      "mean_share_inside": 0.611,
+      "largest_system": "Eu2O3–Gd2O3",
+      "largest_system_cases": 3
+    },
+    "note": "Gap end members use the app's own values. Minority share at least 10%. The gap review read up to two source sentences per composition and chose compositions with a text-mined gap of at least 2.5 eV. n was not reviewed (most rows have no source sentence): end members use measured n, or a median of at least 3 text-mined values, and several of the n cases are films, which can have lower n than bulk crystals."
+  },
+  "mined_gaps_against_computed": {
+    "spread_within_limit": {
+      "formulas": 243,
+      "mean_error_mined": 0.171,
+      "mean_error_tbmbj": 0.626
+    },
+    "spread_within_limit_oxides": {
+      "formulas": 42,
+      "mean_error_mined": 0.177,
+      "mean_error_tbmbj": 0.869
+    },
+    "spread_over_limit": {
+      "formulas": 69,
+      "mean_error_mined": 0.865,
+      "mean_error_tbmbj": 1.195
+    },
+    "spread_over_limit_oxides": {
+      "formulas": 28,
+      "mean_error_mined": 0.789,
+      "mean_error_tbmbj": 1.229
+    },
+    "note": "The limit was chosen on this comparison. Some reports can appear in both sources, so the text-mined error can be too low."
+  },
   "real_crystals": {
     "crystals": 40,
-    "no_alarm": 29,
+    "no_alarm": 26,
     "pass_rate": {
       "charge": 1.0,
-      "distances": 0.9,
+      "distances": 0.925,
       "bond_fit": 0.95,
       "coordination": 0.9,
-      "bond_valence": 0.85,
-      "tolerance_factor": 0.667
+      "bond_valence": 0.8,
+      "tolerance_factor": 1.0
     },
     "warn_rate": {
       "charge": 0.0,
       "distances": 0.0,
-      "bond_fit": 0.025,
+      "bond_fit": 0.05,
       "coordination": 0.1,
-      "bond_valence": 0.15,
-      "tolerance_factor": 0.333
+      "bond_valence": 0.175,
+      "tolerance_factor": 0.0
     },
     "fail_rate": {
       "charge": 0.0,
-      "distances": 0.1,
-      "bond_fit": 0.025,
+      "distances": 0.075,
+      "bond_fit": 0.0,
       "coordination": 0.0,
-      "bond_valence": 0.0,
+      "bond_valence": 0.025,
       "tolerance_factor": 0.0
     },
     "with_alarm": [
-      "CO2",
-      "BaTiO3",
-      "AlPO4",
-      "KTaO3",
+      "TlCl",
+      "NaF",
       "TeO2",
-      "LiIO3",
-      "WS2",
+      "CO2",
+      "KTaO3",
       "KNbO3",
+      "KTiPO5",
+      "AlPO4",
+      "TiH2",
       "Bi(BO2)3",
+      "GaAgS2",
       "PdSe2",
+      "GaCuS2",
       "Ba(BO2)2"
     ],
     "note": "Real crystals at their own geometry, so every warning and failure here is a false alarm."

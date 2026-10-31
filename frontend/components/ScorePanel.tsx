@@ -176,12 +176,13 @@ export function ScorePanel({ candidate, goal, onAskAgent }: Props) {
         <details className="text-xs">
           <summary className="cursor-pointer text-muted">{t("tested.title")}</summary>
           <ul className="mt-1 list-disc space-y-1 pl-4">
-            <li>{t("tested.gap", { inside: card.validation.gap_inside, cases: card.validation.gap_cases })}</li>
-            <li>{t("tested.wide", { inside: card.validation.gap_inside_wide, cases: card.validation.gap_wide_cases, rank: card.validation.gap_wide_rank })}</li>
-            <li>{t("tested.n", { inside: card.validation.n_inside, cases: card.validation.n_cases })}</li>
+            <li>{t("tested.oxides", { inside: card.validation.oxide_inside, cases: card.validation.oxide_cases, systems: card.validation.oxide_systems })}</li>
+            <li>{t("tested.oxidesOther", { inside: card.validation.oxide_other_inside, cases: card.validation.oxide_other_cases, rank: card.validation.oxide_other_rank })}</li>
+            <li>{t("tested.semiconductors", { inside: card.validation.gap_inside, cases: card.validation.gap_cases })}</li>
+            <li>{t("tested.index", { inside: card.validation.n_inside, cases: card.validation.n_cases })}</li>
             <li>{t("tested.fit", { kept: card.validation.swaps_kept, swaps: card.validation.swaps, caught: card.validation.implausible_caught, implausible: card.validation.implausible })}</li>
           </ul>
-          <p className="mt-1 font-medium">{t("tested.notTested")}</p>
+          <p className="mt-1 font-medium">{t("tested.limits")}</p>
         </details>
       )}
     </section>

@@ -33,14 +33,20 @@ from app.tools.registry import ToolError
 # Measured pages that describe the bulk material (thin films and nanoparticles differ).
 BULK_CATEGORIES = {"bulk", "crystal", ""}
 MATCH_NOTE = "Matched by formula; the polymorph may differ from the selected structure."
-# Added to both ends of a Heuristic range. scripts/validate_score.py chose the gap margin on half
-# of the measured solid solutions (0.2 eV: 91% of the other half fall inside). n has no measured
-# solid solutions to test: 0.2 puts 91% of computed wide-gap oxide mixes inside.
-GAP_MARGIN_EV = 0.2
+# Added to both ends of a Heuristic range, from scripts/validate_score.py. Gap: on hand-checked
+# oxide solid solutions, coverage stops rising at 0.3 eV (86% inside, also 86% at 0.5 eV). n: 91%
+# of computed wide-gap oxide mixes fall inside at 0.2, but only 12 measured mixes exist, not reviewed.
+GAP_MARGIN_EV = 0.3
 N_MARGIN = 0.2
 N_NOTE = f"Widened by {N_MARGIN} on each side, from tests on computed mixes."
 GAP_NOTE_RANGE = (
-    f"Widened by {GAP_MARGIN_EV} eV on each side, from tests on measured solid solutions."
+    f"Widened by {GAP_MARGIN_EV} eV on each side, from tests on measured oxide solid solutions."
+)
+# scripts/validate_score.py: within this spread (middle half of the reports) the median is far
+# closer to compiled measured gaps than TBmBJ is. Beyond it, reports disagree (SiO2: 3.2-9.0 eV).
+MAX_MINED_SPREAD_EV = 1.0
+MINED_NOTE = (
+    "Text mining makes errors, and the papers can report films, nanoparticles, or doped samples."
 )
 GAP_NOTE = "Reported in the literature; the compilation does not record the measurement method."
 CURVE_NM = list(range(380, 781, 10))
@@ -195,8 +201,15 @@ class ReferenceDB:
         ).fetchall()
         return [r[0] for r in rows]
 
+    def mined_gap(self, formula: str) -> tuple[float, float, float, int] | None:
+        if self._db is None:
+            return None
+        return self._db.execute(
+            "SELECT median, q1, q3, reports FROM mined_gaps WHERE formula = ?", (formula,)
+        ).fetchone()
+
     def best_gap(self, formula: str) -> PropertyValue:
-        """Measured gap first, then JARVIS TBmBJ, then OptB88vdW (median over ICSD entries)."""
+        """Compiled measured gap, then text-mined measured gap, then JARVIS TBmBJ, then OptB88vdW."""
         measured = self.measured_gaps(formula)
         if measured:
             spread = (
@@ -212,6 +225,22 @@ class ReferenceDB:
                 conditions=f"{spread}{GAP_NOTE} {MATCH_NOTE}",
                 provenance=Provenance(
                     source="Zhuo et al. 2018", method="literature compilation", reference=formula
+                ),
+            )
+        mined = self.mined_gap(formula)
+        if mined and mined[2] - mined[1] <= MAX_MINED_SPREAD_EV:
+            median, q1, q3, reports = mined
+            return PropertyValue(
+                name="band_gap",
+                value=_round(median),
+                units="eV",
+                status="Experimental",
+                conditions=(
+                    f"Median of {reports} values text-mined from papers (middle half {q1}–{q3} "
+                    f"eV). {MINED_NOTE} {MATCH_NOTE}"
+                ),
+                provenance=Provenance(
+                    source="Dong & Cole 2022", method="text-mined literature", reference=formula
                 ),
             )
         computed = self.computed(formula)

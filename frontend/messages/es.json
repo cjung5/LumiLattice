@@ -700,11 +700,12 @@
     "boardRange": "Intervalo",
     "tested": {
       "title": "¿Qué tan bien se ha probado?",
-      "gap": "Brecha de banda: para el {inside}% de {cases} soluciones sólidas medidas, el valor real está dentro del rango. La mayoría son semiconductores, no óxidos.",
-      "wide": "Solo materiales transparentes: el {inside}% de {cases} está dentro del rango, pero la clasificación es débil (correlación de rangos {rank}), no confiar en pequeñas diferencias de puntuación.",
-      "n": "Índice de refracción: el {inside}% de {cases} mezclas de óxidos calculadas está dentro del rango. No se encontraron mezclas medidas para probar.",
+      "oxides": "Óxidos claros: para el {inside}% de {cases} soluciones sólidas medidas ({systems} sistemas químicos), la banda prohibida real está dentro del rango. Estos valores se verificaron manualmente.",
+      "oxidesOther": "Muchos son de un solo sistema, MgO–ZnO. Sin él, el {inside}% de {cases} está dentro y la clasificación es débil (correlación de rangos {rank}). No confíe en pequeñas diferencias de puntuación.",
+      "semiconductors": "Semiconductores: el {inside}% de {cases} está dentro del rango de banda prohibida.",
+      "index": "Índice de refracción: solo {cases} mezclas de óxidos medidas pudieron evaluarse, y {inside}% está dentro del rango. Varias son películas delgadas, que pueden tener un n menor que los cristales en volumen.",
       "fit": "Encaje atómico: {kept} de {swaps} compuestos reales conservan sus puntos, y {caught} de {implausible} intercambios imposibles son detectados, en intercambios separados del diseño de esta regla.",
-      "notTested": "No probado: sin soluciones sólidas de óxidos medidas, y sin prueba de que una puntuación alta prediga un material fabricado y utilizado."
+      "limits": "No probado: si una puntuación alta predice un material que se pueda fabricar y utilizar. Los valores se comparan por fórmula, por lo que la forma cristalina puede diferir."
     }
   },
   "NoveltyCheck": {

@@ -4,7 +4,7 @@ import pytest
 
 from app.tools.reference_db import ReferenceDB, get_reference_db, normalize
 from app.tools.registry import ToolError
-from scripts.build_reference_db import SCHEMA, measured_gap_rows
+from scripts.build_reference_db import SCHEMA, measured_gap_rows, mined_gap_rows
 
 
 @pytest.fixture
@@ -85,6 +85,8 @@ def tiny_db(tmp_path) -> ReferenceDB:
         ],
     )
     db.executemany("INSERT INTO expt_gaps VALUES (?, ?)", [("AB", 4.0), ("AB", 3.4), ("AB", 3.2)])
+    db.execute("INSERT INTO mined_gaps VALUES ('EG', 5.0, 4.6, 5.4, 7)")
+    db.execute("INSERT INTO mined_gaps VALUES ('AB', 9.0, 9.0, 9.0, 9)")
     db.commit()
     db.close()
     return ReferenceDB(path)
@@ -148,6 +150,38 @@ def test_best_gap_prefers_measured(tiny_db):
     assert tiny_db.measured_gaps("AB") == [3.2, 3.4, 4.0]
 
 
+def test_text_mined_gap_comes_after_compiled_and_before_dft(tiny_db):
+    assert tiny_db.best_gap("AB").value == 3.4  # the compiled value, not the 9.0 eV mined one
+    mined = tiny_db.best_gap("EG")
+    assert mined.value == 5.0 and mined.status == "Experimental"
+    assert "text-mined" in mined.conditions and "4.6–5.4 eV" in mined.conditions
+    assert mined.provenance.source == "Dong & Cole 2022"
+
+
+def test_a_wide_spread_of_text_mined_reports_is_not_used(tiny_db):
+    tiny_db._db.close()
+    db = sqlite3.connect(tiny_db.path)
+    db.execute("INSERT INTO mined_gaps VALUES ('CD', 5.7, 3.2, 9.0, 258)")  # like SiO2
+    db.commit()
+    db.close()
+    gap = ReferenceDB(tiny_db.path).best_gap("CD")
+
+    assert gap.status == "DFT-computed" and gap.provenance.source == "JARVIS-DFT"
+
+
+def test_mined_rows_skip_calculations_rare_formulas_and_fractions():
+    header = "Composition,Value,Text\n"
+    measured = "\"{'Sr': 1, 'Ti': 1, 'O': 3}\",[3.2],We measured it.\n"
+    computed = "\"{'Sr': 1, 'Ti': 1, 'O': 3}\",[1.8],DFT calculations give this.\n"
+    rare = "\"{'Ba': 1, 'Ti': 1, 'O': 3}\",[3.1],We measured it.\n"
+    fraction = "\"{'Sr': 0.5, 'Ba': 0.5, 'Ti': 1, 'O': 3}\",[3.2],We measured it.\n"
+    lines = [header, *[measured] * 5, computed, rare, *[fraction] * 5]
+    rows = mined_gap_rows(lines)
+
+    assert [r[0] for r in rows] == ["SrTiO3"]
+    assert rows[0][1] == 3.2 and rows[0][4] == 5
+
+
 def test_best_gap_falls_back_to_dft(tiny_db):
     gap = tiny_db.best_gap("CD")
 
@@ -159,7 +193,7 @@ def test_estimate_range_can_mix_measured_and_dft_gaps(tiny_db):
     gap = tiny_db.estimate(["AB", "CD"]).band_gap
 
     assert gap.status == "Heuristic"
-    assert gap.value_range == (0.8, 3.6)  # 1.0-3.4 and the tested 0.2 eV margin
+    assert gap.value_range == (0.7, 3.7)  # 1.0-3.4 and the tested 0.3 eV margin
     assert "mix measured and DFT" in gap.conditions
 
 

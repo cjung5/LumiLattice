@@ -94,15 +94,14 @@ class Validation(BaseModel):
 
     gap_cases: int
     gap_inside: int
-    gap_inside_wide: int
-    gap_wide_cases: int
-    gap_rank: float
-    gap_wide_rank: float
+    oxide_cases: int
+    oxide_inside: int
+    oxide_systems: int
+    oxide_other_cases: int
+    oxide_other_inside: int
+    oxide_other_rank: float
     n_cases: int
     n_inside: int
-    real_crystals: int
-    real_crystals_charge_pass: int
-    real_crystals_bvs_fail: int
     swaps: int
     swaps_kept: int
     implausible: int
@@ -405,22 +404,25 @@ def load_validation() -> Validation | None:
     """Numbers from the committed report; the panel works without them."""
     try:
         report = json.loads(VALIDATION_FILE.read_text())
-        wide = report["measured_gap_ranges"]["gap_at_least_2_ev"]
         gaps = report["measured_gap_ranges"]["all"]
-        n = report["computed_ranges"]["n_oxides_wide"]
-        crystals, fit = report["real_crystals"], report["atom_fit_holdout"]
+        oxides = report["oxides"]
+        clear = oxides["gap_reviewed_clear"]
+        other = oxides["gap_reviewed_clear_without_mgzno"]
+        n = oxides["n_mined_unreviewed"]
+        fit = report["atom_fit_holdout"]
+        gap_margin = str(report["applied_margins"]["gap_ev"])
+        n_margin = str(report["applied_margins"]["n"])
         return Validation(
             gap_cases=gaps["cases"],
-            gap_inside=round(100 * gaps["inside"]["0.2"]),
-            gap_inside_wide=round(100 * wide["inside"]["0.2"]),
-            gap_wide_cases=wide["cases"],
-            gap_rank=gaps["rank_correlation_midpoint"],
-            gap_wide_rank=wide["rank_correlation_midpoint"],
+            gap_inside=round(100 * gaps["inside"][gap_margin]),
+            oxide_cases=clear["cases"],
+            oxide_inside=round(100 * clear["inside"][gap_margin]),
+            oxide_systems=oxides["gap_reviewed_clear_by_system"]["systems"],
+            oxide_other_cases=other["cases"],
+            oxide_other_inside=round(100 * other["inside"][gap_margin]),
+            oxide_other_rank=other["rank_correlation_midpoint"],
             n_cases=n["cases"],
-            n_inside=round(100 * n["inside"]["0.2"]),
-            real_crystals=crystals["crystals"],
-            real_crystals_charge_pass=round(100 * crystals["pass_rate"]["charge"]),
-            real_crystals_bvs_fail=round(100 * crystals["fail_rate"]["bond_valence"]),
+            n_inside=round(100 * n["inside"][n_margin]),
             swaps=fit["swaps"],
             swaps_kept=fit["kept_above_cap"],
             implausible=fit["implausible_total"],
