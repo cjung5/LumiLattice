@@ -12,13 +12,15 @@ export async function POST(request: NextRequest) {
   const country = /^[A-Z]{2}$/.test(raw) && !NOT_A_COUNTRY.has(raw) ? raw : null;
   const secret = process.env.VISIT_SECRET;
   try {
-    await fetch(`${API_BASE_URL}/api/visits`, {
+    const response = await fetch(`${API_BASE_URL}/api/visits`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...(secret ? { "X-Visit-Secret": secret } : {}) },
       body: JSON.stringify({ country }),
+      // A sleeping backend takes about a minute to wake; Vercel ends this function much sooner.
+      signal: AbortSignal.timeout(8000),
     });
+    return new Response(null, { status: response.ok ? 204 : 502 });
   } catch {
-    // A missed count must not disturb the page.
+    return new Response(null, { status: 502 });
   }
-  return new Response(null, { status: 204 });
 }

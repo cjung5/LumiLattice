@@ -320,9 +320,12 @@ The backend writes its sentences in English, because Muse Spark and the exports 
 
 The backend runs on Render (Docker, free plan) and the frontend on Vercel.
 
-1. **Backend (Render):** New → Blueprint → select this repository. Render reads [`render.yaml`](render.yaml) and asks for `MODEL_API_KEY`, `MP_API_KEY`, `OPENALEX_API_KEY`, and `DATABASE_URL` (optional: a Neon or Supabase Postgres URL; leave it empty to keep candidates in memory). When the deploy finishes, open `https://<service>.onrender.com/api/health`.
-2. **Frontend (Vercel):** New Project → import this repository → Root Directory `frontend`. Add the environment variable `NEXT_PUBLIC_API_BASE_URL` = the Render URL (no trailing slash), then deploy.
-3. **CORS:** `CORS_ORIGIN_REGEX` in `render.yaml` allows `https://lumilattice*.vercel.app`. If the Vercel project has another name, change it in the Render dashboard.
+1. **Secret:** make one value for `VISIT_SECRET` with `openssl rand -hex 32`. Both servers need the same value.
+2. **Database:** create a free Postgres database (Neon or Supabase) and copy its URL. The tables are created at the first start. Without it, candidates and researcher counts are lost when the backend sleeps.
+3. **Backend (Render):** New → Blueprint → select this repository. Render reads [`render.yaml`](render.yaml) and asks for `MODEL_API_KEY`, `MP_API_KEY`, `OPENALEX_API_KEY`, `DATABASE_URL`, and `VISIT_SECRET`. When the deploy finishes, open `https://<service>.onrender.com/api/health`.
+4. **Frontend (Vercel):** New Project → import this repository → Root Directory `frontend`. Add the environment variables `NEXT_PUBLIC_API_BASE_URL` = the Render URL (no trailing slash) and `VISIT_SECRET` = the value from step 1, then deploy. Use a project name that starts with `lumilattice`.
+5. **CORS:** `CORS_ORIGIN_REGEX` in `render.yaml` allows `https://lumilattice*.vercel.app`. If the Vercel project has another name, change it in the Render dashboard.
+6. **Check:** open the site, run the example, and confirm that your country appears on the globe.
 
 Limits of the free plan: the backend sleeps after 15 minutes without requests (the next request takes about a minute). Without `DATABASE_URL`, candidates are lost when it sleeps. Open the health URL a minute before a demo.
 

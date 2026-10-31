@@ -8,15 +8,19 @@ import { ALPHA2_BY_NUMERIC } from "@/lib/isoCountries";
 
 const VISITED_KEY = "lumilattice.visited";
 
-/** Counts this browser once. If storage is blocked it is not counted, not counted every visit. */
+/**
+ * Counts this browser once. If storage is blocked it is not counted, rather than counted on every
+ * visit. It is marked only after the count is stored, so a sleeping backend costs a retry next
+ * time, not the count.
+ */
 async function countThisBrowser() {
   try {
     if (window.localStorage.getItem(VISITED_KEY)) return;
-    window.localStorage.setItem(VISITED_KEY, "1");
+    const response = await fetch("/api/visit", { method: "POST" });
+    if (response.ok) window.localStorage.setItem(VISITED_KEY, "1");
   } catch {
-    return;
+    // Not counted this time.
   }
-  await fetch("/api/visit", { method: "POST" }).catch(() => undefined);
 }
 
 type Land = { code: string | null; shape: GeoPermissibleObjects };

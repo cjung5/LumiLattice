@@ -1,4 +1,4 @@
-# Backend image for Render (free plan: 512 MB RAM; the app peaks near 130 MB).
+# Backend image for Render (free plan: 512 MB RAM; about 215 MB after candidate work in a local check).
 FROM python:3.12-slim
 
 COPY --from=ghcr.io/astral-sh/uv:0.11.28 /uv /bin/uv
