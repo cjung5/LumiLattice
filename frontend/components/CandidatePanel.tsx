@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useBackendText } from "@/lib/backendText";
-import { useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { AssessmentPanel } from "@/components/AssessmentPanel";
 import { CritiquePanel } from "@/components/CritiquePanel";
 import { CrystalViewer, type ViewerHandle } from "@/components/CrystalViewer";
@@ -40,6 +40,9 @@ const FRACTIONS: { label: string; value: number }[] = [
 // Sent to the research agent in English; it replies in the UI language.
 const suggestPrompt = (host: string) =>
   `Suggest one atom swap for ${host} that moves it toward my goal. Make the candidate, score it, and say why you chose that element.`;
+
+type ResultTab = "result" | "score" | "novelty" | "crystal" | "decision";
+const COMMON_TABS: ResultTab[] = ["score", "novelty", "crystal", "decision"];
 
 type Props = {
   /** Null when a candidate is opened from a link or the registry without a host. */
@@ -81,6 +84,19 @@ export function CandidatePanel({
   const t = useTranslations("Candidate");
   const tb = useBackendText();
   const guided = useLevel().level === "guided";
+  const resultTabs: ResultTab[] = guided ? ["result", ...COMMON_TABS] : COMMON_TABS;
+  const [resultTab, setResultTab] = useState<ResultTab>("result");
+  const activeTab = resultTabs.includes(resultTab) ? resultTab : resultTabs[0];
+  const panel = (id: ResultTab) => ({
+    id: `result-panel-${id}`,
+    role: "tabpanel",
+    "aria-labelledby": `result-tab-${id}`,
+    hidden: activeTab !== id,
+    className: "space-y-3",
+  });
+  // A new candidate opens on its plain result, the first thing a beginner should read.
+  const candidateId = current?.candidate_id;
+  useEffect(() => setResultTab("result"), [candidateId]);
   const [rows, setRows] = useState<Substitution[]>([
     { element_from: hostElements[0] ?? "", element_to: "", fraction: 1 / 2 },
   ]);
@@ -294,17 +310,8 @@ export function CandidatePanel({
       {error && <p className="mt-3 text-sm text-danger">{tb(error)}</p>}
 
       {current && (
-        <div className="mt-4 space-y-3">
-          <div id="step-result" className="scroll-mt-4 space-y-3 md:scroll-mt-28">
-            {notice}
-            {guided && (
-              <PlainResult candidate={current} goal={goal} hostFormula={hostFormula} onAskAgent={onAskAgent} onSeeEvidence={onSeeEvidence} />
-            )}
-          </div>
-          <ScorePanel candidate={current} goal={goal} onAskAgent={onAskAgent} />
-          <NoveltyPanel key={`novelty-${current.candidate_id}`} candidate={current} />
-          {history.length > 1 && <Leaderboard candidates={history} current={current.candidate_id} goal={goal} onSelect={onSelect} />}
-          <h3 className="font-medium">
+        <div className="mt-5 space-y-3">
+          <h3 id="step-result" className="scroll-mt-4 font-medium md:scroll-mt-28">
             {current.candidate_id}: {current.formula}
             <span className="ml-2 text-xs font-normal text-muted">
               {t("lineage", {
@@ -316,63 +323,42 @@ export function CandidatePanel({
               {copied ? t("linkCopied") : t("copyLink")}
             </button>
           </h3>
-          <Advanced label={t("moreTools")}>
-          <div className="flex flex-wrap items-center gap-2 text-xs">
-            <span className="text-muted">{t("export")}</span>
-            {(["cif", ...(current.relaxation ? ["cif-relaxed" as const] : []), "record"] as ExportKind[]).map((kind) => (
+          <div
+            role="tablist"
+            aria-label={t("tabsLabel")}
+            className="segmented text-sm"
+            onKeyDown={(event) => {
+              const step = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
+              if (!step) return;
+              const next = resultTabs[(resultTabs.indexOf(activeTab) + step + resultTabs.length) % resultTabs.length];
+              setResultTab(next);
+              document.getElementById(`result-tab-${next}`)?.focus();
+            }}
+          >
+            {resultTabs.map((id) => (
               <button
-                key={kind}
+                key={id}
+                id={`result-tab-${id}`}
                 type="button"
-                disabled={exporting !== null}
-                onClick={() => void exportFile(kind)}
-                className="btn btn-ghost btn-sm"
+                role="tab"
+                aria-selected={activeTab === id}
+                aria-controls={`result-panel-${id}`}
+                tabIndex={activeTab === id ? 0 : -1}
+                onClick={() => setResultTab(id)}
+                className="segment"
               >
-                {exporting === kind ? t("exporting") : t(`exportKind.${kind}`)}
+                {t(`tabs.${id}`)}
               </button>
             ))}
-            <span className="text-muted">{t("exportNote")}</span>
-            {exportError && <span className="text-danger">{exportError}</span>}
           </div>
-          <RelaxationPanel
-            key={`relax-${current.candidate_id}`}
-            candidate={current}
-            showRelaxed={showRelaxed}
-            onShowRelaxed={setShowRelaxed}
-            onChange={onCandidate}
-          />
-          <PublishControl key={`pub-${current.candidate_id}`} candidate={current} onChange={onCandidate} />
-          <ExperimentPanel key={`exp-${current.candidate_id}`} candidate={current} onChange={onCandidate} />
-          </Advanced>
-          <div className={guided ? "" : "grid gap-4 md:grid-cols-[3fr_2fr]"}>
-            <div>
-              <CrystalViewer
-                ref={viewer}
-                initialView={viewerStyle}
-                onViewChange={setViewerStyle}
-                cif={(relaxed?.structure ?? current.structure).cif}
-                emphasis={emphasis}
-                highlight={highlight}
-                species={species}
-              />
-              {viewerStyle === "atoms" && <p className="mt-1 text-xs text-muted">{t("viewerLegend")}</p>}
-            </div>
-            {!guided && (
-              <AssessmentPanel
-                assessment={assessment ?? current.assessment}
-                selectedCheck={selectedCheck}
-                onSelectCheck={setSelectedCheck}
-              />
-            )}
-          </div>
+          {/* Every panel stays mounted: a tab change must not repeat a search or lose a critique. */}
           {guided && (
-            <Advanced label={t("checkDetails")}>
-              <AssessmentPanel
-                assessment={assessment ?? current.assessment}
-                selectedCheck={selectedCheck}
-                onSelectCheck={setSelectedCheck}
-              />
-            </Advanced>
+            <div {...panel("result")}>
+              {notice}
+              <PlainResult candidate={current} goal={goal} hostFormula={hostFormula} onAskAgent={onAskAgent} onSeeEvidence={onSeeEvidence} />
+            </div>
           )}
+          <div {...panel("score")}>
           {!guided && current.optical_estimate && (
             <div className="subcard text-sm">
               <div className="flex flex-wrap items-center gap-2">
@@ -408,7 +394,53 @@ export function CandidatePanel({
               )}
             </div>
           )}
+            <ScorePanel candidate={current} goal={goal} onAskAgent={onAskAgent} />
+            {history.length > 1 && <Leaderboard candidates={history} current={current.candidate_id} goal={goal} onSelect={onSelect} />}
+          </div>
+          <div {...panel("novelty")}>
+            <NoveltyPanel key={`novelty-${current.candidate_id}`} candidate={current} />
+          </div>
+          {/* Off screen, not hidden, when closed: the critique takes its pictures from this canvas. */}
+          <div
+            id="result-panel-crystal"
+            role="tabpanel"
+            aria-labelledby="result-tab-crystal"
+            inert={activeTab !== "crystal"}
+            className={activeTab === "crystal" ? "space-y-3" : "pointer-events-none fixed -left-[9999px] top-0 w-[56rem] space-y-3"}
+          >
+          <div className={guided ? "" : "grid gap-4 md:grid-cols-[3fr_2fr]"}>
+            <div>
+              <CrystalViewer
+                ref={viewer}
+                initialView={viewerStyle}
+                onViewChange={setViewerStyle}
+                cif={(relaxed?.structure ?? current.structure).cif}
+                emphasis={emphasis}
+                highlight={highlight}
+                species={species}
+              />
+              {viewerStyle === "atoms" && <p className="mt-1 text-xs text-muted">{t("viewerLegend")}</p>}
+            </div>
+            {!guided && (
+              <AssessmentPanel
+                assessment={assessment ?? current.assessment}
+                selectedCheck={selectedCheck}
+                onSelectCheck={setSelectedCheck}
+              />
+            )}
+          </div>
+          {guided && (
+            <Advanced label={t("checkDetails")}>
+              <AssessmentPanel
+                assessment={assessment ?? current.assessment}
+                selectedCheck={selectedCheck}
+                onSelectCheck={setSelectedCheck}
+              />
+            </Advanced>
+          )}
           {!guided && <p className="text-xs text-muted">{tb(current.transformation.site_selection)}</p>}
+          </div>
+          <div {...panel("decision")}>
           <CritiquePanel
             key={`critique-${current.candidate_id}`}
             candidate={current}
@@ -424,6 +456,34 @@ export function CandidatePanel({
             busy={agentBusy}
             onDecide={onDecide}
           />
+          <Advanced label={t("moreTools")}>
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <span className="text-muted">{t("export")}</span>
+            {(["cif", ...(current.relaxation ? ["cif-relaxed" as const] : []), "record"] as ExportKind[]).map((kind) => (
+              <button
+                key={kind}
+                type="button"
+                disabled={exporting !== null}
+                onClick={() => void exportFile(kind)}
+                className="btn btn-ghost btn-sm"
+              >
+                {exporting === kind ? t("exporting") : t(`exportKind.${kind}`)}
+              </button>
+            ))}
+            <span className="text-muted">{t("exportNote")}</span>
+            {exportError && <span className="text-danger">{exportError}</span>}
+          </div>
+          <RelaxationPanel
+            key={`relax-${current.candidate_id}`}
+            candidate={current}
+            showRelaxed={showRelaxed}
+            onShowRelaxed={setShowRelaxed}
+            onChange={onCandidate}
+          />
+          <PublishControl key={`pub-${current.candidate_id}`} candidate={current} onChange={onCandidate} />
+          <ExperimentPanel key={`exp-${current.candidate_id}`} candidate={current} onChange={onCandidate} />
+          </Advanced>
+          </div>
         </div>
       )}
 

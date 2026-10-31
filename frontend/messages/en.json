@@ -199,7 +199,15 @@
     "moreTools": "More tools: export, relaxation, publishing, lab results",
     "checkDetails": "Details of the structure checks",
     "mixTitle": "Linear mix (a guide; verdicts use the range):",
-    "mixValues": "n ≈ {n} (± about {nError}), band gap ≈ {gap} eV (± about {gapError} eV), from"
+    "mixValues": "n ≈ {n} (± about {nError}), band gap ≈ {gap} eV (± about {gapError} eV), from",
+    "tabsLabel": "Candidate result",
+    "tabs": {
+      "result": "Result",
+      "score": "Score",
+      "novelty": "How new",
+      "crystal": "Structure",
+      "decision": "Review and decide"
+    }
   },
   "Critique": {
     "title": "Muse Spark critique",

@@ -199,7 +199,15 @@
     "moreTools": "Weitere Tools: Export, Relaxierung, Publikation, Laborergebnisse",
     "checkDetails": "Details der Strukturprüfungen",
     "mixTitle": "Lineare Mischung (Orientierung; Bewertung nutzt Bereich):",
-    "mixValues": "n ≈ {n} (± ca. {nError}), Bandlücke ≈ {gap} eV (± ca. {gapError} eV), aus"
+    "mixValues": "n ≈ {n} (± ca. {nError}), Bandlücke ≈ {gap} eV (± ca. {gapError} eV), aus",
+    "tabsLabel": "Kandidatenergebnis",
+    "tabs": {
+      "result": "Ergebnis",
+      "score": "Punktzahl",
+      "novelty": "Wie neu",
+      "crystal": "Struktur",
+      "decision": "Prüfen und entscheiden"
+    }
   },
   "Critique": {
     "title": "Muse Spark-Kritik",

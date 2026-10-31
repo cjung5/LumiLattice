@@ -199,7 +199,15 @@
     "moreTools": "更多工具：导出、弛豫、发表、实验结果",
     "checkDetails": "结构检查详情",
     "mixTitle": "线性混合（参考；判定使用区间）：",
-    "mixValues": "n ≈ {n}（±约 {nError}），带隙 ≈ {gap} eV（±约 {gapError} eV），来自"
+    "mixValues": "n ≈ {n}（±约 {nError}），带隙 ≈ {gap} eV（±约 {gapError} eV），来自",
+    "tabsLabel": "候选结果",
+    "tabs": {
+      "result": "结果",
+      "score": "评分",
+      "novelty": "新颖度",
+      "crystal": "结构",
+      "decision": "审核并决定"
+    }
   },
   "Critique": {
     "title": "Muse Spark 评价",

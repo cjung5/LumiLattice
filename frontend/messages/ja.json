@@ -199,7 +199,15 @@
     "moreTools": "その他のツール：エクスポート、構造緩和、出版、実験結果",
     "checkDetails": "構造チェックの詳細",
     "mixTitle": "線形混合（目安、判定は範囲を使用）:",
-    "mixValues": "n ≈ {n}（±約{nError}）、バンドギャップ ≈ {gap} eV（±約{gapError} eV）、出典："
+    "mixValues": "n ≈ {n}（±約{nError}）、バンドギャップ ≈ {gap} eV（±約{gapError} eV）、出典：",
+    "tabsLabel": "候補結果",
+    "tabs": {
+      "result": "結果",
+      "score": "スコア",
+      "novelty": "新規性",
+      "crystal": "構造",
+      "decision": "確認・決定"
+    }
   },
   "Critique": {
     "title": "Muse Spark 批評",

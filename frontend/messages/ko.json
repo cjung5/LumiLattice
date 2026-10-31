@@ -199,7 +199,15 @@
     "moreTools": "다른 도구: 내보내기, 이완, 공개, 실험 결과",
     "checkDetails": "구조 검사 상세",
     "mixTitle": "선형 혼합 (참고용, 판정은 범위를 씀):",
-    "mixValues": "n ≈ {n} (약 ±{nError}), 밴드갭 ≈ {gap} eV (약 ±{gapError} eV), 구성:"
+    "mixValues": "n ≈ {n} (약 ±{nError}), 밴드갭 ≈ {gap} eV (약 ±{gapError} eV), 구성:",
+    "tabsLabel": "후보 결과",
+    "tabs": {
+      "result": "결과",
+      "score": "점수",
+      "novelty": "얼마나 새로운가",
+      "crystal": "구조",
+      "decision": "검토와 판단"
+    }
   },
   "Critique": {
     "title": "Muse Spark 비평",

@@ -199,7 +199,15 @@
     "moreTools": "Más herramientas: exportación, relajación, publicación, resultados de laboratorio",
     "checkDetails": "Detalles de las comprobaciones estructurales",
     "mixTitle": "Mezcla lineal (guía; los veredictos usan el rango):",
-    "mixValues": "n ≈ {n} (± aprox. {nError}), brecha de banda ≈ {gap} eV (± aprox. {gapError} eV), de"
+    "mixValues": "n ≈ {n} (± aprox. {nError}), brecha de banda ≈ {gap} eV (± aprox. {gapError} eV), de",
+    "tabsLabel": "Resultado candidato",
+    "tabs": {
+      "result": "Resultado",
+      "score": "Puntuación",
+      "novelty": "Novedad",
+      "crystal": "Estructura",
+      "decision": "Revisar y decidir"
+    }
   },
   "Critique": {
     "title": "Crítica de Muse Spark",
