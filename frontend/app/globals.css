@@ -525,6 +525,11 @@ body::after {
     mask-composite: exclude;
   }
 
+  /* Light fades out before the canvas ends, so its edge never shows. The lattice stays inside. */
+  .lattice-canvas {
+    mask-image: radial-gradient(closest-side, black 78%, transparent);
+  }
+
   /* The same light on the page itself, with the dots it reaches. */
   .pointer-light {
     position: fixed;

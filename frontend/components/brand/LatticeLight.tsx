@@ -113,7 +113,7 @@ export function LatticeLight({ className }: { className?: string }) {
       context.globalCompositeOperation = theme.blend;
       context.lineCap = "round";
 
-      const unit = Math.min(width, height) / 7;
+      const unit = Math.min(width, height) / 8.2;
       const cosYaw = Math.cos(yaw);
       const sinYaw = Math.sin(yaw);
       const cosPitch = Math.cos(0.52);
@@ -132,11 +132,13 @@ export function LatticeLight({ className }: { className?: string }) {
         const b = placed[p.to];
         return { x: a.x + (b.x - a.x) * p.t, y: a.y + (b.y - a.y) * p.t, power: p.power };
       });
-      if (pointer.power > 0.01) lights.push({ x: pointer.x, y: pointer.y, power: pointer.power * 0.8 });
+      // The pointer's own glow is on the page (PointerLight); here it only lights the lattice.
+      // Drawn here, its glow would stop dead at the edge of this canvas.
+      const sources = pointer.power > 0.01 ? [...lights, { x: pointer.x, y: pointer.y, power: pointer.power * 0.8 }] : lights;
       const reach = unit * 0.62;
       const lightAt = (x: number, y: number) => {
         let total = 0;
-        for (const light of lights) {
+        for (const light of sources) {
           const distance = Math.hypot(x - light.x, y - light.y) / reach;
           total += light.power / (1 + distance * distance);
         }

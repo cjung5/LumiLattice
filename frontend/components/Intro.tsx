@@ -22,7 +22,7 @@ export function Intro({ folded, exampleRunning, onExample, onStart }: Props) {
 
   const hero = (
     <section className="relative py-2 md:py-8">
-      <LatticeLight className="pointer-events-none mb-2 block h-44 w-full md:absolute md:-right-6 md:top-[54%] md:mb-0 md:h-[26rem] md:w-[30rem] md:-translate-y-1/2 lg:right-0" />
+      <LatticeLight className="lattice-canvas pointer-events-none mb-2 block h-52 w-full md:absolute md:-right-[4.5rem] md:top-[54%] md:mb-0 md:h-[30rem] md:w-[36rem] md:-translate-y-1/2 lg:-right-12" />
       <div className="relative max-w-2xl">
         <p className="text-3xl font-semibold leading-tight tracking-tight sm:text-4xl md:text-[2.75rem]">
           <span className="prism-text">{th("headline")}</span>

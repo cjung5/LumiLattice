@@ -18,6 +18,8 @@ export default function HomePage({ params }: { params: Promise<{ locale: string 
   return (
     <LevelProvider>
       <PointerLight />
+      {/* The lattice's canvas runs past the column. Clip, not hidden: the step bar must stay sticky. */}
+      <div className="overflow-x-clip">
       <main className="mx-auto flex max-w-6xl flex-col gap-5 px-4 pb-16 pt-4 sm:px-6">
         <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
           <div className="flex items-center gap-2.5">
@@ -34,6 +36,7 @@ export default function HomePage({ params }: { params: Promise<{ locale: string 
         {MACHINE_TRANSLATED.has(locale) && <p className="text-xs text-warning">{tl("machineTranslated")}</p>}
         <Workspace />
       </main>
+      </div>
     </LevelProvider>
   );
 }
