@@ -151,7 +151,8 @@
       "after": "が細い箱です。結晶全体はこの箱があらゆる方向に繰り返したものです。色は元素を示します。"
     },
     "details": "結晶の詳細",
-    "evidenceDetails": "この結晶の技術的エビデンス"
+    "evidenceDetails": "この結晶の技術的エビデンス",
+    "howToReadCloud": "柔らかな雲は各原子の電子の存在範囲を示します。大きな雲は通常酸素です。伸びた雲は最も強い結合の方向を指します。"
   },
   "Candidate": {
     "title": "4. 候補",
@@ -581,7 +582,25 @@
     }
   },
   "Viewer": {
-    "controls": "ドラッグで回転。スクロールで拡大縮小。"
+    "controls": "ドラッグで回転。スクロールで拡大縮小。",
+    "viewLabel": "表示スタイル",
+    "viewAtoms": "ボールアンドスティック",
+    "viewCloud": "電子雲",
+    "cloudLabel": "回転する結晶の雲表示。各原子の電子の位置を柔らかな雲で示します。",
+    "cloudLoading": "雲を生成中…",
+    "noWebgl": "このブラウザでは雲表示を利用できません（WebGL2が必要です）。",
+    "colorLabel": "雲の色",
+    "colorElement": "元素別",
+    "colorDirection": "方向別",
+    "flow": "動きで方向を表示",
+    "spin": "ゆっくり回転",
+    "thickness": "厚さ",
+    "along": "{axis}方向に伸長",
+    "round": "球状",
+    "mostStretched": "最大伸長：",
+    "stretchItem": "{site}：{axes}方向（{stretch}）",
+    "cloudNote": "計算による電子密度ではなく模式図です。雲の大きさはイオン半径に基づき、各雲は結合強度で重み付けして結合方向に伸長します。白点は置換原子を示します。",
+    "flowNote": "波紋は方向のみを示し、電子がこのように動くわけではありません。"
   },
   "Plain": {
     "nScale": "ガラスからダイヤモンドまでの屈折率スケール。目標は {goal} 以上。",

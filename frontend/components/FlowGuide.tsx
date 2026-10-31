@@ -57,7 +57,7 @@ export function FlowGuide({ done, hostLabel, candidateId, example, onJump, onExa
                   <span
                     aria-hidden
                     className={`flex h-5 w-5 items-center justify-center rounded-full text-xs font-semibold ${
-                      state === "current" ? "bg-white/25" : state === "done" ? "bg-accent/15" : "border border-line text-muted"
+                      state === "current" ? "bg-black/25" : state === "done" ? "bg-accent/15" : "border border-line text-muted"
                     }`}
                   >
                     {state === "done" ? "✓" : i + 1}

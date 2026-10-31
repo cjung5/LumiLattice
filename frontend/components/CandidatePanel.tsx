@@ -90,6 +90,7 @@ export function CandidatePanel({
   const [copied, setCopied] = useState(false);
   const [exporting, setExporting] = useState<ExportKind | null>(null);
   const viewer = useRef<ViewerHandle>(null);
+  const [viewerStyle, setViewerStyle] = useState<"atoms" | "cloud">("atoms");
   const [exportError, setExportError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -272,7 +273,7 @@ export function CandidatePanel({
               type="button"
               disabled={agentBusy}
               onClick={() => onAskAgent(suggestPrompt(hostLabel), t("suggest"))}
-              className="rounded-md border border-accent px-4 py-1.5 font-medium text-accent disabled:opacity-50"
+              className="rounded-md border border-accent px-4 py-1.5 font-medium text-accent-text disabled:opacity-50"
             >
               {t("suggest")}
             </button>
@@ -282,7 +283,7 @@ export function CandidatePanel({
               type="button"
               disabled={!canSubmit}
               onClick={() => void generate({ candidate_id: current.candidate_id })}
-              className="rounded-md border border-accent px-4 py-1.5 font-medium text-accent disabled:opacity-50"
+              className="rounded-md border border-accent px-4 py-1.5 font-medium text-accent-text disabled:opacity-50"
             >
               {t("reviseCurrent", { id: current.candidate_id })}
             </button>
@@ -311,7 +312,7 @@ export function CandidatePanel({
                 supercell: current.transformation.supercell.join("×"),
               })}
             </span>
-            <button type="button" onClick={() => void copyLink()} className="ml-2 text-xs font-normal text-accent underline">
+            <button type="button" onClick={() => void copyLink()} className="ml-2 text-xs font-normal text-accent-text underline">
               {copied ? t("linkCopied") : t("copyLink")}
             </button>
           </h3>
@@ -346,12 +347,14 @@ export function CandidatePanel({
             <div>
               <CrystalViewer
                 ref={viewer}
+                initialView={viewerStyle}
+                onViewChange={setViewerStyle}
                 cif={(relaxed?.structure ?? current.structure).cif}
                 emphasis={emphasis}
                 highlight={highlight}
                 species={species}
               />
-              <p className="mt-1 text-xs text-muted">{t("viewerLegend")}</p>
+              {viewerStyle === "atoms" && <p className="mt-1 text-xs text-muted">{t("viewerLegend")}</p>}
             </div>
             {!guided && (
               <AssessmentPanel

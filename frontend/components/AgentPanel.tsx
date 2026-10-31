@@ -79,7 +79,7 @@ export function AgentPanel({ turns, busy, error, onSend, onReset, onOpenCandidat
                       key={id}
                       type="button"
                       onClick={() => onOpenCandidate(id)}
-                      className="rounded border border-accent px-1.5 font-mono text-accent"
+                      className="rounded border border-accent px-1.5 font-mono text-accent-text"
                     >
                       {id}
                     </button>

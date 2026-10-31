@@ -62,7 +62,7 @@ export function NoveltyPanel({ candidate }: { candidate: Candidate }) {
             <p className="rounded border border-warning p-2 text-xs">
               <span aria-hidden>! </span>
               {t("incomplete")}{" "}
-              <button type="button" onClick={() => void run()} className="text-accent underline">
+              <button type="button" onClick={() => void run()} className="text-accent-text underline">
                 {t("retry")}
               </button>
             </p>
@@ -95,7 +95,7 @@ export function NoveltyPanel({ candidate }: { candidate: Candidate }) {
                     {check.items.map((item) => (
                       <li key={item.label}>
                         {item.url ? (
-                          <a href={item.url} target="_blank" rel="noreferrer" className="text-accent underline">
+                          <a href={item.url} target="_blank" rel="noreferrer" className="text-accent-text underline">
                             {item.label}
                           </a>
                         ) : (

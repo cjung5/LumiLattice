@@ -60,7 +60,7 @@ export function AssessmentPanel({ assessment, selectedCheck, onSelectCheck }: Pr
                   <span className="font-medium">{tb(check.name)}</span>
                   <span className="text-muted"> — {tb(check.message)}</span>
                   {clickable && (
-                    <span className="ml-1 text-xs text-accent">
+                    <span className="ml-1 text-xs text-accent-text">
                       {t("atoms", { count: check.atom_indices.length })}
                     </span>
                   )}

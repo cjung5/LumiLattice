@@ -151,7 +151,8 @@
       "after": "is the thin box. The whole crystal is this box repeated in every direction. Colors show the elements."
     },
     "details": "Crystal details",
-    "evidenceDetails": "Technical evidence for this crystal"
+    "evidenceDetails": "Technical evidence for this crystal",
+    "howToReadCloud": "Each soft cloud shows where one atom's electrons sit. Big clouds are usually oxygen. A stretched cloud points along its strongest bonds."
   },
   "Candidate": {
     "title": "4. Candidates",
@@ -581,7 +582,25 @@
     }
   },
   "Viewer": {
-    "controls": "Drag to turn. Scroll to zoom."
+    "controls": "Drag to turn. Scroll to zoom.",
+    "viewLabel": "Picture style",
+    "viewAtoms": "Balls and sticks",
+    "viewCloud": "Electron cloud",
+    "cloudLabel": "Cloud picture of the crystal, turning. Soft clouds show where each atom's electrons sit.",
+    "cloudLoading": "Building the cloud…",
+    "noWebgl": "This browser cannot draw the cloud view (it needs WebGL2).",
+    "colorLabel": "Cloud color",
+    "colorElement": "By element",
+    "colorDirection": "By direction",
+    "flow": "Show direction in motion",
+    "spin": "Turn slowly",
+    "thickness": "Thickness",
+    "along": "stretches along {axis}",
+    "round": "round",
+    "mostStretched": "Most stretched:",
+    "stretchItem": "{site} along {axes} ({stretch})",
+    "cloudNote": "A model picture, not a computed electron density. Cloud size comes from ionic radii, and each cloud stretches along its bonds, weighted by bond strength. White dots mark swapped atoms.",
+    "flowNote": "The ripples only show the direction; electrons do not move like this."
   },
   "Plain": {
     "nScale": "Refractive index scale from glass to diamond. Your goal is at least {goal}.",

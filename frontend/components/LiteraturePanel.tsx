@@ -61,7 +61,7 @@ export function LiteraturePanel({ formula }: { formula: string | null }) {
           {papers.map((paper) => (
             <li key={paper.doi ?? paper.provenance.reference ?? paper.title} className="text-sm">
               {paper.url ? (
-                <a href={paper.url} target="_blank" rel="noreferrer" className="font-medium text-accent underline">
+                <a href={paper.url} target="_blank" rel="noreferrer" className="font-medium text-accent-text underline">
                   {paper.title}
                 </a>
               ) : (

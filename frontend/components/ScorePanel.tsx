@@ -116,7 +116,7 @@ export function ScorePanel({ candidate, goal, onAskAgent }: Props) {
                 <span className="font-medium">
                   {t(`metric.${m.id}.name`)}
                   {m.id === card.biggest_gain && (
-                    <span className="ml-2 rounded border border-accent px-1 text-xs font-normal text-accent">{t("mostToGain")}</span>
+                    <span className="ml-2 rounded border border-accent px-1 text-xs font-normal text-accent-text">{t("mostToGain")}</span>
                   )}
                 </span>
                 <span className="text-xs tabular-nums">
@@ -143,7 +143,7 @@ export function ScorePanel({ candidate, goal, onAskAgent }: Props) {
           <button
             type="button"
             onClick={() => onAskAgent(raisePrompt(id, card.biggest_gain), t("raise", { metric: t(`metric.${card.biggest_gain}.name`) }))}
-            className="mt-2 rounded-md border border-accent px-3 py-1 font-medium text-accent"
+            className="mt-2 rounded-md border border-accent px-3 py-1 font-medium text-accent-text"
           >
             {t("raise", { metric: t(`metric.${card.biggest_gain}.name`) })}
           </button>

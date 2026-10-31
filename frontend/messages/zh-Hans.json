@@ -151,7 +151,8 @@
       "after": "是细线框。整个晶体由该框沿各个方向重复构成。颜色表示元素。"
     },
     "details": "晶体详情",
-    "evidenceDetails": "该晶体的技术证据"
+    "evidenceDetails": "该晶体的技术证据",
+    "howToReadCloud": "每个柔和云团表示一个原子的电子分布。较大的云团通常是氧。拉长的云团指向其最强成键方向。"
   },
   "Candidate": {
     "title": "4. 候选材料",
@@ -581,7 +582,25 @@
     }
   },
   "Viewer": {
-    "controls": "拖动旋转，滚动缩放。"
+    "controls": "拖动旋转，滚动缩放。",
+    "viewLabel": "显示样式",
+    "viewAtoms": "球棍模型",
+    "viewCloud": "电子云",
+    "cloudLabel": "旋转中的晶体云图。柔和云团表示每个原子的电子分布。",
+    "cloudLoading": "正在构建电子云…",
+    "noWebgl": "此浏览器无法绘制电子云视图（需要 WebGL2）。",
+    "colorLabel": "云团颜色",
+    "colorElement": "按元素",
+    "colorDirection": "按方向",
+    "flow": "动态显示方向",
+    "spin": "缓慢旋转",
+    "thickness": "厚度",
+    "along": "沿 {axis} 拉伸",
+    "round": "球形",
+    "mostStretched": "拉伸最大：",
+    "stretchItem": "{site} 沿 {axes}（{stretch}）",
+    "cloudNote": "为模型示意图，并非计算得到的电子密度。云团大小源自离子半径，并沿成键方向按成键强度拉伸。白色圆点表示替换的原子。",
+    "flowNote": "波纹仅表示方向，电子并非如此运动。"
   },
   "Plain": {
     "nScale": "折射率标尺（从玻璃到金刚石）。您的目标至少为 {goal}。",

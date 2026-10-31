@@ -130,6 +130,14 @@ The **Evidence** section shows the data behind each decision, in five views. Eve
 
 Chart colors encode the evidence type (aqua = measured, blue = DFT, orange = Heuristic), from a palette validated for color-vision deficiency in light and dark modes.
 
+### Electron cloud view
+
+The 3D viewer has a second picture style, drawn as a real volume with WebGL2 (ray marching with self-shadowing, about 150 lines of shader code and no extra library). `POST /api/structures/cloud` returns the model behind it.
+
+It is **a model picture, not a computed electron density**, and the app says so. Candidates have no DFT calculation to read a density from. Each atom gets a soft Gaussian cloud: its size comes from the Shannon ionic radius, and it stretches along the atom's bonds, weighted by bond valence (O'Keeffe & Brese). So it shows geometry the app already has: large anions, small cations, and which way the bonds pull. An atom on a symmetric site stays round; the oxygens in SrTiO3 stretch toward their two titanium neighbors. A slight noise makes the edges look wispy, and this carries no data. Materials with no anion get round clouds from atomic radii.
+
+Direction shows in three ways: colors by the axis of the stretch (a, b, c), ripples along it (they only show the direction; electrons do not move like this), and a line of text that names the most stretched sites, because colors alone do not work for everyone. Ripples and turning respect the "reduce motion" setting.
+
 ### 3D structure analysis
 
 The structural checks (see "Candidates and structural checks") look at one site at a time. The 3D structure view looks at the arrangement in space, before substitution, after it, and after CHGNet relaxation (if run):

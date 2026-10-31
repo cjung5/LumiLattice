@@ -151,7 +151,8 @@
       "after": "es el recuadro fino. Todo el cristal es este recuadro repetido en todas las direcciones. Los colores muestran los elementos."
     },
     "details": "Detalles del cristal",
-    "evidenceDetails": "Evidencia técnica de este cristal"
+    "evidenceDetails": "Evidencia técnica de este cristal",
+    "howToReadCloud": "Cada nube suave muestra dónde están los electrones de un átomo. Las nubes grandes suelen ser oxígeno. Una nube alargada apunta a lo largo de sus enlaces más fuertes."
   },
   "Candidate": {
     "title": "4. Candidatos",
@@ -581,7 +582,25 @@
     }
   },
   "Viewer": {
-    "controls": "Arrastra para girar. Desplázate para ampliar."
+    "controls": "Arrastra para girar. Desplázate para ampliar.",
+    "viewLabel": "Estilo de imagen",
+    "viewAtoms": "Bolas y varillas",
+    "viewCloud": "Nube de electrones",
+    "cloudLabel": "Vista de nube del cristal, girando. Las nubes suaves muestran dónde están los electrones de cada átomo.",
+    "cloudLoading": "Creando la nube…",
+    "noWebgl": "Este navegador no puede mostrar la vista de nube (necesita WebGL2).",
+    "colorLabel": "Color de la nube",
+    "colorElement": "Por elemento",
+    "colorDirection": "Por dirección",
+    "flow": "Mostrar dirección en movimiento",
+    "spin": "Girar lentamente",
+    "thickness": "Grosor",
+    "along": "se estira a lo largo de {axis}",
+    "round": "redonda",
+    "mostStretched": "Más alargada:",
+    "stretchItem": "{site} a lo largo de {axes} ({stretch})",
+    "cloudNote": "Imagen de modelo, no una densidad electrónica calculada. El tamaño de la nube proviene de radios iónicos, y cada nube se alarga a lo largo de sus enlaces, ponderada por la fuerza de enlace. Los puntos blancos marcan átomos intercambiados.",
+    "flowNote": "Las ondulaciones solo muestran la dirección; los electrones no se mueven así."
   },
   "Plain": {
     "nScale": "Escala de índice de refracción de vidrio a diamante. Tu objetivo es al menos {goal}.",

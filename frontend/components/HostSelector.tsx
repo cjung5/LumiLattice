@@ -216,7 +216,7 @@ export function HostSelector({ selectedId, onSelectMaterial, onUploadedStructure
                   }`}
                 >
                   <td className="py-1.5 pr-3">
-                    <a href={entry.url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="font-mono text-accent underline">
+                    <a href={entry.url} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="font-mono text-accent-text underline">
                       {entry.cod_id}
                     </a>
                     <div className="text-xs text-muted">{entry.formula}</div>

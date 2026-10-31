@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 import { AssessmentPanel } from "@/components/AssessmentPanel";
 import { CrystalViewer } from "@/components/CrystalViewer";
 import { Advanced, useLevel } from "@/components/Level";
@@ -21,6 +22,7 @@ type Props = {
 export function StructurePanel({ structure, record, assessment, loading, error, goal }: Props) {
   const t = useTranslations("Structure");
   const guided = useLevel().level === "guided";
+  const [view, setView] = useState<"atoms" | "cloud">("atoms");
 
   return (
     <section className="rounded-lg border border-line bg-surface p-4">
@@ -35,9 +37,10 @@ export function StructurePanel({ structure, record, assessment, loading, error, 
 
       {structure && !loading && (
         <div className="grid gap-4 md:grid-cols-[2fr_1fr]">
-          <CrystalViewer cif={structure.cif} />
+          <CrystalViewer cif={structure.cif} initialView={view} onViewChange={setView} />
           <div className="space-y-3">
-            {guided && (
+            {guided && view === "cloud" && <p className="text-sm">{t("howToReadCloud")}</p>}
+            {guided && view === "atoms" && (
               <p className="text-sm">
                 {t("howToRead.before")} <Term id="cell">{t("howToRead.term")}</Term> {t("howToRead.after")}
               </p>
@@ -68,7 +71,7 @@ export function StructurePanel({ structure, record, assessment, loading, error, 
               <dt className="text-muted">{t("source")}</dt>
               <dd>
                 {record ? (
-                  <a href={record.url} target="_blank" rel="noreferrer" className="text-accent underline">
+                  <a href={record.url} target="_blank" rel="noreferrer" className="text-accent-text underline">
                     {structure.provenance.source} · {record.material_id}
                   </a>
                 ) : (

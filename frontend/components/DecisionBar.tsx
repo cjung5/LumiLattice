@@ -7,8 +7,8 @@ import type { Candidate, DecisionKind } from "@/lib/api";
 
 const BUTTONS: { kind: DecisionKind; icon: string; className: string }[] = [
   { kind: "accept", icon: "✓", className: "border-tag-exp text-tag-exp" },
-  { kind: "modify", icon: "✎", className: "border-accent text-accent" },
-  { kind: "explore", icon: "⇄", className: "border-accent text-accent" },
+  { kind: "modify", icon: "✎", className: "border-accent text-accent-text" },
+  { kind: "explore", icon: "⇄", className: "border-accent text-accent-text" },
   { kind: "reject", icon: "✗", className: "border-danger text-danger" },
 ];
 

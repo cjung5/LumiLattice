@@ -128,8 +128,8 @@ export function LandscapeChart({ data, goal, points, box }: Props) {
       notes={[...data.notes.map(tb), ...(hidden ? [t("hiddenPoints", { count: hidden })] : [])]}
       table={table}
     >
-      <div className="relative">
-        <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label={t("landscapeTitle")}>
+      <div className="relative max-sm:overflow-x-auto">
+        <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-sm:min-w-[40rem]" role="img" aria-label={t("landscapeTitle")}>
           {/* goal region */}
           <rect x={goalX} y={M.t} width={W - M.r - goalX} height={goalY - M.t} fill="var(--chart-ink)" fillOpacity="0.05" />
           <text x={W - M.r - 4} y={M.t + 12} textAnchor="end" fontSize="11" fill="var(--chart-ink-2)" {...HALO}>

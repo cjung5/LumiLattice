@@ -356,8 +356,8 @@ function OrderingChart({ ordering, label }: { ordering: NonNullable<SpatialAnaly
       {ordering.distinct === 1 ? (
         <p className="py-4 text-center text-sm text-muted">{t("allEqual")}</p>
       ) : (
-        <div className="relative">
-          <svg viewBox={`0 0 ${W2} ${H}`} className="w-full" role="img" aria-label={t("orderingTitle")}>
+        <div className="relative max-sm:overflow-x-auto">
+          <svg viewBox={`0 0 ${W2} ${H}`} className="w-full max-sm:min-w-[40rem]" role="img" aria-label={t("orderingTitle")}>
             {ticks(0, hi, 6).map((v) => (
               <g key={`x${v}`}>
                 <line x1={x(v)} x2={x(v)} y1={m.t} y2={H - m.b} stroke="var(--chart-grid)" />

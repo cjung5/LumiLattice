@@ -116,8 +116,8 @@ export function DispersionChart({ data, primary, bandLabel, bandFormulas }: Prop
       {lines.length === 0 ? (
         <p className="py-6 text-center text-sm" style={{ color: "var(--chart-ink-2)" }}>{t("noCurveAtAll")}</p>
       ) : (
-        <div className="relative">
-          <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label={t("dispersionTitle")}>
+        <div className="relative max-sm:overflow-x-auto">
+          <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-sm:min-w-[40rem]" role="img" aria-label={t("dispersionTitle")}>
             <defs>
               <linearGradient id="spectrum" x1="0" x2="1" y1="0" y2="0">
                 {SPECTRUM.map(([nm, c]) => <stop key={nm} offset={`${((nm - 380) / 400) * 100}%`} stopColor={c} />)}

@@ -2,14 +2,15 @@
 
 import type { GLViewer } from "3dmol";
 import { useTranslations } from "next-intl";
-import { useEffect, useImperativeHandle, useRef, useState, type Ref } from "react";
+import { CloudView } from "@/components/CloudView";
+import { useEffect, useImperativeHandle, useMemo, useRef, useState, type Ref } from "react";
 
 // Jmol colors cover every element; 3Dmol's default scheme paints many cations the same pink.
 const STICK = { radius: 0.12, colorscheme: "Jmol" };
 const BASE_STYLE = { sphere: { scale: 0.3, colorscheme: "Jmol" }, stick: STICK };
 const EMPHASIS_STYLE = { sphere: { scale: 0.42, colorscheme: "Jmol" }, stick: STICK };
 const HIGHLIGHT_STYLE = { sphere: { scale: 0.48, color: "#e11d8f" }, stick: STICK };
-const LABEL = { fontSize: 11, backgroundOpacity: 0.7, inFront: true };
+const LABEL = { fontSize: 13, backgroundOpacity: 0.7, inFront: true };
 
 export type CapturedViews = { views: { label: string; image: string }[]; legend: Record<string, string> };
 export type ViewerHandle = { capture: () => Promise<CapturedViews> };
@@ -23,6 +24,9 @@ type Props = {
   /** Element symbol per site index, for labels. */
   species?: string[];
   ref?: Ref<ViewerHandle>;
+  /** The style to open with, so it can survive the viewer being replaced for a new material. */
+  initialView?: "atoms" | "cloud";
+  onViewChange?: (view: "atoms" | "cloud") => void;
 };
 
 function label(viewer: GLViewer, indices: number[], species: string[]) {
@@ -86,10 +90,12 @@ async function shrink(dataUrl: string, maxWidth = 640): Promise<string> {
 
 // 3Dmol.js touches `window`, so it is loaded only in the browser.
 // The CIF is P1, so atom index i in the viewer is site i in the backend.
-export function CrystalViewer({ cif, emphasis = [], highlight = [], species = [], ref }: Props) {
+export function CrystalViewer({ cif, emphasis = [], highlight = [], species = [], ref, initialView = "atoms", onViewChange }: Props) {
   const t = useTranslations("Viewer");
   const containerRef = useRef<HTMLDivElement>(null);
   const [elements, setElements] = useState<[string, string][]>([]);
+  const [view, setView] = useState(initialView);
+  const colors = useMemo(() => Object.fromEntries(elements), [elements]);
   const viewerRef = useRef<GLViewer | null>(null);
   const loadedCif = useRef<string | null>(null);
   // Camera straight down the c axis (before the display tilt), for axis-aligned captures.
@@ -181,7 +187,28 @@ export function CrystalViewer({ cif, emphasis = [], highlight = [], species = []
 
   return (
     <div>
-      <div ref={containerRef} className="relative h-80 w-full overflow-hidden rounded-md border border-line" />
+      <div role="radiogroup" aria-label={t("viewLabel")} className="mb-1 inline-flex rounded-md border border-line p-0.5 text-xs">
+        {(["atoms", "cloud"] as const).map((option) => (
+          <button
+            key={option}
+            type="button"
+            role="radio"
+            aria-checked={view === option}
+            onClick={() => {
+              setView(option);
+              onViewChange?.(option);
+            }}
+            className={`rounded px-2 py-1 ${view === option ? "bg-accent text-white" : ""}`}
+          >
+            {t(option === "atoms" ? "viewAtoms" : "viewCloud")}
+          </button>
+        ))}
+      </div>
+      {/* Stays mounted under the cloud: the critique captures its views from this canvas. */}
+      <div className={view === "cloud" ? "pointer-events-none fixed -left-[9999px] top-0 h-80 w-[600px]" : ""}>
+        <div ref={containerRef} className="relative h-80 w-full overflow-hidden rounded-md border border-line" />
+      </div>
+      {view === "cloud" && <CloudView cif={cif} colors={colors} emphasis={emphasis} />}
       <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
         {elements.map(([element, color]) => (
           <span key={element} className="inline-flex items-center gap-1">

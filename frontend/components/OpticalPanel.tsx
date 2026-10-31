@@ -66,7 +66,7 @@ export function OpticalPanel({ formula }: { formula: string }) {
                 {data.measured.map((m) => (
                   <tr key={m.url} className="border-t border-line">
                     <td className="py-1 pr-2">
-                      <a href={m.url} target="_blank" rel="noreferrer" className="text-accent underline">
+                      <a href={m.url} target="_blank" rel="noreferrer" className="text-accent-text underline">
                         {m.title}
                       </a>
                       {m.doi && <div className="font-mono text-muted">doi:{m.doi}</div>}
@@ -109,7 +109,7 @@ export function OpticalPanel({ formula }: { formula: string }) {
                 {data.computed.map((c) => (
                   <tr key={c.jid} className="border-t border-line">
                     <td className="py-1 pr-2">
-                      <a href={c.url} target="_blank" rel="noreferrer" className="text-accent underline">
+                      <a href={c.url} target="_blank" rel="noreferrer" className="text-accent-text underline">
                         {c.jid}
                       </a>
                       {c.mp_id && <div className="font-mono text-muted">{c.mp_id}</div>}

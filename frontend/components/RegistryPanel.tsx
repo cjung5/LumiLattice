@@ -97,7 +97,7 @@ export function RegistryPanel({ version, onOpen }: Props) {
                     />
                   </td>
                   <td className="py-1 pr-2">
-                    <button type="button" className="font-mono text-accent underline" onClick={() => onOpen(c)}>
+                    <button type="button" className="font-mono text-accent-text underline" onClick={() => onOpen(c)}>
                       {c.candidate_id}
                     </button>
                     {c.visibility === "published" && <span className="ml-1">🌐</span>}

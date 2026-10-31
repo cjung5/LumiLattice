@@ -5,11 +5,18 @@ from app.api.deps import CodDep, LiteratureDep, MPDep
 from app.models.evidence import Provenance
 from app.models.materials import LiteratureResult, MaterialRecord, StructurePayload
 from app.models.optical import DispersionData, Landscape, OpticalReference
+from app.tools.cloud import CloudModel, cloud_model
 from app.tools.cod import CodEntry
 from app.tools.materials import parse_query
 from app.tools.reference_db import get_landscape, get_reference_db
 from app.tools.registry import ToolError, UpstreamError
-from app.tools.structures import CELL_METHOD, parse_cif, structure_payload
+from app.tools.structures import (
+    CELL_METHOD,
+    MAX_SITES,
+    parse_cif,
+    parse_cif_structure,
+    structure_payload,
+)
 
 router = APIRouter(prefix="/api")
 
@@ -102,6 +109,22 @@ class CifUpload(BaseModel):
 def upload_cif(upload: CifUpload) -> StructurePayload:
     try:
         return parse_cif(upload.cif, upload.filename)
+    except ToolError as exc:
+        raise to_http(exc) from exc
+
+
+class CloudRequest(BaseModel):
+    cif: str = Field(min_length=1, max_length=2_000_000)
+
+
+@router.post("/structures/cloud")
+def structure_cloud(request: CloudRequest) -> CloudModel:
+    """The model behind the 3D cloud view: a size and a stretch for each atom's cloud."""
+    try:
+        structure = parse_cif_structure(request.cif, "structure.cif")
+        if len(structure) > MAX_SITES:
+            raise ToolError(f"Structure has {len(structure)} sites; the limit is {MAX_SITES}.")
+        return cloud_model(structure)
     except ToolError as exc:
         raise to_http(exc) from exc
 

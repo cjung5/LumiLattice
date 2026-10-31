@@ -513,6 +513,24 @@ export function getNovelty(id: string): Promise<Novelty> {
   return request<Novelty>(`/api/candidates/${encodeURIComponent(id)}/novelty`);
 }
 
+export type CloudModel = {
+  lattice: number[][];
+  kind: "ionic" | "neutral";
+  sites: {
+    index: number;
+    element: string;
+    frac: number[];
+    radius: number;
+    covariance: number[];
+    direction: number[];
+    stretch: number;
+  }[];
+};
+
+export function getCloudModel(cif: string): Promise<CloudModel> {
+  return postJson<CloudModel>("/api/structures/cloud", { cif });
+}
+
 export function getOpticalReference(formula: string): Promise<OpticalReference> {
   return request<OpticalReference>(`/api/reference/${encodeURIComponent(formula)}`);
 }

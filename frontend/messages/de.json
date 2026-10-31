@@ -151,7 +151,8 @@
       "after": "ist der dünne Kasten. Der gesamte Kristall ist dieser Kasten, in jede Richtung wiederholt. Farben zeigen die Elemente."
     },
     "details": "Kristalldetails",
-    "evidenceDetails": "Technische Belege für diesen Kristall"
+    "evidenceDetails": "Technische Belege für diesen Kristall",
+    "howToReadCloud": "Jede weiche Wolke zeigt, wo die Elektronen eines Atoms sitzen. Große Wolken sind meist Sauerstoff. Eine gestreckte Wolke zeigt entlang ihrer stärksten Bindungen."
   },
   "Candidate": {
     "title": "4. Kandidaten",
@@ -581,7 +582,25 @@
     }
   },
   "Viewer": {
-    "controls": "Ziehen zum Drehen. Scrollen zum Zoomen."
+    "controls": "Ziehen zum Drehen. Scrollen zum Zoomen.",
+    "viewLabel": "Bildstil",
+    "viewAtoms": "Kugel-Stab-Modell",
+    "viewCloud": "Elektronenwolke",
+    "cloudLabel": "Wolkenbild des Kristalls, rotierend. Weiche Wolken zeigen, wo die Elektronen jedes Atoms sitzen.",
+    "cloudLoading": "Wolke wird aufgebaut…",
+    "noWebgl": "Dieser Browser kann die Wolkenansicht nicht darstellen (er benötigt WebGL2).",
+    "colorLabel": "Wolkenfarbe",
+    "colorElement": "Nach Element",
+    "colorDirection": "Nach Richtung",
+    "flow": "Richtung animiert zeigen",
+    "spin": "Langsam drehen",
+    "thickness": "Dicke",
+    "along": "streckt sich entlang {axis}",
+    "round": "rund",
+    "mostStretched": "Stärkste Streckung:",
+    "stretchItem": "{site} entlang {axes} ({stretch})",
+    "cloudNote": "Eine Modelldarstellung, keine berechnete Elektronendichte. Die Wolkengröße stammt aus Ionenradien, und jede Wolke streckt sich entlang ihrer Bindungen, gewichtet nach Bindungsstärke. Weiße Punkte markieren ausgetauschte Atome.",
+    "flowNote": "Die Wellen zeigen nur die Richtung; Elektronen bewegen sich nicht so."
   },
   "Plain": {
     "nScale": "Brechungsindex-Skala von Glas bis Diamant. Dein Ziel ist mindestens {goal}.",

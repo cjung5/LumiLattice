@@ -44,7 +44,7 @@ export function RelaxationPanel({ candidate, showRelaxed, onShowRelaxed, onChang
             type="button"
             disabled={busy}
             onClick={() => void run()}
-            className="rounded-md border border-accent px-3 py-1 text-xs font-medium text-accent disabled:opacity-50"
+            className="rounded-md border border-accent px-3 py-1 text-xs font-medium text-accent-text disabled:opacity-50"
           >
             {busy ? t("running") : t("run")}
           </button>

@@ -6,11 +6,11 @@ import { EvidenceTag } from "@/components/EvidenceTag";
 import type { GoalScore, Verdict } from "@/lib/api";
 
 // Status colors always come with an icon and a word, never color alone.
-export const VERDICT: Record<Verdict, { icon: string; color: string }> = {
-  meets: { icon: "✓", color: "var(--status-good)" },
-  uncertain: { icon: "?", color: "var(--status-warning)" },
-  fails: { icon: "✗", color: "var(--status-critical)" },
-  unknown: { icon: "–", color: "var(--chart-muted)" },
+export const VERDICT: Record<Verdict, { icon: string; color: string; ink: string }> = {
+  meets: { icon: "✓", color: "var(--status-good)", ink: "#0b0b0f" },
+  uncertain: { icon: "?", color: "var(--status-warning)", ink: "#0b0b0f" },
+  fails: { icon: "✗", color: "var(--status-critical)", ink: "#ffffff" },
+  unknown: { icon: "–", color: "var(--chart-muted)", ink: "#0b0b0f" },
 };
 
 export function ScoreCard({ score, title }: { score: GoalScore; title: string }) {
@@ -26,7 +26,7 @@ export function ScoreCard({ score, title }: { score: GoalScore; title: string })
         {score.criteria.map((c) => (
           <li key={c.id} className="flex gap-2">
             <span className="flex w-24 shrink-0 items-center gap-1 text-xs font-medium">
-              <span aria-hidden className="inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold text-white" style={{ background: VERDICT[c.verdict].color }}>
+              <span aria-hidden className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold" style={{ background: VERDICT[c.verdict].color, color: VERDICT[c.verdict].ink }}>
                 {VERDICT[c.verdict].icon}
               </span>
               {t(`verdict.${c.verdict}`)}

@@ -23,8 +23,8 @@ export function PlainScore({ score, hostN, mix }: { score: GoalScore; hostN?: nu
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <span
               aria-hidden
-              className="inline-flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold text-white"
-              style={{ background: VERDICT[c.verdict].color }}
+              className="inline-flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold"
+              style={{ background: VERDICT[c.verdict].color, color: VERDICT[c.verdict].ink }}
             >
               {VERDICT[c.verdict].icon}
             </span>
@@ -149,7 +149,7 @@ export function PlainResult({ candidate, goal, hostFormula, onAskAgent, onSeeEvi
             <button type="button" onClick={() => onAskAgent(explainPrompt(id), t("explain"))} className="rounded-md bg-accent px-3 py-1.5 font-medium text-white">
               {t("explain")}
             </button>
-            <button type="button" onClick={() => onAskAgent(improvePrompt(id), t("improve"))} className="rounded-md border border-accent px-3 py-1.5 font-medium text-accent">
+            <button type="button" onClick={() => onAskAgent(improvePrompt(id), t("improve"))} className="rounded-md border border-accent px-3 py-1.5 font-medium text-accent-text">
               {t("improve")}
             </button>
           </>

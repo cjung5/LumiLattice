@@ -18,14 +18,14 @@ type Props = {
 
 // Verdicts and point kinds carry an icon and a label as well as a color.
 const VERDICT: Record<Critique["verdict"], { icon: string; color: string }> = {
-  promising: { icon: "✓", color: "var(--status-good)" },
-  mixed: { icon: "~", color: "var(--status-warning)" },
-  weak: { icon: "✕", color: "var(--status-critical)" },
+  promising: { icon: "✓", color: "var(--tag-exp)" },
+  mixed: { icon: "~", color: "var(--warning)" },
+  weak: { icon: "✕", color: "var(--danger)" },
   insufficient_evidence: { icon: "?", color: "var(--muted)" },
 };
 const KIND: Record<Critique["points"][number]["kind"], { icon: string; color: string }> = {
-  strength: { icon: "✓", color: "var(--status-good)" },
-  concern: { icon: "!", color: "var(--status-warning)" },
+  strength: { icon: "✓", color: "var(--tag-exp)" },
+  concern: { icon: "!", color: "var(--warning)" },
   open_question: { icon: "?", color: "var(--muted)" },
 };
 
@@ -115,7 +115,7 @@ function CritiqueView({
       <span
         key={id}
         title={evidence.get(id)}
-        className="ml-1 inline-block rounded border border-line px-1 font-mono text-[11px] text-muted"
+        className="ml-1 inline-block rounded border border-line px-1 font-mono text-xs text-muted"
       >
         {id}
       </span>
@@ -150,7 +150,7 @@ function CritiqueView({
               <span className="sr-only">{t(`kind.${p.kind}`)}: </span>
               {p.text}
               {p.basis !== "evidence" && (
-                <span className="ml-1 rounded bg-foreground/5 px-1 text-[11px] text-muted">{t(`basis.${p.basis}`)}</span>
+                <span className="ml-1 rounded bg-foreground/5 px-1 text-xs text-muted">{t(`basis.${p.basis}`)}</span>
               )}
               {chips(p.evidence)}
             </span>
@@ -177,7 +177,7 @@ function CritiqueView({
                       onAskAgent(testPrompt(candidateId, s.change, s.rationale));
                       setSent(i);
                     }}
-                    className="mt-1 text-xs text-accent underline disabled:no-underline disabled:opacity-60"
+                    className="mt-1 text-xs text-accent-text underline disabled:no-underline disabled:opacity-60"
                   >
                     {sent === i ? t("sent") : t("testThis")}
                   </button>
