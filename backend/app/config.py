@@ -29,6 +29,8 @@ class Settings(BaseSettings):
 
     # Hosted Postgres for candidates (e.g. Neon or Supabase). Unset: kept in memory only.
     database_url: SecretStr | None = None
+    # Shared with the frontend server. When set, only that server can add to the visitor counts.
+    visit_secret: str | None = None
 
     # Built by scripts/build_reference_db.py (JARVIS-DFT + refractiveindex.info subset).
     reference_db_path: Path = BACKEND_DIR / "data" / "reference.sqlite"

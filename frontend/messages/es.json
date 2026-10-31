@@ -969,5 +969,24 @@
   "Theme": {
     "toDark": "Cambiar a modo oscuro",
     "toLight": "Cambiar a modo claro"
+  },
+  "Visitors": {
+    "title": "Origen de los visitantes",
+    "hint": "Cada navegador cuenta una vez. Solo se guarda su país, no su dirección IP.",
+    "total": "visitantes en total",
+    "countries": "países",
+    "unknown": "Ubicación desconocida",
+    "empty": "Aún no hay visitas registradas.",
+    "unavailable": "Los recuentos de visitantes no están disponibles en este momento.",
+    "colCountry": "País",
+    "colVisitors": "Visitantes",
+    "few": "Menos",
+    "many": "Más",
+    "drag": "Arrastra para girar. Los países muy pequeños están en la lista, pero no en el mapa.",
+    "globeLabel": "Globo de visitantes por país: {total} visitantes de {countries} países. La lista muestra los mismos números.",
+    "visitors": "{count} visitantes",
+    "noVisitors": "Aún sin visitantes",
+    "turnTo": "Gira el globo hacia {country}",
+    "memoryNote": "Este servidor guarda los recuentos en memoria, por lo que se restablecen al reiniciarse."
   }
 }

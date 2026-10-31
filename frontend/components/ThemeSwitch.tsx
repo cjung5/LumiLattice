@@ -7,7 +7,7 @@ const STORAGE_KEY = "lumilattice.theme";
 type Theme = "light" | "dark";
 
 /** Runs before the first paint (see the layout), so a page never flashes the wrong theme. */
-export const THEME_SCRIPT = `(function(){var s;try{s=localStorage.getItem("${STORAGE_KEY}")}catch(e){}document.documentElement.dataset.theme=s||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")})()`;
+export const THEME_SCRIPT = `(function(){var s;try{s=localStorage.getItem("${STORAGE_KEY}")}catch(e){}document.documentElement.dataset.theme=s||"dark"})()`;
 
 export function ThemeSwitch() {
   const t = useTranslations("Theme");
@@ -15,23 +15,16 @@ export function ThemeSwitch() {
 
   useEffect(() => {
     setTheme(document.documentElement.dataset.theme === "dark" ? "dark" : "light");
-    // Until the researcher chooses, follow the system: day and night can change during a session.
-    const system = window.matchMedia("(prefers-color-scheme: dark)");
-    const follow = (event: MediaQueryListEvent) => {
-      try {
-        if (window.localStorage.getItem(STORAGE_KEY)) return;
-      } catch {
-        // Blocked storage: keep following the system.
-      }
-      apply(event.matches ? "dark" : "light");
-    };
-    system.addEventListener("change", follow);
-    return () => system.removeEventListener("change", follow);
   }, []);
 
   function apply(next: Theme) {
-    document.documentElement.dataset.theme = next;
+    // All at once: with each control on its own short transition, the page passes through a
+    // mix of both themes, and a busy page can stay in that mix for a moment.
+    const root = document.documentElement;
+    root.dataset.themeSwitching = "";
+    root.dataset.theme = next;
     setTheme(next);
+    requestAnimationFrame(() => requestAnimationFrame(() => delete root.dataset.themeSwitching));
   }
 
   function toggle() {

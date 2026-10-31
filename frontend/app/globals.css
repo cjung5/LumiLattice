@@ -36,6 +36,15 @@
   --spot-page: 0.35;
   --spot-edge: 186 120 0;
   --spot-dot: rgb(150 92 0 / 0.55);
+  /* The globe: a sea, plain land, and countries from fewest visitors to most. */
+  --globe-sea: #dfeacb;
+  --globe-sea-lit: #f6f9e6;
+  --globe-land: #c3d6a6;
+  --globe-border: #f6f9e6;
+  --globe-few: #8fbb6a;
+  --globe-many: #0c4f2e;
+  --globe-air: rgb(255 214 90 / 0.3);
+  --globe-rim: rgb(70 100 50 / 0.26);
   --card-shadow: 0 1px 2px rgb(14 42 28 / 0.04), 0 10px 26px -14px rgb(14 42 28 / 0.14);
   --button-glow: 0 1px 2px rgb(14 42 28 / 0.18), 0 8px 18px -8px rgb(20 107 58 / 0.55);
   --result-glow: 0 10px 30px -18px rgb(20 107 58 / 0.5);
@@ -67,7 +76,7 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --background: #0a2018;
+  --background: #081a13;
   --foreground: #f4f8ea;
   --surface: #0f2c21;
   --surface-2: #16392b;
@@ -95,6 +104,14 @@
   --spot-page: 0.2;
   --spot-edge: 255 250 205;
   --spot-dot: rgb(251 243 180 / 0.6);
+  --globe-sea: #0a241a;
+  --globe-sea-lit: #17452f;
+  --globe-land: #235a41;
+  --globe-border: #0f2c21;
+  --globe-few: #7edb9b;
+  --globe-many: #fff7b8;
+  --globe-air: rgb(201 240 160 / 0.26);
+  --globe-rim: rgb(0 0 0 / 0.5);
   --card-shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 14px 34px -18px rgb(0 0 0 / 0.7);
   --button-glow: 0 0 0 1px rgb(251 243 180 / 0.18), 0 2px 10px -2px rgb(251 243 180 / 0.45), 0 10px 34px -6px rgb(143 227 168 / 0.45);
   --result-glow: 0 0 44px -22px rgb(201 240 160 / 0.8);
@@ -555,6 +572,10 @@ body::after {
     background: radial-gradient(var(--spot-dot) 1.1px, transparent 1.6px) 0 0 / 26px 26px;
     mask-image: radial-gradient(12rem circle at var(--lx, -999px) var(--ly, -999px), black, rgb(0 0 0 / 0.3) 40%, transparent 80%);
   }
+}
+
+:root[data-theme-switching] * {
+  transition: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -969,5 +969,24 @@
   "Theme": {
     "toDark": "Zum Nachtmodus wechseln",
     "toLight": "Zum Tagmodus wechseln"
+  },
+  "Visitors": {
+    "title": "Herkunft der Besucher",
+    "hint": "Jeder Browser wird einmal gezählt. Nur das Land wird gespeichert, nicht die IP-Adresse.",
+    "total": "Besucher insgesamt",
+    "countries": "Länder",
+    "unknown": "Standort unbekannt",
+    "empty": "Noch keine Besuche gezählt.",
+    "unavailable": "Die Besucherzahlen sind derzeit nicht verfügbar.",
+    "colCountry": "Land",
+    "colVisitors": "Besucher",
+    "few": "Weniger",
+    "many": "Mehr",
+    "drag": "Zum Drehen ziehen. Sehr kleine Länder sind in der Liste, aber nicht auf der Karte.",
+    "globeLabel": "Globus der Besucher nach Land: {total} Besucher aus {countries} Ländern. Die Liste enthält dieselben Zahlen.",
+    "visitors": "{count} Besucher",
+    "noVisitors": "Noch keine Besucher",
+    "turnTo": "Globus zu {country} drehen",
+    "memoryNote": "Dieser Server hält die Zählungen im Speicher, sie werden beim Neustart zurückgesetzt."
   }
 }

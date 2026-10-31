@@ -10,6 +10,7 @@ import { AR_GOAL, GoalPanel } from "@/components/GoalPanel";
 import { HostSelector } from "@/components/HostSelector";
 import { Intro } from "@/components/Intro";
 import { Advanced, useLevel } from "@/components/Level";
+import { VisitorGlobe } from "@/components/VisitorGlobe";
 import { LiteraturePanel } from "@/components/LiteraturePanel";
 import { RegistryPanel } from "@/components/RegistryPanel";
 import { StructurePanel } from "@/components/StructurePanel";
@@ -358,6 +359,7 @@ export function Workspace() {
         <RegistryPanel version={registryVersion} onOpen={showCandidate} />
         <LiteraturePanel key={formula ?? "none"} formula={formula} />
       </Advanced>
+      <VisitorGlobe />
     </>
   );
 }

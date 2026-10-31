@@ -674,3 +674,12 @@ export function addDecision(
     reason,
   });
 }
+
+export type VisitStats = {
+  total: number;
+  unknown: number;
+  countries: { code: string; count: number }[];
+  persistent: boolean;
+};
+
+export const getVisitStats = () => request<VisitStats>("/api/visits");

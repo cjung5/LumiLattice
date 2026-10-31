@@ -969,5 +969,24 @@
   "Theme": {
     "toDark": "切换到夜间模式",
     "toLight": "切换到日间模式"
+  },
+  "Visitors": {
+    "title": "访客来源",
+    "hint": "每个浏览器仅计数一次。仅保留其国家/地区，不保留 IP 地址。",
+    "total": "访客总数",
+    "countries": "国家/地区",
+    "unknown": "位置未知",
+    "empty": "暂无访问统计。",
+    "unavailable": "目前无法获取访客统计。",
+    "colCountry": "国家/地区",
+    "colVisitors": "访客数",
+    "few": "较少",
+    "many": "较多",
+    "drag": "拖动旋转。很小的国家/地区仅在列表中，不在地图上显示。",
+    "globeLabel": "按国家/地区显示访客的地球仪：来自 {countries} 个国家/地区的 {total} 位访客。列表中数字相同。",
+    "visitors": "{count} 位访客",
+    "noVisitors": "暂无访客",
+    "turnTo": "将地球仪转到 {country}",
+    "memoryNote": "本服务器将计数保存在内存中，重启后会重置。"
   }
 }

@@ -1,15 +1,17 @@
+import secrets
 from dataclasses import asdict
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Header, HTTPException, Request
 from openai import APIError
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from app.agents.loop import BEGINNER_NOTE, AgentStepLimitReached, Audience, run_agent
 from app.agents.muse import ModelAPIKeyMissing, create_client
 from app.api.deps import LiteratureDep, OptionalMPDep, SettingsDep, client_id
 from app.models.candidates import DecisionKind
 from app.storage.memory import get_store
+from app.storage.visits import UNKNOWN, get_visits
 from app.tools.catalog import build_registry
 from app.tools.goals import Goal
 from app.tools.reference_db import get_reference_db
@@ -31,6 +33,43 @@ def health(settings: SettingsDep) -> dict[str, Any]:
         "reference_db_available": get_reference_db().available,
         "candidate_store": "postgres" if settings.database_url else "memory",
         "relaxation_available": relaxation_available(),
+    }
+
+
+class VisitRequest(BaseModel):
+    country: str | None = Field(default=None, pattern=r"^[A-Z]{2}$")
+
+    @field_validator("country")
+    @classmethod
+    def not_the_unknown_code(cls, value: str | None) -> str | None:
+        # "ZZ" is how the counter stores an unknown country, so a caller cannot send it as one.
+        if value == UNKNOWN:
+            raise ValueError("Not a country code.")
+        return value
+
+
+@router.post("/visits", status_code=204)
+def record_visit(
+    body: VisitRequest,
+    settings: SettingsDep,
+    x_visit_secret: Annotated[str | None, Header()] = None,
+) -> None:
+    expected = settings.visit_secret
+    if expected and not secrets.compare_digest(x_visit_secret or "", expected):
+        raise HTTPException(status_code=403, detail="Not allowed.")
+    get_visits().add(body.country)
+
+
+@router.get("/visits")
+def visit_stats() -> dict[str, Any]:
+    visits = get_visits()
+    counts = visits.counts()
+    known = [{"code": code, "count": n} for code, n in counts.items() if code != UNKNOWN]
+    return {
+        "total": sum(counts.values()),
+        "unknown": counts.get(UNKNOWN, 0),
+        "countries": sorted(known, key=lambda c: (-c["count"], c["code"])),
+        "persistent": visits.persistent,
     }
 
 

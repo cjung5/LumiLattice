@@ -969,5 +969,24 @@
   "Theme": {
     "toDark": "Switch to night mode",
     "toLight": "Switch to day mode"
+  },
+  "Visitors": {
+    "title": "Where visitors come from",
+    "hint": "Each browser counts once. Only its country is kept, not its IP address.",
+    "total": "in total",
+    "countries": "countries",
+    "unknown": "Location unknown",
+    "empty": "No visits counted yet.",
+    "unavailable": "The visitor counts are not available right now.",
+    "colCountry": "Country",
+    "colVisitors": "Visitors",
+    "few": "Fewer",
+    "many": "More",
+    "drag": "Drag to turn. Very small countries are in the list but not on the map.",
+    "globeLabel": "Globe of visitors by country: {total} visitors from {countries} countries. The list has the same numbers.",
+    "visitors": "Visitors: {count}",
+    "noVisitors": "No visitors yet",
+    "turnTo": "Turn the globe to {country}",
+    "memoryNote": "This server keeps the counts in memory, so they reset when it restarts."
   }
 }
