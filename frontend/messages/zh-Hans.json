@@ -65,7 +65,7 @@
       "candidate": "替换 {host} 中一种元素的部分占位，然后查看结构检查。",
       "evidence": "在证据视图中将 {id} 与已知材料对比，然后接受、修改或驳回并填写理由。"
     },
-    "allDone": "四个步骤已完成。可修改候选材料、向智能体请求替代方案，或发布到注册库。",
+    "allDone": "四个步骤已完成。可修改候选材料、向智能体请求替代方案，或标记为已发布。",
     "example": "试用 AR 示例",
     "exampleRunning": "正在运行示例…",
     "exampleStage": {
@@ -357,7 +357,7 @@
   "Decision": {
     "title": "你对 {id} 的决定",
     "placeholder": "原因？例如仅保留 Ti4+、避免有毒元素、尝试更大的 A 位离子",
-    "hint": "接受与拒绝将被记录。修改与探索将被记录并连同原因发送给智能体。",
+    "hint": "接受与拒绝将被记录。修改与探索将被记录并连同原因发送给智能体。 任何打开本网站的人都能读取。",
     "accept": "接受",
     "modify": "修改",
     "explore": "探索替代方案",
@@ -368,7 +368,7 @@
     "rejectHint": "记录该候选无用及原因。",
     "last": "上次决定：{decision}",
     "placeholderGuided": "原因？例如：折光不够强，因此尝试其他元素。",
-    "hintGuided": "您的决定将与理由一起保存。修改和探索也会让 Muse Spark 重新尝试，请说明您想改变的内容。"
+    "hintGuided": "您的决定将与理由一起保存。修改和探索也会让 Muse Spark 重新尝试，请说明您想改变的内容。 任何打开本网站的人都能读取。"
   },
   "Optical": {
     "loading": "正在加载光学数据…",
@@ -385,16 +385,16 @@
     "gapReports": "报道值：{values} eV"
   },
   "Publish": {
-    "private": "私有",
+    "private": "未发布",
     "published": "已发布",
     "publish": "发布…",
-    "makePrivate": "设为私有",
-    "demoNote": "候选默认私有。在此版本中，发布仅记录你的选择与署名；不会向 LumiLattice 之外发送任何内容。",
+    "makePrivate": "取消发布",
+    "demoNote": "此版本没有账户，因此任何打开本网站的人都能读取这里的所有候选，无论是否已发布。发布仅记录你的选择与署名；不会向 LumiLattice 之外发送任何内容。",
     "credit": "署名",
     "anonymous": "匿名",
     "byName": "具名署名",
     "namePlaceholder": "姓名或 ORCID",
-    "consent": "我选择将 {id} 公开，署名如上。",
+    "consent": "我选择将 {id} 标记为已发布，署名如上。",
     "confirm": "发布",
     "cancel": "取消",
     "creditName": "署名：{name}",
@@ -437,7 +437,7 @@
   },
   "Registry": {
     "title": "7. 候选库",
-    "hint": "本服务器上的所有候选，来自表单与智能体。最多选择 {max} 个进行比较。",
+    "hint": "本服务器上的所有候选，来自表单与智能体。任何打开本网站的人都能读取。最多选择 {max} 个进行比较。",
     "filter": {
       "all": "全部",
       "plausible": "合理",
@@ -674,7 +674,8 @@
     "mixGap": "约 {value} eV，常偏差约 {error} eV。判定使用完整区间。"
   },
   "Workspace": {
-    "sharedAndPapers": "共享的候选材料和研究论文"
+    "sharedAndPapers": "共享的候选材料和研究论文",
+    "noAccounts": "此版本没有账户。任何打开本网站的人都能读取这里保存的候选材料、决定和测量值。您向智能体提出的内容会发送到 Meta 的 Model API。请勿输入机密工作内容。"
   },
   "Scorecard": {
     "title": "评分",

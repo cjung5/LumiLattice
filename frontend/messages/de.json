@@ -65,7 +65,7 @@
       "candidate": "Einen Teil der Plätze eines Elements in {host} ersetzen, dann Strukturprüfungen lesen.",
       "evidence": "{id} in den Evidenz-Ansichten mit bekannten Materialien vergleichen, dann mit Begründung akzeptieren, überarbeiten oder ablehnen."
     },
-    "allDone": "Alle vier Schritte sind fertig. Kandidaten überarbeiten, Agent nach Alternativen fragen oder in der Registry veröffentlichen.",
+    "allDone": "Alle vier Schritte sind fertig. Kandidaten überarbeiten, Agent nach Alternativen fragen oder als veröffentlicht markieren.",
     "example": "AR-Beispiel ausprobieren",
     "exampleRunning": "Beispiel wird ausgeführt…",
     "exampleStage": {
@@ -357,7 +357,7 @@
   "Decision": {
     "title": "Ihre Entscheidung zu {id}",
     "placeholder": "Warum? z. B. nur Ti4+ behalten, toxische Elemente vermeiden, größeres A-Lagen-Ion versuchen",
-    "hint": "Akzeptieren und Ablehnen werden protokolliert. Ändern und Alternativen werden protokolliert und mit Ihrer Begründung an den Agenten gesendet.",
+    "hint": "Akzeptieren und Ablehnen werden protokolliert. Ändern und Alternativen werden protokolliert und mit Ihrer Begründung an den Agenten gesendet. Alle, die diese Seite öffnen, können das lesen.",
     "accept": "Akzeptieren",
     "modify": "Ändern",
     "explore": "Alternativen erkunden",
@@ -368,7 +368,7 @@
     "rejectHint": "Festhalten, dass dieser Kandidat nicht nützlich ist, und warum.",
     "last": "Letzte Entscheidung: {decision}",
     "placeholderGuided": "Warum? Zum Beispiel: Es bricht Licht nicht stark genug, also ein anderes Element versuchen.",
-    "hintGuided": "Deine Entscheidung wird mit Begründung gespeichert. Ändern und Erkunden bitten Muse Spark ebenfalls um einen neuen Versuch, also sag, was geändert werden soll."
+    "hintGuided": "Deine Entscheidung wird mit Begründung gespeichert. Ändern und Erkunden bitten Muse Spark ebenfalls um einen neuen Versuch, also sag, was geändert werden soll. Alle, die diese Seite öffnen, können das lesen."
   },
   "Optical": {
     "loading": "Optische Daten werden geladen…",
@@ -385,16 +385,16 @@
     "gapReports": "Gemeldete Werte: {values} eV"
   },
   "Publish": {
-    "private": "Privat",
+    "private": "Nicht veröffentlicht",
     "published": "Veröffentlicht",
     "publish": "Veröffentlichen…",
-    "makePrivate": "Privat machen",
-    "demoNote": "Kandidaten sind standardmäßig privat. In dieser Version erfasst das Veröffentlichen nur Ihre Wahl und Namensnennung; nichts wird außerhalb von LumiLattice gesendet.",
+    "makePrivate": "Veröffentlichung zurücknehmen",
+    "demoNote": "Diese Version hat keine Konten, daher können alle, die diese Seite öffnen, jeden Kandidaten lesen, ob veröffentlicht oder nicht. Das Veröffentlichen erfasst nur Ihre Wahl und Namensnennung; nichts wird außerhalb von LumiLattice gesendet.",
     "credit": "Namensnennung",
     "anonymous": "Anonym",
     "byName": "Mich namentlich nennen",
     "namePlaceholder": "Name oder ORCID",
-    "consent": "Ich wähle, {id} öffentlich zu machen, mit obiger Namensnennung.",
+    "consent": "Ich wähle, {id} als veröffentlicht zu markieren, mit obiger Namensnennung.",
     "confirm": "Veröffentlichen",
     "cancel": "Abbrechen",
     "creditName": "Namensnennung: {name}",
@@ -437,7 +437,7 @@
   },
   "Registry": {
     "title": "7. Kandidatenregister",
-    "hint": "Alle Kandidaten auf diesem Server, aus Formular und Agent. Bis zu {max} zum Vergleichen wählen.",
+    "hint": "Alle Kandidaten auf diesem Server, aus Formular und Agent. Alle, die diese Seite öffnen, können sie lesen. Bis zu {max} zum Vergleichen wählen.",
     "filter": {
       "all": "Alle",
       "plausible": "Plausibel",
@@ -674,7 +674,8 @@
     "mixGap": "ca. {value} eV, oft um ca. {error} eV abweichend. Die Bewertung nutzt den vollen Bereich."
   },
   "Workspace": {
-    "sharedAndPapers": "Geteilte Kandidaten und Forschungspapiere"
+    "sharedAndPapers": "Geteilte Kandidaten und Forschungspapiere",
+    "noAccounts": "Diese Version hat keine Konten. Alle, die diese Seite öffnen, können die hier gespeicherten Kandidaten, Entscheidungen und Messwerte lesen. Was du den Agenten fragst, geht an die Meta Model API. Gib keine vertraulichen Arbeiten ein."
   },
   "Scorecard": {
     "title": "Bewertung",

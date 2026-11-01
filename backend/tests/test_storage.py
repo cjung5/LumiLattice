@@ -63,7 +63,7 @@ def test_publish_needs_consent_and_can_be_undone(srtio3):
     api = TestClient(app)
     url = f"/api/candidates/{candidate.candidate_id}/visibility"
 
-    assert candidate.visibility == "private"  # private by default
+    assert candidate.visibility == "private"  # not published by default
     assert api.post(url, json={"visibility": "published"}).status_code == 400
     assert (
         api.post(

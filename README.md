@@ -262,7 +262,9 @@ curl -OJ "http://localhost:8000/api/candidates/LL-0003/export.cif"              
 curl -OJ "http://localhost:8000/api/candidates/LL-0003/export.json?target_n=2.2&min_band_gap=3.0&forbidden=Pb,Cd"
 ```
 
-Candidates are **private by default**. Publishing needs explicit consent and a credit choice (by name/ORCID or anonymous). In this version, publishing records the choice only; nothing is sent outside LumiLattice.
+**Do not enter confidential work.** The app has no accounts, so anyone who can reach the site or the API can list and read every candidate, with its decisions, reasons, critiques, and measurements. The site says so at the top of the workspace. The `visibility` value `private` means only "not marked as published".
+
+Publishing needs explicit consent and a credit choice (by name/ORCID or anonymous). In this version, publishing records the choice only; it sends nothing outside LumiLattice.
 
 Candidates are kept in memory unless `DATABASE_URL` points to a Postgres database; then they survive restarts.
 

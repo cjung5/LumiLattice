@@ -9,7 +9,8 @@ type Props = {
   onChange: (candidate: Candidate) => void;
 };
 
-// Private by default (spec section 7). Stage 1: publishing is recorded only; nothing is shared.
+// Not published by default (spec section 7). There are no accounts, so this is only a label:
+// anyone can read an unpublished candidate. Stage 1: publishing is recorded only.
 export function PublishControl({ candidate, onChange }: Props) {
   const t = useTranslations("Publish");
   const [open, setOpen] = useState(false);
@@ -44,7 +45,7 @@ export function PublishControl({ candidate, onChange }: Props) {
     <div className="flex flex-col gap-2 text-sm">
       <div className="flex flex-wrap items-center gap-2">
         <span className={`rounded border px-2 py-0.5 text-xs ${published ? "border-tag-dft text-tag-dft" : "border-line text-muted"}`}>
-          {published ? `🌐 ${t("published")}` : `🔒 ${t("private")}`}
+          {published ? `🌐 ${t("published")}` : t("private")}
         </span>
         {published && <span className="text-xs text-muted">{creditText}</span>}
         {published ? (

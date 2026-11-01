@@ -129,7 +129,8 @@ class Candidate(BaseModel):
     optical_estimate: OpticalEstimate | None = None
     created_at: datetime
     decisions: list[Decision] = []
-    # Private by default. Stage 1 records the choice only; nothing is shared outside the app.
+    # "private" means only "not marked as published": there are no accounts, so anyone can read it.
+    # Stage 1 records the choice only; nothing is shared outside the app.
     visibility: Visibility = "private"
     credit: Credit | None = None
     relaxation: Relaxation | None = None

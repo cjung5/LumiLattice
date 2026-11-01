@@ -65,7 +65,7 @@
       "candidate": "Replace part of one element's sites in {host}, then read the structural checks.",
       "evidence": "Compare {id} with known materials in the Evidence views, then accept, revise, or reject it with a reason."
     },
-    "allDone": "All four steps are done. Revise the candidate, ask the agent for alternatives, or publish it to the registry.",
+    "allDone": "All four steps are done. Revise the candidate, ask the agent for alternatives, or mark it as published.",
     "example": "Try the AR example",
     "exampleRunning": "Running the example…",
     "exampleStage": {
@@ -357,7 +357,7 @@
   "Decision": {
     "title": "Your decision on {id}",
     "placeholder": "Why? e.g. keep Ti4+ only, avoid toxic elements, try a larger A-site ion",
-    "hint": "Accept and Reject are recorded. Modify and Explore are recorded and sent to the agent with your reason.",
+    "hint": "Accept and Reject are recorded. Modify and Explore are recorded and sent to the agent with your reason. Anyone who opens this site can read it.",
     "accept": "Accept",
     "modify": "Modify",
     "explore": "Explore alternatives",
@@ -368,7 +368,7 @@
     "rejectHint": "Record that this candidate is not useful, and why.",
     "last": "Last decision: {decision}",
     "placeholderGuided": "Why? For example: it does not bend light enough, so try another element.",
-    "hintGuided": "Your decision is saved with your reason. Modify and Explore also ask Muse Spark to try again, so say what you want changed."
+    "hintGuided": "Your decision is saved with your reason. Modify and Explore also ask Muse Spark to try again, so say what you want changed. Anyone who opens this site can read it."
   },
   "Optical": {
     "loading": "Loading optical data…",
@@ -385,16 +385,16 @@
     "gapReports": "Reported values: {values} eV"
   },
   "Publish": {
-    "private": "Private",
+    "private": "Not published",
     "published": "Published",
     "publish": "Publish…",
-    "makePrivate": "Make private",
-    "demoNote": "Candidates are private by default. In this version, publishing only records your choice and credit; nothing is sent outside LumiLattice.",
+    "makePrivate": "Undo publishing",
+    "demoNote": "This version has no accounts, so anyone who opens this site can read every candidate here, published or not. Publishing only records your choice and credit; it sends nothing outside LumiLattice.",
     "credit": "Credit",
     "anonymous": "Anonymous",
     "byName": "Credit me by name",
     "namePlaceholder": "Name or ORCID",
-    "consent": "I choose to make {id} public, with the credit above.",
+    "consent": "I choose to mark {id} as published, with the credit above.",
     "confirm": "Publish",
     "cancel": "Cancel",
     "creditName": "Credit: {name}",
@@ -437,7 +437,7 @@
   },
   "Registry": {
     "title": "7. Candidate registry",
-    "hint": "Every candidate on this server, from the form and from the agent. Select up to {max} to compare.",
+    "hint": "Every candidate on this server, from the form and from the agent. Anyone who opens this site can read them. Select up to {max} to compare.",
     "filter": {
       "all": "All",
       "plausible": "Plausible",
@@ -674,7 +674,8 @@
     "mixGap": "about {value} eV, often off by about {error} eV. The verdict uses the full range."
   },
   "Workspace": {
-    "sharedAndPapers": "Shared candidates and research papers"
+    "sharedAndPapers": "Shared candidates and research papers",
+    "noAccounts": "This version has no accounts. Anyone who opens this site can read the candidates, decisions, and measurements saved here. What you ask the agent goes to Meta's Model API. Do not enter confidential work."
   },
   "Scorecard": {
     "title": "Score",

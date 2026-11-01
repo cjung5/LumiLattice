@@ -65,7 +65,7 @@
       "candidate": "Sustituye parte de los sitios de un elemento en {host} y revisa las comprobaciones estructurales.",
       "evidence": "Compara {id} con materiales conocidos en las vistas de evidencia y acéptalo, revísalo o recházalo con un motivo."
     },
-    "allDone": "Los cuatro pasos están completos. Revisa el candidato, pide alternativas al agente o publícalo en el registro.",
+    "allDone": "Los cuatro pasos están completos. Revisa el candidato, pide alternativas al agente o márcalo como publicado.",
     "example": "Probar el ejemplo AR",
     "exampleRunning": "Ejecutando el ejemplo…",
     "exampleStage": {
@@ -357,7 +357,7 @@
   "Decision": {
     "title": "Tu decisión sobre {id}",
     "placeholder": "¿Por qué? p. ej., solo Ti4+, evita elementos tóxicos, prueba un ion de sitio A más grande",
-    "hint": "Aceptar y Rechazar se registran. Modificar y Explorar se registran y se envían al agente con tu motivo.",
+    "hint": "Aceptar y Rechazar se registran. Modificar y Explorar se registran y se envían al agente con tu motivo. Cualquiera que abra este sitio puede leerlo.",
     "accept": "Aceptar",
     "modify": "Modificar",
     "explore": "Explorar alternativas",
@@ -368,7 +368,7 @@
     "rejectHint": "Registra que este candidato no es útil, y por qué.",
     "last": "Última decisión: {decision}",
     "placeholderGuided": "¿Por qué? Por ejemplo: no desvía lo suficiente la luz, así que prueba otro elemento.",
-    "hintGuided": "Tu decisión se guarda con tu motivo. Modificar y Explorar también piden a Muse Spark que lo intente de nuevo, así que indica qué quieres cambiar."
+    "hintGuided": "Tu decisión se guarda con tu motivo. Modificar y Explorar también piden a Muse Spark que lo intente de nuevo, así que indica qué quieres cambiar. Cualquiera que abra este sitio puede leerlo."
   },
   "Optical": {
     "loading": "Cargando datos ópticos…",
@@ -385,16 +385,16 @@
     "gapReports": "Valores reportados: {values} eV"
   },
   "Publish": {
-    "private": "Privado",
+    "private": "No publicado",
     "published": "Publicado",
     "publish": "Publicar…",
-    "makePrivate": "Hacer privado",
-    "demoNote": "Los candidatos son privados por defecto. En esta versión, publicar solo registra tu elección y crédito; no se envía nada fuera de LumiLattice.",
+    "makePrivate": "Deshacer la publicación",
+    "demoNote": "Esta versión no tiene cuentas, así que cualquiera que abra este sitio puede leer todos los candidatos, publicados o no. Publicar solo registra tu elección y crédito; no se envía nada fuera de LumiLattice.",
     "credit": "Crédito",
     "anonymous": "Anónimo",
     "byName": "Reconóceme por mi nombre",
     "namePlaceholder": "Nombre u ORCID",
-    "consent": "Elijo hacer público {id}, con el crédito anterior.",
+    "consent": "Elijo marcar {id} como publicado, con el crédito anterior.",
     "confirm": "Publicar",
     "cancel": "Cancelar",
     "creditName": "Crédito: {name}",
@@ -437,7 +437,7 @@
   },
   "Registry": {
     "title": "7. Registro de candidatos",
-    "hint": "Todos los candidatos de este servidor, del formulario y del agente. Selecciona hasta {max} para comparar.",
+    "hint": "Todos los candidatos de este servidor, del formulario y del agente. Cualquiera que abra este sitio puede leerlos. Selecciona hasta {max} para comparar.",
     "filter": {
       "all": "Todos",
       "plausible": "Plausible",
@@ -674,7 +674,8 @@
     "mixGap": "aprox. {value} eV, a menudo con error de aprox. {error} eV. El veredicto usa el rango completo."
   },
   "Workspace": {
-    "sharedAndPapers": "Candidatos compartidos y artículos científicos"
+    "sharedAndPapers": "Candidatos compartidos y artículos científicos",
+    "noAccounts": "Esta versión no tiene cuentas. Cualquiera que abra este sitio puede leer los candidatos, decisiones y medidas guardados aquí. Lo que preguntas al agente se envía a la Model API de Meta. No introduzcas trabajo confidencial."
   },
   "Scorecard": {
     "title": "Puntuación",

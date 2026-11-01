@@ -115,7 +115,7 @@ class VisibilityRequest(BaseModel):
 
 @router.post("/candidates/{candidate_id}/visibility")
 def set_visibility(candidate_id: str, request: VisibilityRequest) -> Candidate:
-    """Private by default; publishing needs explicit consent and a credit choice."""
+    """Not published by default; publishing needs explicit consent and a credit choice."""
     if request.visibility == "private":
         changes = {"visibility": "private", "credit": None}
     else:

@@ -130,7 +130,7 @@ export function Workspace() {
     showCandidate(known ?? (await getCandidate(candidateId)));
   }
 
-  // Share links: ?candidate=LL-0003 opens that candidate (it stays private to this backend).
+  // Share links: ?candidate=LL-0003 opens that candidate. There are no accounts, so anyone can open it.
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("candidate");
     if (!id) return;
@@ -269,6 +269,7 @@ export function Workspace() {
         onExample={() => void runExample()}
         onStart={() => jump("goal")}
       />
+      <p className="mb-4 rounded-lg bg-accent-soft p-3 text-xs">{tw("noAccounts")}</p>
       <FlowGuide
         done={done}
         hostLabel={hostLabel}
