@@ -1,5 +1,6 @@
 import hashlib
 from datetime import UTC, datetime
+from threading import Lock
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, HTTPException, Query, Request, Response
@@ -30,6 +31,7 @@ from app.storage.scoped import NotOwner
 from app.tools.candidates import assess_host, create_candidate, load_host
 from app.tools.export import CandidateRecord, SpatialRecord, ancestry, build_record, cif_text
 from app.tools.goals import Goal, GoalScore, score_candidate, score_formula
+from app.tools.matches import PublicMatches, public_matches
 from app.tools.novelty import Novelty, check_novelty
 from app.tools.reference_db import get_reference_db
 from app.tools.registry import ToolError, UpstreamError
@@ -109,6 +111,7 @@ def record_decision(candidate_id: str, request: DecisionRequest, store: StoreDep
 
 
 PUBLISHED_LICENSE = "CC BY 4.0"
+_publishing = Lock()  # one app process: two people cannot pass the duplicate check at once
 
 
 class VisibilityRequest(BaseModel):
@@ -118,14 +121,23 @@ class VisibilityRequest(BaseModel):
     consent: bool = False
 
 
+@router.get("/candidates/{candidate_id}/public-matches")
+def candidate_public_matches(candidate_id: str, store: StoreDep) -> PublicMatches:
+    """Whether this material is already public, shown before an owner publishes it."""
+    stored = store.get(candidate_id)
+    if stored is None:
+        raise not_found(candidate_id)
+    return public_matches(store, *stored)
+
+
 @router.post("/candidates/{candidate_id}/visibility")
 def set_visibility(
     candidate_id: str, request: VisibilityRequest, store: StoreDep, settings: SettingsDep
 ) -> Candidate:
     """Not published by default; publishing needs explicit consent and a credit choice.
 
-    With sign-in on, only an owner can publish, and the credit name is the signed-in account. A
-    candidate from public mode has no owner, so nobody can claim it.
+    With sign-in on, only an owner can publish, under the account's tag, and only a material that
+    no owner has published yet. A candidate from public mode has no owner, so nobody can claim it.
     """
     stored = store.get(candidate_id)
     if stored is None:
@@ -178,7 +190,15 @@ def set_visibility(
                 Publication(action="published", at=now, credit=credit),
             ],
         }
-    updated = store.update(candidate_id, changes)
+    with _publishing:
+        if request.visibility == "published" and candidate.mine:
+            taken = public_matches(store, candidate, stored[1]).already_public
+            if taken:
+                raise HTTPException(
+                    status_code=409,
+                    detail=f"This material is already public as {taken[0].candidate_id}.",
+                )
+        updated = store.update(candidate_id, changes)
     if updated is None:
         raise not_found(candidate_id)
     return updated

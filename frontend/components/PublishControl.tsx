@@ -1,10 +1,10 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/components/Auth";
 import { LockIcon } from "@/components/LockIcon";
-import { setVisibility, type Candidate, type Credit } from "@/lib/api";
+import { getPublicMatches, setVisibility, type Candidate, type Credit, type PublicMatch, type PublicMatches } from "@/lib/api";
 
 type Props = {
   candidate: Candidate;
@@ -55,14 +55,32 @@ export function OwnershipLine({ candidate }: { candidate: Candidate }) {
   );
 }
 
-// A candidate from private mode has an owner, who alone can publish it, under the signed-in name.
+function MatchList({ matches }: { matches: PublicMatch[] }) {
+  const t = useTranslations("Publish");
+  return (
+    <>
+      {matches.map((m, i) => (
+        <span key={m.candidate_id}>
+          {i > 0 && ", "}
+          <a className="text-accent-text underline" href={`?candidate=${encodeURIComponent(m.candidate_id)}`}>
+            {m.candidate_id}
+          </a>
+          {m.credit && ` (${m.credit.display === "name" && m.credit.name ? m.credit.name : t("anonymous")})`}
+        </span>
+      ))}
+    </>
+  );
+}
+
+// A candidate from private mode has an owner, who alone can publish it, under the account's tag.
 // With sign-in off, the app works as a demo: publishing records a typed name (spec section 7).
 export function PublishControl({ candidate, onChange }: Props) {
   const t = useTranslations("Publish");
   const creditText = useCreditText();
   const { enabled, name: accountName } = useAuth();
   const [open, setOpen] = useState(false);
-  const [creditDisplay, setCreditDisplay] = useState<"anonymous" | "name">("anonymous");
+  const [creditDisplay, setCreditDisplay] = useState<"anonymous" | "name">(candidate.mine ? "name" : "anonymous");
+  const [matches, setMatches] = useState<PublicMatches | null>(null);
   const [name, setName] = useState("");
   const [consent, setConsent] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -83,6 +101,21 @@ export function PublishControl({ candidate, onChange }: Props) {
   }
 
   const published = candidate.visibility === "published";
+  const checkMatches = open && candidate.mine && !published;
+
+  useEffect(() => {
+    if (!checkMatches) return;
+    let active = true;
+    setMatches(null);
+    getPublicMatches(candidate.candidate_id)
+      .then((found) => active && setMatches(found))
+      .catch((err) => active && setError(err instanceof Error ? err.message : String(err)));
+    return () => {
+      active = false;
+    };
+  }, [checkMatches, candidate.candidate_id]);
+
+  const taken = (matches?.already_public.length ?? 0) > 0;
 
   // Someone else's published work: read it, or revise it into your own version.
   if (!candidate.editable) {
@@ -146,6 +179,27 @@ export function PublishControl({ candidate, onChange }: Props) {
 
       {open && !published && (
         <div className="subcard">
+          {owned && (
+            <div className="mb-2 text-xs" aria-live="polite">
+              {!matches && !error && <p className="text-muted">{t("checking")}</p>}
+              {matches && taken && (
+                <p className="text-warning">
+                  {t("duplicate")} <MatchList matches={matches.already_public} />
+                </p>
+              )}
+              {matches && !taken && <p className="text-accent-text">✓ {t("noDuplicate")}</p>}
+              {matches && matches.other_framework.length > 0 && (
+                <p className="mt-1 text-muted">
+                  {t("otherFramework")} <MatchList matches={matches.other_framework} />
+                </p>
+              )}
+              {matches && !taken && matches.unclaimed.length > 0 && (
+                <p className="mt-1 text-muted">
+                  {t("unclaimed")} <MatchList matches={matches.unclaimed.slice(0, 5)} />
+                </p>
+              )}
+            </div>
+          )}
           <p className="text-xs text-muted">{owned ? t("ownedWarning") : t("demoNote")}</p>
           <fieldset className="mt-2 flex flex-wrap items-center gap-3 text-xs">
             <legend className="sr-only">{t("credit")}</legend>
@@ -174,7 +228,7 @@ export function PublishControl({ candidate, onChange }: Props) {
           <div className="mt-2 flex gap-2">
             <button
               type="button"
-              disabled={busy || !consent || (!owned && creditDisplay === "name" && !name.trim())}
+              disabled={busy || !consent || (!owned && creditDisplay === "name" && !name.trim()) || (owned && (!matches || taken))}
               className="btn btn-primary btn-sm"
               onClick={() =>
                 void apply({ visibility: "published", credit_display: creditDisplay, display_name: name, consent })

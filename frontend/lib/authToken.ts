@@ -32,6 +32,16 @@ export function readToken(token: string | undefined, secret: string, aud: TokenP
   }
 }
 
+/** A short tag such as "C. Jung". The full name is not kept. Google does not promise any name. */
+export function accountTag(user: { name?: string; given_name?: string; family_name?: string }) {
+  const parts = (user.name ?? "").trim().split(/\s+/).filter(Boolean);
+  const given = user.given_name?.trim() || parts[0];
+  const family = user.family_name?.trim() || (parts.length > 1 ? parts[parts.length - 1] : "");
+  if (!given) return family || "Researcher";
+  const initial = `${[...given][0].toUpperCase()}.`;
+  return (family ? `${initial} ${family}` : initial).slice(0, 60);
+}
+
 /** All three are needed. Without them, the site offers only public mode. */
 export function authSettings() {
   const secret = process.env.AUTH_SECRET;

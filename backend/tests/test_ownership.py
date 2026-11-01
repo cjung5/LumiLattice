@@ -51,6 +51,7 @@ class NoCod:
 
 @pytest.fixture
 def api() -> Iterator[TestClient]:
+    get_store.cache_clear()  # each test starts with no published materials
     app.dependency_overrides[get_settings] = lambda: Settings(_env_file=None, auth_secret=SECRET)
     app.dependency_overrides[get_optional_mp_client] = lambda: None
     app.dependency_overrides[get_literature_client] = lambda: NoLiterature()
@@ -93,6 +94,7 @@ READS = {
     ("GET", "/api/candidates/{candidate_id}/novelty"): {},
     ("GET", "/api/candidates/{candidate_id}/export.cif"): {},
     ("GET", "/api/candidates/{candidate_id}/export.json"): {},
+    ("GET", "/api/candidates/{candidate_id}/public-matches"): {},
 }
 WRITES = {
     ("POST", "/api/candidates/{candidate_id}/decisions"): {
@@ -452,6 +454,126 @@ def test_publishing_works_as_before_when_sign_in_is_off(srtio3):
 def test_short_secret_is_refused():
     with pytest.raises(ValueError, match="32 characters"):
         Settings(_env_file=None, auth_secret="short")
+
+
+def matches(api: TestClient, candidate_id: str, sub: str = ALICE) -> dict:
+    response = api.get(f"/api/candidates/{candidate_id}/public-matches", headers=auth(sub))
+    assert response.status_code == 200, response.text
+    return response.json()
+
+
+def test_a_material_that_is_already_public_cannot_be_published_again(api, srtio3):
+    first = create(api, srtio3, auth(ALICE, "A. Kim"))
+    second = create(api, srtio3, auth(BOB, "B. Lee"))
+    assert matches(api, second, BOB)["already_public"] == []
+    publish(api, first)
+
+    found = matches(api, second, BOB)["already_public"]
+    assert [m["candidate_id"] for m in found] == [first]
+    assert found[0]["credit"]["name"] == "alice"  # the tag in the token that published it
+    response = api.post(
+        f"/api/candidates/{second}/visibility",
+        headers=auth(BOB, "B. Lee"),
+        json={"visibility": "published", "credit_display": "name", "consent": True},
+    )
+    assert response.status_code == 409
+    assert first in response.json()["detail"]
+    assert api.get(f"/api/candidates/{second}").status_code == 404  # it stays private
+
+
+def test_your_own_published_copy_also_counts(api, srtio3):
+    first = create(api, srtio3, auth(ALICE))
+    second = create(api, srtio3, auth(ALICE))
+    publish(api, first)
+    assert [m["candidate_id"] for m in matches(api, second)["already_public"]] == [first]
+
+
+def test_undoing_a_publication_frees_the_material(api, srtio3):
+    first = create(api, srtio3, auth(ALICE))
+    second = create(api, srtio3, auth(BOB, "bob"))
+    publish(api, first)
+    api.post(
+        f"/api/candidates/{first}/visibility",
+        headers=auth(ALICE),
+        json={"visibility": "private"},
+    )
+    assert matches(api, second, BOB)["already_public"] == []
+    assert publish(api, second, sub=BOB)["visibility"] == "published"
+
+
+def test_republishing_your_own_candidate_is_not_a_duplicate(api, srtio3):
+    candidate_id = create(api, srtio3, auth(ALICE))
+    publish(api, candidate_id)
+    api.post(
+        f"/api/candidates/{candidate_id}/visibility",
+        headers=auth(ALICE),
+        json={"visibility": "private"},
+    )
+    assert publish(api, candidate_id)["visibility"] == "published"
+
+
+def test_a_private_copy_is_not_shown_to_others(api, srtio3):
+    hidden = create(api, srtio3, auth(ALICE))
+    mine = create(api, srtio3, auth(BOB, "bob"))
+    text = api.get(f"/api/candidates/{mine}/public-matches", headers=auth(BOB, "bob")).text
+    assert hidden not in text
+    assert publish(api, mine, sub=BOB)["visibility"] == "published"
+
+
+def test_a_public_mode_copy_does_not_stop_publishing(api, srtio3):
+    """Anyone can make a public-mode copy in seconds, so it must not block the researcher's credit."""
+    copy = create(api, srtio3)
+    mine = create(api, srtio3, auth(ALICE))
+    found = matches(api, mine)
+    assert found["already_public"] == []
+    assert [m["candidate_id"] for m in found["unclaimed"]] == [copy]
+    assert publish(api, mine)["visibility"] == "published"
+
+
+def test_another_crystal_form_is_a_different_material(api):
+    from pymatgen.core import Lattice, Structure
+
+    rutile = Structure.from_spacegroup(
+        "P4_2/mnm", Lattice.tetragonal(4.594, 2.959), ["Ti", "O"], [[0, 0, 0], [0.305, 0.305, 0]]
+    )
+    anatase = Structure.from_spacegroup(
+        "I4_1/amd", Lattice.tetragonal(3.785, 9.514), ["Ti", "O"], [[0, 0, 0], [0, 0, 0.2066]]
+    )
+
+    def make(structure) -> str:
+        return api.post(
+            "/api/candidates",
+            headers=auth(ALICE),
+            json={
+                "host": {"cif": str(CifWriter(structure)), "filename": "x.cif"},
+                "substitutions": [{"element_from": "Ti", "element_to": "Zr", "fraction": 0.5}],
+            },
+        ).json()["candidate_id"]
+
+    first, second = make(rutile), make(anatase)
+    publish(api, first)
+    found = matches(api, second)
+    assert found["already_public"] == []
+    assert [m["candidate_id"] for m in found["other_framework"]] == [first]
+    assert publish(api, second)["visibility"] == "published"
+
+
+def test_a_different_arrangement_is_the_same_material(api, srtio3):
+    body = {
+        "host": {"cif": str(CifWriter(srtio3)), "filename": "sto.cif"},
+        "substitutions": [
+            {"element_from": "Sr", "element_to": "La", "fraction": 0.25},
+            {"element_from": "Ti", "element_to": "Al", "fraction": 0.25},
+        ],
+    }
+    spread = api.post("/api/candidates", headers=auth(ALICE), json=body).json()["candidate_id"]
+    ewald = api.post(
+        "/api/candidates",
+        headers=auth(BOB, "bob"),
+        json=body | {"arrangement": "lowest_ewald"},
+    ).json()["candidate_id"]
+    publish(api, spread)
+    assert [m["candidate_id"] for m in matches(api, ewald, BOB)["already_public"]] == [spread]
 
 
 def test_a_name_in_any_language_survives_the_token(api, srtio3):

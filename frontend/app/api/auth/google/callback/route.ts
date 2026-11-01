@@ -1,9 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { authSettings, OAUTH_COOKIE, safeNext, SESSION_COOKIE, SESSION_SECONDS, signToken } from "@/lib/authToken";
+import { accountTag, authSettings, OAUTH_COOKIE, safeNext, SESSION_COOKIE, SESSION_SECONDS, signToken } from "@/lib/authToken";
 
 const DISCOVERY = "https://accounts.google.com/.well-known/openid-configuration";
 
-/** Step 2: Google returns here. Only the account's ID and name are kept, in a signed cookie. */
+/** Step 2: Google returns here. Only the account's ID and a short tag are kept, in a signed cookie. */
 export async function GET(request: NextRequest) {
   const settings = authSettings();
   if (!settings) return new Response(null, { status: 404 });
@@ -63,14 +63,14 @@ export async function GET(request: NextRequest) {
     if (!accessToken) return failed();
     const userResponse = await fetch(userUrl, { headers: { Authorization: `Bearer ${accessToken}` }, signal });
     if (!userResponse.ok) return failed();
-    const user = (await userResponse.json()) as { sub?: string; name?: string };
+    const user = (await userResponse.json()) as { sub?: string; name?: string; given_name?: string; family_name?: string };
     if (!user.sub) return failed();
-    // sub is the account's permanent ID. Google does not promise a name, and the user can change it.
-    // The Google access token is not stored: the app needs nothing else from Google.
+    // sub is the account's permanent ID. The Google access token is not stored: the app needs
+    // nothing else from Google.
     const session = signToken(
       {
         sub: `google:${user.sub}`,
-        name: (user.name?.trim() || "Google user").slice(0, 200),
+        name: accountTag(user),
         aud: "session",
         exp: Math.floor(Date.now() / 1000) + SESSION_SECONDS,
       },

@@ -400,23 +400,28 @@
     "confirm": "Veröffentlichen",
     "cancel": "Abbrechen",
     "creditName": "Namensnennung: {name}",
-    "creditAnonymous": "Anonym veröffentlicht",
+    "creditAnonymous": "Öffentliches Material (anonym)",
     "privateChip": "Privates Material",
     "publicChip": "Öffentliches Material",
     "publicHint": "Ein Kandidat aus dem öffentlichen Modus hat keinen Eigentümer, daher kann ihn niemand mit Namen veröffentlichen. Um eigene Arbeit zu veröffentlichen, wähle Privat und melde dich an.",
     "ownedWarning": "Das Veröffentlichen zeigt diesen Kandidaten allen, mit Entscheidungen, Begründungen, Kritiken, Messwerten und den Substitutionen, die zu ihm führten. Eine Veröffentlichung kann eine spätere Patentanmeldung beeinträchtigen, prüfe das also vorher, falls es für dich wichtig ist. LumiLattice speichert dein Konto, die Zeit und einen Fingerabdruck der Struktur. Das ist ein Nachweis des Vorgangs, kein Beweis für rechtliches Eigentum. Andere können den Inhalt unter CC BY 4.0 mit Namensnennung weiterverwenden.",
-    "creditLogin": "Meinen Google-Kontonamen zeigen ({name})",
+    "creditLogin": "Mein Kürzel zeigen ({name})",
     "anonymousOwned": "Anonym (andere sehen dein Konto nicht)",
     "consentOwned": "Ich habe das gelesen und veröffentliche {id} unter CC BY 4.0.",
     "undoNote": "Das Zurücknehmen verbirgt den Kandidaten wieder, aber Kopien anderer können bestehen bleiben.",
     "recordHash": "Nachweis: SHA-256 {hash}…",
-    "creditVerified": "Veröffentlicht von {name}",
+    "creditVerified": "Öffentliches Material von {name}",
     "license": "Lizenz: {license}",
     "otherNote": "Dies ist die veröffentlichte Arbeit einer anderen Person: Du kannst sie lesen, aber nicht ändern. Um darauf aufzubauen, überarbeite sie. Deine Version gehört dir und behält die Namensnennung.",
     "basedOn": "Basiert auf der Arbeit von {name}",
     "basedOnAnonymous": "Basiert auf der Arbeit einer anonymen Person",
     "privateHint": "Nur du siehst das, bis du es veröffentlichst.",
-    "publicChipHint": "Alle können das lesen, weil es im öffentlichen Modus erstellt wurde."
+    "publicChipHint": "Alle können das lesen, weil es im öffentlichen Modus erstellt wurde.",
+    "checking": "Es wird geprüft, ob dieses Material schon öffentlich ist…",
+    "duplicate": "Dieses Material ist schon öffentlich und kann nicht erneut veröffentlicht werden. Um darauf aufzubauen, öffne und überarbeite es:",
+    "noDuplicate": "Noch kein Eigentümer hat dieses Material veröffentlicht.",
+    "otherFramework": "Dieselbe Zusammensetzung in einer anderen Kristallform ist öffentlich. Dieses Material kannst du trotzdem veröffentlichen:",
+    "unclaimed": "Es gibt Kopien aus dem öffentlichen Modus. Sie haben keinen Eigentümer und hindern dich nicht:"
   },
   "Relax": {
     "title": "Relaxation (CHGNet, lokale Installation)",
@@ -696,7 +701,7 @@
   "Workspace": {
     "sharedAndPapers": "Geteilte Kandidaten und Forschungspapiere",
     "noAccounts": "Diese Version hat keine Konten. Alle, die diese Seite öffnen, können die hier gespeicherten Kandidaten, Entscheidungen und Messwerte lesen. Was du den Agenten fragst, geht an die Meta Model API. Gib keine vertraulichen Arbeiten ein.",
-    "publicNotice": "Öffentlicher Modus: Alle, die diese Seite öffnen, können die hier gespeicherten Kandidaten, Entscheidungen und Messwerte lesen. Was du den Agenten fragst, geht an die Meta Model API. Gib keine vertraulichen Arbeiten ein. Um neue Kandidaten vor anderen zu verbergen, wähle Privat und melde dich mit Google an. Wir speichern nur deine Google-Konto-ID und deinen Namen, nicht dein Passwort oder deine E-Mail-Adresse.",
+    "publicNotice": "Öffentlicher Modus: Alle, die diese Seite öffnen, können die hier gespeicherten Kandidaten, Entscheidungen und Messwerte lesen. Was du den Agenten fragst, geht an die Meta Model API. Gib keine vertraulichen Arbeiten ein. Um neue Kandidaten vor anderen zu verbergen, wähle Privat und melde dich mit Google an. Wir speichern nur deine Google-Konto-ID und ein Kürzel deines Namens, zum Beispiel C. Jung, nicht deinen vollen Namen, dein Passwort oder deine E-Mail-Adresse.",
     "privateNotice": "Privater Modus: Andere sehen die hier erstellten Kandidaten erst, wenn du sie veröffentlichst. Geheim sind sie dadurch nicht: Was du den Agenten fragst, geht an die Meta Model API, Suchen senden die Formel an externe Dienste, und der Betreiber kann die Datenbank lesen. Gib keine vertraulichen Arbeiten ein."
   },
   "Scorecard": {

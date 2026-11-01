@@ -19,12 +19,13 @@ export default function PrivacyPage({ params }: { params: Promise<{ locale: stri
       <h2 className={heading}>Google sign-in (private mode only)</h2>
       <p className="mt-1">
         We ask Google only for your account&apos;s permanent ID and your name. We do not ask for your email address or
-        your password, and we do not keep the access token that Google gives us. We use the ID to mark candidates as
-        yours. A signed cookie keeps you signed in for up to 7 days.
+        your password, and we do not keep the access token that Google gives us. From your name, we make a short tag,
+        such as C. Jung, and we do not keep the full name. We use the ID to mark candidates as yours. A signed cookie
+        keeps you signed in for up to 7 days.
       </p>
       <p className="mt-1">
-        We show your name only if you publish a candidate and choose to show it. If you choose anonymous credit, other
-        users do not see your account, but the ID stays in our database.
+        We show your tag only if you publish a candidate with it. If you choose anonymous credit, other users do not
+        see your account, but the ID stays in our database.
       </p>
 
       <h2 className={heading}>What you save</h2>

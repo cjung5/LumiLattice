@@ -400,23 +400,28 @@
     "confirm": "Publish",
     "cancel": "Cancel",
     "creditName": "Credit: {name}",
-    "creditAnonymous": "Published anonymously",
+    "creditAnonymous": "Public Material (anonymous)",
     "privateChip": "Private Material",
     "publicChip": "Public Material",
     "publicHint": "A public-mode candidate has no owner, so nobody can publish it with a name. To publish your own work, select Private and sign in.",
     "ownedWarning": "Publishing shows this candidate to everyone, with its decisions, reasons, critiques, measurements, and the substitutions that led to it. Public disclosure can affect a later patent application, so check first if that matters to you. LumiLattice records your account, the time, and a fingerprint of the structure. This is a record, not proof of legal ownership. Others can reuse it under CC BY 4.0, with credit.",
-    "creditLogin": "Show my Google account name ({name})",
+    "creditLogin": "Show my tag ({name})",
     "anonymousOwned": "Anonymous (other users do not see your account)",
     "consentOwned": "I have read this, and I choose to publish {id} under CC BY 4.0.",
     "undoNote": "Undo hides it again, but copies that others already made can remain.",
     "recordHash": "Record: SHA-256 {hash}…",
-    "creditVerified": "Published by {name}",
+    "creditVerified": "Public Material by {name}",
     "license": "License: {license}",
     "otherNote": "This is someone else's published work, so you can read it but not change it. To build on it, revise it: your version is yours, and it keeps their credit.",
     "basedOn": "Based on work by {name}",
     "basedOnAnonymous": "Based on work by an anonymous researcher",
     "privateHint": "Only you can see this until you publish it.",
-    "publicChipHint": "Anyone can read this, because it was made in public mode."
+    "publicChipHint": "Anyone can read this, because it was made in public mode.",
+    "checking": "Checking whether this material is already public…",
+    "duplicate": "This material is already public, so it cannot be published again. To build on it, open it and revise it:",
+    "noDuplicate": "No owner has published this material yet.",
+    "otherFramework": "The same composition in another crystal form is public. You can still publish this one:",
+    "unclaimed": "Public-mode copies exist. They have no owner, so they do not stop you:"
   },
   "Relax": {
     "title": "Relaxation (CHGNet, local install)",
@@ -696,7 +701,7 @@
   "Workspace": {
     "sharedAndPapers": "Shared candidates and research papers",
     "noAccounts": "This version has no accounts. Anyone who opens this site can read the candidates, decisions, and measurements saved here. What you ask the agent goes to Meta's Model API. Do not enter confidential work.",
-    "publicNotice": "Public mode: anyone who opens this site can read the candidates, decisions, and measurements saved here. What you ask the agent goes to Meta's Model API. Do not enter confidential work. To keep new candidates from other users, select Private and sign in with Google. We keep only your Google account ID and name, not your password or email address.",
+    "publicNotice": "Public mode: anyone who opens this site can read the candidates, decisions, and measurements saved here. What you ask the agent goes to Meta's Model API. Do not enter confidential work. To keep new candidates from other users, select Private and sign in with Google. We keep only your Google account ID and a short tag from your name, such as C. Jung, not your full name, password, or email address.",
     "privateNotice": "Private mode: other users cannot see the candidates that you make here until you publish them. This does not make them secret: what you ask the agent goes to Meta's Model API, searches send the formula to outside services, and the operator can read the database. Do not enter confidential work."
   },
   "Scorecard": {

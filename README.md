@@ -11,12 +11,22 @@ Test an idea for a new material in seconds. Every number shows where it comes fr
   <a href="https://lumi-lattice.vercel.app"><strong>Open the live demo</strong></a> ·
   <a href="#try-it-in-one-minute">Try it in one minute</a> ·
   <a href="#a-tour-of-the-app">Tour</a> ·
+  <a href="#7-work-in-public-or-in-private">Public and private</a> ·
   <a href="#how-muse-spark-is-used">Muse Spark</a> ·
   <a href="#the-science">The science</a> ·
   <a href="#run-locally">Run locally</a>
 </p>
 
 Built for the Meta Global AI Developer Hackathon (Oct 27 – Nov 4, 2026), track **Push the Frontier**.
+
+**At a glance:**
+
+- **Propose:** swap atoms in a known crystal, by hand or with the Muse Spark research agent.
+- **Check:** see the new structure in 3D, with structural checks, a score with stated uncertainty, and a novelty check.
+- **Trust the numbers:** scientific tools compute each value, and each value shows its source and how strong it is.
+- **Decide:** you accept, revise, or reject each candidate, and Muse Spark works from your reason.
+- **Keep or share:** work in public with no sign-in, or in private with Google sign-in. Publish your own material with your credit, if no owner has published it yet.
+- **For everyone:** Guided mode uses plain words, Expert mode shows all tools, and the site is available in 6 languages.
 
 ## Why this exists
 
@@ -46,12 +56,13 @@ LumiLattice helps you search that empty corner. You pick a known crystal and swa
 3. Read the result. It says what the candidate means for your goal and how sure the evidence is.
 4. Select **Explain this to me** or **Suggest a better swap** to ask Muse Spark.
 5. Record your decision and a reason. **Modify** and **Explore alternatives** send the reason to the agent, which tries again.
+6. To keep your work from other users, select **Private** at the top and sign in with Google. See [Work in public or in private](#7-work-in-public-or-in-private).
 
 <p align="center"><img src="docs/figures/plain-result.png" alt="Result panel for candidate LL-0001. It says: It could work, but it is not settled yet. Scales show the bend-light range against glass, sapphire, and diamond, and the band gap on the visible spectrum."></p>
 <p align="center"><sub>The result in Guided mode, with no formula to know first. Scales put each range next to familiar materials and the colors of the spectrum.</sub></p>
 
 > [!NOTE]
-> **Public mode** needs no account, and anyone can read what is saved there. **Private mode** uses Google sign-in, and other users cannot see your new candidates until you publish them. In both modes, do not enter confidential work: see [Public and private work](#7-work-in-public-or-in-private). Muse Spark requests are limited to 10 for each client in 10 minutes, to protect the API credits.
+> In both modes, do not enter confidential work. Private mode keeps your candidates from other users, but it does not make them secret. Muse Spark requests are limited to 10 for each client in 10 minutes, to protect the API credits.
 
 <details>
 <summary><strong>Guided mode and Expert mode</strong></summary>
@@ -161,22 +172,35 @@ Use the switch at the top of the page. Each mode is a separate workspace, so pri
 | **Sign-in** | None | Google |
 | **A new candidate** | Anyone can read and change it | Only you can read and change it |
 | **You can see** | Public-mode and published candidates | Those, and your own private candidates |
-| **Publishing** | Not available: the candidate has no owner, so nobody can claim it | You choose it, after a warning and your consent |
+| **Making it public** | It is public already. It has no owner, so nobody can claim it | You choose it, after a check, a warning, and your consent |
 | **Someone's published work** | Read it, or revise it into a new candidate | Read it, or revise it into your own private candidate. Their credit stays on your version |
 
-<p align="center"><img src="docs/figures/modes.png" alt="The top of the page in the two modes. In public mode, a notice says that anyone can read what is saved. In private mode, the page shows the signed-in Google account, and a notice says that other users cannot see new candidates until they are published." width="820"></p>
+<p align="center"><img src="docs/figures/modes.png" alt="The top of the page in the two modes. In public mode, a notice says that anyone can read what is saved. In private mode, the page shows the signed-in account's short tag, and a notice says that other users cannot see new candidates until they are published." width="820"></p>
 <p align="center"><sub>The same page in each mode. The account in this picture is a test account.</sub></p>
 
-To publish, select **Publish** on your own private candidate. The app warns you first, and you choose your Google account name or anonymous credit.
+Your own work shows a **Private Material** badge under its name.
 
-<p align="center"><img src="docs/figures/publish.png" alt="The publish panel. A warning says what becomes visible, that public disclosure can affect a later patent application, and that the record is not proof of legal ownership. Below are the credit choice and a consent box." width="820"></p>
-<p align="center"><sub>Publishing needs your consent. The name comes from the signed-in account, not from typed text.</sub></p>
+<p align="center"><img src="docs/figures/material.gif" alt="A candidate's name, LL-0006: Sr3LaTi3AlO12, in gold, slowly growing bright and dim, above a Private Material badge." width="480"></p>
 
-**What the record shows.** The app records the account's permanent ID, the time, and a SHA-256 fingerprint of the structure, and publishes under CC BY 4.0. This is a record of which account published what and when. Other users see only the name on the account, and Google does not check that it is a person's real name or that it is unique. It is **not proof of legal ownership**, patent priority, or authorship, and it cannot stop someone from finding the same composition independently. Public disclosure can affect a later patent application. Undoing a publication hides the candidate again, but copies that others made can remain. Anonymous credit hides your account from other users, and the operator can still see it in the database.
+**To make your material public:**
+
+1. Select **Publish** on your private candidate. The app first checks if the same material is already public.
+2. If no owner has published it, read the warning and give your consent. It becomes **Public Material**, with your tag, such as *C. Jung*, or as anonymous. The tag is the default.
+3. If an owner has published it, you cannot publish it again. The app names the public candidate and its author, so you can open it and revise it.
+
+<p align="center"><img src="docs/figures/publish.png" alt="The publish panel with a check mark that says no owner has published this material yet. Below are a note about public-mode copies, a warning about patents and legal ownership, the credit choice, and a consent box." width="820"></p>
+<p align="center"><sub>The first owner to publish a material. Public-mode copies are listed, but they do not stop you.</sub></p>
+
+<p align="center"><img src="docs/figures/duplicate.png" alt="The publish panel for a second researcher. A message says that this material is already public, names the candidate and its author A. Kim, and the Publish button is disabled." width="820"></p>
+<p align="center"><sub>The next researcher with the same material. The server also refuses the request, so this rule does not depend on the screen.</sub></p>
+
+**What counts as the same material.** The same composition on the same crystal framework ([`matches.py`](backend/app/tools/matches.py)). Atom arrangement does not count, because an ordered cell is one model of a disordered solid. A different crystal form, such as rutile and anatase, is a different material, and the app lists it for information. The check compares only public candidates, so it never shows a private one. Thus two researchers can hold the same material in private, and the first to publish it gets the credit.
+
+**What the record shows.** The app records the account's permanent ID, the time, and a SHA-256 fingerprint of the structure, and publishes under CC BY 4.0. This is a record of which account published what and when. Other users see only the short tag. Two people can have the same tag, and Google does not check that a name is real. It is **not proof of legal ownership**, patent priority, or authorship, and being first here says nothing about who was first anywhere else. Public disclosure can affect a later patent application. Undoing a publication hides the candidate again, and it frees the material for others, but copies that others made can remain. Anonymous credit hides your account from other users, and the operator can still see it in the database.
 
 **What private mode does not do.** It keeps your candidates from other users. It does not make them secret: what you ask the agent goes to Meta's Model API, novelty checks and searches send the formula to outside services, and the operator can read the database, which is not encrypted. Candidate IDs are sequential, so an ID can show that a candidate exists elsewhere in the numbering, but not what it is.
 
-**How it works.** The frontend server runs the Google sign-in. It asks only for the `openid` and `profile` scopes, not for the email address, and it keeps only the account's ID and name, in a signed HTTP-only cookie. See the [privacy page](https://lumi-lattice.vercel.app/en/privacy). It gives the browser a token that lasts 15 minutes, and the backend checks that token on each request. All candidate paths and agent tools read through one class, [`ScopedStore`](backend/app/storage/scoped.py), and [`test_ownership.py`](backend/tests/test_ownership.py) tests each path and fails if a new path is not listed. A stranger gets 404, so a private candidate looks the same as one that does not exist. A bad or expired token is an error, so private work is never saved as public by mistake.
+**How it works.** The frontend server runs the Google sign-in. It asks only for the `openid` and `profile` scopes, not for the email address. It makes the short tag from your name and does not keep the full name. It keeps only the account's ID and the tag, in a signed HTTP-only cookie. See the [privacy page](https://lumi-lattice.vercel.app/en/privacy). It gives the browser a token that lasts 15 minutes, and the backend checks that token on each request. All candidate paths and agent tools read through one class, [`ScopedStore`](backend/app/storage/scoped.py), and [`test_ownership.py`](backend/tests/test_ownership.py) tests each path and fails if a new path is not listed. A stranger gets 404, so a private candidate looks the same as one that does not exist. A bad or expired token is an error, so private work is never saved as public by mistake.
 
 ## How Muse Spark is used
 
@@ -543,7 +567,7 @@ Each candidate also has:
 - **Share link:** `?candidate=LL-0003` opens that candidate on the same backend, if the person who opens it can read it.
 - **Export:** a CIF of the candidate (and of its relaxed geometry, if relaxed) and a JSON research record (below).
 - **Muse Spark critique:** a reviewer's reading of the candidate from its evidence and three views of its structure (below).
-- **Registry:** all candidates in one table with filters, and a side-by-side comparison of up to 3 (checks, n range, ΔV after relaxation, measurements).
+- **Registry:** all candidates that you can see, in one table with filters, and a side-by-side comparison of up to 3 (checks, n range, ΔV after relaxation, measurements).
 
 </details>
 
@@ -581,7 +605,7 @@ curl -OJ "http://localhost:8000/api/candidates/LL-0003/export.json?target_n=2.2&
 
 **Do not enter confidential work.** In public mode, anyone who can reach the site or the API can list and read each candidate, with its decisions, reasons, critiques, and measurements. In private mode, other users cannot, but the limits in [Work in public or in private](#7-work-in-public-or-in-private) apply. The `visibility` value `private` hides a candidate only if it has an owner. A candidate with no owner stays open, and for it the value means only "not marked as published".
 
-Publishing needs explicit consent and a credit choice. It changes who can read the candidate in LumiLattice, and it sends nothing outside LumiLattice. With sign-in off, the site offers only public mode, and publishing records a typed name or ORCID without checking it.
+Publishing needs explicit consent and a credit choice, and it is refused if an owner has already published the same material. It changes who can read the candidate in LumiLattice, and it sends nothing outside LumiLattice. With sign-in off, the site offers only public mode, and publishing records a typed name or ORCID without checking it.
 
 Candidates are kept in memory unless `DATABASE_URL` points to a Postgres database; then they survive restarts.
 
@@ -624,7 +648,9 @@ The backend writes its sentences in English, because Muse Spark and the exports 
 | Path | Contents |
 |---|---|
 | `backend/` | FastAPI app: Muse Spark agent loop, tool registry, scientific tools (pymatgen, Materials Project, OpenAlex) |
-| `frontend/` | Next.js app in 6 languages: host search (Materials Project or COD), CIF upload, 3D viewer (3Dmol.js), candidates, optical evidence, literature, research agent |
+| `frontend/` | Next.js app in 6 languages: host search (Materials Project or COD), CIF upload, 3D viewer (3Dmol.js), candidates, optical evidence, literature, research agent, Google sign-in |
+| `docs/figures/` | The figures in this README, made with LumiLattice |
+| `THIRD_PARTY_NOTICES.txt` | Licenses of the bundled data, and the libraries |
 
 </details>
 
@@ -681,7 +707,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000.
+Open http://localhost:3000. The site offers public mode only until you add the private mode settings (see step 7 under Deploy). For a local test of private mode, add `http://localhost:3000/api/auth/google/callback` as a redirect URI.
 
 Tests and live check:
 

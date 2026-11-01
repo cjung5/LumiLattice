@@ -577,6 +577,17 @@ export type Credit = {
   content_sha256: string | null;
 };
 
+export type PublicMatch = { candidate_id: string; credit: Credit | null };
+export type PublicMatches = {
+  already_public: PublicMatch[]; // this material cannot be published again
+  other_framework: PublicMatch[]; // the same composition, in another crystal form
+  unclaimed: PublicMatch[]; // public-mode copies with no owner
+};
+
+export function getPublicMatches(candidateId: string): Promise<PublicMatches> {
+  return request<PublicMatches>(`/api/candidates/${encodeURIComponent(candidateId)}/public-matches`);
+}
+
 export function setVisibility(
   candidateId: string,
   body: {

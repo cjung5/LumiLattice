@@ -400,23 +400,28 @@
     "confirm": "Publicar",
     "cancel": "Cancelar",
     "creditName": "Crédito: {name}",
-    "creditAnonymous": "Publicado de forma anónima",
+    "creditAnonymous": "Material público (anónimo)",
     "privateChip": "Material privado",
     "publicChip": "Material público",
     "publicHint": "Un candidato del modo público no tiene propietario, así que nadie puede publicarlo con su nombre. Para publicar tu trabajo, selecciona Privado e inicia sesión.",
     "ownedWarning": "Publicar muestra este candidato a todos, con sus decisiones, motivos, críticas, medidas y las sustituciones que llevaron a él. La divulgación pública puede afectar a una solicitud de patente posterior, así que compruébalo antes si te importa. LumiLattice registra tu cuenta, la hora y una huella de la estructura. Esto es un registro, no una prueba de propiedad legal. Otros pueden reutilizarlo bajo CC BY 4.0, con crédito.",
-    "creditLogin": "Mostrar el nombre de mi cuenta de Google ({name})",
+    "creditLogin": "Mostrar mi etiqueta ({name})",
     "anonymousOwned": "Anónimo (otros usuarios no ven tu cuenta)",
     "consentOwned": "He leído esto y elijo publicar {id} bajo CC BY 4.0.",
     "undoNote": "Deshacer lo oculta de nuevo, pero las copias que otros ya hicieron pueden permanecer.",
     "recordHash": "Registro: SHA-256 {hash}…",
-    "creditVerified": "Publicado por {name}",
+    "creditVerified": "Material público de {name}",
     "license": "Licencia: {license}",
     "otherNote": "Este es el trabajo publicado de otra persona: puedes leerlo, pero no cambiarlo. Para continuarlo, revísalo. Tu versión es tuya y conserva su crédito.",
     "basedOn": "Basado en el trabajo de {name}",
     "basedOnAnonymous": "Basado en el trabajo de una persona anónima",
     "privateHint": "Solo tú puedes verlo hasta que lo publiques.",
-    "publicChipHint": "Cualquiera puede leerlo, porque se creó en modo público."
+    "publicChipHint": "Cualquiera puede leerlo, porque se creó en modo público.",
+    "checking": "Comprobando si este material ya es público…",
+    "duplicate": "Este material ya es público, así que no se puede publicar de nuevo. Para continuarlo, ábrelo y revísalo:",
+    "noDuplicate": "Ningún propietario ha publicado este material todavía.",
+    "otherFramework": "La misma composición en otra forma cristalina es pública. Aun así puedes publicar este:",
+    "unclaimed": "Hay copias del modo público. No tienen propietario, así que no te lo impiden:"
   },
   "Relax": {
     "title": "Relajación (CHGNet, instalación local)",
@@ -696,7 +701,7 @@
   "Workspace": {
     "sharedAndPapers": "Candidatos compartidos y artículos científicos",
     "noAccounts": "Esta versión no tiene cuentas. Cualquiera que abra este sitio puede leer los candidatos, decisiones y medidas guardados aquí. Lo que preguntas al agente se envía a la Model API de Meta. No introduzcas trabajo confidencial.",
-    "publicNotice": "Modo público: cualquiera que abra este sitio puede leer los candidatos, decisiones y medidas guardados aquí. Lo que preguntas al agente se envía a la Model API de Meta. No introduzcas trabajo confidencial. Para ocultar candidatos nuevos a otros usuarios, selecciona Privado e inicia sesión con Google. Solo guardamos el ID y el nombre de tu cuenta de Google, no tu contraseña ni tu correo electrónico.",
+    "publicNotice": "Modo público: cualquiera que abra este sitio puede leer los candidatos, decisiones y medidas guardados aquí. Lo que preguntas al agente se envía a la Model API de Meta. No introduzcas trabajo confidencial. Para ocultar candidatos nuevos a otros usuarios, selecciona Privado e inicia sesión con Google. Solo guardamos el ID de tu cuenta de Google y una etiqueta corta de tu nombre, como C. Jung, no tu nombre completo, tu contraseña ni tu correo electrónico.",
     "privateNotice": "Modo privado: otros usuarios no ven los candidatos que creas aquí hasta que los publiques. Esto no los hace secretos: lo que preguntas al agente se envía a la Model API de Meta, las búsquedas envían la fórmula a servicios externos, y el operador puede leer la base de datos. No introduzcas trabajo confidencial."
   },
   "Scorecard": {
