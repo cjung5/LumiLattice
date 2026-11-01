@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     # Meta Model API (https://dev.meta.ai/docs/quickstart). The OpenAI SDK does not
     # read MODEL_API_KEY on its own, so it is passed to the client explicitly.
     model_api_key: SecretStr | None = None
+    # In production this is the frontend server's /api/meta route (see README, Deploy).
     model_api_base_url: str = "https://api.meta.ai/v1"
     # Standard (non-contributor) variant: researcher data must not be used for training.
     muse_model: str = "muse-spark-1.3"

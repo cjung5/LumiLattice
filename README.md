@@ -326,12 +326,15 @@ The backend and its Postgres database run on Railway, and the frontend on Vercel
    - `DATABASE_URL` = `${{Postgres.DATABASE_URL}}`
    - `MODEL_API_KEY`, `MP_API_KEY`, `OPENALEX_API_KEY`
    - `VISIT_SECRET` = the value from step 1
-   - `CORS_ORIGIN_REGEX` = `https://lumilattice[a-z0-9-]*\.vercel\.app`
+   - `CORS_ORIGIN_REGEX` = `https://lumi-lattice[a-z0-9-]*\.vercel\.app`
+   - `MODEL_API_BASE_URL` = `https://<your-site>.vercel.app/api/meta`
 
    Then generate a public domain under the service's Networking settings, set the health check path to `/api/health`, and open `https://<domain>/api/health`. It should show `"candidate_store":"postgres"`.
-4. **Frontend (Vercel):** New Project → import this repository → Root Directory `frontend`. Add `NEXT_PUBLIC_API_BASE_URL` = the Railway URL (no trailing slash) and `VISIT_SECRET` = the value from step 1, then deploy. Use a project name that starts with `lumilattice`, or change `CORS_ORIGIN_REGEX` to match.
+4. **Frontend (Vercel):** New Project → import this repository → Root Directory `frontend`. Add `NEXT_PUBLIC_API_BASE_URL` = the Railway URL with `https://` and no trailing slash (type Config), `VISIT_SECRET` = the value from step 1, and `MODEL_API_KEY` = the Meta key (type Secret, no `NEXT_PUBLIC_` prefix), then deploy. `CORS_ORIGIN_REGEX` must match the address that Vercel gives the site.
 5. **Check:** open the site, run the example, and confirm that your country appears on the globe.
-6. **Spending:** on the Railway workspace Usage page, set an email alert at $5 and a hard limit at $10 (the lowest allowed). At the hard limit, every service in the workspace goes offline until the next billing cycle or until you raise the limit. Also set a spend limit on the Meta account, because the site is public.
+6. **Spending:** on the Railway workspace Usage page, set an email alert at $5 and a hard limit at $10 (the lowest allowed). At the hard limit, every service in the workspace goes offline until the next billing cycle or until you raise the limit. Also check the Meta billing page for a spend limit, because the site is public; the app's own daily cap is the protection that this repository controls.
+
+**Why Muse Spark calls go through Vercel:** on 2026-11-01 the Meta Model API listed no models for requests from Railway's network (US West) and returned `model_not_found`, while the same key listed nine models from Vercel's network and from a home connection. We do not know the reason. So `frontend/app/api/meta/[...path]/route.ts` forwards the backend's calls to Meta. It accepts only `responses` and `chat/completions`, and only with the secret that the two servers share. If you host the backend on a network that Meta allows, leave `MODEL_API_BASE_URL` unset to call Meta directly.
 
 Without `DATABASE_URL`, candidates and researcher counts are kept in memory and are lost when the server restarts. CHGNet relaxation is not installed in the image; it works only in a local install (`uv sync --group relax`).
 

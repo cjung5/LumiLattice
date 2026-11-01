@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
 
+from app.agents.muse import create_client
 from app.config import Settings, get_settings
 from app.main import app
 
@@ -72,3 +73,18 @@ def test_blank_secret_counts_as_not_configured():
     assert settings.model_api_key is None
     assert settings.mp_api_key is None
     assert settings.openalex_api_key is not None
+
+
+def test_proxy_secret_goes_only_to_the_proxy():
+    direct = create_client(Settings(_env_file=None, model_api_key="k", visit_secret="s"))
+    proxied = create_client(
+        Settings(
+            _env_file=None,
+            model_api_key="k",
+            visit_secret="s",
+            model_api_base_url="https://site.vercel.app/api/meta",
+        )
+    )
+
+    assert "X-Proxy-Secret" not in direct.default_headers
+    assert proxied.default_headers["X-Proxy-Secret"] == "s"
