@@ -689,7 +689,8 @@
     "headline": {
       "meets": "En el objetivo. Vale la pena examinarlo más de cerca.",
       "uncertain": "Podría funcionar, pero aún no es seguro.",
-      "fails": "Aún no lo logra."
+      "fails": "Aún no lo logra.",
+      "unknown": "Aún no se puede saber: no hay ningún valor creíble para este material."
     },
     "subject": "Candidato {id} ({formula})",
     "swap": "{from} → {to} {percent}%",
@@ -949,7 +950,8 @@
       "goalNMethod": "n {value} ({status}, {method}) vs objetivo ≥ {t}.",
       "goalN": "n {value} ({status}) vs objetivo ≥ {t}.",
       "errPartial1": "El anfitrión tiene ocupaciones parciales.",
-      "errPartial2": "Utilice una estructura ordenada."
+      "errPartial2": "Utilice una estructura ordenada.",
+      "notCredible": "Valores calculados omitidos: la constante dieléctrica es demasiado grande para la banda prohibida, lo que sugiere un cálculo metálico."
     },
     "words": {
       "plausible": "Estructuralmente plausible",

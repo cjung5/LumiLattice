@@ -99,8 +99,8 @@ export function HostScore({ goal, formula }: { goal: Goal; formula: string }) {
   );
 }
 
-const headlineOf = (verdicts: Verdict[]) =>
-  verdicts.includes("fails") ? "fails" : verdicts.every((v) => v === "meets") ? "meets" : "uncertain";
+const headlineOf = (verdicts: Verdict[], optical: Verdict[]) =>
+  optical.every((v) => v === "unknown") ? "unknown" : verdicts.includes("fails") ? "fails" : verdicts.every((v) => v === "meets") ? "meets" : "uncertain";
 
 type Props = {
   candidate: Candidate;
@@ -135,7 +135,7 @@ export function PlainResult({ candidate, goal, hostFormula, onAskAgent, onSeeEvi
           {swaps && ` · ${swaps}`}
         </p>
         {score ? (
-          <h3 className="mt-1 text-lg font-semibold">{t(`headline.${headlineOf(score.criteria.map((c) => c.verdict))}`)}</h3>
+          <h3 className="mt-1 text-lg font-semibold">{t(`headline.${headlineOf(score.criteria.map((c) => c.verdict), score.criteria.filter((c) => c.id === "n" || c.id === "band_gap").map((c) => c.verdict))}`)}</h3>
         ) : (
           <p className="mt-1 text-muted">{t("loading")}</p>
         )}

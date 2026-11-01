@@ -1,5 +1,6 @@
 """Candidate creation: substitute on a host, then assess (spec 3.3 and 3.4)."""
 
+import itertools
 from datetime import UTC, datetime
 
 from pymatgen.core import Composition, Structure
@@ -53,11 +54,54 @@ def load_host(
     return host, Provenance(source="CIF upload", reference=filename), None
 
 
+def _chained_ends(root_formula: str, lineage: list[Substitution]) -> list[str] | None:
+    """End members of a revision that swapped atoms that an earlier step put in. None if no step did.
+
+    The substitutions are followed site by site. SrTiO3 + Sr->La + Ti->Al + Al->Ti 100 % has no Al
+    left, so it lies between SrTiO3 and LaTiO3. The first formula uses the element that came first
+    on each site family, and the others change one family, or all that vary, at a time.
+    """
+    base = Composition(root_formula).reduced_composition.as_dict()
+    if all(s.element_from in base for s in lineage):
+        return None
+    families = {site: {site: 1.0} for site in base}
+    for s in lineage:
+        for family in families.values():
+            moved = family.get(s.element_from, 0.0) * s.fraction
+            if moved > 0:
+                family[s.element_from] -= moved
+                family[s.element_to] = family.get(s.element_to, 0.0) + moved
+    members = {
+        site: [el for el, share in f.items() if share > 1e-6] for site, f in families.items()
+    }
+
+    def formula(choice: dict[str, str]) -> str:
+        amounts: dict[str, float] = {}
+        for site, n in base.items():
+            amounts[choice[site]] = amounts.get(choice[site], 0.0) + n
+        return Composition(amounts).reduced_formula
+
+    first = {site: found[0] for site, found in members.items()}
+    varied = [site for site, found in members.items() if len(found) > 1]
+    others = itertools.product(*(members[site][1:] for site in varied))
+    if len(varied) == 1:
+        ends = [formula(first | {varied[0]: el}) for el in members[varied[0]][1:]]
+    else:
+        ends = [
+            formula(first | dict(zip(varied, combo, strict=True)))
+            for combo in itertools.islice(others, 8)
+        ]
+    return list(dict.fromkeys([formula(first), *ends]))
+
+
 def end_member_formulas(root_formula: str, lineage: list[Substitution]) -> list[str]:
     """Root host with substitutions taken to 100 %: all of them together, then each alone.
 
     SrTiO3 + Sr->La + Ti->Al gives LaAlO3 (together), LaTiO3, and SrAlO3.
     """
+    chained = _chained_ends(root_formula, lineage)
+    if chained is not None:
+        return [f for f in chained if f != root_formula] or chained
     base = Composition(root_formula).reduced_composition.as_dict()
 
     def swap(subs: list[Substitution]) -> str:
@@ -72,6 +116,9 @@ def end_member_formulas(root_formula: str, lineage: list[Substitution]) -> list[
 def solid_solution_ends(root_formula: str, lineage: list[Substitution]) -> list[str]:
     """Compounds a candidate lies between: SrTiO3 + Sr->La + Ti->Al lies between SrTiO3 and
     LaAlO3; SrTiO3 + Ti->Zr + Ti->Hf lies among SrTiO3, SrZrO3, and SrHfO3."""
+    chained = _chained_ends(root_formula, lineage)
+    if chained is not None:
+        return chained
     ends = end_member_formulas(root_formula, lineage)
     if len({s.element_from for s in lineage}) > 1:
         ends = ends[:1]

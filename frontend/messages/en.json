@@ -689,7 +689,8 @@
     "headline": {
       "meets": "On target. Worth a closer look.",
       "uncertain": "It could work, but it is not settled yet.",
-      "fails": "Not there yet."
+      "fails": "Not there yet.",
+      "unknown": "We cannot tell yet: no credible value is known for this material."
     },
     "subject": "Candidate {id} ({formula})",
     "swap": "{from} → {to} {percent}%",
@@ -949,7 +950,8 @@
       "goalNMethod": "n {value} ({status}, {method}) vs target ≥ {t}.",
       "goalN": "n {value} ({status}) vs target ≥ {t}.",
       "errPartial1": "The host has partial occupancies.",
-      "errPartial2": "Use an ordered structure."
+      "errPartial2": "Use an ordered structure.",
+      "notCredible": "Computed values left out: the dielectric constant is too large for the band gap, which suggests a metallic calculation."
     },
     "words": {
       "plausible": "Structurally Plausible",

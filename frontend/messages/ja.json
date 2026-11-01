@@ -689,7 +689,8 @@
     "headline": {
       "meets": "目標達成。詳しく見る価値があります。",
       "uncertain": "可能性はありますが、まだ確定していません。",
-      "fails": "まだ目標に届きません。"
+      "fails": "まだ目標に届きません。",
+      "unknown": "まだ判断できません。このマテリアルには信頼できる値がありません。"
     },
     "subject": "候補 {id}（{formula}）",
     "swap": "{from} → {to} {percent}%",
@@ -949,7 +950,8 @@
       "goalNMethod": "n {value}（{status}、{method}）、目標 ≥ {t} と比較。",
       "goalN": "n {value}（{status}）、目標 ≥ {t} と比較。",
       "errPartial1": "ホストに部分占有があります。",
-      "errPartial2": "規則構造を使用してください。"
+      "errPartial2": "規則構造を使用してください。",
+      "notCredible": "計算値を除外：誘電率がバンドギャップに対して大きすぎ、金属的な計算と考えられます。"
     },
     "words": {
       "plausible": "構造的に妥当",

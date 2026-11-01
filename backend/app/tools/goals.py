@@ -144,5 +144,5 @@ def score_formula(
     return _score(
         formula,
         goal,
-        _criteria(formula, db.best_n(formula), db.best_gap(formula), assessment, goal),
+        _criteria(formula, *db.usable_optics(formula), assessment, goal),
     )

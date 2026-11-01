@@ -689,7 +689,8 @@
     "headline": {
       "meets": "Im Ziel. Einen genaueren Blick wert.",
       "uncertain": "Es könnte funktionieren, ist aber noch nicht sicher.",
-      "fails": "Noch nicht erreicht."
+      "fails": "Noch nicht erreicht.",
+      "unknown": "Das lässt sich noch nicht sagen: Für dieses Material ist kein glaubwürdiger Wert bekannt."
     },
     "subject": "Kandidat {id} ({formula})",
     "swap": "{from} → {to} {percent}%",
@@ -949,7 +950,8 @@
       "goalNMethod": "n {value} ({status}, {method}) vs Ziel ≥ {t}.",
       "goalN": "n {value} ({status}) vs Ziel ≥ {t}.",
       "errPartial1": "Der Wirt hat Teilbesetzungen.",
-      "errPartial2": "Geordnete Struktur verwenden."
+      "errPartial2": "Geordnete Struktur verwenden.",
+      "notCredible": "Berechnete Werte ausgelassen: Die Dielektrizitätskonstante ist für die Bandlücke zu groß, was auf eine metallische Rechnung hindeutet."
     },
     "words": {
       "plausible": "Strukturell plausibel",

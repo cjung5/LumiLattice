@@ -689,7 +689,8 @@
     "headline": {
       "meets": "符合目标，值得进一步研究。",
       "uncertain": "可能可行，但尚未确定。",
-      "fails": "尚未达标。"
+      "fails": "尚未达标。",
+      "unknown": "目前无法判断：此材料没有可信的数值。"
     },
     "subject": "候选材料 {id}（{formula}）",
     "swap": "{from} → {to} {percent}%",
@@ -949,7 +950,8 @@
       "goalNMethod": "n {value}（{status}，{method}）与目标 ≥ {t} 对比。",
       "goalN": "n {value}（{status}）与目标 ≥ {t} 对比。",
       "errPartial1": "主体结构存在部分占位。",
-      "errPartial2": "请使用有序结构。"
+      "errPartial2": "请使用有序结构。",
+      "notCredible": "已排除计算值：介电常数相对带隙过大，提示这是金属性计算。"
     },
     "words": {
       "plausible": "结构合理",

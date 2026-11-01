@@ -40,6 +40,15 @@ MATCH_NOTE = "Matched by formula; the polymorph may differ from the selected str
 # Added to both ends of a Heuristic range, from scripts/validate_score.py. Gap: on hand-checked
 # oxide solid solutions, coverage stops rising at 0.3 eV (86% inside, also 86% at 0.5 eV). n: 91%
 # of computed wide-gap oxide mixes fall inside at 0.2, but only 12 measured mixes exist, not reviewed.
+# A computed n comes from the dielectric constant. Near-metallic calculations give huge values that
+# do not agree with a wide gap: LaTiO3 has n = 7.48 and a 3.5 eV gap. These limits are above every
+# material with a measured n in the reference data (highest n 5.15, highest n^4 * gap / 95 under 12).
+MAX_CREDIBLE_N = 6.0
+MAX_CREDIBLE_MOSS_RATIO = 12.0
+NOT_CREDIBLE = (
+    "Computed values left out: the dielectric constant is too large for the band gap, which "
+    "suggests a metallic calculation."
+)
 GAP_MARGIN_EV = 0.3
 N_MARGIN = 0.2
 # Median error of a linear mix on tested oxides (scripts/validate_score.py): 43 hand-checked band
@@ -185,6 +194,25 @@ class ReferenceDB:
                 )
         return PropertyValue(name="refractive_index", status="Unknown", conditions=MATCH_NOTE)
 
+    def usable_optics(self, formula: str) -> tuple[PropertyValue, PropertyValue | None]:
+        """Best n and gap for a verdict or a range, without computed values that are not credible.
+
+        Charts and reference tables still show them, with their source.
+        """
+        n, gap = self.best_n(formula), self.best_gap(formula)
+        if n.status != "DFT-computed" or n.value is None:
+            return n, gap
+        gap_value = gap.value if gap else None
+        ratio = n.value**4 * gap_value / MOSS_CONSTANT_EV if gap_value else 0.0
+        if n.value <= MAX_CREDIBLE_N and ratio <= MAX_CREDIBLE_MOSS_RATIO:
+            return n, gap
+        left_out = PropertyValue(name="refractive_index", status="Unknown", conditions=NOT_CREDIBLE)
+        if gap and gap.status == "DFT-computed":
+            gap = PropertyValue(
+                name="band_gap", units="eV", status="Unknown", conditions=NOT_CREDIBLE
+            )
+        return left_out, gap
+
     def reference(self, formula: str) -> OpticalReference:
         formula = normalize(formula)
         return OpticalReference(
@@ -288,10 +316,10 @@ class ReferenceDB:
         SrTiO3 with Ba gives BaTiO3, not something between it and SrTiO3. OptB88vdW values do not
         qualify: its gaps are too low to replace a range from measured end members.
         """
-        members = [
-            EndMemberIndex(formula=f, n=self.best_n(f), band_gap=self.best_gap(f))
-            for f in dict.fromkeys(end_members)
-        ]
+        members = []
+        for f in dict.fromkeys(end_members):
+            n, gap = self.usable_optics(f)
+            members.append(EndMemberIndex(formula=f, n=n, band_gap=gap))
         names = ", ".join(m.formula for m in members)
         note = (
             f"Range spanned by end members {names}. Not a prediction: it assumes the value "
@@ -302,8 +330,7 @@ class ReferenceDB:
             m.band_gap.value for m in members if m.band_gap and m.band_gap.value is not None
         ]
         note = f"{note}, and it can mix measured and DFT values."
-        n = self.best_n(exact) if exact else None
-        gap = self.best_gap(exact) if exact else None
+        n, gap = self.usable_optics(exact) if exact else (None, None)
         mix = _linear_mix(members, exact, _good(n), _good(gap))
         return OpticalEstimate(
             linear_mix=mix,

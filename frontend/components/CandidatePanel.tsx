@@ -381,6 +381,13 @@ export function CandidatePanel({
                   </li>
                 ))}
               </ul>
+              {current.optical_estimate.end_members
+                .filter((m) => m.n.status === "Unknown" && m.n.conditions)
+                .map((m) => (
+                  <p key={m.formula} className="mt-1 text-xs text-muted">
+                    {m.formula}: {tb(m.n.conditions ?? "")}
+                  </p>
+                ))}
               {current.optical_estimate.linear_mix && (
                 <p className="mt-1 text-xs">
                   <span aria-hidden>◆ </span>

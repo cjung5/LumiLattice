@@ -689,7 +689,8 @@
     "headline": {
       "meets": "목표에 맞습니다. 더 살펴볼 만합니다.",
       "uncertain": "가능성은 있지만 아직 확실하지 않습니다.",
-      "fails": "아직 목표에 못 미칩니다."
+      "fails": "아직 목표에 못 미칩니다.",
+      "unknown": "아직 판단할 수 없습니다. 이 물질에 믿을 만한 값이 없습니다."
     },
     "subject": "후보 {id} ({formula})",
     "swap": "{from} → {to} {percent}%",
@@ -949,7 +950,8 @@
       "goalNMethod": "n {value} ({status}, {method}), 목표 ≥ {t}.",
       "goalN": "n {value} ({status}), 목표 ≥ {t}.",
       "errPartial1": "기준 구조에 부분 점유가 있습니다.",
-      "errPartial2": "질서 구조를 쓰세요."
+      "errPartial2": "질서 구조를 쓰세요.",
+      "notCredible": "계산값 제외: 유전 상수가 밴드갭에 비해 너무 커서 금속성 계산으로 보입니다."
     },
     "words": {
       "plausible": "구조적으로 타당",

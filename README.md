@@ -380,6 +380,7 @@ We tested the score against real data, and the tests changed it. These limits ma
 - Values are matched by formula, so the crystal form can differ (SiC in the tests below; TiO2 has one value for rutile and anatase).
 - Impossible swaps can pass the charge check through unusual oxidation states: LaO and LaF2 with La(+2) score 80 in the held-out set, and CsN with N(-1) and CsS with S(-1) score 80 in the tuning set.
 - The score has not been tested against whether a material was made or used, beyond the small control list.
+- The tests above ran before the limits on computed values were added, and they have not been run again with them.
 
 <details>
 <summary><strong>Scoring and novelty in full</strong></summary>
@@ -473,6 +474,10 @@ Band gaps follow the same order: measured values first, then a JARVIS-DFT value 
 A **linear mix** is shown as a guide inside the range: the end-member values weighted by each one's share of the composition (Sr3LaTi3AlO12 is 75% SrTiO3 and 25% LaAlO3). It is typically off by about 0.6 eV for the band gap (median, 43 hand-checked clear oxides) and about 0.3 for n (median, 12 unreviewed cases). It appears only when the composition really is a mix of its end members. Verdicts and the score do not use it: it is closer on average than the range's midpoint (mean error 0.84 against 1.10 eV), but without MgO–ZnO it barely improves (0.82 against 0.86 eV) and ranks worse (rank correlation 0.26 against 0.36).
 
 The reference data is matched by formula, so the polymorph can differ from the selected structure; the app says so next to each value.
+
+**Revisions.** The end members follow the whole line of substitutions, site by site. If a later step removes an element, it is no longer an end member: Sr<sub>3</sub>LaTi<sub>3</sub>AlO<sub>12</sub> with all Al changed back to Ti lies between SrTiO<sub>3</sub> and LaTiO<sub>3</sub>, not LaAlO<sub>3</sub>.
+
+**Computed values that are left out.** A near-metallic DFT calculation can give a huge dielectric constant, and so a huge n. LaTiO<sub>3</sub> has n = 7.48 with a 3.5 eV gap in JARVIS-DFT. Such values would make a candidate "meet" a goal for no real reason. So verdicts, ranges, and the score leave out a computed n above 6, or one with $`n^4 E_g / 95\ \text{eV}`$ above 12, along with a computed gap for that formula, and the value counts as `Unknown`. A measured gap stays. These limits are above every material with a measured n in the reference data (highest n 5.15). They leave out 21,607 of the 65,321 JARVIS formulas, mostly metals, and common optical oxides such as TiO<sub>2</sub>, HfO<sub>2</sub>, and Ta<sub>2</sub>O<sub>5</sub> are not affected. Reference tables and charts still show the values, with their source.
 
 The bundled `backend/data/reference.sqlite` (14 MB) holds a subset of JARVIS-DFT 3D (2025-09-24, 93,902 entries) the refractiveindex.info database (release 2026-05-24, 868 measured pages with n in the visible range; "Models and simulations" pages are excluded), and the measured band gaps. To rebuild it:
 
