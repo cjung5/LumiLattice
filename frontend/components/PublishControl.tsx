@@ -3,7 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/Auth";
-import { LockIcon } from "@/components/LockIcon";
+import { GlobeIcon, LockIcon } from "@/components/LockIcon";
 import { getPublicMatches, setVisibility, type Candidate, type Credit, type PublicMatch, type PublicMatches } from "@/lib/api";
 
 type Props = {
@@ -39,7 +39,10 @@ export function OwnershipLine({ candidate }: { candidate: Candidate }) {
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-muted">
       {candidate.credit ? (
-        <span className={`${badge} border-tag-dft text-tag-dft`}>🌐 {creditText(candidate.credit)}</span>
+        <span className={`${badge} border-tag-dft text-tag-dft`}>
+          <GlobeIcon />
+          {creditText(candidate.credit)}
+        </span>
       ) : candidate.mine ? (
         <span className={`${badge} border-accent bg-accent-soft text-accent-text`} title={t("privateHint")}>
           <LockIcon />

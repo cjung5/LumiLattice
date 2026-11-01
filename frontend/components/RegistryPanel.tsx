@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/components/Auth";
+import { GlobeIcon, LockIcon } from "@/components/LockIcon";
 import { useBackendText } from "@/lib/backendText";
 import { useEffect, useState } from "react";
 import { formatValue } from "@/components/EvidenceTag";
@@ -16,9 +17,34 @@ type Props = {
   onOpen: (candidate: Candidate) => void;
 };
 
+/** Who can see it, and whose it is. The account's tag shows only if the owner chose to show it. */
+function Visibility({ candidate }: { candidate: Candidate }) {
+  const t = useTranslations("Registry");
+  const { credit } = candidate;
+  const line = "inline-flex items-center gap-1.5";
+  if (candidate.visibility === "published") {
+    return (
+      <span className={`${line} text-tag-dft`}>
+        <GlobeIcon />
+        {credit?.display === "name" && credit.name ? credit.name : t("visAnonymous")}
+      </span>
+    );
+  }
+  if (candidate.mine) {
+    return (
+      <span className={`${line} text-accent-text`}>
+        <LockIcon />
+        {t("visPrivate")}
+      </span>
+    );
+  }
+  return <span className="text-muted">{t("visPublicMode")}</span>;
+}
+
 // P1 stage 2: every candidate in one table, with filters and a side-by-side comparison.
 export function RegistryPanel({ version, onOpen }: Props) {
   const t = useTranslations("Registry");
+  const td = useTranslations("Decision");
   const { mode } = useAuth();
   const tb = useBackendText();
   const [items, setItems] = useState<Candidate[]>([]);
@@ -77,45 +103,55 @@ export function RegistryPanel({ version, onOpen }: Props) {
         <p className="text-sm text-muted">{t("empty")}</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full text-left text-xs [&_td]:align-middle">
             <thead className="text-muted">
               <tr>
-                <th className="py-1 pr-2 font-normal">{t("compare")}</th>
-                <th className="py-1 pr-2 font-normal">ID</th>
-                <th className="py-1 pr-2 font-normal">{t("formula")}</th>
-                <th className="py-1 pr-2 font-normal">{t("origin")}</th>
-                <th className="py-1 pr-2 font-normal">{t("status")}</th>
-                <th className="py-1 pr-2 font-normal">n</th>
-                <th className="py-1 font-normal">{t("decision")}</th>
+                <th className="py-2 pr-3 font-normal">{t("compare")}</th>
+                <th className="py-2 pr-3 font-normal">ID</th>
+                <th className="py-2 pr-3 font-normal">{t("formula")}</th>
+                <th className="py-2 pr-3 font-normal">{t("visibility")}</th>
+                <th className="hidden py-2 pr-3 font-normal sm:table-cell">{t("origin")}</th>
+                <th className="py-2 pr-3 font-normal">{t("status")}</th>
+                <th className="hidden py-2 pr-3 font-normal md:table-cell">n</th>
+                <th className="py-2 font-normal">{t("decision")}</th>
               </tr>
             </thead>
             <tbody>
-              {shown.map((c) => (
-                <tr key={c.candidate_id} className="border-t border-line">
-                  <td className="py-1 pr-2">
-                    <input
-                      type="checkbox"
-                      aria-label={t("compare")}
-                      checked={selected.includes(c.candidate_id)}
-                      onChange={() => toggle(c.candidate_id)}
-                    />
-                  </td>
-                  <td className="py-1 pr-2">
-                    <button type="button" className="font-mono text-accent-text underline" onClick={() => onOpen(c)}>
-                      {c.candidate_id}
-                    </button>
-                    {c.visibility === "published" && <span className="ml-1">🌐</span>}
-                    {c.mine && c.visibility === "private" && <span className="ml-1">🔒</span>}
-                  </td>
-                  <td className="py-1 pr-2">{c.formula}</td>
-                  <td className="py-1 pr-2 text-muted">{c.parent_id ?? c.transformation.host.reference}</td>
-                  <td className="py-1 pr-2">{tb(c.assessment.status)}</td>
-                  <td className="py-1 pr-2 tabular-nums">
-                    {c.optical_estimate ? formatValue(c.optical_estimate.estimate) : "—"}
-                  </td>
-                  <td className="py-1">{c.decisions.at(-1)?.decision ?? "—"}</td>
-                </tr>
-              ))}
+              {shown.map((c) => {
+                const last = c.decisions.at(-1)?.decision;
+                return (
+                  <tr key={c.candidate_id} className="border-t border-line">
+                    <td className="py-2 pr-3">
+                      <input
+                        type="checkbox"
+                        className="block h-3.5 w-3.5 accent-[var(--accent)]"
+                        aria-label={`${t("compare")} ${c.candidate_id}`}
+                        checked={selected.includes(c.candidate_id)}
+                        onChange={() => toggle(c.candidate_id)}
+                      />
+                    </td>
+                    <td className="py-2 pr-3 whitespace-nowrap">
+                      <button
+                        type="button"
+                        className="font-medium tabular-nums text-accent-text underline-offset-2 hover:underline"
+                        onClick={() => onOpen(c)}
+                      >
+                        {c.candidate_id}
+                      </button>
+                    </td>
+                    <td className="py-2 pr-3 font-medium">{c.formula}</td>
+                    <td className="py-2 pr-3 whitespace-nowrap">
+                      <Visibility candidate={c} />
+                    </td>
+                    <td className="hidden py-2 pr-3 text-muted sm:table-cell">{c.parent_id ?? c.transformation.host.reference}</td>
+                    <td className={`py-2 pr-3 ${c.assessment.status === "Structural Concerns" ? "text-warning" : ""}`}>{tb(c.assessment.status)}</td>
+                    <td className="hidden py-2 pr-3 tabular-nums whitespace-nowrap md:table-cell">
+                      {c.optical_estimate ? formatValue(c.optical_estimate.estimate) : "—"}
+                    </td>
+                    <td className="py-2 whitespace-nowrap">{last ? td(last) : "—"}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

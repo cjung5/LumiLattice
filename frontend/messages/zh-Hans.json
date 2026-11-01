@@ -463,7 +463,7 @@
   },
   "Registry": {
     "title": "7. 候选库",
-    "hint": "本服务器上的所有候选，来自表单与智能体。任何打开本网站的人都能读取。最多选择 {max} 个进行比较。",
+    "hint": "公开候选，来自表单与智能体。任何打开本网站的人都能读取。最多选择 {max} 个进行比较。",
     "filter": {
       "all": "全部",
       "plausible": "合理",
@@ -482,7 +482,11 @@
     "nRange": "n（端元范围）",
     "relaxedVolume": "CHGNet 弛豫后 ΔV",
     "experiments": "测量",
-    "hintPrivate": "公开候选和您自己的私有候选（🔒），来自表单与智能体。最多选择 {max} 个进行比较。"
+    "hintPrivate": "公开候选和您自己的私有候选，来自表单与智能体。最多选择 {max} 个进行比较。",
+    "visibility": "可见性",
+    "visPrivate": "私有",
+    "visAnonymous": "匿名",
+    "visPublicMode": "公开模式"
   },
   "Spatial": {
     "loading": "正在分析三维结构…",

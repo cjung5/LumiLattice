@@ -463,7 +463,7 @@
   },
   "Registry": {
     "title": "7. Candidate registry",
-    "hint": "Every candidate on this server, from the form and from the agent. Anyone who opens this site can read them. Select up to {max} to compare.",
+    "hint": "Public candidates, from the form and from the agent. Anyone who opens this site can read them. Select up to {max} to compare.",
     "filter": {
       "all": "All",
       "plausible": "Plausible",
@@ -482,7 +482,11 @@
     "nRange": "n (end-member range)",
     "relaxedVolume": "ΔV after CHGNet",
     "experiments": "Measurements",
-    "hintPrivate": "Public candidates and your own private candidates (🔒), from the form and from the agent. Select up to {max} to compare."
+    "hintPrivate": "Public candidates and your own private candidates, from the form and from the agent. Select up to {max} to compare.",
+    "visibility": "Visibility",
+    "visPrivate": "Private",
+    "visAnonymous": "Anonymous",
+    "visPublicMode": "Public mode"
   },
   "Spatial": {
     "loading": "Analyzing the 3D structure…",

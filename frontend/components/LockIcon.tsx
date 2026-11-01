@@ -7,3 +7,12 @@ export function LockIcon({ className = "" }: { className?: string }) {
     </svg>
   );
 }
+
+export function GlobeIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg aria-hidden viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.4" className={`inline-block ${className}`}>
+      <circle cx="8" cy="8" r="6.3" />
+      <path d="M1.7 8h12.6M8 1.7c-3.6 4-3.6 8.6 0 12.6M8 1.7c3.6 4 3.6 8.6 0 12.6" />
+    </svg>
+  );
+}

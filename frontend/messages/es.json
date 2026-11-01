@@ -463,7 +463,7 @@
   },
   "Registry": {
     "title": "7. Registro de candidatos",
-    "hint": "Todos los candidatos de este servidor, del formulario y del agente. Cualquiera que abra este sitio puede leerlos. Selecciona hasta {max} para comparar.",
+    "hint": "Candidatos públicos, del formulario y del agente. Cualquiera que abra este sitio puede leerlos. Selecciona hasta {max} para comparar.",
     "filter": {
       "all": "Todos",
       "plausible": "Plausible",
@@ -482,7 +482,11 @@
     "nRange": "n (rango de miembros extremos)",
     "relaxedVolume": "ΔV tras CHGNet",
     "experiments": "Mediciones",
-    "hintPrivate": "Candidatos públicos y tus candidatos privados (🔒), del formulario y del agente. Selecciona hasta {max} para comparar."
+    "hintPrivate": "Candidatos públicos y tus candidatos privados, del formulario y del agente. Selecciona hasta {max} para comparar.",
+    "visibility": "Visibilidad",
+    "visPrivate": "Privado",
+    "visAnonymous": "Anónimo",
+    "visPublicMode": "Modo público"
   },
   "Spatial": {
     "loading": "Analizando la estructura 3D…",
