@@ -498,7 +498,7 @@ body::after {
   /* A candidate's name, in its own color, that slowly grows bright and then dim. */
   .material-name {
     color: var(--material);
-    animation: material-glow 6s ease-in-out infinite;
+    animation: material-glow 4s ease-in-out infinite;
   }
 
   .material-header {
