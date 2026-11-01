@@ -1,7 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import SecretStr
+from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
@@ -43,6 +43,19 @@ class Settings(BaseSettings):
     cors_origins: list[str] = ["http://localhost:3000"]
     # Also allow origins that fully match this pattern (e.g. Vercel preview URLs).
     cors_origin_regex: str | None = None
+
+    @field_validator(
+        "model_api_key",
+        "mp_api_key",
+        "semantic_scholar_api_key",
+        "openalex_api_key",
+        "database_url",
+        mode="before",
+    )
+    @classmethod
+    def blank_means_not_set(cls, value: object) -> object:
+        """A host can save a variable with no value; it must not count as configured."""
+        return None if isinstance(value, str) and not value.strip() else value
 
 
 @lru_cache

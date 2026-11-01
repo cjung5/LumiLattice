@@ -64,3 +64,11 @@ def test_cors_regex_allows_vercel_previews():
     assert pattern.fullmatch("https://lumilattice-git-main-cjung5.vercel.app")
     assert not pattern.fullmatch("https://evil.example.com")
     assert not pattern.fullmatch("https://lumilattice.vercel.app.evil.com")
+
+
+def test_blank_secret_counts_as_not_configured():
+    settings = Settings(_env_file=None, model_api_key="", mp_api_key="  ", openalex_api_key="k")
+
+    assert settings.model_api_key is None
+    assert settings.mp_api_key is None
+    assert settings.openalex_api_key is not None
