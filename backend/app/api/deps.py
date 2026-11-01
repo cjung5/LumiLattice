@@ -70,8 +70,12 @@ CodDep = Annotated[CodClient, Depends(get_cod_client)]
 
 
 def client_id(request: Request) -> str:
-    """Rate-limit key: the first X-Forwarded-For address (Render's proxy), else the peer."""
-    forwarded = request.headers.get("x-forwarded-for")
-    if forwarded:
-        return forwarded.split(",")[0].strip()
+    """Rate-limit key: X-Real-IP from Railway's edge, else the peer (local development).
+
+    X-Forwarded-For is not used: its first address can come from the client. If a proxy adds to
+    a value the client sent, the last X-Real-IP is the one the proxy wrote.
+    """
+    real_ip = request.headers.getlist("x-real-ip")
+    if real_ip:
+        return real_ip[-1].strip()
     return request.client.host if request.client else "unknown"

@@ -264,13 +264,13 @@ curl -OJ "http://localhost:8000/api/candidates/LL-0003/export.json?target_n=2.2&
 
 Candidates are **private by default**. Publishing needs explicit consent and a credit choice (by name/ORCID or anonymous). In this version, publishing records the choice only; nothing is sent outside LumiLattice.
 
-Candidates are kept in memory unless `DATABASE_URL` points to a Postgres database (for example the free plan of Neon or Supabase); then they survive restarts.
+Candidates are kept in memory unless `DATABASE_URL` points to a Postgres database; then they survive restarts.
 
 ## API usage limits
 
 - Materials Project and OpenAlex responses are cached for 24 hours. OpenAlex stops at 500 searches per day (half of its free daily budget) and stops early if the free budget left for the day falls below $0.05. Materials Project has a cap of 1,000 requests per day.
 - Crossref (public pool, 1 request per second), arXiv (1 request per 3 seconds, as its API terms ask), Semantic Scholar (optional free key), and COD are free; they are cached and capped too. If a source rate-limits or times out, it is skipped for 10 minutes so the other sources still answer quickly. No personal email address is sent.
-- The public demo protects Meta Model API credits: at most 10 agent requests per client per 10 minutes and 200 per day, with at most 8 tool steps per request. Critiques count as agent requests (one request, plus at most one retry).
+- The public demo protects Meta Model API credits: at most 10 agent requests per client per 10 minutes (the client is the `X-Real-IP` address from Railway's edge) and 200 per day, with at most 8 tool steps per request. Critiques count as agent requests (one request, plus at most one retry).
 
 ## Run locally
 
@@ -318,16 +318,22 @@ The backend writes its sentences in English, because Muse Spark and the exports 
 
 ## Deploy
 
-The backend runs on Render (Docker, free plan) and the frontend on Vercel.
+The backend and its Postgres database run on Railway, and the frontend on Vercel.
 
 1. **Secret:** make one value for `VISIT_SECRET` with `openssl rand -hex 32`. Both servers need the same value.
-2. **Database:** create a free Postgres database (Neon or Supabase) and copy its URL. The tables are created at the first start. Without it, candidates and researcher counts are lost when the backend sleeps.
-3. **Backend (Render):** New → Blueprint → select this repository. Render reads [`render.yaml`](render.yaml) and asks for `MODEL_API_KEY`, `MP_API_KEY`, `OPENALEX_API_KEY`, `DATABASE_URL`, and `VISIT_SECRET`. When the deploy finishes, open `https://<service>.onrender.com/api/health`.
-4. **Frontend (Vercel):** New Project → import this repository → Root Directory `frontend`. Add the environment variables `NEXT_PUBLIC_API_BASE_URL` = the Render URL (no trailing slash) and `VISIT_SECRET` = the value from step 1, then deploy. Use a project name that starts with `lumilattice`.
-5. **CORS:** `CORS_ORIGIN_REGEX` in `render.yaml` allows `https://lumilattice*.vercel.app`. If the Vercel project has another name, change it in the Render dashboard.
-6. **Check:** open the site, run the example, and confirm that your country appears on the globe.
+2. **Database (Railway):** in a new project, add PostgreSQL. The tables are created at the first start of the backend.
+3. **Backend (Railway):** add a service from this GitHub repository and set its Root Directory to `backend`, so that it builds from [`backend/Dockerfile`](backend/Dockerfile). Add these variables:
+   - `DATABASE_URL` = `${{Postgres.DATABASE_URL}}`
+   - `MODEL_API_KEY`, `MP_API_KEY`, `OPENALEX_API_KEY`
+   - `VISIT_SECRET` = the value from step 1
+   - `CORS_ORIGIN_REGEX` = `https://lumilattice[a-z0-9-]*\.vercel\.app`
 
-Limits of the free plan: the backend sleeps after 15 minutes without requests (the next request takes about a minute). Without `DATABASE_URL`, candidates are lost when it sleeps. Open the health URL a minute before a demo.
+   Then generate a public domain under the service's Networking settings, set the health check path to `/api/health`, and open `https://<domain>/api/health`. It should show `"candidate_store":"postgres"`.
+4. **Frontend (Vercel):** New Project → import this repository → Root Directory `frontend`. Add `NEXT_PUBLIC_API_BASE_URL` = the Railway URL (no trailing slash) and `VISIT_SECRET` = the value from step 1, then deploy. Use a project name that starts with `lumilattice`, or change `CORS_ORIGIN_REGEX` to match.
+5. **Check:** open the site, run the example, and confirm that your country appears on the globe.
+6. **Spending:** on the Railway workspace Usage page, set an email alert at $5 and a hard limit at $10 (the lowest allowed). At the hard limit, every service in the workspace goes offline until the next billing cycle or until you raise the limit. Also set a spend limit on the Meta account, because the site is public.
+
+Without `DATABASE_URL`, candidates and researcher counts are kept in memory and are lost when the server restarts. CHGNet relaxation is not installed in the image; it works only in a local install (`uv sync --group relax`).
 
 ## Built during the hackathon
 

@@ -1,7 +1,7 @@
 """Candidate stores: in memory (default) or SQL (Postgres in production, SQLite in tests).
 
-Render's free plan deletes local files when the service sleeps, so set DATABASE_URL to a
-hosted Postgres (e.g. Neon or Supabase) to keep candidates, decisions, and history.
+Memory is lost when the server restarts, so set DATABASE_URL to a hosted Postgres (Railway in
+production) to keep candidates, decisions, and history.
 """
 
 import json
@@ -78,7 +78,7 @@ candidates_table = Table(
 
 
 def sqlalchemy_url(url: str) -> str:
-    """Neon and Supabase give postgres:// URLs; SQLAlchemy needs the psycopg 3 driver name."""
+    """Hosts give postgres:// or postgresql:// URLs; SQLAlchemy needs the psycopg 3 driver name."""
     for prefix in ("postgres://", "postgresql://"):
         if url.startswith(prefix):
             return "postgresql+psycopg://" + url.removeprefix(prefix)

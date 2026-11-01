@@ -76,6 +76,43 @@ def test_agent_rate_limit(fake_agent):
     assert api.post("/api/agent/run", json={"message": "hi"}).status_code == 429
 
 
+def test_changing_x_forwarded_for_does_not_avoid_the_rate_limit(fake_agent):
+    api = TestClient(app)
+    for n in range(AGENT_RATE.max_requests):
+        response = api.post(
+            "/api/agent/run", json={"message": "hi"}, headers={"X-Forwarded-For": f"203.0.113.{n}"}
+        )
+        assert response.status_code == 200
+
+    response = api.post(
+        "/api/agent/run", json={"message": "hi"}, headers={"X-Forwarded-For": "198.51.100.1"}
+    )
+    assert response.status_code == 429
+
+
+def test_rate_limit_is_per_real_ip(fake_agent):
+    api = TestClient(app)
+    first = {"X-Real-IP": "203.0.113.1"}
+    for _ in range(AGENT_RATE.max_requests):
+        assert api.post("/api/agent/run", json={"message": "hi"}, headers=first).status_code == 200
+    assert api.post("/api/agent/run", json={"message": "hi"}, headers=first).status_code == 429
+
+    other = {"X-Real-IP": "203.0.113.2"}
+    assert api.post("/api/agent/run", json={"message": "hi"}, headers=other).status_code == 200
+
+
+def test_last_real_ip_is_used_when_a_proxy_adds_to_the_client_value(fake_agent):
+    api = TestClient(app)
+    for n in range(AGENT_RATE.max_requests):
+        headers = [("X-Real-IP", f"203.0.113.{n}"), ("X-Real-IP", "198.51.100.1")]
+        assert (
+            api.post("/api/agent/run", json={"message": "hi"}, headers=headers).status_code == 200
+        )
+
+    headers = [("X-Real-IP", "203.0.113.200"), ("X-Real-IP", "198.51.100.1")]
+    assert api.post("/api/agent/run", json={"message": "hi"}, headers=headers).status_code == 429
+
+
 def test_decision_is_recorded(srtio3):
     seed = create_candidate(
         get_store(),

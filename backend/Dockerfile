@@ -1,4 +1,4 @@
-# Backend image for Render (free plan: 512 MB RAM; about 215 MB after candidate work in a local check).
+# Backend image for Railway (about 215 MB of memory after candidate work in a local check).
 FROM python:3.12-slim
 
 COPY --from=ghcr.io/astral-sh/uv:0.11.28 /uv /bin/uv
@@ -17,5 +17,5 @@ COPY app ./app
 COPY data/reference.sqlite ./data/reference.sqlite
 COPY data/validation.json ./data/validation.json
 
-# Render sets PORT (default 10000).
+# Railway sets PORT.
 CMD ["sh", "-c", "exec .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips='*'"]

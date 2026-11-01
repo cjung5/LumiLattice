@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     # Semantic Scholar works without a key but is often rate-limited; a free key helps.
     semantic_scholar_api_key: SecretStr | None = None
 
-    # Hosted Postgres for candidates (e.g. Neon or Supabase). Unset: kept in memory only.
+    # Hosted Postgres for candidates (Railway in production). Unset: kept in memory only.
     database_url: SecretStr | None = None
     # Shared with the frontend server. When set, only that server can add to the visitor counts.
     visit_secret: str | None = None

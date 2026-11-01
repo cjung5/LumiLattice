@@ -44,7 +44,7 @@ def test_sql_store_survives_restart(tmp_path, srtio3):
     url = f"sqlite:///{tmp_path / 'c.db'}"
     first = make(SqlStore(url), srtio3)
 
-    reopened = SqlStore(url)  # e.g. after Render's free plan wakes up
+    reopened = SqlStore(url)  # e.g. after the server restarts
 
     assert reopened.get(first.candidate_id)[0].formula == first.formula
     assert make(reopened, srtio3).candidate_id == "LL-0002"
