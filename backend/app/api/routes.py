@@ -1,7 +1,9 @@
+import hashlib
 import secrets
 from dataclasses import asdict
 from typing import Annotated, Any, Literal
 
+import httpx
 from fastapi import APIRouter, Header, HTTPException, Request
 from openai import APIError
 from pydantic import BaseModel, Field, field_validator
@@ -128,6 +130,39 @@ def with_context(message: str, context: AgentContext | None) -> str:
     if not lines:
         return message
     return "[Workspace]\n" + "\n".join(lines) + "\n[/Workspace]\n\n" + message
+
+
+@router.get("/debug/meta")
+def debug_meta(request: Request, settings: SettingsDep) -> dict[str, Any]:
+    """TEMPORARY: what Meta tells this server about its models. Remove after the live test."""
+    if settings.model_api_key is None:
+        raise HTTPException(status_code=503, detail="MODEL_API_KEY is not set.")
+    if not AGENT_RATE.allow(client_id(request)):
+        raise HTTPException(status_code=429, detail="Too many requests. Wait a few minutes.")
+    key = settings.model_api_key.get_secret_value()
+    headers = {"Authorization": f"Bearer {key}"}
+    with httpx.Client(timeout=30) as http:
+        listed = http.get(f"{settings.model_api_base_url}/models", headers=headers)
+        location = http.get("https://ipinfo.io/json").json()
+        calls = {}
+        for model in ("muse-spark-1.3", "muse-spark-1.2", "muse-spark-1.1"):
+            response = http.post(
+                f"{settings.model_api_base_url}/responses",
+                headers=headers,
+                json={"model": model, "input": "Reply OK", "max_output_tokens": 16},
+            )
+            calls[model] = {"status": response.status_code, "text": response.text[:120]}
+    return {
+        "key_fingerprint": hashlib.sha256(key.encode()).hexdigest()[:12],
+        "base_url": settings.model_api_base_url,
+        "models_status": listed.status_code,
+        "models": [m.get("id") for m in listed.json().get("data", [])]
+        if listed.status_code == 200
+        else listed.text[:120],
+        "server_country": location.get("country"),
+        "server_org": location.get("org"),
+        "calls": calls,
+    }
 
 
 @router.post("/agent/run")
