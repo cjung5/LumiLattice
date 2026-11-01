@@ -76,17 +76,17 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --background: #081a13;
+  --background: #030c08;
   --foreground: #f4f8ea;
-  --surface: #0f2c21;
-  --surface-2: #16392b;
-  --line: #224a39;
-  --line-strong: #356350;
+  --surface: #0a2018;
+  --surface-2: #102c21;
+  --line: #1a3a2c;
+  --line-strong: #2d5543;
   --muted: #b4cdbc;
   --accent: #a8e6a1;
   --on-accent: #0a2a18;
   --accent-text: #b5eca9;
-  --accent-soft: #1a4433;
+  --accent-soft: #14362a;
   --danger: #ffa198;
   --warning: #f6e08a;
   --leaf-1: #8fe3a8;
@@ -104,10 +104,10 @@
   --spot-page: 0.2;
   --spot-edge: 255 250 205;
   --spot-dot: rgb(251 243 180 / 0.6);
-  --globe-sea: #0a241a;
-  --globe-sea-lit: #17452f;
-  --globe-land: #235a41;
-  --globe-border: #0f2c21;
+  --globe-sea: #051710;
+  --globe-sea-lit: #113824;
+  --globe-land: #1e4f39;
+  --globe-border: #0a2018;
   --globe-few: #7edb9b;
   --globe-many: #fff7b8;
   --globe-air: rgb(201 240 160 / 0.26);
@@ -115,7 +115,7 @@
   --card-shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 14px 34px -18px rgb(0 0 0 / 0.7);
   --button-glow: 0 0 0 1px rgb(251 243 180 / 0.18), 0 2px 10px -2px rgb(251 243 180 / 0.45), 0 10px 34px -6px rgb(143 227 168 / 0.45);
   --result-glow: 0 0 44px -22px rgb(201 240 160 / 0.8);
-  --glass: rgb(15 44 33 / 0.84);
+  --glass: rgb(10 32 24 / 0.84);
   --on-unknown-mark: #0b0f1d;
   --tag-exp: #7ce6c0;
   --tag-dft: #a5ccf5;
@@ -126,9 +126,9 @@
   --series-dft: #6cb0f5;
   --series-heur: #f28548;
   --dft-cloud: 0.62;
-  --chart-surface: #0c251b;
-  --chart-grid: #1d3f30;
-  --chart-axis: #356350;
+  --chart-surface: #071810;
+  --chart-grid: #163125;
+  --chart-axis: #2d5543;
   --chart-ink: #f4f8ea;
   --chart-ink-2: #cfe0d2;
   --chart-muted: #93ad9b;

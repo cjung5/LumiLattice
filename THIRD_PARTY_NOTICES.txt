@@ -1,0 +1,78 @@
+LumiLattice is licensed under Apache-2.0 (see LICENSE). This file lists the third-party data
+bundled in this repository, and the libraries that the app depends on. Each item keeps its own
+license. README.md lists the citations for every data source.
+
+
+DATA BUNDLED IN backend/data/reference.sqlite
+
+We changed these datasets: we kept only selected fields, matched values by reduced formula, and
+computed medians and quartiles. The original authors do not endorse LumiLattice.
+
+JARVIS-DFT 3D, version 2025-09-24
+  K. Choudhary et al., npj Comput. Mater. 6, 173 (2020)
+  https://doi.org/10.6084/m9.figshare.6815699
+  License: CC BY 4.0, https://creativecommons.org/licenses/by/4.0/
+
+refractiveindex.info database, release 2026-05-24
+  M. N. Polyanskiy, Sci. Data 11, 94 (2024)
+  License: CC0 1.0, https://creativecommons.org/publicdomain/zero/1.0/
+
+Expt Gap Data
+  Y. Zhuo, A. Mansouri Tehrani, J. Brgoch, J. Phys. Chem. Lett. 9, 1668 (2018)
+  https://doi.org/10.6084/m9.figshare.7289687.v1
+  License: MIT, as stated on the Figshare record. Copyright (c) the authors.
+
+Text-mined band gaps
+  Q. Dong, J. M. Cole, Sci. Data 9, 193 (2022)
+  https://doi.org/10.6084/m9.figshare.14079863.v1
+  License: MIT, as stated on the Figshare record. Copyright (c) the authors.
+
+The MIT license text for the two items above:
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+  and associated documentation files (the "Software"), to deal in the Software without
+  restriction, including without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+  Software is furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in all copies or
+  substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+  BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+  DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+DATA THE APP USES AT RUN TIME, OR THAT THE TESTS USE (NOT BUNDLED)
+
+Materials Project (CC BY 4.0), Crystallography Open Database (CC0), OpenAlex (CC0), Crossref,
+arXiv, Semantic Scholar. The score tests also use the text-mined refractive indices of Zhao & Cole
+(CC BY 4.0). See README.md.
+
+
+FIGURES IN docs/figures
+
+We made these figures with LumiLattice. They contain no images from other sources. The crystal
+structure in them comes from Materials Project (mp-5229, CC BY 4.0). The charts show data from
+the sources above.
+
+
+LIBRARIES
+
+The repository does not contain copies of its libraries. The package managers install them from
+backend/uv.lock and frontend/package-lock.json, unchanged. Each package keeps its own license.
+
+Most are MIT, BSD, ISC, or Apache-2.0. These are the main ones the app uses directly:
+  3Dmol.js (BSD-3-Clause), pymatgen (MIT), Next.js (MIT), React (MIT), next-intl (MIT),
+  d3-geo (ISC), topojson-client (ISC), FastAPI (MIT), SQLAlchemy (MIT)
+  world-atlas (ISC), with map data from Natural Earth (public domain)
+  Geist font (SIL Open Font License 1.1), through next/font
+  CHGNet (BSD-3-Clause), for a local install only
+
+These have a weak copyleft license, and the app uses them as unchanged libraries:
+  psycopg, psycopg-binary (LGPL-3.0), the Postgres driver
+  ase (LGPL-2.1-or-later), for the optional local relaxation
+  bibtexparser (LGPL-3.0 or BSD), a dependency of pymatgen
+  sharp-libvips (LGPL-3.0-or-later), an optional image library of Next.js

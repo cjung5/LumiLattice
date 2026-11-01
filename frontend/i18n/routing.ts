@@ -5,6 +5,8 @@ import { defineRouting } from "next-intl/routing";
 export const routing = defineRouting({
   locales: ["en", "ko", "zh-Hans", "ja", "es", "de"],
   defaultLocale: "en",
+  // Always open in English; a browser's language setting does not change it. The switcher still works.
+  localeDetection: false,
 });
 
 export type Locale = (typeof routing.locales)[number];

@@ -667,7 +667,7 @@ export function CloudView({ cif, colors, emphasis = [] }: Props) {
 
   return (
     <div>
-      <div className="relative h-96 w-full overflow-hidden rounded-lg border border-line" style={{ background: "radial-gradient(circle at 50% 40%, #143527, #0a1f17 75%)" }}>
+      <div className="relative h-96 w-full overflow-hidden rounded-lg border border-line" style={{ background: "radial-gradient(circle at 50% 40%, #0f2a1f, #061610 75%)" }}>
         <canvas ref={canvas} className="absolute inset-0 h-full w-full cursor-grab touch-none active:cursor-grabbing" aria-label={t("cloudLabel")} role="img" />
         {!data && !error && <p className="absolute inset-0 flex items-center justify-center text-sm text-white/70">{t("cloudLoading")}</p>}
         {error && <p className="absolute inset-0 flex items-center justify-center p-4 text-center text-sm text-white">{error}</p>}
