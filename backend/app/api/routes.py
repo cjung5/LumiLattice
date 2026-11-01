@@ -8,9 +8,9 @@ from pydantic import BaseModel, Field, field_validator
 
 from app.agents.loop import BEGINNER_NOTE, AgentStepLimitReached, Audience, run_agent
 from app.agents.muse import ModelAPIKeyMissing, create_client
-from app.api.deps import LiteratureDep, OptionalMPDep, SettingsDep, client_id
+from app.api.deps import LiteratureDep, OptionalMPDep, SettingsDep, StoreDep, client_id
 from app.models.candidates import DecisionKind
-from app.storage.memory import get_store
+from app.storage.scoped import ScopedStore
 from app.storage.visits import UNKNOWN, get_visits
 from app.tools.catalog import build_registry
 from app.tools.goals import Goal
@@ -33,6 +33,7 @@ def health(settings: SettingsDep) -> dict[str, Any]:
         "reference_db_available": get_reference_db().available,
         "candidate_store": "postgres" if settings.database_url else "memory",
         "relaxation_available": relaxation_available(),
+        "sign_in_enabled": settings.auth_secret is not None,
     }
 
 
@@ -92,7 +93,7 @@ class AgentRequest(BaseModel):
     context: AgentContext | None = None
 
 
-def with_context(message: str, context: AgentContext | None) -> str:
+def with_context(message: str, context: AgentContext | None, store: ScopedStore) -> str:
     if context is None:
         return message
     lines = []
@@ -111,7 +112,7 @@ def with_context(message: str, context: AgentContext | None) -> str:
             "Use score_against_goal to check candidates."
         )
     if context.current_candidate_id:
-        stored = get_store().get(context.current_candidate_id)
+        stored = store.get(context.current_candidate_id)
         if stored:
             candidate = stored[0]
             lines.append(
@@ -137,6 +138,7 @@ def agent_run(
     settings: SettingsDep,
     mp: OptionalMPDep,
     literature: LiteratureDep,
+    store: StoreDep,
 ) -> dict[str, Any]:
     try:
         client = create_client(settings)
@@ -153,8 +155,10 @@ def agent_run(
         result = run_agent(
             client,
             settings.muse_model,
-            build_registry(mp, literature, goal=body.context.goal if body.context else None),
-            with_context(body.message, body.context),
+            build_registry(
+                mp, literature, store=store, goal=body.context.goal if body.context else None
+            ),
+            with_context(body.message, body.context, store),
             locale=body.locale,
             max_steps=settings.agent_max_steps,
             previous_response_id=body.previous_response_id,

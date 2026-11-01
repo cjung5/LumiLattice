@@ -357,7 +357,7 @@
   "Decision": {
     "title": "你对 {id} 的决定",
     "placeholder": "原因？例如仅保留 Ti4+、避免有毒元素、尝试更大的 A 位离子",
-    "hint": "接受与拒绝将被记录。修改与探索将被记录并连同原因发送给智能体。 任何打开本网站的人都能读取。",
+    "hint": "接受与拒绝将被记录。修改与探索将被记录并连同原因发送给智能体。",
     "accept": "接受",
     "modify": "修改",
     "explore": "探索替代方案",
@@ -368,7 +368,9 @@
     "rejectHint": "记录该候选无用及原因。",
     "last": "上次决定：{decision}",
     "placeholderGuided": "原因？例如：折光不够强，因此尝试其他元素。",
-    "hintGuided": "您的决定将与理由一起保存。修改和探索也会让 Muse Spark 重新尝试，请说明您想改变的内容。 任何打开本网站的人都能读取。"
+    "hintGuided": "您的决定将与理由一起保存。修改和探索也会让 Muse Spark 重新尝试，请说明您想改变的内容。",
+    "visiblePublic": "任何打开本网站的人都能读取。",
+    "visibleOwner": "除非您发布此候选，否则其他用户无法读取。"
   },
   "Optical": {
     "loading": "正在加载光学数据…",
@@ -398,7 +400,21 @@
     "confirm": "发布",
     "cancel": "取消",
     "creditName": "署名：{name}",
-    "creditAnonymous": "署名：匿名"
+    "creditAnonymous": "匿名发布",
+    "privateChip": "私有：只有您能看到",
+    "publicChip": "公开模式：任何人都能读取",
+    "publicHint": "公开模式的候选没有所有者，因此任何人都不能署名发布。若要发布自己的工作，请选择私有并登录。",
+    "ownedWarning": "发布后，所有人都能看到此候选及其决定、理由、评审、测量值和得到它的替换过程。公开披露可能影响之后的专利申请，如有需要请先确认。LumiLattice 会记录您的账户、时间和结构指纹。这只是记录，不是法律所有权的证明。他人可按 CC BY 4.0 署名后再利用。",
+    "creditLogin": "显示我的 GitHub 名称 (@{login})",
+    "anonymousOwned": "匿名（其他用户看不到您的账户）",
+    "consentOwned": "我已阅读以上内容，并选择以 CC BY 4.0 发布 {id}。",
+    "undoNote": "取消后会重新隐藏，但他人已制作的副本可能仍然存在。",
+    "recordHash": "记录：SHA-256 {hash}…",
+    "creditVerified": "由 @{name} 发布",
+    "license": "许可：{license}",
+    "otherNote": "这是他人发布的工作，您可以读取但不能更改。若要继续研究，请修改它：您的版本归您所有，并保留原作者的署名。",
+    "basedOn": "基于 @{name} 的工作",
+    "basedOnAnonymous": "基于匿名研究者的工作"
   },
   "Relax": {
     "title": "弛豫 (CHGNet，本地安装)",
@@ -442,7 +458,8 @@
       "all": "全部",
       "plausible": "合理",
       "published": "已发布",
-      "decided": "已有决定"
+      "decided": "已有决定",
+      "mine": "我的"
     },
     "empty": "暂无候选。",
     "compare": "比较",
@@ -454,7 +471,8 @@
     "substitutions": "取代（相对初始主体）",
     "nRange": "n（端元范围）",
     "relaxedVolume": "CHGNet 弛豫后 ΔV",
-    "experiments": "测量"
+    "experiments": "测量",
+    "hintPrivate": "公开候选和您自己的私有候选（🔒），来自表单与智能体。最多选择 {max} 个进行比较。"
   },
   "Spatial": {
     "loading": "正在分析三维结构…",
@@ -675,7 +693,9 @@
   },
   "Workspace": {
     "sharedAndPapers": "共享的候选材料和研究论文",
-    "noAccounts": "此版本没有账户。任何打开本网站的人都能读取这里保存的候选材料、决定和测量值。您向智能体提出的内容会发送到 Meta 的 Model API。请勿输入机密工作内容。"
+    "noAccounts": "此版本没有账户。任何打开本网站的人都能读取这里保存的候选材料、决定和测量值。您向智能体提出的内容会发送到 Meta 的 Model API。请勿输入机密工作内容。",
+    "publicNotice": "公开模式：任何打开本网站的人都能读取这里保存的候选材料、决定和测量值。您向智能体提出的内容会发送到 Meta 的 Model API。请勿输入机密工作内容。若要让新候选不被其他用户看到，请选择私有并使用 GitHub 登录。我们只保存您的 GitHub ID 和用户名，不保存密码或电子邮件地址。",
+    "privateNotice": "私有模式：您在这里创建的候选在发布前，其他用户看不到。但这并不等于保密：您向智能体提出的内容会发送到 Meta 的 Model API，搜索会把化学式发送到外部服务，运营者也能读取数据库。请勿输入机密工作内容。"
   },
   "Scorecard": {
     "title": "评分",
@@ -974,7 +994,7 @@
   "Visitors": {
     "title": "本研究活跃地区",
     "hint": "每个打开此工具的浏览器仅计数一次。",
-    "notice": "我们不会保留您的确切位置、IP 地址或任何可识别您身份的信息。我们仅保留每个国家/地区的计数，以了解本研究在哪些地区活跃。",
+    "notice": "为了这项统计，我们不保存您的精确位置、IP 地址或任何可识别您的信息。我们只保存每个国家的数量，以了解这项研究在哪里活跃。",
     "total": "总计",
     "countries": "个国家",
     "unknown": "位置未知",
@@ -990,5 +1010,14 @@
     "noVisitors": "暂无研究人员",
     "turnTo": "将地球仪转向{country}",
     "memoryNote": "此服务器将计数保存在内存中，重启后会重置。"
+  },
+  "Auth": {
+    "modeLabel": "工作模式",
+    "public": "公开",
+    "private": "私有",
+    "publicHint": "无需登录。任何人都能读取您保存的内容。",
+    "privateHint": "使用 GitHub 登录。新的候选在发布前，其他用户看不到。",
+    "signOut": "退出登录",
+    "signInFailed": "GitHub 登录未完成。请重试。"
   }
 }

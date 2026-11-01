@@ -357,7 +357,7 @@
   "Decision": {
     "title": "Ihre Entscheidung zu {id}",
     "placeholder": "Warum? z. B. nur Ti4+ behalten, toxische Elemente vermeiden, größeres A-Lagen-Ion versuchen",
-    "hint": "Akzeptieren und Ablehnen werden protokolliert. Ändern und Alternativen werden protokolliert und mit Ihrer Begründung an den Agenten gesendet. Alle, die diese Seite öffnen, können das lesen.",
+    "hint": "Akzeptieren und Ablehnen werden protokolliert. Ändern und Alternativen werden protokolliert und mit Ihrer Begründung an den Agenten gesendet.",
     "accept": "Akzeptieren",
     "modify": "Ändern",
     "explore": "Alternativen erkunden",
@@ -368,7 +368,9 @@
     "rejectHint": "Festhalten, dass dieser Kandidat nicht nützlich ist, und warum.",
     "last": "Letzte Entscheidung: {decision}",
     "placeholderGuided": "Warum? Zum Beispiel: Es bricht Licht nicht stark genug, also ein anderes Element versuchen.",
-    "hintGuided": "Deine Entscheidung wird mit Begründung gespeichert. Ändern und Erkunden bitten Muse Spark ebenfalls um einen neuen Versuch, also sag, was geändert werden soll. Alle, die diese Seite öffnen, können das lesen."
+    "hintGuided": "Deine Entscheidung wird mit Begründung gespeichert. Ändern und Erkunden bitten Muse Spark ebenfalls um einen neuen Versuch, also sag, was geändert werden soll.",
+    "visiblePublic": "Alle, die diese Seite öffnen, können das lesen.",
+    "visibleOwner": "Andere können das nicht lesen, solange du diesen Kandidaten nicht veröffentlichst."
   },
   "Optical": {
     "loading": "Optische Daten werden geladen…",
@@ -398,7 +400,21 @@
     "confirm": "Veröffentlichen",
     "cancel": "Abbrechen",
     "creditName": "Namensnennung: {name}",
-    "creditAnonymous": "Namensnennung: anonym"
+    "creditAnonymous": "Anonym veröffentlicht",
+    "privateChip": "Privat: nur du siehst das",
+    "publicChip": "Öffentlicher Modus: alle können das lesen",
+    "publicHint": "Ein Kandidat aus dem öffentlichen Modus hat keinen Eigentümer, daher kann ihn niemand mit Namen veröffentlichen. Um eigene Arbeit zu veröffentlichen, wähle Privat und melde dich an.",
+    "ownedWarning": "Das Veröffentlichen zeigt diesen Kandidaten allen, mit Entscheidungen, Begründungen, Kritiken, Messwerten und den Substitutionen, die zu ihm führten. Eine Veröffentlichung kann eine spätere Patentanmeldung beeinträchtigen, prüfe das also vorher, falls es für dich wichtig ist. LumiLattice speichert dein Konto, die Zeit und einen Fingerabdruck der Struktur. Das ist ein Nachweis des Vorgangs, kein Beweis für rechtliches Eigentum. Andere können den Inhalt unter CC BY 4.0 mit Namensnennung weiterverwenden.",
+    "creditLogin": "Meinen GitHub-Namen zeigen (@{login})",
+    "anonymousOwned": "Anonym (andere sehen dein Konto nicht)",
+    "consentOwned": "Ich habe das gelesen und veröffentliche {id} unter CC BY 4.0.",
+    "undoNote": "Das Zurücknehmen verbirgt den Kandidaten wieder, aber Kopien anderer können bestehen bleiben.",
+    "recordHash": "Nachweis: SHA-256 {hash}…",
+    "creditVerified": "Veröffentlicht von @{name}",
+    "license": "Lizenz: {license}",
+    "otherNote": "Dies ist die veröffentlichte Arbeit einer anderen Person: Du kannst sie lesen, aber nicht ändern. Um darauf aufzubauen, überarbeite sie. Deine Version gehört dir und behält die Namensnennung.",
+    "basedOn": "Basiert auf der Arbeit von @{name}",
+    "basedOnAnonymous": "Basiert auf der Arbeit einer anonymen Person"
   },
   "Relax": {
     "title": "Relaxation (CHGNet, lokale Installation)",
@@ -442,7 +458,8 @@
       "all": "Alle",
       "plausible": "Plausibel",
       "published": "Veröffentlicht",
-      "decided": "Mit Entscheidung"
+      "decided": "Mit Entscheidung",
+      "mine": "Meine"
     },
     "empty": "Noch keine Kandidaten.",
     "compare": "Vergleichen",
@@ -454,7 +471,8 @@
     "substitutions": "Substitutionen (ab Root-Host)",
     "nRange": "n (Endglied-Bereich)",
     "relaxedVolume": "ΔV nach CHGNet",
-    "experiments": "Messungen"
+    "experiments": "Messungen",
+    "hintPrivate": "Öffentliche Kandidaten und deine eigenen privaten Kandidaten (🔒), aus Formular und Agent. Bis zu {max} zum Vergleichen wählen."
   },
   "Spatial": {
     "loading": "3D-Struktur wird analysiert…",
@@ -675,7 +693,9 @@
   },
   "Workspace": {
     "sharedAndPapers": "Geteilte Kandidaten und Forschungspapiere",
-    "noAccounts": "Diese Version hat keine Konten. Alle, die diese Seite öffnen, können die hier gespeicherten Kandidaten, Entscheidungen und Messwerte lesen. Was du den Agenten fragst, geht an die Meta Model API. Gib keine vertraulichen Arbeiten ein."
+    "noAccounts": "Diese Version hat keine Konten. Alle, die diese Seite öffnen, können die hier gespeicherten Kandidaten, Entscheidungen und Messwerte lesen. Was du den Agenten fragst, geht an die Meta Model API. Gib keine vertraulichen Arbeiten ein.",
+    "publicNotice": "Öffentlicher Modus: Alle, die diese Seite öffnen, können die hier gespeicherten Kandidaten, Entscheidungen und Messwerte lesen. Was du den Agenten fragst, geht an die Meta Model API. Gib keine vertraulichen Arbeiten ein. Um neue Kandidaten vor anderen zu verbergen, wähle Privat und melde dich mit GitHub an. Wir speichern nur deine GitHub-ID und deinen Benutzernamen, nicht dein Passwort oder deine E-Mail-Adresse.",
+    "privateNotice": "Privater Modus: Andere sehen die hier erstellten Kandidaten erst, wenn du sie veröffentlichst. Geheim sind sie dadurch nicht: Was du den Agenten fragst, geht an die Meta Model API, Suchen senden die Formel an externe Dienste, und der Betreiber kann die Datenbank lesen. Gib keine vertraulichen Arbeiten ein."
   },
   "Scorecard": {
     "title": "Bewertung",
@@ -974,7 +994,7 @@
   "Visitors": {
     "title": "Wo diese Forschung aktiv ist",
     "hint": "Jeder Browser, der dieses Tool öffnet, zählt einmal.",
-    "notice": "Wir speichern weder Ihren genauen Standort, Ihre IP-Adresse noch etwas, das Sie identifiziert. Wir speichern nur eine Anzahl pro Land, um zu sehen, wo diese Forschung aktiv ist.",
+    "notice": "Für diese Zählung speichern wir weder deinen genauen Standort noch deine IP-Adresse oder etwas, das dich identifiziert. Wir speichern nur eine Zahl pro Land, um zu sehen, wo diese Forschung aktiv ist.",
     "total": "insgesamt",
     "countries": "Länder",
     "unknown": "Standort unbekannt",
@@ -990,5 +1010,14 @@
     "noVisitors": "Noch keine Forschenden",
     "turnTo": "Globus zu {country} drehen",
     "memoryNote": "Dieser Server hält die Zählungen im Speicher, daher werden sie beim Neustart zurückgesetzt."
+  },
+  "Auth": {
+    "modeLabel": "Arbeitsmodus",
+    "public": "Öffentlich",
+    "private": "Privat",
+    "publicHint": "Keine Anmeldung. Alle können lesen, was du speicherst.",
+    "privateHint": "Mit GitHub anmelden. Andere sehen deine neuen Kandidaten erst, wenn du sie veröffentlichst.",
+    "signOut": "Abmelden",
+    "signInFailed": "Die GitHub-Anmeldung wurde nicht abgeschlossen. Versuche es erneut."
   }
 }

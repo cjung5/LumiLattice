@@ -1,9 +1,12 @@
 from collections.abc import Iterator
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, Request
+from fastapi import Depends, Header, HTTPException, Request
 
+from app.auth import InvalidToken, Viewer, verify_token
 from app.config import Settings, get_settings
+from app.storage.memory import get_store
+from app.storage.scoped import ScopedStore
 from app.tools.cod import CodClient
 from app.tools.literature import OpenAlexClient
 from app.tools.literature_sources import (
@@ -67,6 +70,31 @@ OptionalMPDep = Annotated[MaterialsProjectClient | None, Depends(get_optional_mp
 MPDep = Annotated[MaterialsProjectClient, Depends(get_mp_client)]
 LiteratureDep = Annotated[LiteratureSearch, Depends(get_literature_client)]
 CodDep = Annotated[CodClient, Depends(get_cod_client)]
+
+
+def get_viewer(
+    settings: SettingsDep, authorization: Annotated[str | None, Header()] = None
+) -> Viewer | None:
+    """No header: public mode. A bad token is an error, so private work never turns public."""
+    if authorization is None:
+        return None
+    scheme, _, token = authorization.partition(" ")
+    if settings.auth_secret and scheme.lower() == "bearer":
+        try:
+            return verify_token(token.strip(), settings.auth_secret)
+        except InvalidToken:
+            pass
+    raise HTTPException(status_code=401, detail="Your sign-in has ended. Sign in again.")
+
+
+ViewerDep = Annotated[Viewer | None, Depends(get_viewer)]
+
+
+def get_scoped_store(viewer: ViewerDep) -> ScopedStore:
+    return ScopedStore(get_store(), viewer)
+
+
+StoreDep = Annotated[ScopedStore, Depends(get_scoped_store)]
 
 
 def client_id(request: Request) -> str:

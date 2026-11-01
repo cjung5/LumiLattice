@@ -32,6 +32,9 @@ class Settings(BaseSettings):
     database_url: SecretStr | None = None
     # Shared with the frontend server. When set, only that server can add to the visitor counts.
     visit_secret: str | None = None
+    # Shared with the frontend server, which signs tokens after a GitHub sign-in. Unset: nobody can
+    # sign in, and only public mode is available.
+    auth_secret: str | None = None
 
     # Built by scripts/build_reference_db.py (JARVIS-DFT + refractiveindex.info subset).
     reference_db_path: Path = BACKEND_DIR / "data" / "reference.sqlite"
@@ -51,12 +54,21 @@ class Settings(BaseSettings):
         "semantic_scholar_api_key",
         "openalex_api_key",
         "database_url",
+        "auth_secret",
         mode="before",
     )
     @classmethod
     def blank_means_not_set(cls, value: object) -> object:
         """A host can save a variable with no value; it must not count as configured."""
         return None if isinstance(value, str) and not value.strip() else value
+
+    @field_validator("auth_secret")
+    @classmethod
+    def long_enough(cls, value: str | None) -> str | None:
+        """A short secret can be guessed, and then anyone could sign in as anyone."""
+        if value is not None and len(value) < 32:
+            raise ValueError("AUTH_SECRET needs at least 32 characters (openssl rand -hex 32).")
+        return value
 
 
 @lru_cache

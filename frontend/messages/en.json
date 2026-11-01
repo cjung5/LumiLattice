@@ -357,7 +357,7 @@
   "Decision": {
     "title": "Your decision on {id}",
     "placeholder": "Why? e.g. keep Ti4+ only, avoid toxic elements, try a larger A-site ion",
-    "hint": "Accept and Reject are recorded. Modify and Explore are recorded and sent to the agent with your reason. Anyone who opens this site can read it.",
+    "hint": "Accept and Reject are recorded. Modify and Explore are recorded and sent to the agent with your reason.",
     "accept": "Accept",
     "modify": "Modify",
     "explore": "Explore alternatives",
@@ -368,7 +368,9 @@
     "rejectHint": "Record that this candidate is not useful, and why.",
     "last": "Last decision: {decision}",
     "placeholderGuided": "Why? For example: it does not bend light enough, so try another element.",
-    "hintGuided": "Your decision is saved with your reason. Modify and Explore also ask Muse Spark to try again, so say what you want changed. Anyone who opens this site can read it."
+    "hintGuided": "Your decision is saved with your reason. Modify and Explore also ask Muse Spark to try again, so say what you want changed.",
+    "visiblePublic": "Anyone who opens this site can read it.",
+    "visibleOwner": "Other users cannot read it unless you publish this candidate."
   },
   "Optical": {
     "loading": "Loading optical data…",
@@ -398,7 +400,21 @@
     "confirm": "Publish",
     "cancel": "Cancel",
     "creditName": "Credit: {name}",
-    "creditAnonymous": "Credit: anonymous"
+    "creditAnonymous": "Published anonymously",
+    "privateChip": "Private: only you can see this",
+    "publicChip": "Public mode: anyone can read this",
+    "publicHint": "A public-mode candidate has no owner, so nobody can publish it with a name. To publish your own work, select Private and sign in.",
+    "ownedWarning": "Publishing shows this candidate to everyone, with its decisions, reasons, critiques, measurements, and the substitutions that led to it. Public disclosure can affect a later patent application, so check first if that matters to you. LumiLattice records your account, the time, and a fingerprint of the structure. This is a record, not proof of legal ownership. Others can reuse it under CC BY 4.0, with credit.",
+    "creditLogin": "Show my GitHub name (@{login})",
+    "anonymousOwned": "Anonymous (other users do not see your account)",
+    "consentOwned": "I have read this, and I choose to publish {id} under CC BY 4.0.",
+    "undoNote": "Undo hides it again, but copies that others already made can remain.",
+    "recordHash": "Record: SHA-256 {hash}…",
+    "creditVerified": "Published by @{name}",
+    "license": "License: {license}",
+    "otherNote": "This is someone else's published work, so you can read it but not change it. To build on it, revise it: your version is yours, and it keeps their credit.",
+    "basedOn": "Based on work by @{name}",
+    "basedOnAnonymous": "Based on work by an anonymous researcher"
   },
   "Relax": {
     "title": "Relaxation (CHGNet, local install)",
@@ -442,7 +458,8 @@
       "all": "All",
       "plausible": "Plausible",
       "published": "Published",
-      "decided": "With decision"
+      "decided": "With decision",
+      "mine": "Mine"
     },
     "empty": "No candidates yet.",
     "compare": "Compare",
@@ -454,7 +471,8 @@
     "substitutions": "Substitutions (from root host)",
     "nRange": "n (end-member range)",
     "relaxedVolume": "ΔV after CHGNet",
-    "experiments": "Measurements"
+    "experiments": "Measurements",
+    "hintPrivate": "Public candidates and your own private candidates (🔒), from the form and from the agent. Select up to {max} to compare."
   },
   "Spatial": {
     "loading": "Analyzing the 3D structure…",
@@ -675,7 +693,9 @@
   },
   "Workspace": {
     "sharedAndPapers": "Shared candidates and research papers",
-    "noAccounts": "This version has no accounts. Anyone who opens this site can read the candidates, decisions, and measurements saved here. What you ask the agent goes to Meta's Model API. Do not enter confidential work."
+    "noAccounts": "This version has no accounts. Anyone who opens this site can read the candidates, decisions, and measurements saved here. What you ask the agent goes to Meta's Model API. Do not enter confidential work.",
+    "publicNotice": "Public mode: anyone who opens this site can read the candidates, decisions, and measurements saved here. What you ask the agent goes to Meta's Model API. Do not enter confidential work. To keep new candidates from other users, select Private and sign in with GitHub. We keep only your GitHub ID and user name, not your password or email address.",
+    "privateNotice": "Private mode: other users cannot see the candidates that you make here until you publish them. This does not make them secret: what you ask the agent goes to Meta's Model API, searches send the formula to outside services, and the operator can read the database. Do not enter confidential work."
   },
   "Scorecard": {
     "title": "Score",
@@ -974,7 +994,7 @@
   "Visitors": {
     "title": "Where this research is active",
     "hint": "Each browser that opens this tool counts once.",
-    "notice": "We do not keep your exact location, your IP address, or anything that identifies you. We keep only a count for each country, to see where this research is active.",
+    "notice": "For this count, we do not keep your exact location, your IP address, or anything that identifies you. We keep only a count for each country, to see where this research is active.",
     "total": "in total",
     "countries": "countries",
     "unknown": "Location unknown",
@@ -990,5 +1010,14 @@
     "noVisitors": "No researchers yet",
     "turnTo": "Turn the globe to {country}",
     "memoryNote": "This server keeps the counts in memory, so they reset when it restarts."
+  },
+  "Auth": {
+    "modeLabel": "Workspace mode",
+    "public": "Public",
+    "private": "Private",
+    "publicHint": "No sign-in. Anyone can read what you save.",
+    "privateHint": "Sign in with GitHub. Other users cannot see your new candidates until you publish them.",
+    "signOut": "Sign out",
+    "signInFailed": "GitHub sign-in did not finish. Try again."
   }
 }

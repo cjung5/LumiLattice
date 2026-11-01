@@ -67,14 +67,16 @@ export function CritiquePanel({ candidate, goal, geometry, capture, onChange, on
           </h4>
           <p className="mt-1 text-xs text-muted">{guided ? t("hintGuided") : t("hint")}</p>
         </div>
-        <button
-          type="button"
-          onClick={() => void run()}
-          disabled={busy}
-          className="btn btn-primary btn-sm"
-        >
-          {busy ? t("running") : latest ? t("rerun") : t("run")}
-        </button>
+        {candidate.editable && (
+          <button
+            type="button"
+            onClick={() => void run()}
+            disabled={busy}
+            className="btn btn-primary btn-sm"
+          >
+            {busy ? t("running") : latest ? t("rerun") : t("run")}
+          </button>
+        )}
       </div>
       {busy && <p className="mt-2 text-xs text-muted" aria-live="polite">{t("runningLong", { id: candidate.candidate_id })}</p>}
       {error && <p className="mt-2 text-danger">{error}</p>}

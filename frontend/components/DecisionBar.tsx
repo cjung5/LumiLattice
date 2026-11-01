@@ -58,7 +58,10 @@ export function DecisionBar({ candidate, busy, onDecide }: Props) {
           </button>
         ))}
       </div>
-      <p className="mt-1 text-xs text-muted">{guided ? t("hintGuided") : t("hint")}</p>
+      <p className="mt-1 text-xs text-muted">
+        {guided ? t("hintGuided") : t("hint")}{" "}
+        {candidate.mine && candidate.visibility === "private" ? t("visibleOwner") : t("visiblePublic")}
+      </p>
       {last && (
         <p className="mt-1 text-xs">
           {t("last", { decision: t(last.decision) })}

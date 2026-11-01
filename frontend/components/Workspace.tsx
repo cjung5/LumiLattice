@@ -10,6 +10,7 @@ import { AR_GOAL, GoalPanel } from "@/components/GoalPanel";
 import { HostSelector } from "@/components/HostSelector";
 import { Intro } from "@/components/Intro";
 import { Advanced, useLevel } from "@/components/Level";
+import { useAuth } from "@/components/Auth";
 import { VisitorGlobe } from "@/components/VisitorGlobe";
 import { LiteraturePanel } from "@/components/LiteraturePanel";
 import { RegistryPanel } from "@/components/RegistryPanel";
@@ -57,6 +58,7 @@ export function Workspace() {
   const locale = useLocale();
   const t = useTranslations("Decision");
   const tw = useTranslations("Workspace");
+  const { enabled: authEnabled, mode } = useAuth();
   const guided = useLevel().level === "guided";
   const [record, setRecord] = useState<MaterialRecord | null>(null);
   const [structure, setStructure] = useState<StructurePayload | null>(null);
@@ -130,7 +132,7 @@ export function Workspace() {
     showCandidate(known ?? (await getCandidate(candidateId)));
   }
 
-  // Share links: ?candidate=LL-0003 opens that candidate. There are no accounts, so anyone can open it.
+  // Share links: ?candidate=LL-0003 opens that candidate, if this viewer can read it.
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("candidate");
     if (!id) return;
@@ -269,7 +271,9 @@ export function Workspace() {
         onExample={() => void runExample()}
         onStart={() => jump("goal")}
       />
-      <p className="mb-4 rounded-lg bg-accent-soft p-3 text-xs">{tw("noAccounts")}</p>
+      <p className="mb-4 rounded-lg bg-accent-soft p-3 text-xs">
+        {tw(!authEnabled ? "noAccounts" : mode === "private" ? "privateNotice" : "publicNotice")}
+      </p>
       <FlowGuide
         done={done}
         hostLabel={hostLabel}

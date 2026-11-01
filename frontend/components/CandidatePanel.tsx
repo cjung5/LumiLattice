@@ -12,7 +12,7 @@ import { ExperimentPanel } from "@/components/ExperimentPanel";
 import { Advanced, useLevel } from "@/components/Level";
 import { PlainResult } from "@/components/PlainResult";
 import { NoveltyPanel } from "@/components/NoveltyPanel";
-import { PublishControl } from "@/components/PublishControl";
+import { OwnershipLine, PublishControl } from "@/components/PublishControl";
 import { RelaxationPanel } from "@/components/RelaxationPanel";
 import { Leaderboard, ScorePanel } from "@/components/ScorePanel";
 import { Term } from "@/components/Term";
@@ -323,6 +323,7 @@ export function CandidatePanel({
               {copied ? t("linkCopied") : t("copyLink")}
             </button>
           </h3>
+          <OwnershipLine candidate={current} />
           <div
             role="tablist"
             aria-label={t("tabsLabel")}
@@ -450,12 +451,14 @@ export function CandidatePanel({
             onChange={onCandidate}
             onAskAgent={onAskAgent}
           />
-          <DecisionBar
-            key={current.candidate_id}
-            candidate={current}
-            busy={agentBusy}
-            onDecide={onDecide}
-          />
+          {current.editable && (
+            <DecisionBar
+              key={current.candidate_id}
+              candidate={current}
+              busy={agentBusy}
+              onDecide={onDecide}
+            />
+          )}
           <Advanced label={t("moreTools")}>
           <div className="flex flex-wrap items-center gap-2 text-xs">
             <span className="text-muted">{t("export")}</span>
@@ -473,13 +476,15 @@ export function CandidatePanel({
             <span className="text-muted">{t("exportNote")}</span>
             {exportError && <span className="text-danger">{exportError}</span>}
           </div>
-          <RelaxationPanel
-            key={`relax-${current.candidate_id}`}
-            candidate={current}
-            showRelaxed={showRelaxed}
-            onShowRelaxed={setShowRelaxed}
-            onChange={onCandidate}
-          />
+          {(current.editable || current.relaxation) && (
+            <RelaxationPanel
+              key={`relax-${current.candidate_id}`}
+              candidate={current}
+              showRelaxed={showRelaxed}
+              onShowRelaxed={setShowRelaxed}
+              onChange={onCandidate}
+            />
+          )}
           <PublishControl key={`pub-${current.candidate_id}`} candidate={current} onChange={onCandidate} />
           <ExperimentPanel key={`exp-${current.candidate_id}`} candidate={current} onChange={onCandidate} />
           </Advanced>

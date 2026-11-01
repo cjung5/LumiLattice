@@ -117,6 +117,17 @@ class Credit(BaseModel):
     display: Literal["name", "anonymous"]
     name: str | None = Field(default=None, max_length=200)
     published_at: datetime
+    verified: bool = False  # the name is the signed-in GitHub account, not typed text
+    license: str | None = None
+    content_sha256: str | None = None  # of the structure's CIF, so the record shows what was shown
+
+
+class Publication(BaseModel):
+    """One publish or undo, kept for the owner. It is a record, not proof of legal ownership."""
+
+    action: Literal["published", "unpublished"]
+    at: datetime
+    credit: Credit | None = None
 
 
 class Candidate(BaseModel):
@@ -129,10 +140,15 @@ class Candidate(BaseModel):
     optical_estimate: OpticalEstimate | None = None
     created_at: datetime
     decisions: list[Decision] = []
-    # "private" means only "not marked as published": there are no accounts, so anyone can read it.
-    # Stage 1 records the choice only; nothing is shared outside the app.
+    # "private" with an owner: only the owner can read it. With no owner (public mode), it means
+    # only "not marked as published", and anyone can read it. See app/storage/scoped.py.
     visibility: Visibility = "private"
     credit: Credit | None = None
+    owner_id: str | None = None  # never sent to a client: ScopedStore clears it
+    mine: bool = False  # set for each viewer by ScopedStore
+    editable: bool = True  # set for each viewer by ScopedStore
+    based_on_credit: Credit | None = None  # the published work that this candidate came from
+    publications: list[Publication] = []
     relaxation: Relaxation | None = None
     experiments: list[ExperimentRecord] = []
     critiques: list[Critique] = []  # Muse Spark reviews, newest last

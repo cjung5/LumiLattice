@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useAuth } from "@/components/Auth";
 import { useBackendText } from "@/lib/backendText";
 import { useEffect, useState } from "react";
 import { formatValue } from "@/components/EvidenceTag";
@@ -18,9 +19,10 @@ type Props = {
 // P1 stage 2: every candidate in one table, with filters and a side-by-side comparison.
 export function RegistryPanel({ version, onOpen }: Props) {
   const t = useTranslations("Registry");
+  const { mode } = useAuth();
   const tb = useBackendText();
   const [items, setItems] = useState<Candidate[]>([]);
-  const [filter, setFilter] = useState<"all" | "plausible" | "published" | "decided">("all");
+  const [filter, setFilter] = useState<"all" | "plausible" | "published" | "decided" | "mine">("all");
   const [selected, setSelected] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,7 +43,9 @@ export function RegistryPanel({ version, onOpen }: Props) {
         ? c.visibility === "published"
         : filter === "decided"
           ? c.decisions.length > 0
-          : true,
+          : filter === "mine"
+            ? c.mine
+            : true,
   );
   const compared = items.filter((c) => selected.includes(c.candidate_id));
   const checkIds = [...new Set(compared.flatMap((c) => c.assessment.checks.map((k) => k.id)))];
@@ -55,9 +59,9 @@ export function RegistryPanel({ version, onOpen }: Props) {
   return (
     <section className="card">
       <h2 className="text-lg font-semibold tracking-tight">{t("title")}</h2>
-      <p className="mb-2 text-sm text-muted">{t("hint", { max: MAX_COMPARE })}</p>
+      <p className="mb-2 text-sm text-muted">{t(mode === "private" ? "hintPrivate" : "hint", { max: MAX_COMPARE })}</p>
       <div className="segmented mb-3 text-xs">
-        {(["all", "plausible", "published", "decided"] as const).map((f) => (
+        {(["all", "plausible", "published", "decided", ...(mode === "private" ? (["mine"] as const) : [])] as const).map((f) => (
           <button
             key={f}
             type="button"
@@ -101,6 +105,7 @@ export function RegistryPanel({ version, onOpen }: Props) {
                       {c.candidate_id}
                     </button>
                     {c.visibility === "published" && <span className="ml-1">🌐</span>}
+                    {c.mine && c.visibility === "private" && <span className="ml-1">🔒</span>}
                   </td>
                   <td className="py-1 pr-2">{c.formula}</td>
                   <td className="py-1 pr-2 text-muted">{c.parent_id ?? c.transformation.host.reference}</td>

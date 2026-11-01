@@ -10,6 +10,7 @@ export type Health = {
   reference_db_available: boolean;
   candidate_store: "memory" | "postgres";
   relaxation_available: boolean;
+  sign_in_enabled: boolean;
 };
 
 export type EvidenceStatus = "Experimental" | "DFT-computed" | "Heuristic" | "Unknown";
@@ -298,7 +299,10 @@ export type Candidate = {
   created_at: string;
   decisions: { decision: "accept" | "modify" | "reject" | "explore"; reason: string; created_at: string }[];
   visibility: "private" | "published";
-  credit: { display: "name" | "anonymous"; name: string | null; published_at: string } | null;
+  credit: Credit | null;
+  mine: boolean; // this signed-in account owns it
+  editable: boolean; // false: someone else's published work
+  based_on_credit: Credit | null; // the published work that this came from
   relaxation: Relaxation | null;
   experiments: ExperimentRecord[];
   critiques: Critique[];
@@ -374,14 +378,29 @@ async function errorFrom(response: Response): Promise<Error> {
   );
 }
 
+// Set in private mode only (components/Auth.tsx). It throws if the sign-in has ended.
+let tokenSource: (() => Promise<string>) | null = null;
+
+export function setTokenSource(source: (() => Promise<string>) | null) {
+  tokenSource = source;
+}
+
+async function withToken(init?: RequestInit): Promise<RequestInit | undefined> {
+  if (!tokenSource) return init;
+  const headers = new Headers(init?.headers);
+  headers.set("Authorization", `Bearer ${await tokenSource()}`);
+  return { ...init, headers };
+}
+
 /** A read that fails at the network level gets one retry, for example while the dev server reloads. */
 async function send(path: string, init?: RequestInit): Promise<Response> {
+  const signed = await withToken(init);
   try {
-    return await fetch(`${API_BASE_URL}${path}`, init);
+    return await fetch(`${API_BASE_URL}${path}`, signed);
   } catch (err) {
     if (init?.method && init.method !== "GET") throw err;
     await new Promise((resolve) => setTimeout(resolve, 300));
-    return fetch(`${API_BASE_URL}${path}`, init);
+    return fetch(`${API_BASE_URL}${path}`, signed);
   }
 }
 
@@ -549,6 +568,15 @@ export function getCodStructure(codId: string): Promise<StructurePayload> {
 
 export type Visibility = "private" | "published";
 
+export type Credit = {
+  display: "name" | "anonymous";
+  name: string | null;
+  published_at: string;
+  verified: boolean; // the name is the signed-in GitHub account
+  license: string | null;
+  content_sha256: string | null;
+};
+
 export function setVisibility(
   candidateId: string,
   body: {
@@ -593,7 +621,7 @@ export function exportUrl(id: string, kind: ExportKind, goal?: Goal): string {
 
 /** Fetch an export and save it under its file name (<a download> ignores cross-origin URLs). */
 export async function downloadExport(id: string, kind: ExportKind, goal?: Goal): Promise<void> {
-  const response = await fetch(exportUrl(id, kind, goal));
+  const response = await fetch(exportUrl(id, kind, goal), await withToken());
   if (!response.ok) throw await errorFrom(response);
   const url = URL.createObjectURL(await response.blob());
   const link = document.createElement("a");

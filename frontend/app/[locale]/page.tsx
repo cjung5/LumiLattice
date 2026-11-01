@@ -1,13 +1,14 @@
 import { useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { use } from "react";
+import { AuthProvider, ModeSwitch } from "@/components/Auth";
 import { BackendStatus } from "@/components/BackendStatus";
 import { PointerLight } from "@/components/brand/LatticeLight";
 import { Logo } from "@/components/brand/Logo";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { LevelProvider, LevelSwitch } from "@/components/Level";
 import { ThemeSwitch } from "@/components/ThemeSwitch";
-import { Workspace } from "@/components/Workspace";
+import { ModeWorkspace } from "@/components/ModeWorkspace";
 import { MACHINE_TRANSLATED } from "@/i18n/routing";
 
 export default function HomePage({ params }: { params: Promise<{ locale: string }> }) {
@@ -17,6 +18,7 @@ export default function HomePage({ params }: { params: Promise<{ locale: string 
 
   return (
     <LevelProvider>
+      <AuthProvider>
       <PointerLight />
       {/* The lattice's canvas runs past the column. Clip, not hidden: the step bar must stay sticky. */}
       <div className="overflow-x-clip">
@@ -27,6 +29,7 @@ export default function HomePage({ params }: { params: Promise<{ locale: string 
             <h1 className="text-xl font-semibold tracking-tight">LumiLattice</h1>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            <ModeSwitch />
             <LevelSwitch />
             <BackendStatus />
             <ThemeSwitch />
@@ -34,9 +37,10 @@ export default function HomePage({ params }: { params: Promise<{ locale: string 
           </div>
         </header>
         {MACHINE_TRANSLATED.has(locale) && <p className="text-xs text-warning">{tl("machineTranslated")}</p>}
-        <Workspace />
+        <ModeWorkspace />
       </main>
       </div>
+      </AuthProvider>
     </LevelProvider>
   );
 }

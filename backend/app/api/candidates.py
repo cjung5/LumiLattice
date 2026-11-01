@@ -1,3 +1,4 @@
+import hashlib
 from datetime import UTC, datetime
 from typing import Annotated, Literal
 
@@ -9,7 +10,7 @@ from pydantic import BaseModel, Field
 from app.agents.critique import View, evidence_pack, run_critique
 from app.agents.loop import Audience
 from app.agents.muse import ModelAPIKeyMissing, create_client
-from app.api.deps import CodDep, LiteratureDep, OptionalMPDep, SettingsDep, client_id
+from app.api.deps import CodDep, LiteratureDep, OptionalMPDep, SettingsDep, StoreDep, client_id
 from app.api.materials import to_http
 from app.models.candidates import (
     Candidate,
@@ -17,13 +18,15 @@ from app.models.candidates import (
     Decision,
     DecisionKind,
     ExperimentRecord,
+    Publication,
     Relaxation,
     StructuralAssessment,
     Substitution,
     Visibility,
 )
 from app.models.evidence import Provenance
-from app.storage.memory import add_decision, get_store
+from app.storage.memory import add_decision
+from app.storage.scoped import NotOwner
 from app.tools.candidates import assess_host, create_candidate, load_host
 from app.tools.export import CandidateRecord, SpatialRecord, ancestry, build_record, cif_text
 from app.tools.goals import Goal, GoalScore, score_candidate, score_formula
@@ -60,8 +63,7 @@ def not_found(candidate_id: str) -> HTTPException:
 
 
 @router.post("/candidates")
-def new_candidate(request: CandidateRequest, mp: OptionalMPDep) -> Candidate:
-    store = get_store()
+def new_candidate(request: CandidateRequest, mp: OptionalMPDep, store: StoreDep) -> Candidate:
     try:
         host, host_ref, parent_id = load_host(store, mp, **request.host.model_dump())
         return create_candidate(
@@ -78,13 +80,13 @@ def new_candidate(request: CandidateRequest, mp: OptionalMPDep) -> Candidate:
 
 
 @router.get("/candidates")
-def list_candidates() -> list[Candidate]:
-    return get_store().all()
+def list_candidates(store: StoreDep) -> list[Candidate]:
+    return store.all()
 
 
 @router.get("/candidates/{candidate_id}")
-def get_candidate(candidate_id: str) -> Candidate:
-    stored = get_store().get(candidate_id)
+def get_candidate(candidate_id: str, store: StoreDep) -> Candidate:
+    stored = store.get(candidate_id)
     if stored is None:
         raise not_found(candidate_id)
     return stored[0]
@@ -96,14 +98,17 @@ class DecisionRequest(BaseModel):
 
 
 @router.post("/candidates/{candidate_id}/decisions")
-def record_decision(candidate_id: str, request: DecisionRequest) -> Candidate:
+def record_decision(candidate_id: str, request: DecisionRequest, store: StoreDep) -> Candidate:
     decision = Decision(
         decision=request.decision, reason=request.reason.strip(), created_at=datetime.now(UTC)
     )
-    updated = add_decision(get_store(), candidate_id, decision)
+    updated = add_decision(store, candidate_id, decision)
     if updated is None:
         raise not_found(candidate_id)
     return updated
+
+
+PUBLISHED_LICENSE = "CC BY 4.0"
 
 
 class VisibilityRequest(BaseModel):
@@ -114,25 +119,66 @@ class VisibilityRequest(BaseModel):
 
 
 @router.post("/candidates/{candidate_id}/visibility")
-def set_visibility(candidate_id: str, request: VisibilityRequest) -> Candidate:
-    """Not published by default; publishing needs explicit consent and a credit choice."""
+def set_visibility(
+    candidate_id: str, request: VisibilityRequest, store: StoreDep, settings: SettingsDep
+) -> Candidate:
+    """Not published by default; publishing needs explicit consent and a credit choice.
+
+    With sign-in on, only an owner can publish, and the credit name is the signed-in account. A
+    candidate from public mode has no owner, so nobody can claim it.
+    """
+    stored = store.get(candidate_id)
+    if stored is None:
+        raise not_found(candidate_id)
+    candidate = stored[0]
+    if not candidate.editable:
+        raise NotOwner(candidate_id)
+    if settings.auth_secret and not candidate.mine:
+        raise HTTPException(
+            status_code=403,
+            detail="Anyone can already read a public-mode candidate. "
+            "Make it in private mode to publish it with your name.",
+        )
+    now = datetime.now(UTC)
     if request.visibility == "private":
-        changes = {"visibility": "private", "credit": None}
+        changes = {
+            "visibility": "private",
+            "credit": None,
+            "publications": [*candidate.publications, Publication(action="unpublished", at=now)],
+        }
     else:
         if not request.consent:
             raise HTTPException(status_code=400, detail="Publishing needs explicit consent.")
-        name = (request.display_name or "").strip()
-        if request.credit_display == "name" and not name:
-            raise HTTPException(status_code=400, detail="Give a name, or choose anonymous credit.")
-        changes = {
-            "visibility": "published",
-            "credit": Credit(
+        if candidate.mine and store.viewer:
+            # The name is the signed-in account, so nobody can publish under another person's name.
+            credit = Credit(
+                display=request.credit_display,
+                name=store.viewer.login if request.credit_display == "name" else None,
+                published_at=now,
+                verified=request.credit_display == "name",
+                license=PUBLISHED_LICENSE,
+                content_sha256=hashlib.sha256(candidate.structure.cif.encode()).hexdigest(),
+            )
+        else:
+            name = (request.display_name or "").strip()
+            if request.credit_display == "name" and not name:
+                raise HTTPException(
+                    status_code=400, detail="Give a name, or choose anonymous credit."
+                )
+            credit = Credit(
                 display=request.credit_display,
                 name=name if request.credit_display == "name" else None,
-                published_at=datetime.now(UTC),
-            ),
+                published_at=now,
+            )
+        changes = {
+            "visibility": "published",
+            "credit": credit,
+            "publications": [
+                *candidate.publications,
+                Publication(action="published", at=now, credit=credit),
+            ],
         }
-    updated = get_store().update(candidate_id, changes)
+    updated = store.update(candidate_id, changes)
     if updated is None:
         raise not_found(candidate_id)
     return updated
@@ -149,11 +195,10 @@ class ExperimentRequest(BaseModel):
 
 
 @router.post("/candidates/{candidate_id}/experiments")
-def add_experiment(candidate_id: str, request: ExperimentRequest) -> Candidate:
+def add_experiment(candidate_id: str, request: ExperimentRequest, store: StoreDep) -> Candidate:
     """Attach a researcher's measurement, so prediction and experiment can be compared."""
     if request.property == "refractive_index" and request.wavelength_nm is None:
         raise HTTPException(status_code=400, detail="Give the wavelength for a refractive index.")
-    store = get_store()
     stored = store.get(candidate_id)
     if stored is None:
         raise not_found(candidate_id)
@@ -162,12 +207,13 @@ def add_experiment(candidate_id: str, request: ExperimentRequest) -> Candidate:
 
 
 @router.post("/candidates/{candidate_id}/relax")
-def relax_candidate(candidate_id: str) -> Candidate:
+def relax_candidate(candidate_id: str, store: StoreDep) -> Candidate:
     """CHGNet relaxation, then the same checks on the relaxed geometry (local installs only)."""
-    store = get_store()
     stored = store.get(candidate_id)
     if stored is None:
         raise not_found(candidate_id)
+    if not stored[0].editable:  # before the long calculation
+        raise NotOwner(candidate_id)
     if not relaxation_available():
         raise HTTPException(
             status_code=501,
@@ -202,11 +248,11 @@ class ScoreRequest(BaseModel):
 
 
 @router.post("/score")
-def score(request: ScoreRequest) -> GoalScore:
+def score(request: ScoreRequest, store: StoreDep) -> GoalScore:
     """Score a candidate (or a known formula) against the research goal, with evidence."""
     try:
         if request.candidate_id:
-            stored = get_store().get(request.candidate_id)
+            stored = store.get(request.candidate_id)
             if stored is None:
                 raise not_found(request.candidate_id)
             return score_candidate(stored[0], request.goal)
@@ -221,9 +267,9 @@ _spatial_cache: dict[tuple[str, bool, bool], SpatialAnalysis] = {}
 
 
 @router.get("/candidates/{candidate_id}/spatial")
-def candidate_spatial(candidate_id: str, relaxed: bool = False) -> SpatialAnalysis:
+def candidate_spatial(candidate_id: str, store: StoreDep, relaxed: bool = False) -> SpatialAnalysis:
     """Symmetry/optical class, polyhedra, connectivity, dopant arrangement, ordering rank."""
-    stored = get_store().get(candidate_id)
+    stored = store.get(candidate_id)
     if stored is None:
         raise not_found(candidate_id)
     candidate, structure = stored
@@ -250,9 +296,9 @@ def candidate_spatial(candidate_id: str, relaxed: bool = False) -> SpatialAnalys
 
 
 @router.post("/candidates/{candidate_id}/scorecard")
-def candidate_scorecard(candidate_id: str, goal: Goal) -> Scorecard:
+def candidate_scorecard(candidate_id: str, goal: Goal, store: StoreDep) -> Scorecard:
     """A 0-100 ranking score (a range) from the goal, the evidence, and known materials."""
-    stored = get_store().get(candidate_id)
+    stored = store.get(candidate_id)
     if stored is None:
         raise not_found(candidate_id)
     candidate, structure = stored
@@ -265,10 +311,10 @@ _novelty_cache: dict[str, Novelty] = {}
 
 @router.get("/candidates/{candidate_id}/novelty")
 def candidate_novelty(
-    candidate_id: str, mp: OptionalMPDep, cod: CodDep, literature: LiteratureDep
+    candidate_id: str, mp: OptionalMPDep, cod: CodDep, literature: LiteratureDep, store: StoreDep
 ) -> Novelty:
     """Exact matches and related work for this composition. Complete answers are kept in memory."""
-    stored = get_store().get(candidate_id)
+    stored = store.get(candidate_id)
     if stored is None:
         raise not_found(candidate_id)
     if candidate_id in _novelty_cache:
@@ -282,9 +328,8 @@ def candidate_novelty(
 
 
 @router.get("/candidates/{candidate_id}/export.cif", response_class=PlainTextResponse)
-def export_cif(candidate_id: str, relaxed: bool = False) -> PlainTextResponse:
+def export_cif(candidate_id: str, store: StoreDep, relaxed: bool = False) -> PlainTextResponse:
     """The candidate's P1 cell (or its CHGNet-relaxed cell) with a provenance header."""
-    store = get_store()
     stored = store.get(candidate_id)
     if stored is None:
         raise not_found(candidate_id)
@@ -303,6 +348,7 @@ def export_cif(candidate_id: str, relaxed: bool = False) -> PlainTextResponse:
 def export_record(
     candidate_id: str,
     response: Response,
+    store: StoreDep,
     target_n: Annotated[float | None, Query(ge=1, le=5)] = None,
     min_band_gap: Annotated[float | None, Query(ge=0, le=15)] = None,
     forbidden: Annotated[str, Query(max_length=200)] = "",
@@ -311,7 +357,6 @@ def export_record(
 
     Give target_n and min_band_gap (and optionally forbidden=Pb,Cd) to include a goal score.
     """
-    store = get_store()
     stored = store.get(candidate_id)
     if stored is None:
         raise not_found(candidate_id)
@@ -325,12 +370,14 @@ def export_record(
         )
         try:
             goal_score = score_candidate(candidate, goal)
-            scorecard = candidate_scorecard(candidate_id, goal)
+            scorecard = candidate_scorecard(candidate_id, goal, store)
         except ToolError as exc:
             raise to_http(exc) from exc
     spatial = SpatialRecord(
-        unrelaxed=candidate_spatial(candidate_id),
-        relaxed=candidate_spatial(candidate_id, relaxed=True) if candidate.relaxation else None,
+        unrelaxed=candidate_spatial(candidate_id, store),
+        relaxed=candidate_spatial(candidate_id, store, relaxed=True)
+        if candidate.relaxation
+        else None,
     )
     response.headers["Content-Disposition"] = f'attachment; filename="{candidate_id}-record.json"'
     return build_record(
@@ -349,14 +396,19 @@ class CritiqueRequest(BaseModel):
 
 @router.post("/candidates/{candidate_id}/critique")
 def critique_candidate(
-    candidate_id: str, body: CritiqueRequest, request: Request, settings: SettingsDep
+    candidate_id: str,
+    body: CritiqueRequest,
+    request: Request,
+    settings: SettingsDep,
+    store: StoreDep,
 ) -> Candidate:
     """Muse Spark reviews the candidate from its evidence and structure views (cites IDs)."""
-    store = get_store()
     stored = store.get(candidate_id)
     if stored is None:
         raise not_found(candidate_id)
     candidate = stored[0]
+    if not candidate.editable:  # before the paid request
+        raise NotOwner(candidate_id)
     if body.geometry == "relaxed" and candidate.relaxation is None:
         raise HTTPException(status_code=400, detail=f"{candidate_id} has not been relaxed.")
     try:
@@ -375,8 +427,8 @@ def critique_candidate(
         evidence = evidence_pack(
             candidate,
             score_candidate(candidate, body.goal),
-            candidate_spatial(candidate_id),
-            candidate_spatial(candidate_id, relaxed=True) if candidate.relaxation else None,
+            candidate_spatial(candidate_id, store),
+            candidate_spatial(candidate_id, store, relaxed=True) if candidate.relaxation else None,
         )
         critique = run_critique(
             client,
@@ -401,18 +453,18 @@ def critique_candidate(
 
 
 @router.post("/structures/spatial")
-def host_spatial(host: HostRef, mp: OptionalMPDep) -> SpatialAnalysis:
+def host_spatial(host: HostRef, mp: OptionalMPDep, store: StoreDep) -> SpatialAnalysis:
     try:
-        structure, _, _ = load_host(get_store(), mp, **host.model_dump())
+        structure, _, _ = load_host(store, mp, **host.model_dump())
     except ToolError as exc:
         raise to_http(exc) from exc
     return analyze(structure)
 
 
 @router.post("/structures/assess")
-def assess_structure(host: HostRef, mp: OptionalMPDep) -> StructuralAssessment:
+def assess_structure(host: HostRef, mp: OptionalMPDep, store: StoreDep) -> StructuralAssessment:
     try:
-        structure, _, _ = load_host(get_store(), mp, **host.model_dump())
+        structure, _, _ = load_host(store, mp, **host.model_dump())
         return assess_host(structure, mp)
     except ToolError as exc:
         raise to_http(exc) from exc

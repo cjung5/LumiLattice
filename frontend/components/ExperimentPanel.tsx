@@ -84,6 +84,7 @@ export function ExperimentPanel({ candidate, onChange }: Props) {
         </ul>
       )}
 
+      {candidate.editable && (
       <form onSubmit={onSubmit} className="mt-2 flex flex-wrap items-end gap-2 text-xs">
         <label className="flex flex-col">
           {t("property")}
@@ -162,6 +163,7 @@ export function ExperimentPanel({ candidate, onChange }: Props) {
           {t("add")}
         </button>
       </form>
+      )}
       <p className="mt-1 text-xs text-muted">{t("hint")}</p>
       {error && <p className="mt-1 text-xs text-danger">{error}</p>}
     </div>

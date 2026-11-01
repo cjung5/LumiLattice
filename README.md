@@ -51,7 +51,7 @@ LumiLattice helps you search that empty corner. You pick a known crystal and swa
 <p align="center"><sub>The result in Guided mode, with no formula to know first. Scales put each range next to familiar materials and the colors of the spectrum.</sub></p>
 
 > [!NOTE]
-> The demo has no accounts, so anyone who opens it can read what is saved there. Do not enter confidential work. Muse Spark requests are limited to 10 for each client in 10 minutes, to protect the API credits.
+> **Public mode** needs no account, and anyone can read what is saved there. **Private mode** uses GitHub sign-in, and other users cannot see your new candidates until you publish them. In both modes, do not enter confidential work: see [Public and private work](#7-work-in-public-or-in-private). Muse Spark requests are limited to 10 for each client in 10 minutes, to protect the API credits.
 
 <details>
 <summary><strong>Guided mode and Expert mode</strong></summary>
@@ -151,6 +151,32 @@ You can also talk to the research agent. It sees the selected host and candidate
 
 <p align="center"><img src="docs/figures/agent.png" width="820" alt="The research agent answers a question about the weakest evidence. It lists what each tool returned, says why n is weaker than the band gap, and suggests one change to test next."></p>
 <p align="center"><sub>A real answer. For this answer, the agent made 4 tool calls. In the app, you can open the list under the answer to see each call and what it returned.</sub></p>
+
+### 7. Work in public or in private
+
+Use the switch at the top of the page. Each mode is a separate workspace, so private work leaves the screen when you switch to public.
+
+| | Public mode | Private mode |
+|---|---|---|
+| **Sign-in** | None | GitHub |
+| **A new candidate** | Anyone can read and change it | Only you can read and change it |
+| **You can see** | Public-mode and published candidates | Those, and your own private candidates |
+| **Publishing** | Not available: the candidate has no owner, so nobody can claim it | You choose it, after a warning and your consent |
+| **Someone's published work** | Read it, or revise it into a new candidate | Read it, or revise it into your own private candidate. Their credit stays on your version |
+
+<p align="center"><img src="docs/figures/modes.png" alt="The top of the page in the two modes. In public mode, a notice says that anyone can read what is saved. In private mode, the page shows the signed-in GitHub account, and a notice says that other users cannot see new candidates until they are published." width="820"></p>
+<p align="center"><sub>The same page in each mode. The account in this picture is a test account.</sub></p>
+
+To publish, select **Publish** on your own private candidate. The app warns you first, and you choose your GitHub name or anonymous credit.
+
+<p align="center"><img src="docs/figures/publish.png" alt="The publish panel. A warning says what becomes visible, that public disclosure can affect a later patent application, and that the record is not proof of legal ownership. Below are the credit choice and a consent box." width="820"></p>
+<p align="center"><sub>Publishing needs your consent. The name comes from the signed-in account, so nobody can publish under someone else's name.</sub></p>
+
+**What the record shows.** The app records the account, the time, and a SHA-256 fingerprint of the structure, and publishes under CC BY 4.0. This is a record of who published what and when. It is **not proof of legal ownership**, patent priority, or authorship, and it cannot stop someone from finding the same composition independently. Public disclosure can affect a later patent application. Undoing a publication hides the candidate again, but copies that others made can remain. Anonymous credit hides your account from other users, and the operator can still see it in the database.
+
+**What private mode does not do.** It keeps your candidates from other users. It does not make them secret: what you ask the agent goes to Meta's Model API, novelty checks and searches send the formula to outside services, and the operator can read the database, which is not encrypted. Candidate IDs are sequential, so an ID can show that a candidate exists elsewhere in the numbering, but not what it is.
+
+**How it works.** The frontend server runs the GitHub sign-in and keeps only the account's ID and user name, in a signed HTTP-only cookie. It gives the browser a token that lasts 15 minutes, and the backend checks that token on each request. All candidate paths and agent tools read through one class, [`ScopedStore`](backend/app/storage/scoped.py), and [`test_ownership.py`](backend/tests/test_ownership.py) tests each path and fails if a new path is not listed. A stranger gets 404, so a private candidate looks the same as one that does not exist. A bad or expired token is an error, so private work is never saved as public by mistake.
 
 ## How Muse Spark is used
 
@@ -514,7 +540,7 @@ Each candidate also has:
 
 - **CHGNet relaxation (local install only):** moves atoms and the cell with a machine-learned potential and runs the same checks on the relaxed geometry; the UI switches between unrelaxed and relaxed views. It needs PyTorch (about 1 GB), so it is not in the hosted image, and the live demo says "local install". CHGNet energies are never compared with DFT energies.
 - **Measurements:** the researcher can add a measured n (with wavelength) or band gap, with sample type, method, and reference. The app shows whether a measured n falls inside the candidate's end-member range. LumiLattice records these values as given.
-- **Share link:** `?candidate=LL-0003` opens that candidate on the same backend.
+- **Share link:** `?candidate=LL-0003` opens that candidate on the same backend, if the person who opens it can read it.
 - **Export:** a CIF of the candidate (and of its relaxed geometry, if relaxed) and a JSON research record (below).
 - **Muse Spark critique:** a reviewer's reading of the candidate from its evidence and three views of its structure (below).
 - **Registry:** all candidates in one table with filters, and a side-by-side comparison of up to 3 (checks, n range, ΔV after relaxation, measurements).
@@ -553,9 +579,9 @@ curl -OJ "http://localhost:8000/api/candidates/LL-0003/export.cif"              
 curl -OJ "http://localhost:8000/api/candidates/LL-0003/export.json?target_n=2.2&min_band_gap=3.0&forbidden=Pb,Cd"
 ```
 
-**Do not enter confidential work.** The app has no accounts, so anyone who can reach the site or the API can list and read every candidate, with its decisions, reasons, critiques, and measurements. The site says so at the top of the workspace. The `visibility` value `private` means only "not marked as published".
+**Do not enter confidential work.** In public mode, anyone who can reach the site or the API can list and read each candidate, with its decisions, reasons, critiques, and measurements. In private mode, other users cannot, but the limits in [Work in public or in private](#7-work-in-public-or-in-private) apply. The `visibility` value `private` hides a candidate only if it has an owner. A candidate with no owner stays open, and for it the value means only "not marked as published".
 
-Publishing needs explicit consent and a credit choice (by name/ORCID or anonymous). In this version, publishing records the choice only; it sends nothing outside LumiLattice.
+Publishing needs explicit consent and a credit choice. It changes who can read the candidate in LumiLattice, and it sends nothing outside LumiLattice. With sign-in off, the site offers only public mode, and publishing records a typed name or ORCID without checking it.
 
 Candidates are kept in memory unless `DATABASE_URL` points to a Postgres database; then they survive restarts.
 
@@ -620,6 +646,11 @@ The backend and its Postgres database run on Railway, and the frontend on Vercel
 4. **Frontend (Vercel):** New Project → import this repository → Root Directory `frontend`. Add `NEXT_PUBLIC_API_BASE_URL` = the Railway URL with `https://` and no trailing slash (type Config), `VISIT_SECRET` = the value from step 1, and `MODEL_API_KEY` = the Meta key (type Secret, no `NEXT_PUBLIC_` prefix), then deploy. `CORS_ORIGIN_REGEX` must match the address that Vercel gives the site.
 5. **Check:** open the site, run the example, and confirm that your country appears on the globe.
 6. **Spending:** on the Railway workspace Usage page, set an email alert at $5 and a hard limit at $10 (the lowest allowed). At the hard limit, every service in the workspace goes offline until the next billing cycle or until you raise the limit. Also check the Meta billing page for a spend limit, because the site is public; the app's own daily cap is the protection that this repository controls.
+7. **Private mode (optional):** without these settings, the site offers only public mode.
+   - On GitHub, go to Settings → Developer settings → OAuth Apps → New OAuth App. Set Homepage URL = your site, and Authorization callback URL = `https://<your-site>.vercel.app/api/auth/github/callback`. Then generate a client secret.
+   - Make one more secret with `openssl rand -hex 32`, for `AUTH_SECRET`. Both servers need the same value.
+   - Railway: add `AUTH_SECRET`. `/api/health` should then show `"sign_in_enabled":true`.
+   - Vercel: add `AUTH_SECRET`, `GITHUB_CLIENT_ID`, and `GITHUB_CLIENT_SECRET` (type Secret, no `NEXT_PUBLIC_` prefix), then redeploy.
 
 **Why Muse Spark calls go through Vercel:** on 2026-10-31 the Meta Model API listed no models for requests from Railway's network (US West) and returned `model_not_found`, while the same key listed nine models from Vercel's network and from a home connection. We do not know the reason. So `frontend/app/api/meta/[...path]/route.ts` forwards the backend's calls to Meta. It accepts only `responses` and `chat/completions`, and only with the secret that the two servers share. If you host the backend on a network that Meta allows, leave `MODEL_API_BASE_URL` unset to call Meta directly.
 
@@ -685,7 +716,7 @@ The file [`THIRD_PARTY_NOTICES.txt`](THIRD_PARTY_NOTICES.txt) has the license te
 - **Semantic Scholar** — paper metadata via the Semantic Scholar Academic Graph API.
 - **CHGNet** (optional, local) — B. Deng et al., *Nat. Mach. Intell.* 5, 1031 (2023), BSD-3-Clause license.
 
-**Figures.** We made every figure in this README with LumiLattice itself, from our own code, on 2026-10-31. They contain no images from other sources. The crystal comes from Materials Project (mp-5229, CC BY 4.0), and the charts show data from the sources above.
+**Figures.** We made every figure in this README with LumiLattice itself, from our own code, on 2026-10-31 and 2026-11-01. They contain no images from other sources. The crystal comes from Materials Project (mp-5229, CC BY 4.0), and the charts show data from the sources above.
 
 ## License
 

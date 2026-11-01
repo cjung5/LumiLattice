@@ -127,6 +127,11 @@ def create_candidate(
         solid_solution_ends(root_formula, lineage), exact=structure.composition.reduced_formula
     )
 
+    # Work from someone else's published candidate keeps their credit, through any later revisions.
+    based_on = None
+    if parent:
+        based_on = parent.credit if parent.credit and not parent.mine else parent.based_on_credit
+
     def build(candidate_id: str) -> tuple[Candidate, Structure]:
         payload = structure_payload(
             structure, Provenance(source="LumiLattice substitution", reference=candidate_id)
@@ -149,6 +154,7 @@ def create_candidate(
             assessment=assessment,
             optical_estimate=optical,
             created_at=datetime.now(UTC),
+            based_on_credit=based_on,
         )
         return candidate, structure
 

@@ -357,7 +357,7 @@
   "Decision": {
     "title": "Tu decisión sobre {id}",
     "placeholder": "¿Por qué? p. ej., solo Ti4+, evita elementos tóxicos, prueba un ion de sitio A más grande",
-    "hint": "Aceptar y Rechazar se registran. Modificar y Explorar se registran y se envían al agente con tu motivo. Cualquiera que abra este sitio puede leerlo.",
+    "hint": "Aceptar y Rechazar se registran. Modificar y Explorar se registran y se envían al agente con tu motivo.",
     "accept": "Aceptar",
     "modify": "Modificar",
     "explore": "Explorar alternativas",
@@ -368,7 +368,9 @@
     "rejectHint": "Registra que este candidato no es útil, y por qué.",
     "last": "Última decisión: {decision}",
     "placeholderGuided": "¿Por qué? Por ejemplo: no desvía lo suficiente la luz, así que prueba otro elemento.",
-    "hintGuided": "Tu decisión se guarda con tu motivo. Modificar y Explorar también piden a Muse Spark que lo intente de nuevo, así que indica qué quieres cambiar. Cualquiera que abra este sitio puede leerlo."
+    "hintGuided": "Tu decisión se guarda con tu motivo. Modificar y Explorar también piden a Muse Spark que lo intente de nuevo, así que indica qué quieres cambiar.",
+    "visiblePublic": "Cualquiera que abra este sitio puede leerlo.",
+    "visibleOwner": "Otros usuarios no pueden leerlo salvo que publiques este candidato."
   },
   "Optical": {
     "loading": "Cargando datos ópticos…",
@@ -398,7 +400,21 @@
     "confirm": "Publicar",
     "cancel": "Cancelar",
     "creditName": "Crédito: {name}",
-    "creditAnonymous": "Crédito: anónimo"
+    "creditAnonymous": "Publicado de forma anónima",
+    "privateChip": "Privado: solo tú puedes verlo",
+    "publicChip": "Modo público: cualquiera puede leerlo",
+    "publicHint": "Un candidato del modo público no tiene propietario, así que nadie puede publicarlo con su nombre. Para publicar tu trabajo, selecciona Privado e inicia sesión.",
+    "ownedWarning": "Publicar muestra este candidato a todos, con sus decisiones, motivos, críticas, medidas y las sustituciones que llevaron a él. La divulgación pública puede afectar a una solicitud de patente posterior, así que compruébalo antes si te importa. LumiLattice registra tu cuenta, la hora y una huella de la estructura. Esto es un registro, no una prueba de propiedad legal. Otros pueden reutilizarlo bajo CC BY 4.0, con crédito.",
+    "creditLogin": "Mostrar mi nombre de GitHub (@{login})",
+    "anonymousOwned": "Anónimo (otros usuarios no ven tu cuenta)",
+    "consentOwned": "He leído esto y elijo publicar {id} bajo CC BY 4.0.",
+    "undoNote": "Deshacer lo oculta de nuevo, pero las copias que otros ya hicieron pueden permanecer.",
+    "recordHash": "Registro: SHA-256 {hash}…",
+    "creditVerified": "Publicado por @{name}",
+    "license": "Licencia: {license}",
+    "otherNote": "Este es el trabajo publicado de otra persona: puedes leerlo, pero no cambiarlo. Para continuarlo, revísalo. Tu versión es tuya y conserva su crédito.",
+    "basedOn": "Basado en el trabajo de @{name}",
+    "basedOnAnonymous": "Basado en el trabajo de una persona anónima"
   },
   "Relax": {
     "title": "Relajación (CHGNet, instalación local)",
@@ -442,7 +458,8 @@
       "all": "Todos",
       "plausible": "Plausible",
       "published": "Publicado",
-      "decided": "Con decisión"
+      "decided": "Con decisión",
+      "mine": "Míos"
     },
     "empty": "Aún no hay candidatos.",
     "compare": "Comparar",
@@ -454,7 +471,8 @@
     "substitutions": "Sustituciones (desde el anfitrión raíz)",
     "nRange": "n (rango de miembros extremos)",
     "relaxedVolume": "ΔV tras CHGNet",
-    "experiments": "Mediciones"
+    "experiments": "Mediciones",
+    "hintPrivate": "Candidatos públicos y tus candidatos privados (🔒), del formulario y del agente. Selecciona hasta {max} para comparar."
   },
   "Spatial": {
     "loading": "Analizando la estructura 3D…",
@@ -675,7 +693,9 @@
   },
   "Workspace": {
     "sharedAndPapers": "Candidatos compartidos y artículos científicos",
-    "noAccounts": "Esta versión no tiene cuentas. Cualquiera que abra este sitio puede leer los candidatos, decisiones y medidas guardados aquí. Lo que preguntas al agente se envía a la Model API de Meta. No introduzcas trabajo confidencial."
+    "noAccounts": "Esta versión no tiene cuentas. Cualquiera que abra este sitio puede leer los candidatos, decisiones y medidas guardados aquí. Lo que preguntas al agente se envía a la Model API de Meta. No introduzcas trabajo confidencial.",
+    "publicNotice": "Modo público: cualquiera que abra este sitio puede leer los candidatos, decisiones y medidas guardados aquí. Lo que preguntas al agente se envía a la Model API de Meta. No introduzcas trabajo confidencial. Para ocultar candidatos nuevos a otros usuarios, selecciona Privado e inicia sesión con GitHub. Solo guardamos tu ID y nombre de usuario de GitHub, no tu contraseña ni tu correo electrónico.",
+    "privateNotice": "Modo privado: otros usuarios no ven los candidatos que creas aquí hasta que los publiques. Esto no los hace secretos: lo que preguntas al agente se envía a la Model API de Meta, las búsquedas envían la fórmula a servicios externos, y el operador puede leer la base de datos. No introduzcas trabajo confidencial."
   },
   "Scorecard": {
     "title": "Puntuación",
@@ -974,7 +994,7 @@
   "Visitors": {
     "title": "Dónde está activa esta investigación",
     "hint": "Cada navegador que abre esta herramienta cuenta una vez.",
-    "notice": "No se guardan la ubicación exacta, la dirección IP ni ningún dato identificativo. Solo se guarda un recuento por país, para ver dónde está activa esta investigación.",
+    "notice": "Para este recuento, no guardamos tu ubicación exacta, tu dirección IP ni nada que te identifique. Solo guardamos un número por país, para ver dónde está activa esta investigación.",
     "total": "en total",
     "countries": "países",
     "unknown": "Ubicación desconocida",
@@ -990,5 +1010,14 @@
     "noVisitors": "Aún no hay investigadores",
     "turnTo": "Girar el globo hasta {country}",
     "memoryNote": "Este servidor conserva los recuentos en memoria, por lo que se restablecen cuando se reinicia."
+  },
+  "Auth": {
+    "modeLabel": "Modo de trabajo",
+    "public": "Público",
+    "private": "Privado",
+    "publicHint": "Sin iniciar sesión. Cualquiera puede leer lo que guardes.",
+    "privateHint": "Inicia sesión con GitHub. Otros usuarios no verán tus candidatos nuevos hasta que los publiques.",
+    "signOut": "Cerrar sesión",
+    "signInFailed": "El inicio de sesión con GitHub no terminó. Inténtalo de nuevo."
   }
 }
