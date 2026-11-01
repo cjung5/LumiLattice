@@ -196,7 +196,7 @@
     "hintGuided": "选择 {host} 中的一种元素、替代元素及替换比例。应用将构建新晶体并进行检查。",
     "generateGuided": "生成新材料",
     "suggest": "让 Muse Spark 推荐替换方案",
-    "moreTools": "更多工具：导出、弛豫、发表、实验结果",
+    "moreTools": "更多工具：导出、弛豫、实验结果",
     "checkDetails": "结构检查详情",
     "mixTitle": "线性混合（参考；判定使用区间）：",
     "mixValues": "n ≈ {n}（±约 {nError}），带隙 ≈ {gap} eV（±约 {gapError} eV），来自",
@@ -421,7 +421,10 @@
     "duplicate": "此材料已公开，不能再次发布。若要继续研究，请打开并修改它：",
     "noDuplicate": "还没有所有者发布过此材料。",
     "otherFramework": "相同组成的另一种晶型已公开。您仍可发布此材料：",
-    "unclaimed": "存在公开模式的副本。它们没有所有者，因此不会妨碍您："
+    "unclaimed": "存在公开模式的副本。它们没有所有者，因此不会妨碍您：",
+    "notPublic": "此材料尚未进入公开列表。",
+    "makePublic": "以 {name} 公开",
+    "makePublicAnonymous": "匿名公开"
   },
   "Relax": {
     "title": "弛豫 (CHGNet，本地安装)",

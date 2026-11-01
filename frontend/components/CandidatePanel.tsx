@@ -12,7 +12,8 @@ import { ExperimentPanel } from "@/components/ExperimentPanel";
 import { Advanced, useLevel } from "@/components/Level";
 import { PlainResult } from "@/components/PlainResult";
 import { NoveltyPanel } from "@/components/NoveltyPanel";
-import { OwnershipLine, PublishControl } from "@/components/PublishControl";
+import { useAuth } from "@/components/Auth";
+import { OwnershipLine, PublicStatus, PublishControl } from "@/components/PublishControl";
 import { RelaxationPanel } from "@/components/RelaxationPanel";
 import { Leaderboard, ScorePanel } from "@/components/ScorePanel";
 import { Term } from "@/components/Term";
@@ -81,6 +82,7 @@ export function CandidatePanel({
   onSelect,
   onDecide,
 }: Props) {
+  const { enabled: authEnabled } = useAuth();
   const t = useTranslations("Candidate");
   const tb = useBackendText();
   const guided = useLevel().level === "guided";
@@ -327,6 +329,7 @@ export function CandidatePanel({
               </button>
             </p>
             <OwnershipLine candidate={current} />
+            {authEnabled && <PublicStatus key={`status-${current.candidate_id}`} candidate={current} onChange={onCandidate} />}
           </div>
           <div
             role="tablist"
@@ -489,7 +492,7 @@ export function CandidatePanel({
               onChange={onCandidate}
             />
           )}
-          <PublishControl key={`pub-${current.candidate_id}`} candidate={current} onChange={onCandidate} />
+          {!authEnabled && <PublishControl key={`pub-${current.candidate_id}`} candidate={current} onChange={onCandidate} />}
           <ExperimentPanel key={`exp-${current.candidate_id}`} candidate={current} onChange={onCandidate} />
           </Advanced>
           </div>

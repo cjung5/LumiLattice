@@ -196,7 +196,7 @@
     "hintGuided": "Choose an element in {host}, the element to put in its place, and how much of it to replace. The app builds the new crystal and checks it.",
     "generateGuided": "Make the new material",
     "suggest": "Let Muse Spark suggest a swap",
-    "moreTools": "More tools: export, relaxation, publishing, lab results",
+    "moreTools": "More tools: export, relaxation, lab results",
     "checkDetails": "Details of the structure checks",
     "mixTitle": "Linear mix (a guide; verdicts use the range):",
     "mixValues": "n ≈ {n} (± about {nError}), band gap ≈ {gap} eV (± about {gapError} eV), from",
@@ -421,7 +421,10 @@
     "duplicate": "This material is already public, so it cannot be published again. To build on it, open it and revise it:",
     "noDuplicate": "No owner has published this material yet.",
     "otherFramework": "The same composition in another crystal form is public. You can still publish this one:",
-    "unclaimed": "Public-mode copies exist. They have no owner, so they do not stop you:"
+    "unclaimed": "Public-mode copies exist. They have no owner, so they do not stop you:",
+    "notPublic": "This material is not in the public list yet.",
+    "makePublic": "Make public as {name}",
+    "makePublicAnonymous": "Make public anonymously"
   },
   "Relax": {
     "title": "Relaxation (CHGNet, local install)",

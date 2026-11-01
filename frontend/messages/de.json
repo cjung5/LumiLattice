@@ -196,7 +196,7 @@
     "hintGuided": "Wähle ein Element in {host}, das Ersatzelement und den Anteil für den Austausch. Die App baut den neuen Kristall und prüft ihn.",
     "generateGuided": "Neues Material erzeugen",
     "suggest": "Von Muse Spark einen Austausch vorschlagen lassen",
-    "moreTools": "Weitere Tools: Export, Relaxierung, Publikation, Laborergebnisse",
+    "moreTools": "Weitere Tools: Export, Relaxierung, Laborergebnisse",
     "checkDetails": "Details der Strukturprüfungen",
     "mixTitle": "Lineare Mischung (Orientierung; Bewertung nutzt Bereich):",
     "mixValues": "n ≈ {n} (± ca. {nError}), Bandlücke ≈ {gap} eV (± ca. {gapError} eV), aus",
@@ -421,7 +421,10 @@
     "duplicate": "Dieses Material ist schon öffentlich und kann nicht erneut veröffentlicht werden. Um darauf aufzubauen, öffne und überarbeite es:",
     "noDuplicate": "Noch kein Eigentümer hat dieses Material veröffentlicht.",
     "otherFramework": "Dieselbe Zusammensetzung in einer anderen Kristallform ist öffentlich. Dieses Material kannst du trotzdem veröffentlichen:",
-    "unclaimed": "Es gibt Kopien aus dem öffentlichen Modus. Sie haben keinen Eigentümer und hindern dich nicht:"
+    "unclaimed": "Es gibt Kopien aus dem öffentlichen Modus. Sie haben keinen Eigentümer und hindern dich nicht:",
+    "notPublic": "Dieses Material ist noch nicht in der öffentlichen Liste.",
+    "makePublic": "Als {name} veröffentlichen",
+    "makePublicAnonymous": "Anonym veröffentlichen"
   },
   "Relax": {
     "title": "Relaxation (CHGNet, lokale Installation)",

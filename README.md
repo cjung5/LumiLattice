@@ -178,21 +178,23 @@ Use the switch at the top of the page. Each mode is a separate workspace, so pri
 <p align="center"><img src="docs/figures/modes.png" alt="The top of the page in the two modes. In public mode, a notice says that anyone can read what is saved. In private mode, the page shows the signed-in account's short tag, and a notice says that other users cannot see new candidates until they are published." width="820"></p>
 <p align="center"><sub>The same page in each mode. The account in this picture is a test account.</sub></p>
 
-Your own work shows a **Private Material** badge under its name.
+Your own work shows a **Private Material** badge under its name. The same card says if the material is already public, so you do not have to look for this.
 
-<p align="center"><img src="docs/figures/material.gif" alt="A candidate's name, LL-0006: Sr3LaTi3AlO12, in gold, slowly growing bright and dim, above a Private Material badge." width="480"></p>
+<p align="center"><img src="docs/figures/material.gif" alt="A candidate's card. The name, LL-0002: Sr3LaTi3AlO12, slowly grows bright and dim in gold. Below it are a Private Material badge, a check mark that says no owner has published this material yet, and a button: Make public as A. Kim." width="620"></p>
 
 **To make your material public:**
 
-1. Select **Publish** on your private candidate. The app first checks if the same material is already public.
-2. If no owner has published it, read the warning and give your consent. It becomes **Public Material**, with your tag, such as *C. Jung*, or as anonymous. The tag is the default.
-3. If an owner has published it, you cannot publish it again. The app names the public candidate and its author, so you can open it and revise it.
+1. If no owner has published it, select **Make public as C. Jung** in the card. The button shows your own tag, which comes from your account name.
+2. Read the warning, and give your consent. You can choose anonymous credit here.
+3. The badge changes to **Public Material by C. Jung**, with the date and the license.
 
-<p align="center"><img src="docs/figures/publish.png" alt="The publish panel with a check mark that says no owner has published this material yet. Below are a note about public-mode copies, a warning about patents and legal ownership, the credit choice, and a consent box." width="820"></p>
-<p align="center"><sub>The first owner to publish a material. Public-mode copies are listed, but they do not stop you.</sub></p>
+<p align="center"><img src="docs/figures/publish.png" alt="The candidate's card with the panel open. It lists a public-mode copy that has no owner, and a warning about patents and legal ownership. Below are the credit choice, a consent box, and the button." width="820"></p>
+<p align="center"><img src="docs/figures/published.png" alt="The candidate's card after publishing, with the badge: Public Material by A. Kim, the date, and License: CC BY 4.0. Below are an undo link and the record's SHA-256 fingerprint." width="820"></p>
+<p align="center"><sub>Before and after. Public-mode copies are listed, but they do not stop you. The account is a test account.</sub></p>
 
-<p align="center"><img src="docs/figures/duplicate.png" alt="The publish panel for a second researcher. A message says that this material is already public, names the candidate and its author A. Kim, and the Publish button is disabled." width="820"></p>
-<p align="center"><sub>The next researcher with the same material. The server also refuses the request, so this rule does not depend on the screen.</sub></p>
+If an owner has already published the material, you cannot publish it again. The card names the public candidate and its author, so you can open it and revise it. The server also refuses the request, so this rule does not depend on the screen.
+
+<p align="center"><img src="docs/figures/duplicate.png" alt="The card for a second researcher with the same material. A message says that this material is already public, and it names the candidate and its author, A. Kim. There is no make-public button." width="820"></p>
 
 **What counts as the same material.** The same composition on the same crystal framework ([`matches.py`](backend/app/tools/matches.py)). Atom arrangement does not count, because an ordered cell is one model of a disordered solid. A different crystal form, such as rutile and anatase, is a different material, and the app lists it for information. The check compares only public candidates, so it never shows a private one. Thus two researchers can hold the same material in private, and the first to publish it gets the credit.
 
