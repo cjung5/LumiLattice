@@ -18,4 +18,4 @@ COPY data/reference.sqlite ./data/reference.sqlite
 COPY data/validation.json ./data/validation.json
 
 # Railway sets PORT.
-CMD ["sh", "-c", "exec .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips='*'"]
+CMD ["sh", "-c", "exec .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips='*' --no-access-log"]
