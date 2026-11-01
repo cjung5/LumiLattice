@@ -401,8 +401,8 @@
     "cancel": "Abbrechen",
     "creditName": "Namensnennung: {name}",
     "creditAnonymous": "Anonym veröffentlicht",
-    "privateChip": "Privat: nur du siehst das",
-    "publicChip": "Öffentlicher Modus: alle können das lesen",
+    "privateChip": "Privates Material",
+    "publicChip": "Öffentliches Material",
     "publicHint": "Ein Kandidat aus dem öffentlichen Modus hat keinen Eigentümer, daher kann ihn niemand mit Namen veröffentlichen. Um eigene Arbeit zu veröffentlichen, wähle Privat und melde dich an.",
     "ownedWarning": "Das Veröffentlichen zeigt diesen Kandidaten allen, mit Entscheidungen, Begründungen, Kritiken, Messwerten und den Substitutionen, die zu ihm führten. Eine Veröffentlichung kann eine spätere Patentanmeldung beeinträchtigen, prüfe das also vorher, falls es für dich wichtig ist. LumiLattice speichert dein Konto, die Zeit und einen Fingerabdruck der Struktur. Das ist ein Nachweis des Vorgangs, kein Beweis für rechtliches Eigentum. Andere können den Inhalt unter CC BY 4.0 mit Namensnennung weiterverwenden.",
     "creditLogin": "Meinen Google-Kontonamen zeigen ({name})",
@@ -414,7 +414,9 @@
     "license": "Lizenz: {license}",
     "otherNote": "Dies ist die veröffentlichte Arbeit einer anderen Person: Du kannst sie lesen, aber nicht ändern. Um darauf aufzubauen, überarbeite sie. Deine Version gehört dir und behält die Namensnennung.",
     "basedOn": "Basiert auf der Arbeit von {name}",
-    "basedOnAnonymous": "Basiert auf der Arbeit einer anonymen Person"
+    "basedOnAnonymous": "Basiert auf der Arbeit einer anonymen Person",
+    "privateHint": "Nur du siehst das, bis du es veröffentlichst.",
+    "publicChipHint": "Alle können das lesen, weil es im öffentlichen Modus erstellt wurde."
   },
   "Relax": {
     "title": "Relaxation (CHGNet, lokale Installation)",

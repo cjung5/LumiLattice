@@ -310,20 +310,24 @@ export function CandidatePanel({
       {error && <p className="mt-3 text-sm text-danger">{tb(error)}</p>}
 
       {current && (
-        <div className="mt-5 space-y-3">
-          <h3 id="step-result" className="scroll-mt-4 font-medium md:scroll-mt-28">
-            {current.candidate_id}: {current.formula}
-            <span className="ml-2 text-xs font-normal text-muted">
+        <div className="mt-6 space-y-4">
+          <div className="material-header space-y-2.5 rounded-xl border border-line-strong p-4 sm:p-5">
+            <h3 id="step-result" className="scroll-mt-8 text-lg font-semibold tracking-tight sm:text-xl md:scroll-mt-36">
+              <span className="material-name">
+                {current.candidate_id}: {current.formula}
+              </span>
+            </h3>
+            <p className="text-xs text-muted">
               {t("lineage", {
                 parent: current.parent_id ?? current.transformation.host.reference ?? "",
                 supercell: current.transformation.supercell.join("×"),
               })}
-            </span>
-            <button type="button" onClick={() => void copyLink()} className="ml-2 text-xs font-normal text-accent-text underline">
-              {copied ? t("linkCopied") : t("copyLink")}
-            </button>
-          </h3>
-          <OwnershipLine candidate={current} />
+              <button type="button" onClick={() => void copyLink()} className="ml-2 text-accent-text underline">
+                {copied ? t("linkCopied") : t("copyLink")}
+              </button>
+            </p>
+            <OwnershipLine candidate={current} />
+          </div>
           <div
             role="tablist"
             aria-label={t("tabsLabel")}

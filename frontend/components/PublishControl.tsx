@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { useAuth } from "@/components/Auth";
+import { LockIcon } from "@/components/LockIcon";
 import { setVisibility, type Candidate, type Credit } from "@/lib/api";
 
 type Props = {
@@ -24,23 +25,34 @@ function useCreditText() {
   };
 }
 
-/** Beside the candidate's name: whose it is, and who can see it. */
+/** Below the candidate's name: whose it is, and who can see it. */
 export function OwnershipLine({ candidate }: { candidate: Candidate }) {
   const t = useTranslations("Publish");
   const creditText = useCreditText();
   const { enabled } = useAuth();
-  const parts: string[] = [];
-  if (candidate.credit) parts.push(creditText(candidate.credit));
-  else if (candidate.mine) parts.push(`🔒 ${t("privateChip")}`);
-  else if (enabled) parts.push(t("publicChip"));
-  if (candidate.based_on_credit) {
-    parts.push(
-      candidate.based_on_credit.display === "name" && candidate.based_on_credit.name
-        ? t("basedOn", { name: candidate.based_on_credit.name })
-        : t("basedOnAnonymous"),
-    );
-  }
-  return parts.length ? <p className="text-xs text-muted">{parts.join(" · ")}</p> : null;
+  const based = candidate.based_on_credit;
+  const basedOn =
+    based && (based.display === "name" && based.name ? t("basedOn", { name: based.name }) : t("basedOnAnonymous"));
+  const badge = "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium";
+  const hasBadge = candidate.credit || candidate.mine || enabled;
+  if (!hasBadge && !basedOn) return null;
+  return (
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-muted">
+      {candidate.credit ? (
+        <span className={`${badge} border-tag-dft text-tag-dft`}>🌐 {creditText(candidate.credit)}</span>
+      ) : candidate.mine ? (
+        <span className={`${badge} border-accent bg-accent-soft text-accent-text`} title={t("privateHint")}>
+          <LockIcon />
+          {t("privateChip")}
+        </span>
+      ) : enabled ? (
+        <span className={`${badge} border-line-strong`} title={t("publicChipHint")}>
+          {t("publicChip")}
+        </span>
+      ) : null}
+      {basedOn && <span>{basedOn}</span>}
+    </div>
+  );
 }
 
 // A candidate from private mode has an owner, who alone can publish it, under the signed-in name.
@@ -88,7 +100,9 @@ export function PublishControl({ candidate, onChange }: Props) {
     return (
       <div className="flex flex-col gap-1 text-sm">
         <span className="w-fit rounded border border-line px-2 py-0.5 text-xs text-muted">{t("publicChip")}</span>
-        <p className="text-xs text-muted">{t("publicHint")}</p>
+        <p className="text-xs text-muted">
+          {t("publicChipHint")} {t("publicHint")}
+        </p>
       </div>
     );
   }
@@ -98,9 +112,19 @@ export function PublishControl({ candidate, onChange }: Props) {
   return (
     <div className="flex flex-col gap-2 text-sm">
       <div className="flex flex-wrap items-center gap-2">
-        <span className={`rounded border px-2 py-0.5 text-xs ${published ? "border-tag-dft text-tag-dft" : "border-line text-muted"}`}>
-          {published ? `🌐 ${t("published")}` : owned ? `🔒 ${t("privateChip")}` : t("private")}
+        <span className={`inline-flex items-center gap-1.5 rounded border px-2 py-0.5 text-xs ${published ? "border-tag-dft text-tag-dft" : "border-line text-muted"}`}>
+          {published ? (
+            `🌐 ${t("published")}`
+          ) : owned ? (
+            <>
+              <LockIcon />
+              {t("privateChip")}
+            </>
+          ) : (
+            t("private")
+          )}
         </span>
+        {!published && owned && <span className="text-xs text-muted">{t("privateHint")}</span>}
         {published && candidate.credit && <span className="text-xs text-muted">{creditText(candidate.credit)}</span>}
         {published ? (
           <button type="button" disabled={busy} className="text-xs underline" onClick={() => void apply({ visibility: "private" })}>

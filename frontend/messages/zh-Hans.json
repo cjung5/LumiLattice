@@ -401,8 +401,8 @@
     "cancel": "取消",
     "creditName": "署名：{name}",
     "creditAnonymous": "匿名发布",
-    "privateChip": "私有：只有您能看到",
-    "publicChip": "公开模式：任何人都能读取",
+    "privateChip": "私有材料",
+    "publicChip": "公开材料",
     "publicHint": "公开模式的候选没有所有者，因此任何人都不能署名发布。若要发布自己的工作，请选择私有并登录。",
     "ownedWarning": "发布后，所有人都能看到此候选及其决定、理由、评审、测量值和得到它的替换过程。公开披露可能影响之后的专利申请，如有需要请先确认。LumiLattice 会记录您的账户、时间和结构指纹。这只是记录，不是法律所有权的证明。他人可按 CC BY 4.0 署名后再利用。",
     "creditLogin": "显示我的 Google 账户名称 ({name})",
@@ -414,7 +414,9 @@
     "license": "许可：{license}",
     "otherNote": "这是他人发布的工作，您可以读取但不能更改。若要继续研究，请修改它：您的版本归您所有，并保留原作者的署名。",
     "basedOn": "基于 {name} 的工作",
-    "basedOnAnonymous": "基于匿名研究者的工作"
+    "basedOnAnonymous": "基于匿名研究者的工作",
+    "privateHint": "在您发布之前，只有您能看到。",
+    "publicChipHint": "它是在公开模式下创建的，因此任何人都能读取。"
   },
   "Relax": {
     "title": "弛豫 (CHGNet，本地安装)",

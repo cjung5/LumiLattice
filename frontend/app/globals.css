@@ -14,6 +14,9 @@
   --muted: #44604f;
   --accent: #146b3a;
   --on-accent: #ffffff;
+  --material: #0b6e3a;
+  --material-glow: rgb(226 178 24 / 0.75);
+  --material-glow-soft: rgb(226 178 24 / 0.22);
   --accent-text: #125f34;
   --accent-soft: #e6f4d2;
   --danger: #b3262b;
@@ -85,6 +88,9 @@
   --muted: #b4cdbc;
   --accent: #a8e6a1;
   --on-accent: #0a2a18;
+  --material: #fff3a8;
+  --material-glow: rgb(255 232 120 / 0.8);
+  --material-glow-soft: rgb(255 232 120 / 0.2);
   --accent-text: #b5eca9;
   --accent-soft: #14362a;
   --danger: #ffa198;
@@ -487,6 +493,16 @@ body::after {
     color: transparent;
   }
 
+  /* A candidate's name, in its own color, with a light that slowly rises and falls. */
+  .material-name {
+    color: var(--material);
+    animation: material-glow 4.5s ease-in-out infinite;
+  }
+
+  .material-header {
+    background: color-mix(in oklab, var(--surface-2) 55%, transparent);
+  }
+
   /* Surfaces catch the light as it passes. Bright and small, with a steep fall-off: the edge is
      brightest, the face less, and the wash stays under the text. */
   .card,
@@ -585,5 +601,25 @@ body::after {
   *::after {
     animation: none !important;
     transition: none !important;
+  }
+}
+
+@keyframes material-glow {
+  0%,
+  100% {
+    text-shadow: 0 0 3px var(--material-glow-soft);
+  }
+
+  50% {
+    text-shadow:
+      0 0 10px var(--material-glow),
+      0 0 26px var(--material-glow-soft);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .material-name {
+    animation: none;
+    text-shadow: 0 0 8px var(--material-glow-soft);
   }
 }

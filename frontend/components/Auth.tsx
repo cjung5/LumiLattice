@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { LockIcon } from "@/components/LockIcon";
 import { setTokenSource } from "@/lib/api";
 
 // Public mode sends no token, so the backend treats the browser as anyone. Private mode sends one,
@@ -103,7 +104,7 @@ export function ModeSwitch() {
   const { enabled, name, mode, failed, choose, signOut } = useAuth();
   if (!enabled) return null;
   return (
-    <div className="flex flex-wrap items-center gap-2 text-sm">
+    <div className="flex flex-wrap items-center gap-2 text-sm sm:mr-3">
       <div role="radiogroup" aria-label={t("modeLabel")} className="segmented text-sm">
         {(["public", "private"] as const).map((option) => (
           <button
@@ -115,17 +116,33 @@ export function ModeSwitch() {
             onClick={() => choose(option)}
             className="segment"
           >
-            {option === "private" ? `🔒 ${t("private")}` : t("public")}
+            {option === "private" ? (
+              <span className="inline-flex items-center gap-1.5">
+                <LockIcon />
+                {t("private")}
+              </span>
+            ) : (
+              t("public")
+            )}
           </button>
         ))}
       </div>
       {name && (
-        <>
-          <span className="text-muted">{name}</span>
-          <button type="button" className="text-xs underline" onClick={() => void signOut()}>
+        <div className="flex items-center gap-2 rounded-full border border-line bg-surface py-1 pl-1 pr-3">
+          <span
+            aria-hidden
+            className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-semibold text-on-accent"
+          >
+            {[...name][0]?.toUpperCase()}
+          </span>
+          <span className="max-w-40 truncate font-medium" title={name}>
+            {name}
+          </span>
+          <span aria-hidden className="h-4 w-px bg-line-strong" />
+          <button type="button" className="text-xs text-muted underline-offset-2 hover:text-foreground hover:underline" onClick={() => void signOut()}>
             {t("signOut")}
           </button>
-        </>
+        </div>
       )}
       {failed && !name && <span className="text-xs text-danger">{t("signInFailed")}</span>}
     </div>
