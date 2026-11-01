@@ -63,9 +63,16 @@ def test_missing_refractive_index_is_unknown():
 
 
 def test_bad_key_is_upstream_error():
-    client = mp_client(lambda r: httpx.Response(403, json={"detail": "bad key"}))
+    client = mp_client(lambda r: httpx.Response(401, json={"message": "Invalid credentials"}))
 
-    with pytest.raises(UpstreamError):
+    with pytest.raises(UpstreamError, match="rejected the API key"):
+        client.search(formula="SrTiO3")
+
+
+def test_blocked_server_is_not_reported_as_a_bad_key():
+    client = mp_client(lambda r: httpx.Response(403, text="error code: 1020"))
+
+    with pytest.raises(UpstreamError, match="error 403: error code: 1020"):
         client.search(formula="SrTiO3")
 
 

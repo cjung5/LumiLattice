@@ -59,7 +59,8 @@ class MaterialsProjectClient:
             response = self._http.get(path, params=params)
         except httpx.HTTPError as exc:
             raise UpstreamError(f"Materials Project request failed: {exc}") from exc
-        if response.status_code in (401, 403):
+        # A bad key gets 401. A 403 can be a block on this server's address, so its text is shown.
+        if response.status_code == 401:
             raise UpstreamError("Materials Project rejected the API key.")
         if response.status_code >= 400:
             raise UpstreamError(
