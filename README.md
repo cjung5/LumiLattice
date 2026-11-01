@@ -223,7 +223,7 @@ flowchart LR
 
 | Muse Spark feature | How LumiLattice uses it |
 |---|---|
-| **Tool calling** (Responses API) | The agent plans the work and calls 9 scientific tools. The model never writes a number on its own: tools return each value with its source |
+| **Tool calling** (Responses API) | The agent plans the work and calls 9 scientific tools. Tools return each value with its source, and the agent is instructed to use them for every number |
 | **Conversation state** (`previous_response_id`) | The agent remembers the host, the candidates, and the researcher's reasons |
 | **Multimodal input** | The critique reads three rendered views of the crystal, with the swapped atoms labeled, along with the evidence |
 | **Strict JSON output** | The critique returns a fixed structure. The app rejects unknown evidence IDs and flags numbers that are not in the evidence |
@@ -231,7 +231,7 @@ flowchart LR
 
 1. The researcher sets optical targets and constraints, and selects a host crystal structure.
 2. Muse Spark (Meta Model API, Responses endpoint) plans the work and calls tools. It also reviews each candidate from its evidence and rendered views of its structure (multimodal critique).
-3. Tools return values with provenance. The model never writes a number on its own.
+3. Tools return values with provenance. The agent is instructed to use tools for every number, and its answers can include simple arithmetic on those values. The app checks the numbers in a critique against the evidence, but it does not check them in an agent answer.
 4. Each value carries one evidence tag: `Experimental`, `DFT-computed`, `Heuristic`, or `Unknown`.
 5. The researcher accepts, modifies, or rejects a candidate, and the agent revises it.
 
