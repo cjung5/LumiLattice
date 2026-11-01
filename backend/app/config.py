@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     database_url: SecretStr | None = None
     # Shared with the frontend server. When set, only that server can add to the visitor counts.
     visit_secret: str | None = None
-    # Shared with the frontend server, which signs tokens after a GitHub sign-in. Unset: nobody can
+    # Shared with the frontend server, which signs tokens after a Google sign-in. Unset: nobody can
     # sign in, and only public mode is available.
     auth_secret: str | None = None
 

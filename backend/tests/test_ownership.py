@@ -21,14 +21,14 @@ from app.tools.goals import Goal
 from app.tools.literature_sources import LiteratureResult
 
 SECRET = "test-secret-with-at-least-32-characters"
-ALICE = "github:1"
-BOB = "github:2"
+ALICE = "google:1"
+BOB = "google:2"
 GOAL = {"target_n": 2.2, "min_band_gap": 3.0}
 
 
 def token(sub: str, login: str = "alice", *, exp: float | None = None, aud: str = "api") -> str:
     return sign_token(
-        {"sub": sub, "login": login, "aud": aud, "exp": exp or time.time() + 600}, SECRET
+        {"sub": sub, "name": login, "aud": aud, "exp": exp or time.time() + 600}, SECRET
     )
 
 
@@ -134,7 +134,7 @@ def test_private_candidate_is_hidden_on_every_path(api, srtio3, route, kwargs):
         # 404, not 403: a stranger cannot tell a private candidate from one that does not exist.
         assert response.status_code == 404, (route, response.text)
         assert candidate_id in response.json()["detail"]
-        assert "github:" not in response.text
+        assert "google:" not in response.text
 
 
 @pytest.mark.parametrize("route,kwargs", READS.items())
@@ -150,7 +150,7 @@ def test_published_candidate_can_be_read_by_anyone(api, srtio3, route, kwargs):
     for headers in ({}, auth(BOB, "bob")):
         response = call(api, route, kwargs, candidate_id, headers)
         assert response.status_code == 200
-        assert "github:" not in response.text
+        assert "google:" not in response.text
 
 
 @pytest.mark.parametrize("route,kwargs", WRITES.items())
@@ -192,7 +192,7 @@ def test_lists_show_each_viewer_the_right_candidates(api, srtio3):
 
     def ids(headers: dict) -> set[str]:
         response = api.get("/api/candidates", headers=headers)
-        assert "github:" not in response.text
+        assert "google:" not in response.text
         return {c["candidate_id"] for c in response.json()}
 
     mine = {open_id, alice_private, alice_published, bob_private}
@@ -252,7 +252,7 @@ def test_anonymous_credit_does_not_show_the_account(api, srtio3):
         "/api/candidates",
     ):
         text = api.get(url).text
-        assert "github:" not in text
+        assert "google:" not in text
         assert login not in text
 
 
@@ -395,7 +395,7 @@ def test_export_of_a_published_child_does_not_show_a_private_parent(api, srtio3)
         "Basic abc",
         f"Bearer {token(ALICE, exp=time.time() - 1)}",
         f"Bearer {token(ALICE, aud='session')}",
-        f"Bearer {sign_token({'sub': ALICE, 'login': 'a', 'aud': 'api', 'exp': time.time() + 600}, 'x' * 32)}",
+        f"Bearer {sign_token({'sub': ALICE, 'name': 'a', 'aud': 'api', 'exp': time.time() + 600}, 'x' * 32)}",
     ],
 )
 def test_a_bad_token_is_an_error_and_never_public_mode(api, srtio3, header):
@@ -454,11 +454,22 @@ def test_short_secret_is_refused():
         Settings(_env_file=None, auth_secret="short")
 
 
+def test_a_name_in_any_language_survives_the_token(api, srtio3):
+    """Google names can be in any script, and the frontend server writes the token as UTF-8."""
+    candidate_id = create(api, srtio3, auth(ALICE, "정 연구원"))
+    credit = api.post(
+        f"/api/candidates/{candidate_id}/visibility",
+        headers=auth(ALICE, "정 연구원"),
+        json={"visibility": "published", "credit_display": "name", "consent": True},
+    ).json()["credit"]
+    assert credit["name"] == "정 연구원"
+
+
 def test_token_round_trip_and_tampering():
     good = token(ALICE, "alice")
-    assert verify_token(good, SECRET) == Viewer(id=ALICE, login="alice")
+    assert verify_token(good, SECRET) == Viewer(id=ALICE, name="alice")
     body, signature = good.split(".")
-    other = sign_token({"sub": BOB, "login": "bob", "aud": "api", "exp": time.time() + 9}, SECRET)
+    other = sign_token({"sub": BOB, "name": "bob", "aud": "api", "exp": time.time() + 9}, SECRET)
     for bad in (f"{other.split('.')[0]}.{signature}", f"{body}.", good + "x"):
         with pytest.raises(InvalidToken):
             verify_token(bad, SECRET)
@@ -466,8 +477,8 @@ def test_token_round_trip_and_tampering():
 
 def test_store_keeps_the_owner_and_hides_it_from_the_view(tmp_path, srtio3):
     for store in (MemoryStore(), SqlStore(f"sqlite:///{tmp_path / 'c.db'}")):
-        alice = ScopedStore(store, Viewer(id=ALICE, login="alice"))
-        bob = ScopedStore(store, Viewer(id=BOB, login="bob"))
+        alice = ScopedStore(store, Viewer(id=ALICE, name="alice"))
+        bob = ScopedStore(store, Viewer(id=BOB, name="bob"))
         made = create_candidate(
             alice, srtio3, _host(), [Substitution(element_from="Sr", element_to="Ba", fraction=0.5)]
         )
@@ -502,12 +513,12 @@ def test_old_records_with_no_owner_stay_open(tmp_path, srtio3):
 
 def test_agent_tools_see_only_what_the_viewer_can(srtio3):
     store = MemoryStore()
-    alice = ScopedStore(store, Viewer(id=ALICE, login="alice"))
+    alice = ScopedStore(store, Viewer(id=ALICE, name="alice"))
     secret = create_candidate(
         alice, srtio3, _host(), [Substitution(element_from="Sr", element_to="Ba", fraction=0.5)]
     ).candidate_id
     goal = Goal(target_n=2.2, min_band_gap=3.0)
-    for viewer in (None, Viewer(id=BOB, login="bob")):
+    for viewer in (None, Viewer(id=BOB, name="bob")):
         registry = build_registry(None, NoLiterature(), store=ScopedStore(store, viewer), goal=goal)
         for tool in ("get_candidate", "score_against_goal", "get_scorecard", "check_novelty"):
             assert "error" in _run(registry, tool, {"candidate_id": secret}), tool
@@ -540,7 +551,7 @@ def test_agent_context_does_not_name_a_private_candidate(api, srtio3):
     context = AgentContext(current_candidate_id=candidate_id)
     formula = get_store().get(candidate_id)[0].formula
     assert formula not in with_context("hi", context, ScopedStore(get_store(), None))
-    own = ScopedStore(get_store(), Viewer(id=ALICE, login="alice"))
+    own = ScopedStore(get_store(), Viewer(id=ALICE, name="alice"))
     assert formula in with_context("hi", context, own)
 
 

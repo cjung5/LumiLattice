@@ -9,16 +9,16 @@ import { setTokenSource } from "@/lib/api";
 type Mode = "public" | "private";
 const MODE_KEY = "lumilattice.mode";
 
-type Session = { enabled: boolean; login: string | null; token: string | null; expires_at: number };
+type Session = { enabled: boolean; name: string | null; token: string | null; expires_at: number };
 
 const AuthContext = createContext<{
   enabled: boolean;
-  login: string | null;
+  name: string | null;
   mode: Mode;
   failed: boolean;
   choose: (mode: Mode) => void;
   signOut: () => Promise<void>;
-}>({ enabled: false, login: null, mode: "public", failed: false, choose: () => undefined, signOut: async () => undefined });
+}>({ enabled: false, name: null, mode: "public", failed: false, choose: () => undefined, signOut: async () => undefined });
 
 export const useAuth = () => useContext(AuthContext);
 
@@ -47,7 +47,7 @@ function saveMode(mode: Mode) {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [enabled, setEnabled] = useState(false);
-  const [login, setLogin] = useState<string | null>(null);
+  const [name, setName] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>("public");
   const [failed, setFailed] = useState(false);
 
@@ -63,23 +63,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .then((session) => {
         cached = session;
         setEnabled(session.enabled);
-        setLogin(session.login);
+        setName(session.name);
         let saved: string | null = null;
         try {
           saved = window.localStorage.getItem(MODE_KEY);
         } catch {
           // Blocked storage: stay in public mode.
         }
-        if (session.login && saved === "private") apply("private");
+        if (session.name && saved === "private") apply("private");
       })
       .catch(() => setEnabled(false));
   }, []);
 
   function choose(next: Mode) {
     saveMode(next);
-    if (next === "private" && !login) {
+    if (next === "private" && !name) {
       const here = `${window.location.pathname}${window.location.search}`;
-      window.location.assign(`/api/auth/github?next=${encodeURIComponent(here)}`);
+      window.location.assign(`/api/auth/google?next=${encodeURIComponent(here)}`);
       return;
     }
     apply(next);
@@ -89,18 +89,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await fetch("/api/auth/signout", { method: "POST" });
     cached = null;
     saveMode("public");
-    setLogin(null);
+    setName(null);
     apply("public");
   }
 
   return (
-    <AuthContext.Provider value={{ enabled, login, mode, failed, choose, signOut }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ enabled, name, mode, failed, choose, signOut }}>{children}</AuthContext.Provider>
   );
 }
 
 export function ModeSwitch() {
   const t = useTranslations("Auth");
-  const { enabled, login, mode, failed, choose, signOut } = useAuth();
+  const { enabled, name, mode, failed, choose, signOut } = useAuth();
   if (!enabled) return null;
   return (
     <div className="flex flex-wrap items-center gap-2 text-sm">
@@ -119,15 +119,15 @@ export function ModeSwitch() {
           </button>
         ))}
       </div>
-      {login && (
+      {name && (
         <>
-          <span className="text-muted">@{login}</span>
+          <span className="text-muted">{name}</span>
           <button type="button" className="text-xs underline" onClick={() => void signOut()}>
             {t("signOut")}
           </button>
         </>
       )}
-      {failed && !login && <span className="text-xs text-danger">{t("signInFailed")}</span>}
+      {failed && !name && <span className="text-xs text-danger">{t("signInFailed")}</span>}
     </div>
   );
 }

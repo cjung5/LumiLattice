@@ -1,4 +1,4 @@
-"""Who is asking: a short-lived token from the frontend server, which runs the GitHub sign-in.
+"""Who is asking: a short-lived token from the frontend server, which runs the Google sign-in.
 
 A token is base64url(JSON payload) + "." + base64url(HMAC-SHA256 of that text), signed with
 AUTH_SECRET. The frontend server and this server share the secret, and only they can make a token.
@@ -21,8 +21,8 @@ class InvalidToken(Exception):
 
 @dataclass(frozen=True)
 class Viewer:
-    id: str  # "github:<numeric account ID>", which stays the same if the user name changes
-    login: str
+    id: str  # "google:<sub>": the account's permanent ID, which stays the same if the name changes
+    name: str
 
 
 def _signature(body: str, secret: str) -> str:
@@ -41,7 +41,7 @@ def verify_token(token: str, secret: str) -> Viewer:
         raise InvalidToken("Bad signature.")
     try:
         payload = json.loads(base64.urlsafe_b64decode(body + "=" * (-len(body) % 4)))
-        viewer = Viewer(id=str(payload["sub"]), login=str(payload["login"]))
+        viewer = Viewer(id=str(payload["sub"]), name=str(payload["name"]))
         expires, audience = float(payload["exp"]), payload["aud"]
     except (binascii.Error, ValueError, KeyError, TypeError) as exc:
         raise InvalidToken("Bad payload.") from exc

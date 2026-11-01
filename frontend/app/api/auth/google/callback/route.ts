@@ -1,7 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { authSettings, OAUTH_COOKIE, safeNext, SESSION_COOKIE, SESSION_SECONDS, signToken } from "@/lib/authToken";
 
-/** Step 2: GitHub returns here. Only the account's ID and user name are kept, in a signed cookie. */
+const DISCOVERY = "https://accounts.google.com/.well-known/openid-configuration";
+
+/** Step 2: Google returns here. Only the account's ID and name are kept, in a signed cookie. */
 export async function GET(request: NextRequest) {
   const settings = authSettings();
   if (!settings) return new Response(null, { status: 404 });
@@ -39,29 +41,39 @@ export async function GET(request: NextRequest) {
   if (!code || !state || state !== saved.state) return failed();
 
   try {
-    const tokenResponse = await fetch("https://github.com/login/oauth/access_token", {
+    const signal = AbortSignal.timeout(10_000);
+    const discovery = await fetch(DISCOVERY, { signal });
+    const { token_endpoint: tokenUrl, userinfo_endpoint: userUrl } = (await discovery.json()) as {
+      token_endpoint: string;
+      userinfo_endpoint: string;
+    };
+    const tokenResponse = await fetch(tokenUrl, {
       method: "POST",
-      headers: { Accept: "application/json", "Content-Type": "application/json" },
-      body: JSON.stringify({
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
         client_id: settings.clientId,
         client_secret: settings.clientSecret,
         code,
-        redirect_uri: `${origin}/api/auth/github/callback`,
+        grant_type: "authorization_code",
+        redirect_uri: `${origin}/api/auth/google/callback`,
       }),
-      signal: AbortSignal.timeout(10_000),
+      signal,
     });
     const { access_token: accessToken } = (await tokenResponse.json()) as { access_token?: string };
     if (!accessToken) return failed();
-    const userResponse = await fetch("https://api.github.com/user", {
-      headers: { Accept: "application/vnd.github+json", Authorization: `Bearer ${accessToken}`, "User-Agent": "LumiLattice" },
-      signal: AbortSignal.timeout(10_000),
-    });
+    const userResponse = await fetch(userUrl, { headers: { Authorization: `Bearer ${accessToken}` }, signal });
     if (!userResponse.ok) return failed();
-    const user = (await userResponse.json()) as { id?: number; login?: string };
-    if (!user.id || !user.login) return failed();
-    // The GitHub access token is not stored: the app needs nothing else from GitHub.
+    const user = (await userResponse.json()) as { sub?: string; name?: string };
+    if (!user.sub) return failed();
+    // sub is the account's permanent ID. Google does not promise a name, and the user can change it.
+    // The Google access token is not stored: the app needs nothing else from Google.
     const session = signToken(
-      { sub: `github:${user.id}`, login: user.login, aud: "session", exp: Math.floor(Date.now() / 1000) + SESSION_SECONDS },
+      {
+        sub: `google:${user.sub}`,
+        name: (user.name?.trim() || "Google user").slice(0, 200),
+        aud: "session",
+        exp: Math.floor(Date.now() / 1000) + SESSION_SECONDS,
+      },
       settings.secret,
     );
     return finish(new URL(next, origin), session);

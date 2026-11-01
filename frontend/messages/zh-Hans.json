@@ -405,15 +405,15 @@
     "publicChip": "公开模式：任何人都能读取",
     "publicHint": "公开模式的候选没有所有者，因此任何人都不能署名发布。若要发布自己的工作，请选择私有并登录。",
     "ownedWarning": "发布后，所有人都能看到此候选及其决定、理由、评审、测量值和得到它的替换过程。公开披露可能影响之后的专利申请，如有需要请先确认。LumiLattice 会记录您的账户、时间和结构指纹。这只是记录，不是法律所有权的证明。他人可按 CC BY 4.0 署名后再利用。",
-    "creditLogin": "显示我的 GitHub 名称 (@{login})",
+    "creditLogin": "显示我的 Google 账户名称 ({name})",
     "anonymousOwned": "匿名（其他用户看不到您的账户）",
     "consentOwned": "我已阅读以上内容，并选择以 CC BY 4.0 发布 {id}。",
     "undoNote": "取消后会重新隐藏，但他人已制作的副本可能仍然存在。",
     "recordHash": "记录：SHA-256 {hash}…",
-    "creditVerified": "由 @{name} 发布",
+    "creditVerified": "由 {name} 发布",
     "license": "许可：{license}",
     "otherNote": "这是他人发布的工作，您可以读取但不能更改。若要继续研究，请修改它：您的版本归您所有，并保留原作者的署名。",
-    "basedOn": "基于 @{name} 的工作",
+    "basedOn": "基于 {name} 的工作",
     "basedOnAnonymous": "基于匿名研究者的工作"
   },
   "Relax": {
@@ -694,7 +694,7 @@
   "Workspace": {
     "sharedAndPapers": "共享的候选材料和研究论文",
     "noAccounts": "此版本没有账户。任何打开本网站的人都能读取这里保存的候选材料、决定和测量值。您向智能体提出的内容会发送到 Meta 的 Model API。请勿输入机密工作内容。",
-    "publicNotice": "公开模式：任何打开本网站的人都能读取这里保存的候选材料、决定和测量值。您向智能体提出的内容会发送到 Meta 的 Model API。请勿输入机密工作内容。若要让新候选不被其他用户看到，请选择私有并使用 GitHub 登录。我们只保存您的 GitHub ID 和用户名，不保存密码或电子邮件地址。",
+    "publicNotice": "公开模式：任何打开本网站的人都能读取这里保存的候选材料、决定和测量值。您向智能体提出的内容会发送到 Meta 的 Model API。请勿输入机密工作内容。若要让新候选不被其他用户看到，请选择私有并使用 Google 登录。我们只保存您的 Google 账户 ID 和名称，不保存密码或电子邮件地址。",
     "privateNotice": "私有模式：您在这里创建的候选在发布前，其他用户看不到。但这并不等于保密：您向智能体提出的内容会发送到 Meta 的 Model API，搜索会把化学式发送到外部服务，运营者也能读取数据库。请勿输入机密工作内容。"
   },
   "Scorecard": {
@@ -1016,8 +1016,9 @@
     "public": "公开",
     "private": "私有",
     "publicHint": "无需登录。任何人都能读取您保存的内容。",
-    "privateHint": "使用 GitHub 登录。新的候选在发布前，其他用户看不到。",
+    "privateHint": "使用 Google 登录。新的候选在发布前，其他用户看不到。",
     "signOut": "退出登录",
-    "signInFailed": "GitHub 登录未完成。请重试。"
+    "signInFailed": "Google 登录未完成。请重试。",
+    "privacy": "隐私"
   }
 }

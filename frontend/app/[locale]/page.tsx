@@ -9,6 +9,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { LevelProvider, LevelSwitch } from "@/components/Level";
 import { ThemeSwitch } from "@/components/ThemeSwitch";
 import { ModeWorkspace } from "@/components/ModeWorkspace";
+import { PrivacyLink } from "@/components/PrivacyLink";
 import { MACHINE_TRANSLATED } from "@/i18n/routing";
 
 export default function HomePage({ params }: { params: Promise<{ locale: string }> }) {
@@ -38,6 +39,7 @@ export default function HomePage({ params }: { params: Promise<{ locale: string 
         </header>
         {MACHINE_TRANSLATED.has(locale) && <p className="text-xs text-warning">{tl("machineTranslated")}</p>}
         <ModeWorkspace />
+        <PrivacyLink />
       </main>
       </div>
       </AuthProvider>

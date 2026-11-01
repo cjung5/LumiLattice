@@ -48,7 +48,7 @@ export function OwnershipLine({ candidate }: { candidate: Candidate }) {
 export function PublishControl({ candidate, onChange }: Props) {
   const t = useTranslations("Publish");
   const creditText = useCreditText();
-  const { enabled, login } = useAuth();
+  const { enabled, name: accountName } = useAuth();
   const [open, setOpen] = useState(false);
   const [creditDisplay, setCreditDisplay] = useState<"anonymous" | "name">("anonymous");
   const [name, setName] = useState("");
@@ -131,7 +131,7 @@ export function PublishControl({ candidate, onChange }: Props) {
             </label>
             <label className="flex items-center gap-1">
               <input type="radio" checked={creditDisplay === "name"} onChange={() => setCreditDisplay("name")} />
-              {owned ? t("creditLogin", { login: login ?? "" }) : t("byName")}
+              {owned ? t("creditLogin", { name: accountName ?? "" }) : t("byName")}
             </label>
             {!owned && creditDisplay === "name" && (
               <input

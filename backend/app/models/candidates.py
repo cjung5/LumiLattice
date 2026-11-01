@@ -117,7 +117,7 @@ class Credit(BaseModel):
     display: Literal["name", "anonymous"]
     name: str | None = Field(default=None, max_length=200)
     published_at: datetime
-    verified: bool = False  # the name is the signed-in GitHub account, not typed text
+    verified: bool = False  # the name comes from the signed-in account, not typed text
     license: str | None = None
     content_sha256: str | None = None  # of the structure's CIF, so the record shows what was shown
 

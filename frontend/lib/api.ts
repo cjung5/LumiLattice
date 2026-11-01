@@ -572,7 +572,7 @@ export type Credit = {
   display: "name" | "anonymous";
   name: string | null;
   published_at: string;
-  verified: boolean; // the name is the signed-in GitHub account
+  verified: boolean; // the name comes from the signed-in account
   license: string | null;
   content_sha256: string | null;
 };

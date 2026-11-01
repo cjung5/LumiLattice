@@ -150,10 +150,10 @@ def set_visibility(
         if not request.consent:
             raise HTTPException(status_code=400, detail="Publishing needs explicit consent.")
         if candidate.mine and store.viewer:
-            # The name is the signed-in account, so nobody can publish under another person's name.
+            # The name comes from the signed-in account, and the record has the account's permanent ID.
             credit = Credit(
                 display=request.credit_display,
-                name=store.viewer.login if request.credit_display == "name" else None,
+                name=store.viewer.name if request.credit_display == "name" else None,
                 published_at=now,
                 verified=request.credit_display == "name",
                 license=PUBLISHED_LICENSE,

@@ -2,7 +2,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 
 // Server only. The same token format as backend/app/auth.py: base64url(JSON) + "." + base64url(HMAC).
 // The session cookie and the API token have different audiences, so one cannot act as the other.
-export type TokenPayload = { sub: string; login: string; aud: "session" | "api"; exp: number };
+export type TokenPayload = { sub: string; name: string; aud: "session" | "api"; exp: number };
 
 export const SESSION_COOKIE = "ll_session";
 export const OAUTH_COOKIE = "ll_oauth";
@@ -35,8 +35,8 @@ export function readToken(token: string | undefined, secret: string, aud: TokenP
 /** All three are needed. Without them, the site offers only public mode. */
 export function authSettings() {
   const secret = process.env.AUTH_SECRET;
-  const clientId = process.env.GITHUB_CLIENT_ID;
-  const clientSecret = process.env.GITHUB_CLIENT_SECRET;
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
   return secret && secret.length >= 32 && clientId && clientSecret ? { secret, clientId, clientSecret } : null;
 }
 

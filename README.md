@@ -51,7 +51,7 @@ LumiLattice helps you search that empty corner. You pick a known crystal and swa
 <p align="center"><sub>The result in Guided mode, with no formula to know first. Scales put each range next to familiar materials and the colors of the spectrum.</sub></p>
 
 > [!NOTE]
-> **Public mode** needs no account, and anyone can read what is saved there. **Private mode** uses GitHub sign-in, and other users cannot see your new candidates until you publish them. In both modes, do not enter confidential work: see [Public and private work](#7-work-in-public-or-in-private). Muse Spark requests are limited to 10 for each client in 10 minutes, to protect the API credits.
+> **Public mode** needs no account, and anyone can read what is saved there. **Private mode** uses Google sign-in, and other users cannot see your new candidates until you publish them. In both modes, do not enter confidential work: see [Public and private work](#7-work-in-public-or-in-private). Muse Spark requests are limited to 10 for each client in 10 minutes, to protect the API credits.
 
 <details>
 <summary><strong>Guided mode and Expert mode</strong></summary>
@@ -158,25 +158,25 @@ Use the switch at the top of the page. Each mode is a separate workspace, so pri
 
 | | Public mode | Private mode |
 |---|---|---|
-| **Sign-in** | None | GitHub |
+| **Sign-in** | None | Google |
 | **A new candidate** | Anyone can read and change it | Only you can read and change it |
 | **You can see** | Public-mode and published candidates | Those, and your own private candidates |
 | **Publishing** | Not available: the candidate has no owner, so nobody can claim it | You choose it, after a warning and your consent |
 | **Someone's published work** | Read it, or revise it into a new candidate | Read it, or revise it into your own private candidate. Their credit stays on your version |
 
-<p align="center"><img src="docs/figures/modes.png" alt="The top of the page in the two modes. In public mode, a notice says that anyone can read what is saved. In private mode, the page shows the signed-in GitHub account, and a notice says that other users cannot see new candidates until they are published." width="820"></p>
+<p align="center"><img src="docs/figures/modes.png" alt="The top of the page in the two modes. In public mode, a notice says that anyone can read what is saved. In private mode, the page shows the signed-in Google account, and a notice says that other users cannot see new candidates until they are published." width="820"></p>
 <p align="center"><sub>The same page in each mode. The account in this picture is a test account.</sub></p>
 
-To publish, select **Publish** on your own private candidate. The app warns you first, and you choose your GitHub name or anonymous credit.
+To publish, select **Publish** on your own private candidate. The app warns you first, and you choose your Google account name or anonymous credit.
 
 <p align="center"><img src="docs/figures/publish.png" alt="The publish panel. A warning says what becomes visible, that public disclosure can affect a later patent application, and that the record is not proof of legal ownership. Below are the credit choice and a consent box." width="820"></p>
-<p align="center"><sub>Publishing needs your consent. The name comes from the signed-in account, so nobody can publish under someone else's name.</sub></p>
+<p align="center"><sub>Publishing needs your consent. The name comes from the signed-in account, not from typed text.</sub></p>
 
-**What the record shows.** The app records the account, the time, and a SHA-256 fingerprint of the structure, and publishes under CC BY 4.0. This is a record of who published what and when. It is **not proof of legal ownership**, patent priority, or authorship, and it cannot stop someone from finding the same composition independently. Public disclosure can affect a later patent application. Undoing a publication hides the candidate again, but copies that others made can remain. Anonymous credit hides your account from other users, and the operator can still see it in the database.
+**What the record shows.** The app records the account's permanent ID, the time, and a SHA-256 fingerprint of the structure, and publishes under CC BY 4.0. This is a record of which account published what and when. Other users see only the name on the account, and Google does not check that it is a person's real name or that it is unique. It is **not proof of legal ownership**, patent priority, or authorship, and it cannot stop someone from finding the same composition independently. Public disclosure can affect a later patent application. Undoing a publication hides the candidate again, but copies that others made can remain. Anonymous credit hides your account from other users, and the operator can still see it in the database.
 
 **What private mode does not do.** It keeps your candidates from other users. It does not make them secret: what you ask the agent goes to Meta's Model API, novelty checks and searches send the formula to outside services, and the operator can read the database, which is not encrypted. Candidate IDs are sequential, so an ID can show that a candidate exists elsewhere in the numbering, but not what it is.
 
-**How it works.** The frontend server runs the GitHub sign-in and keeps only the account's ID and user name, in a signed HTTP-only cookie. It gives the browser a token that lasts 15 minutes, and the backend checks that token on each request. All candidate paths and agent tools read through one class, [`ScopedStore`](backend/app/storage/scoped.py), and [`test_ownership.py`](backend/tests/test_ownership.py) tests each path and fails if a new path is not listed. A stranger gets 404, so a private candidate looks the same as one that does not exist. A bad or expired token is an error, so private work is never saved as public by mistake.
+**How it works.** The frontend server runs the Google sign-in. It asks only for the `openid` and `profile` scopes, not for the email address, and it keeps only the account's ID and name, in a signed HTTP-only cookie. See the [privacy page](https://lumi-lattice.vercel.app/en/privacy). It gives the browser a token that lasts 15 minutes, and the backend checks that token on each request. All candidate paths and agent tools read through one class, [`ScopedStore`](backend/app/storage/scoped.py), and [`test_ownership.py`](backend/tests/test_ownership.py) tests each path and fails if a new path is not listed. A stranger gets 404, so a private candidate looks the same as one that does not exist. A bad or expired token is an error, so private work is never saved as public by mistake.
 
 ## How Muse Spark is used
 
@@ -647,10 +647,11 @@ The backend and its Postgres database run on Railway, and the frontend on Vercel
 5. **Check:** open the site, run the example, and confirm that your country appears on the globe.
 6. **Spending:** on the Railway workspace Usage page, set an email alert at $5 and a hard limit at $10 (the lowest allowed). At the hard limit, every service in the workspace goes offline until the next billing cycle or until you raise the limit. Also check the Meta billing page for a spend limit, because the site is public; the app's own daily cap is the protection that this repository controls.
 7. **Private mode (optional):** without these settings, the site offers only public mode.
-   - On GitHub, go to Settings → Developer settings → OAuth Apps → New OAuth App. Set Homepage URL = your site, and Authorization callback URL = `https://<your-site>.vercel.app/api/auth/github/callback`. Then generate a client secret.
+   - In the Google Cloud console, open Google Auth Platform. Register the app with user type External, and add your site's privacy page (`/en/privacy`) on the Branding page. To let any Google user sign in, select Publish app on the Audience page.
+   - On the Clients page, create a Web application client. Set Authorized redirect URI = `https://<your-site>.vercel.app/api/auth/google/callback`. The app asks only for the `openid` and `profile` scopes.
    - Make one more secret with `openssl rand -hex 32`, for `AUTH_SECRET`. Both servers need the same value.
    - Railway: add `AUTH_SECRET`. `/api/health` should then show `"sign_in_enabled":true`.
-   - Vercel: add `AUTH_SECRET`, `GITHUB_CLIENT_ID`, and `GITHUB_CLIENT_SECRET` (type Secret, no `NEXT_PUBLIC_` prefix), then redeploy.
+   - Vercel: add `AUTH_SECRET`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` (type Secret, no `NEXT_PUBLIC_` prefix), then redeploy.
 
 **Why Muse Spark calls go through Vercel:** on 2026-10-31 the Meta Model API listed no models for requests from Railway's network (US West) and returned `model_not_found`, while the same key listed nine models from Vercel's network and from a home connection. We do not know the reason. So `frontend/app/api/meta/[...path]/route.ts` forwards the backend's calls to Meta. It accepts only `responses` and `chat/completions`, and only with the secret that the two servers share. If you host the backend on a network that Meta allows, leave `MODEL_API_BASE_URL` unset to call Meta directly.
 

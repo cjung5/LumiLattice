@@ -405,15 +405,15 @@
     "publicChip": "Öffentlicher Modus: alle können das lesen",
     "publicHint": "Ein Kandidat aus dem öffentlichen Modus hat keinen Eigentümer, daher kann ihn niemand mit Namen veröffentlichen. Um eigene Arbeit zu veröffentlichen, wähle Privat und melde dich an.",
     "ownedWarning": "Das Veröffentlichen zeigt diesen Kandidaten allen, mit Entscheidungen, Begründungen, Kritiken, Messwerten und den Substitutionen, die zu ihm führten. Eine Veröffentlichung kann eine spätere Patentanmeldung beeinträchtigen, prüfe das also vorher, falls es für dich wichtig ist. LumiLattice speichert dein Konto, die Zeit und einen Fingerabdruck der Struktur. Das ist ein Nachweis des Vorgangs, kein Beweis für rechtliches Eigentum. Andere können den Inhalt unter CC BY 4.0 mit Namensnennung weiterverwenden.",
-    "creditLogin": "Meinen GitHub-Namen zeigen (@{login})",
+    "creditLogin": "Meinen Google-Kontonamen zeigen ({name})",
     "anonymousOwned": "Anonym (andere sehen dein Konto nicht)",
     "consentOwned": "Ich habe das gelesen und veröffentliche {id} unter CC BY 4.0.",
     "undoNote": "Das Zurücknehmen verbirgt den Kandidaten wieder, aber Kopien anderer können bestehen bleiben.",
     "recordHash": "Nachweis: SHA-256 {hash}…",
-    "creditVerified": "Veröffentlicht von @{name}",
+    "creditVerified": "Veröffentlicht von {name}",
     "license": "Lizenz: {license}",
     "otherNote": "Dies ist die veröffentlichte Arbeit einer anderen Person: Du kannst sie lesen, aber nicht ändern. Um darauf aufzubauen, überarbeite sie. Deine Version gehört dir und behält die Namensnennung.",
-    "basedOn": "Basiert auf der Arbeit von @{name}",
+    "basedOn": "Basiert auf der Arbeit von {name}",
     "basedOnAnonymous": "Basiert auf der Arbeit einer anonymen Person"
   },
   "Relax": {
@@ -694,7 +694,7 @@
   "Workspace": {
     "sharedAndPapers": "Geteilte Kandidaten und Forschungspapiere",
     "noAccounts": "Diese Version hat keine Konten. Alle, die diese Seite öffnen, können die hier gespeicherten Kandidaten, Entscheidungen und Messwerte lesen. Was du den Agenten fragst, geht an die Meta Model API. Gib keine vertraulichen Arbeiten ein.",
-    "publicNotice": "Öffentlicher Modus: Alle, die diese Seite öffnen, können die hier gespeicherten Kandidaten, Entscheidungen und Messwerte lesen. Was du den Agenten fragst, geht an die Meta Model API. Gib keine vertraulichen Arbeiten ein. Um neue Kandidaten vor anderen zu verbergen, wähle Privat und melde dich mit GitHub an. Wir speichern nur deine GitHub-ID und deinen Benutzernamen, nicht dein Passwort oder deine E-Mail-Adresse.",
+    "publicNotice": "Öffentlicher Modus: Alle, die diese Seite öffnen, können die hier gespeicherten Kandidaten, Entscheidungen und Messwerte lesen. Was du den Agenten fragst, geht an die Meta Model API. Gib keine vertraulichen Arbeiten ein. Um neue Kandidaten vor anderen zu verbergen, wähle Privat und melde dich mit Google an. Wir speichern nur deine Google-Konto-ID und deinen Namen, nicht dein Passwort oder deine E-Mail-Adresse.",
     "privateNotice": "Privater Modus: Andere sehen die hier erstellten Kandidaten erst, wenn du sie veröffentlichst. Geheim sind sie dadurch nicht: Was du den Agenten fragst, geht an die Meta Model API, Suchen senden die Formel an externe Dienste, und der Betreiber kann die Datenbank lesen. Gib keine vertraulichen Arbeiten ein."
   },
   "Scorecard": {
@@ -1016,8 +1016,9 @@
     "public": "Öffentlich",
     "private": "Privat",
     "publicHint": "Keine Anmeldung. Alle können lesen, was du speicherst.",
-    "privateHint": "Mit GitHub anmelden. Andere sehen deine neuen Kandidaten erst, wenn du sie veröffentlichst.",
+    "privateHint": "Mit Google anmelden. Andere sehen deine neuen Kandidaten erst, wenn du sie veröffentlichst.",
     "signOut": "Abmelden",
-    "signInFailed": "Die GitHub-Anmeldung wurde nicht abgeschlossen. Versuche es erneut."
+    "signInFailed": "Die Google-Anmeldung wurde nicht abgeschlossen. Versuche es erneut.",
+    "privacy": "Datenschutz"
   }
 }
