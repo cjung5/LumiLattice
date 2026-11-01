@@ -80,7 +80,11 @@ All pictures below come from one example: candidate **LL-0001** (Sr<sub>3</sub>L
 Choose the $`n`$ and the band gap that you need. The app converts the gap to the color where absorption starts:
 
 ```math
-\lambda_\text{edge}\,[\text{nm}] = \frac{hc}{E_g} \approx \frac{1240}{E_g\,[\text{eV}]} \qquad E_g = 3.0\ \text{eV} \;\Rightarrow\; \lambda_\text{edge} \approx 413\ \text{nm}
+\lambda_\text{edge}\,[\text{nm}] = \frac{hc}{E_g} \approx \frac{1240}{E_g\,[\text{eV}]}
+```
+
+```math
+E_g = 3.0\ \text{eV} \;\Rightarrow\; \lambda_\text{edge} \approx 413\ \text{nm}
 ```
 
 <p align="center"><img src="docs/figures/goal.png" alt="Goal panel with a scale for bending light, marked against glass, sapphire, and diamond, and a band-gap scale on the visible spectrum."></p>
@@ -145,8 +149,8 @@ Muse Spark reads the evidence and three rendered views of the crystal. Each poin
 
 You can also talk to the research agent. It sees the selected host and candidate, calls the tools, and remembers the conversation.
 
-<p align="center"><img src="docs/figures/agent.png" width="820" alt="The research agent answers a question about the weakest evidence. It quotes a candidate's goal verdicts and the sources of its end-member values."></p>
-<p align="center"><sub>The start of a real answer. For this answer, the agent made 6 tool calls, and each call is listed under the answer in the app.</sub></p>
+<p align="center"><img src="docs/figures/agent.png" width="820" alt="The research agent answers a question about the weakest evidence. It lists what each tool returned, says why n is weaker than the band gap, and suggests one change to test next."></p>
+<p align="center"><sub>A real answer. For this answer, the agent made 4 tool calls. In the app, you can open the list under the answer to see each call and what it returned.</sub></p>
 
 ## How Muse Spark is used
 
@@ -217,10 +221,14 @@ n = \sqrt{\varepsilon}
 A candidate has no measured value of its own, so the app gives a **range** between its end members $`i`$, with a margin from the tests below. The linear mix is a guide only, where $`x_i`$ is the share of each end member. Verdicts and the score do not use it.
 
 ```math
-n \in \Big[\min_i n_i - 0.2,\ \max_i n_i + 0.2\Big],
-\qquad
-E_g \in \Big[\min_i E_{g,i} - 0.3,\ \max_i E_{g,i} + 0.3\Big]\ \text{eV},
-\qquad
+n \in \Big[\min_i n_i - 0.2,\ \max_i n_i + 0.2\Big]
+```
+
+```math
+E_g \in \Big[\min_i E_{g,i} - 0.3,\ \max_i E_{g,i} + 0.3\Big]\ \text{eV}
+```
+
+```math
 \bar n = \sum_i x_i n_i
 ```
 
@@ -254,11 +262,15 @@ t = \frac{r_A + r_X}{\sqrt{2}\,(r_B + r_X)}
 **Bond valence sum**, with the universal parameters of O'Keeffe and Brese ($`b = 0.37`$ Å), for bonds $`j`$ of length $`d_j`$ around a cation. The app reports the misfit as the bond-length change $`\Delta d`$ that would bring the sum to the oxidation state $`V_\text{ox}`$, which grades small misfits fairly.
 
 ```math
-V = \sum_j \exp\!\left(\frac{R_0 - d_j}{b}\right),
-\qquad
-R_0 = r_c + r_a - \frac{r_c\, r_a \left(\sqrt{c_c} - \sqrt{c_a}\right)^2}{c_c\, r_c + c_a\, r_a},
-\qquad
-\Delta d = b \ln\frac{V}{V_\text{ox}}
+V = \sum_j \exp\!\left(\frac{R_0 - d_j}{b}\right)
+```
+
+```math
+R_0 = r_c + r_a - \frac{r_c\, r_a \left(\sqrt{c_c} - \sqrt{c_a}\right)^2}{c_c\, r_c + c_a\, r_a}
+```
+
+```math
+\Delta d = b\,\ln\frac{V}{V_\text{ox}}
 ```
 
 **Ionic size mismatch**, from the mean bond length $`\bar d`$ at a site. It warns above 10% and fails above 20%.
@@ -272,12 +284,18 @@ R_0 = r_c + r_a - \frac{r_c\, r_a \left(\sqrt{c_c} - \sqrt{c_a}\right)^2}{c_c\, 
 For a polyhedron with bond lengths $`d_i`$: the distortion index (Baur 1974) and, for octahedra, the quadratic elongation and bond-angle variance (Robinson et al. 1971). Here $`l_0`$ is the center-to-vertex distance of a regular octahedron with the same volume, and $`\theta_i`$ are the 12 cis angles. For frameworks with only corner-shared octahedra, the tilt comes from the $`B{-}X{-}B`$ angle.
 
 ```math
-\Delta = \frac{1}{N} \sum_{i=1}^{N} \frac{|d_i - \bar d|}{\bar d},
-\qquad
-\langle\lambda\rangle = \frac{1}{6} \sum_{i=1}^{6} \left(\frac{d_i}{l_0}\right)^2,
-\qquad
-\sigma^2 = \frac{1}{11} \sum_{i=1}^{12} (\theta_i - 90^\circ)^2,
-\qquad
+\Delta = \frac{1}{N} \sum_{i=1}^{N} \frac{|d_i - \bar d|}{\bar d}
+```
+
+```math
+\langle\lambda\rangle = \frac{1}{6} \sum_{i=1}^{6} \left(\frac{d_i}{l_0}\right)^2
+```
+
+```math
+\sigma^2 = \frac{1}{11} \sum_{i=1}^{12} (\theta_i - 90^\circ)^2
+```
+
+```math
 \omega = \frac{180^\circ - \angle B{-}X{-}B}{2}
 ```
 
@@ -292,8 +310,10 @@ E_\text{Ewald} = \frac{1}{2} \sum_{i \ne j} \frac{q_i q_j}{4\pi\varepsilon_0\, r
 Each atom gets a Gaussian with a width from its Shannon radius $`r_i`$. It stretches along its bonds $`b`$, which have unit vectors $`\hat{\mathbf u}_b`$ and bond-valence weights $`w_b = \exp[(R_0 - d_b)/0.37\ \text{Å}]`$. Again, this is a model picture of the geometry, not a computed electron density.
 
 ```math
-\rho_i(\mathbf r) \propto \exp\!\left[-\tfrac12 (\mathbf r - \mathbf r_i)^{\mathsf T} \Sigma_i^{-1} (\mathbf r - \mathbf r_i)\right],
-\qquad
+\rho_i(\mathbf r) \propto \exp\!\left[-\tfrac12 (\mathbf r - \mathbf r_i)^{\mathsf T} \Sigma_i^{-1} (\mathbf r - \mathbf r_i)\right]
+```
+
+```math
 \Sigma_i = (0.42\, r_i)^2 \left[0.4\, \mathbf I + 1.8\, \frac{\sum_b w_b \hat{\mathbf u}_b \hat{\mathbf u}_b^{\mathsf T}}{\sum_b w_b}\right]
 ```
 

@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
+import { AgentText } from "@/components/AgentText";
 import { useLevel } from "@/components/Level";
 import type { ToolCall } from "@/lib/api";
 
@@ -17,11 +18,6 @@ type Props = {
   onReset: () => void;
   onOpenCandidate: (candidateId: string) => void;
 };
-
-/** The model marks emphasis with **bold**. Everything else stays plain text. */
-function withBold(text: string) {
-  return text.split(/\*\*(.+?)\*\*/g).map((part, i) => (i % 2 ? <strong key={i}>{part}</strong> : part));
-}
 
 export function AgentPanel({ turns, busy, error, onSend, onReset, onOpenCandidate }: Props) {
   const t = useTranslations("Agent");
@@ -70,7 +66,7 @@ export function AgentPanel({ turns, busy, error, onSend, onReset, onOpenCandidat
             </li>
           ) : (
             <li key={index} className="space-y-2">
-              <p className="whitespace-pre-wrap text-sm">{withBold(turn.text)}</p>
+              <AgentText text={turn.text} />
               {turn.candidateIds.length > 0 && (
                 <div className="flex flex-wrap gap-2 text-sm">
                   <span className="text-muted">{t("created")}</span>
