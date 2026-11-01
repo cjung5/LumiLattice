@@ -1,9 +1,11 @@
 import json
 from types import SimpleNamespace
 
+import httpx
 import pytest
+from openai import BadRequestError
 
-from app.agents.loop import AgentStepLimitReached, run_agent
+from app.agents.loop import CHAIN_RETRY_SECONDS, AgentStepLimitReached, create_chained, run_agent
 from app.tools.composition import COMPOSITION_TOOL
 from app.tools.registry import ToolRegistry
 
@@ -85,3 +87,47 @@ def test_follow_up_turn_continues_the_conversation():
     assert request["previous_response_id"] == "resp_prev"
     assert request["input"] == [{"role": "user", "content": "and now?"}]  # no second system prompt
     assert request["tools"]
+
+
+def bad_request(message: str) -> BadRequestError:
+    request = httpx.Request("POST", "https://api.meta.ai/v1/responses")
+    return BadRequestError(message, response=httpx.Response(400, request=request), body=None)
+
+
+def client_that_answers(*answers) -> SimpleNamespace:
+    pending = list(answers)
+
+    def create(**kwargs):
+        answer = pending.pop(0)
+        if isinstance(answer, Exception):
+            raise answer
+        return answer
+
+    return SimpleNamespace(responses=SimpleNamespace(create=create), pending=pending)
+
+
+def test_chained_request_waits_for_meta_to_save_the_response(monkeypatch):
+    waits = []
+    monkeypatch.setattr("app.agents.loop.time.sleep", waits.append)
+    client = client_that_answers(bad_request("referenced response not found or expired"), "ok")
+
+    assert create_chained(client, model="m") == "ok"
+    assert waits == [CHAIN_RETRY_SECONDS[0]]
+
+
+def test_chained_request_stops_after_the_last_retry(monkeypatch):
+    monkeypatch.setattr("app.agents.loop.time.sleep", lambda _: None)
+    missing = bad_request("referenced response not found or expired")
+    client = client_that_answers(*[missing] * (len(CHAIN_RETRY_SECONDS) + 1), "never reached")
+
+    with pytest.raises(BadRequestError):
+        create_chained(client, model="m")
+    assert client.pending == ["never reached"]
+
+
+def test_other_bad_requests_are_not_retried(monkeypatch):
+    monkeypatch.setattr("app.agents.loop.time.sleep", lambda _: pytest.fail("must not wait"))
+    client = client_that_answers(bad_request("invalid tool schema"), "never reached")
+
+    with pytest.raises(BadRequestError, match="invalid tool schema"):
+        create_chained(client, model="m")

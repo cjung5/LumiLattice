@@ -7,10 +7,15 @@ https://dev.meta.ai/docs/tool-calling
 """
 
 import json
+import time
 from dataclasses import dataclass, field
 from typing import Any, Literal, Protocol
 
+from openai import BadRequestError
+
 from app.tools.registry import ToolRegistry
+
+CHAIN_RETRY_SECONDS = (2.0, 4.0)
 
 LANGUAGES = {
     "en": "English",
@@ -67,6 +72,21 @@ class AgentStepLimitReached(RuntimeError):
     pass
 
 
+def create_chained(client: ResponsesClient, **request: Any) -> Any:
+    """Meta can need a few seconds to save a response, and until then a request that refers to it
+    gets a 400. Meta's advice is to retry once or twice with a short wait.
+    https://dev.meta.ai/docs/protocols/responses (Persistence guarantees)
+    """
+    for delay in CHAIN_RETRY_SECONDS:
+        try:
+            return client.responses.create(**request)
+        except BadRequestError as exc:
+            if "referenced response" not in str(exc):
+                raise
+            time.sleep(delay)
+    return client.responses.create(**request)
+
+
 def run_agent(
     client: ResponsesClient,
     model: str,
@@ -91,7 +111,8 @@ def run_agent(
             tools=tools,
         )
     else:
-        response = client.responses.create(
+        response = create_chained(
+            client,
             model=model,
             input=[{"role": "user", "content": user_message}],
             previous_response_id=previous_response_id,
@@ -113,7 +134,8 @@ def run_agent(
                     "output": json.dumps(result),
                 }
             )
-        response = client.responses.create(
+        response = create_chained(
+            client,
             model=model,
             input=outputs,
             previous_response_id=response.id,
