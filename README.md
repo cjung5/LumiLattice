@@ -270,7 +270,7 @@ Candidates are kept in memory unless `DATABASE_URL` points to a Postgres databas
 
 - Materials Project and OpenAlex responses are cached for 24 hours. OpenAlex stops at 500 searches per day (half of its free daily budget) and stops early if the free budget left for the day falls below $0.05. Materials Project has a cap of 1,000 requests per day.
 - Crossref (public pool, 1 request per second), arXiv (1 request per 3 seconds, as its API terms ask), Semantic Scholar (optional free key), and COD are free; they are cached and capped too. If a source rate-limits or times out, it is skipped for 10 minutes so the other sources still answer quickly. No personal email address is sent.
-- The public demo protects Meta Model API credits: at most 10 agent requests per client per 10 minutes (the client is the `X-Real-IP` address from Railway's edge) and 200 per day, with at most 8 tool steps per request. Critiques count as agent requests (one request, plus at most one retry).
+- The public demo protects Meta Model API credits: at most 10 agent requests per client per 10 minutes (the client is the `X-Real-IP` address from Railway's edge; the limiter stores only a hash of it with a random key, and removes it when the window has passed) and 200 per day, with at most 8 tool steps per request. Critiques count as agent requests (one request, plus at most one retry).
 
 ## Run locally
 

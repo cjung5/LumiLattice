@@ -4,7 +4,7 @@ import pytest
 from app.tools.literature import OpenAlexClient
 from app.tools.materials import MaterialsProjectClient
 from app.tools.registry import UpstreamError
-from app.tools.usage import DailyCap, ResponseCache, cache_key
+from app.tools.usage import DailyCap, RateLimiter, ResponseCache, cache_key
 
 
 def test_daily_cap_blocks_after_limit():
@@ -14,6 +14,21 @@ def test_daily_cap_blocks_after_limit():
 
     with pytest.raises(UpstreamError, match="cap"):
         cap.take()
+
+
+def test_rate_limiter_stores_no_client_address_and_removes_old_entries(monkeypatch):
+    now = [100.0]
+    monkeypatch.setattr("app.tools.usage.time.monotonic", lambda: now[0])
+    limiter = RateLimiter(max_requests=1, window_seconds=60)
+
+    assert limiter.allow("203.0.113.9")
+    assert not limiter.allow("203.0.113.9")
+    assert b"203.0.113.9" not in b"".join(limiter._hits)
+
+    now[0] += 61
+    assert limiter.allow("198.51.100.1")
+    assert len(limiter._hits) == 1
+    assert limiter.allow("203.0.113.9")
 
 
 def test_cache_key_ignores_api_key():

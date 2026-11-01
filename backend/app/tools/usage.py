@@ -5,6 +5,8 @@
 - Materials Project: free, with rate limits. The cap keeps use polite.
 """
 
+import hashlib
+import secrets
 import time
 from collections import OrderedDict
 from datetime import UTC, datetime
@@ -116,23 +118,32 @@ S2_THROTTLE = Throttle(1.0)  # Semantic Scholar: 1 request per second with a key
 
 
 class RateLimiter:
-    """Sliding-window limit per client (e.g. IP address)."""
+    """Sliding-window limit per client (e.g. IP address).
+
+    The client value is not stored: only a hash with a random key that is lost at restart.
+    Entries are removed once their window has passed.
+    """
 
     def __init__(self, max_requests: int, window_seconds: float):
         self.max_requests = max_requests
         self.window = window_seconds
-        self._hits: dict[str, list[float]] = {}
+        self._hits: dict[bytes, list[float]] = {}
+        self._key = secrets.token_bytes(32)
         self._lock = Lock()
 
     def allow(self, client: str) -> bool:
         now = time.monotonic()
+        token = hashlib.blake2b(client.encode(), key=self._key, digest_size=16).digest()
         with self._lock:
-            hits = [t for t in self._hits.get(client, []) if now - t < self.window]
+            self._hits = {
+                other: recent
+                for other, hits in self._hits.items()
+                if (recent := [t for t in hits if now - t < self.window])
+            }
+            hits = self._hits.get(token, [])
             if len(hits) >= self.max_requests:
-                self._hits[client] = hits
                 return False
-            hits.append(now)
-            self._hits[client] = hits
+            self._hits[token] = [*hits, now]
             return True
 
     def reset(self) -> None:
